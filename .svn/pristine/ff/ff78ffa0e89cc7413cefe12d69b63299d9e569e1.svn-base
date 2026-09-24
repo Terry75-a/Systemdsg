@@ -1,0 +1,213 @@
+<?php
+
+namespace App\Controllers;
+
+class PersonasAddController extends BaseController
+{
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+    }
+
+    private function verificarSesion(): mixed
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
+        }
+        return null;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // INDEX
+    // ══════════════════════════════════════════════════════════════════
+    public function index()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        try {
+            $data['departamentos'] = $this->db
+                ->table('ubigeo_peru_departments')
+                ->orderBy('name', 'ASC')
+                ->get()->getResultObject();
+        }
+        catch (\Throwable $e) {
+            $data['departamentos'] = [];
+        }
+
+        $data['titulo'] = 'Agregar Persona';
+        $data['username'] = session()->get('username');
+
+        echo view('layouts/header', $data);
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('personas/personasadd', $data);
+        echo view('layouts/footer');
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // BUSCAR DNI
+    // CAMBIOS: http → https, allow_redirects: true, sin bloque debug
+    // ══════════════════════════════════════════════════════════════════
+    public function buscarDni()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+
+        $dni = $this->request->getPost('dni');
+
+        if (!$dni || !preg_match('/^\d{8}$/', $dni)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'El DNI debe tener 8 dígitos numéricos'
+            ]);
+        }
+
+        try {
+            $url = 'https://www.dsgperutech.com/api-customer/v1/dni/' . $dni; // ← https
+            $client = \Config\Services::curlrequest();
+
+            $apiResponse = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
+                ],
+                'http_errors' => false,
+                'timeout' => 10,
+                'allow_redirects' => true, // ← sigue redirecciones 301/302
+            ]);
+
+            $status = $apiResponse->getStatusCode();
+            $body = $apiResponse->getBody();
+            $dataApi = json_decode($body);
+
+            if ($status !== 200 || !$dataApi || empty($dataApi->success)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'DNI no encontrado en el servicio externo'
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'nombres' => $dataApi->result->name ?? '',
+                'apellido_paterno' => $dataApi->result->paternal ?? '',
+                'apellido_materno' => $dataApi->result->maternal ?? '',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error al conectar con el servicio: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // BUSCAR RUC
+    // CAMBIOS: http → https, allow_redirects: true
+    // ══════════════════════════════════════════════════════════════════
+    public function buscarRuc()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+
+        $ruc = $this->request->getPost('ruc');
+
+        if (!$ruc || !preg_match('/^\d{11}$/', $ruc)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'El RUC debe tener 11 dígitos numéricos'
+            ]);
+        }
+
+        try {
+            $url = 'https://www.dsgperutech.com/api-customer/v1/ruc/' . $ruc; // ← https
+            $client = \Config\Services::curlrequest();
+
+            $apiResponse = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
+                ],
+                'http_errors' => false,
+                'timeout' => 10,
+                'allow_redirects' => true, // ← sigue redirecciones 301/302
+            ]);
+
+            $status = $apiResponse->getStatusCode();
+            $body = $apiResponse->getBody();
+            $dataApi = json_decode($body);
+
+            if ($status !== 200 || !$dataApi || empty($dataApi->success)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'RUC no encontrado en el servicio externo'
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'razon' => $dataApi->result->name ?? '',
+                'direccion' => $dataApi->result->address ?? '',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error al conectar con el servicio: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // REGISTRAR PERSONA
+    // ══════════════════════════════════════════════════════════════════
+    public function registrar_persona()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $personaModel = new \App\Models\PersonasAddModel();
+        $clienteModel = new \App\Models\ClientesModel();
+
+        $dataPersona = [
+            'nombre' => $this->request->getPost('nombre'),
+            'apellido_paterno' => $this->request->getPost('apellido_paterno'),
+            'apellido_materno' => $this->request->getPost('apellido_materno'),
+            'dni' => $this->request->getPost('dni'),
+            'telefono' => $this->request->getPost('telefono'),
+            'correo' => $this->request->getPost('correo'),
+            'direccion' => $this->request->getPost('direccion_rep'),
+            'id_distrito' => $this->request->getPost('distrito_rep'),
+            'fecha_nacimiento' => $this->request->getPost('fecha_nacimiento'),
+            'id_pais' => 1,
+            'id_tipo_documento' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+
+        if ($personaModel->insert($dataPersona)) {
+            $id_generado = $personaModel->getInsertID();
+            $id_empresa = $this->request->getPost('empresa');
+
+            if ($id_empresa) {
+                $clienteModel->insert([
+                    'id_cliente' => $id_generado,
+                    'id_empresa' => $id_empresa,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
+            return redirect()->to(base_url('personas'))
+                ->with('success', 'Persona registrada correctamente.');
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'No se pudo registrar la persona.');
+    }
+}

@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Controllers;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
+class EmailController extends BaseController
+{
+    public function enviar()
+    {
+        require ROOTPATH . 'vendor/autoload.php'; 
+
+        $mail = new PHPMailer(true);
+
+        try {
+            
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'aquituariterry@gmail.com';
+            $mail->Password   = 'jkcr wxqb uvjf iqpp'; 
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+
+            //  Remitente y destinatario
+            $mail->setFrom('maxterry299@gmail.com', 'Formulario Web');
+            $mail->addAddress('aaron235x@gmail.com', 'Admin');
+
+            // Contenido
+            $mail->isHTML(true);
+            $mail->Subject = $this->request->getPost('asunto');
+            $mail->Body    = '
+                <h3>Nuevo mensaje del formulario</h3>
+                <p><b>Nombre:</b> '.$this->request->getPost('nombre').'</p>
+                <p><b>Correo:</b> '.$this->request->getPost('correo').'</p>
+                <p><b>Empresa:</b> '.$this->request->getPost('empresa').'</p>
+                <p><b>Teléfono:</b> '.$this->request->getPost('telefono').'</p>
+                <p><b>Mensaje:</b><br>'.$this->request->getPost('mensaje').'</p>
+            ';
+
+            $mail->send();
+            return redirect()->to(base_url('/'))->with('success', '✅ Tu mensaje fue enviado correctamente.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', "❌ Error al enviar: {$mail->ErrorInfo}");
+        }
+    }
+}

@@ -1,0 +1,202 @@
+/* Contenedor del globo de texto */
+.whatsapp-message {
+    position: absolute;
+    bottom: 4.5rem; /* Ajustado para que flote sobre el botón */
+    right: 0;
+    width: 280px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 25px; /* Bordes redondeados de la imagen */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid #f0f0f0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    z-index: 999;
+}
+
+/* El piquito del globo */
+.whatsapp-message::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 25px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    transform: rotate(45deg);
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+}
+
+/* Texto del globo */
+.whatsapp-message p {
+    margin: 0;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.whatsapp-message a {
+    display: block;
+    color: #3b71fe; /* Azul del enlace de la foto */
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+/* Botón de cerrar (la X) */
+.close-wa {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: #e0e0e0;
+    border: none;
+    color: #666;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-wa:hover {
+    background: #ccc;
+}
+
+/* Ocultar el tooltip viejo si usas este globo */
+.whatsapp-tooltip {
+    display: none !important;
+}
+
+/* Animación sutil al aparecer */
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.whatsapp-message {
+    animation: popIn 0.5s ease-out forwards;
+}
+
+
+/* WhatsApp Button - Diseño limpio y moderno */
+.whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #128C7E;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    position: relative;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.whatsapp-button:hover {
+    background: #25D366;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+}
+
+.whatsapp-icon {
+    color: white;
+    font-size: 1.8rem;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.whatsapp-button:hover .whatsapp-icon {
+    transform: scale(1.05);
+}
+
+/* Badge de notificación */
+.whatsapp-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #FF4D4D;
+    color: white;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 2px solid white;
+}
+
+/* Tooltip sutil */
+.whatsapp-tooltip {
+    position: absolute;
+    right: 4.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card);
+    color: var(--foreground);
+    padding: 0.6rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border);
+    pointer-events: none;
+}
+
+.whatsapp-float:hover .whatsapp-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-0.5rem, -50%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .whatsapp-float {
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .whatsapp-button {
+        width: 3.2rem;
+        height: 3.2rem;
+    }
+    
+    .whatsapp-icon {
+        font-size: 1.6rem;
+    }
+    
+    .whatsapp-tooltip {
+        display: none;
+    }
+}
+
+/* Tema oscuro */
+.dark .whatsapp-button {
+    border-color: var(--background);
+}
+
+.dark .whatsapp-tooltip {
+    background: var(--card);
+    border-color: var(--border);
+}

@@ -1,0 +1,55 @@
+<main id="main-content" class="admin-page" aria-labelledby="menu-page-title">
+<section class="admin-surface w-100 h-100 p-4" aria-describedby="menu-page-subtitle">
+        <header class="admin-page-header mb-4">
+            <div>
+                <h1 class="h4 admin-page-title mb-1" id="menu-page-title">Menú del sistema</h1>
+                <p class="admin-page-subtitle mb-0" id="menu-page-subtitle">Vista saneada del sidebar administrativo según las rutas y pantallas hoy disponibles.</p>
+            </div>
+            <span class="badge bg-secondary-subtle text-secondary border px-3 py-2">Solo lectura</span>
+        </header>
+
+        <div class="alert alert-warning mb-4" role="status" aria-live="polite">
+            <h5 class="mb-2"><i class="fa-solid fa-triangle-exclamation me-2" aria-hidden="true"></i>Alcance actual</h5>
+            <p class="mb-0">Se retiraron acciones fantasmas: este módulo no reordena ni edita el menú todavía. Solo documenta la estructura visible que realmente existe.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="list-group shadow-sm" role="list" aria-label="Estructura vigente del menú">
+                    <div class="list-group-item list-group-item-action active bg-dark border-dark">
+                        <i class="fa-solid fa-layer-group me-2" aria-hidden="true"></i>Estructura vigente del menú
+                    </div>
+                    <?php foreach (($menuItems ?? []) as $item): ?>
+                        <?php if (($item['type'] ?? 'directo') === 'grupo'): ?>
+                            <div class="list-group-item admin-muted-block ps-4" role="listitem">
+                                <i class="fa-solid <?= esc($item['icon']) ?> me-2" aria-hidden="true"></i>
+                                <strong><?= esc($item['label']) ?></strong>
+                                <div class="ms-3 mt-2 d-flex flex-column gap-2">
+                                    <?php foreach (($item['children'] ?? []) as $child): ?>
+                                        <span class="badge bg-secondary-subtle text-secondary border text-start"><?= esc($child) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="list-group-item" role="listitem">
+                                <i class="fa-solid <?= esc($item['icon']) ?> me-3" aria-hidden="true"></i><?= esc($item['label']) ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <aside class="admin-muted-block h-100 shadow-sm" aria-label="Limitaciones documentadas del módulo">
+                    <div class="card-body">
+                        <h2 class="h5 card-title"><i class="fa-solid fa-circle-info me-2" aria-hidden="true"></i>Limitaciones documentadas</h2>
+                        <ul class="mb-0 ps-3">
+                            <?php foreach (($limitaciones ?? []) as $limitacion): ?>
+                                <li class="mb-2"><?= esc($limitacion) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+</section>
+</main>

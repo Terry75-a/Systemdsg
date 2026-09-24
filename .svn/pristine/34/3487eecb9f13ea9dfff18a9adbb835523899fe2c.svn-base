@@ -1,0 +1,844 @@
+DEBUG - 2026-02-09 04:44:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 04:44:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 04:44:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 04:58:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 04:58:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 04:59:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:06:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:10:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:11:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:11:29 --> mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:11:29 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:11:29 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:11:29 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:13:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:13:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:13:51 --> mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:13:51 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:13:51 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:13:51 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:14:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:14:09 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:16:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:16:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:16:36 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 26.
+ 1 APPPATH\Views\perfil.php(26): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 26)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:16:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:16:45 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 30.
+ 1 APPPATH\Views\perfil.php(30): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 30)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:17:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:17:49 --> mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:17:49 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:17:49 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:17:49 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:17:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:17:51 --> mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:17:51 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:17:51 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:17:51 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:19:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:19:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:19:22 --> mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:19:22 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:19:22 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:19:22 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_permiso' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_permiso`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:22:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:22:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-09 05:22:57 --> mysqli_sql_exception: Unknown column 'usuarios.id_roles' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-02-09 05:22:57 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_roles' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:22:57 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'usuarios.id_roles' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-09 05:22:57 --> [Caused by] mysqli_sql_exception: Unknown column 'usuarios.id_roles' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = \'3\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `usuarios`.`password`, `personas`.`nombre`, `personas`.`id_persona`
+FROM `usuarios`
+JOIN `permisos` ON `permisos`.`id_permiso` = `usuarios`.`id_roles`
+JOIN `personas` ON `personas`.`id_persona` = `permisos`.`id_persona`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\PerfilModel.php(19): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:23:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:23:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:23:08 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:23:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:23:51 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:28:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:28:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:28:09 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:29:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:29:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:29:16 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:34:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:34:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 05:34:51 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 05:34:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 05:34:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 13:38:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:18:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:18:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:18:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:18:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:19:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 14:19:02 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 14:23:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 14:23:28 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 14:23:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:23:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:23:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 14:23:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:12:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:12:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:12:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:12:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-09 15:13:00 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-09 15:13:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:13:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:41:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 15:41:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:06:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:13:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:21:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:31:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:36:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:37:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:38:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:38:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:39:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:39:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-09 16:39:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

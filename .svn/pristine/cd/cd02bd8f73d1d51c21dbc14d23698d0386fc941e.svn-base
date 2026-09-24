@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Controllers;
+use CodeIgniter\Controller;
+use App\Models\PersonaModel;
+use Faker\Provider\Person;
+
+class PersonasController extends BaseController
+{
+    public function index()
+    {
+        $model = new PersonaModel();
+        $data['titulo'] = 'Gestión de Personas';
+        $data['personas'] = $model->findAll();
+        session()->set('last_page', 'personas');
+
+        echo view('layouts/header'); //cabezera 
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('personas/personas', $data); // <-- contenido principal
+        echo view('layouts/footer');
+    }
+   
+    
+    public function listar() 
+{
+    // 1. Capturamos el estado (1 o 0). Por defecto es 1 (Activos).
+    $estado = $this->request->getGet('estado') ?? 1;
+
+    $model = new PersonaModel();
+
+    // 2. Especificamos los campos de la tabla personas de forma limpia para evitar ambigüedades
+    // Usamos 'personas.id_persona' para decirle a MySQL exactamente de dónde sacar los datos.
+    $data = $model->select('personas.id_persona, personas.nombre, personas.dni, personas.telefono, personas.direccion')
+                  ->join('empresa', 'empresa.id_persona = personas.id_persona')
+                  ->where('empresa.estado', (int)$estado) 
+                  ->findAll();
+
+    // Estructura requerida por DataTables
+    return $this->response->setJSON([
+        'data' => $data
+    ]);
+}
+
+    public function eliminar($id = null)
+{
+    if (!$id) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'ID no válido']);
+    }
+
+    // 1. Capturamos el estado que manda el AJAX (0 o 1)
+    // Si por algún motivo no viene, le ponemos 0 por defecto (dar de baja)
+    $nuevoEstado = $this->request->getPost('estado') ?? 0;
+
+    // 2. Cargamos el modelo de la EMPRESA (ya que tu ing te pidió que el estado esté en la empresa)
+    $empresaModel = new \App\Models\EmpresaModel();
+
+    // 3. Buscamos la empresa vinculada a esta persona para cambiarle el estado
+    // NOTA: Asegúrate de que los nombres de las columnas coincidan con tu BD
+    $empresa = $empresaModel->where('id_persona', $id)->first();
+
+    if ($empresa) {
+        // Actualizamos el estado de la empresa
+        $empresaModel->update($empresa->id_empresa, ['estado' => $nuevoEstado]);
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => $nuevoEstado == 0 ? 'Registro dado de baja correctamente.' : 'Registro activado correctamente.'
+        ]);
+    }
+
+    return $this->response->setJSON(['status' => 'error', 'message' => 'No se encontró una empresa asociada a esta persona.']);
+}
+
+}

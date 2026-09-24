@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Controllers;
+
+
+class CalendarioController extends BaseController
+{
+  public function index(): string
+  {
+    $data = [
+      'titulo' => 'Calendario',
+    ];
+
+    session()->set('last_page', 'calendario');
+
+    return $this->renderAdminPage('calendario/calendario', $data);
+  }
+}

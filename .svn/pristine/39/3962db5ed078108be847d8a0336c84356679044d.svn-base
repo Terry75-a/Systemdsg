@@ -1,0 +1,192 @@
+<?php
+$uri = service('uri');
+$isAdmin = (int) session()->get('id_rol') === 1;
+$programadorActivo = isset($this->session->userdata['programdor']) && (int) $this->session->userdata['programdor'] === 1;
+?>
+
+<!-- Sidebar Start -->
+<aside class="left-sidebar admin-sidebar" aria-label="Navegación lateral principal">
+  <!-- Sidebar scroll-->
+  <div>
+    <div class="brand-logo d-flex align-items-center justify-content-between">
+      <a href="<?= base_url('dashboard') ?>" class="text-nowrap logo-img d-flex align-items-center gap-2 text-decoration-none">
+        <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Perú Technology" class="admin-brand-logo" />
+        <span class="fw-bold text-dark admin-brand-text">DSG Perú</span>
+      </a>
+      <button type="button" class="close-btn d-xl-none d-block sidebartoggler cursor-pointer border-0 bg-transparent" id="sidebarCollapse" aria-label="Cerrar menú lateral">
+        <i class="ti ti-x fs-8" aria-hidden="true"></i>
+      </button>
+    </div>
+    <!-- Sidebar navigation-->
+      <?php if ($programadorActivo): ?>
+        <div class="alert alert-danger m-3" role="alert">
+          <i class="fa-solid fa-triangle-exclamation me-2" aria-hidden="true"></i>
+          Modo Programador Activado
+        </div>
+      <?php endif; ?>
+    <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+
+      <ul id="sidebarnav">
+        <li class="nav-small-cap">
+          <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+          <span class="hide-menu">Navegación Principal</span>
+        </li>
+        
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'dashboard') ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>" aria-expanded="false"<?= ($uri->getSegment(1) == 'dashboard') ? ' aria-current="page"' : '' ?>>
+            <iconify-icon icon="solar:home-2-linear"></iconify-icon>
+            <span class="hide-menu">Inicio</span>
+          </a>
+        </li>
+
+        <?php
+          $personasListActive = $uri->getSegment(1) === 'personas';
+          $personasAddActive = ($uri->getSegment(1) === 'personas' && $uri->getSegment(2) === 'add');
+          $personasMenuActive = $personasListActive || $personasAddActive;
+        ?>
+        <li class="sidebar-item">
+          <button type="button" class="sidebar-link justify-content-between has-arrow w-100 text-start border-0 bg-transparent <?= $personasMenuActive ? 'active' : '' ?>" aria-expanded="<?= $personasMenuActive ? 'true' : 'false' ?>" aria-controls="submenu-personas">
+            <div class="d-flex align-items-center gap-3">
+              <span class="d-flex">
+                <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+              </span>
+              <span class="hide-menu">Personas</span>
+            </div>
+          </button>
+          <ul id="submenu-personas" aria-expanded="<?= $personasMenuActive ? 'true' : 'false' ?>" class="collapse first-level <?= $personasMenuActive ? 'in' : '' ?>">
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= $personasListActive ? 'active' : '' ?>" href="<?= base_url('personas') ?>"<?= $personasListActive ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Ver personas</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= $personasAddActive ? 'active' : '' ?>" href="<?= base_url('personas/add') ?>"<?= $personasAddActive ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Agregar persona</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <?php
+          $clientesActive = $uri->getSegment(1) === 'clientes';
+          $clientesAddActive = $clientesActive && $uri->getSegment(2) === 'add';
+          $clientesListActive = $clientesActive && $uri->getSegment(2) !== 'add';
+          $clientesMenuActive = $clientesActive;
+        ?>
+        <li class="sidebar-item">
+          <button type="button" class="sidebar-link justify-content-between has-arrow w-100 text-start border-0 bg-transparent <?= $clientesMenuActive ? 'active' : '' ?>" aria-expanded="<?= $clientesMenuActive ? 'true' : 'false' ?>" aria-controls="submenu-clientes">
+            <div class="d-flex align-items-center gap-3">
+              <span class="d-flex">
+                <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
+              </span>
+              <span class="hide-menu">Clientes</span>
+            </div>
+          </button>
+          <ul id="submenu-clientes" aria-expanded="<?= $clientesMenuActive ? 'true' : 'false' ?>" class="collapse first-level <?= $clientesMenuActive ? 'in' : '' ?>">
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= $clientesListActive ? 'active' : '' ?>" href="<?= base_url('clientes') ?>"<?= $clientesListActive ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Ver clientes</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= $clientesAddActive ? 'active' : '' ?>" href="<?= base_url('clientes/add') ?>"<?= $clientesAddActive ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Agregar cliente</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'calendario') ? 'active' : '' ?>" href="<?= base_url('calendario') ?>" aria-expanded="false"<?= ($uri->getSegment(1) == 'calendario') ? ' aria-current="page"' : '' ?>>
+            <iconify-icon icon="solar:calendar-minimalistic-linear"></iconify-icon>
+            <span class="hide-menu">Calendario</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'perfil') ? 'active' : '' ?>" href="<?= base_url('perfil') ?>" aria-expanded="false"<?= ($uri->getSegment(1) == 'perfil') ? ' aria-current="page"' : '' ?>>
+            <iconify-icon icon="solar:user-circle-linear"></iconify-icon>
+            <span class="hide-menu">Mi Perfil</span>
+          </a>
+        </li>
+
+        <li>
+          <span class="sidebar-divider lg"></span>
+        </li>
+
+        <li class="nav-small-cap">
+          <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+          <span class="hide-menu">Administración</span>
+        </li>
+
+        <?php if ($isAdmin): ?>
+        <!-- Sección de Módulos -->
+        <?php 
+          $active_modules = ['permisos', 'usuarios', 'menu'];
+          $is_modulo_active = in_array($uri->getSegment(1), $active_modules);
+        ?>
+        <li class="sidebar-item">
+          <button type="button" class="sidebar-link justify-content-between has-arrow w-100 text-start border-0 bg-transparent <?= $is_modulo_active ? 'active' : '' ?>" aria-expanded="<?= $is_modulo_active ? 'true' : 'false' ?>" aria-controls="submenu-modulos">
+            <div class="d-flex align-items-center gap-3">
+              <span class="d-flex">
+                <iconify-icon icon="solar:widget-2-linear"></iconify-icon>
+              </span>
+              <span class="hide-menu">Módulos</span>
+            </div>
+          </button>
+          <ul id="submenu-modulos" aria-expanded="<?= $is_modulo_active ? 'true' : 'false' ?>" class="collapse first-level <?= $is_modulo_active ? 'in' : '' ?>">
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'permisos') ? 'active' : '' ?>" href="<?= base_url('permisos') ?>"<?= ($uri->getSegment(1) == 'permisos') ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Permisos</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'usuarios') ? 'active' : '' ?>" href="<?= base_url('usuarios') ?>"<?= ($uri->getSegment(1) == 'usuarios') ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Usuarios</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'menu') ? 'active' : '' ?>" href="<?= base_url('menu') ?>"<?= ($uri->getSegment(1) == 'menu') ? ' aria-current="page"' : '' ?>>
+                <span class="icon-small"></span>
+                <span class="hide-menu">Menú</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <?php endif; ?>
+
+        <?php if ($isAdmin): ?>
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'configuracion') ? 'active' : '' ?>" href="<?= base_url('configuracion') ?>" aria-expanded="false"<?= ($uri->getSegment(1) == 'configuracion') ? ' aria-current="page"' : '' ?>>
+            <iconify-icon icon="solar:settings-linear"></iconify-icon>
+            <span class="hide-menu">Configuración</span>
+          </a>
+        </li>
+        <?php endif; ?>
+
+        <li>
+          <span class="sidebar-divider lg"></span>
+        </li>
+
+        <li class="sidebar-item mt-4">
+          <form method="post" action="<?= base_url('logout') ?>" class="admin-sidebar-logout">
+            <?= csrf_field() ?>
+            <button type="submit" class="sidebar-link text-danger bg-transparent border-0 w-100 text-start" aria-label="Cerrar sesión" aria-expanded="false">
+              <iconify-icon icon="solar:logout-linear" class="text-danger"></iconify-icon>
+              <span class="hide-menu fw-bold">Cerrar Sesión</span>
+            </button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+    <!-- End Sidebar navigation -->
+  </div>
+  <!-- End Sidebar scroll-->
+</aside>
+<!--  Sidebar End -->

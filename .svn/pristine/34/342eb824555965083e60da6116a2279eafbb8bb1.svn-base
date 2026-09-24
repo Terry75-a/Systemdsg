@@ -1,0 +1,30 @@
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class DashboardModel extends Model
+{ 
+
+     
+
+    protected $table = 'clientes';  
+    protected $primaryKey = 'id_cliente';
+   
+     
+    
+    // Total clientes registrados
+    public function totalClientes()
+    {
+        return $this->countAllResults();
+    }
+
+    // Clientes registrados en el mes actual
+    public function nuevosClientesEsteMes()
+    {
+        $startDate = date('Y-m-01 00:00:00');
+        return $this->where('created_at >=', $startDate)->countAllResults();
+    }
+
+    
+}

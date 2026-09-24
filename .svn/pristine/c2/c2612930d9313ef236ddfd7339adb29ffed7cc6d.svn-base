@@ -1,0 +1,410 @@
+<?php
+
+namespace App\Controllers;
+use Config\Database;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class Home extends BaseController
+{
+    public function index(): string
+    {
+        return $this->renderPublicPage('index', [
+            'titulo' => 'Software para restaurantes, boticas y minimarkets | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Impulsá tu negocio con software especializado para restaurantes, boticas, farmacias y minimarkets. Automatizá ventas, inventario, caja y reportes con DSG Perú.',
+            'canonical' => base_url('/'),
+            'ogImage' => base_url('images/features.png'),
+            'ogImageAlt' => 'Soluciones de software de DSG Perú Technology para negocios',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebPage',
+                    'name' => 'Software para restaurantes, boticas y minimarkets',
+                    'url' => base_url('/'),
+                    'description' => 'Landing principal de DSG Perú Technology con soluciones de software para negocios.',
+                    'inLanguage' => 'es-PE',
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'ContactPage',
+                    'name' => 'Contacto DSG PERU TECHNOLOGY',
+                    'url' => base_url('/#contacto'),
+                    'description' => 'Formulario y canales de contacto de DSG Perú Technology para solicitar una demo o asesoría.',
+                    'inLanguage' => 'es-PE',
+                ],
+            ],
+        ]);
+    }
+    
+    public function dsg(): string
+    {
+        return $this->renderPublicPage('dsg', [
+            'titulo' => 'Quiénes somos | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Conocé la historia, experiencia y enfoque de DSG Perú Technology, empresa peruana de software especializada en digitalizar negocios con soporte cercano.',
+            'canonical' => base_url('dsg'),
+            'ogImage' => base_url('images/image.png'),
+            'ogImageAlt' => 'Equipo y trayectoria de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'AboutPage',
+                    'name' => 'Quiénes somos | DSG PERU TECHNOLOGY',
+                    'url' => base_url('dsg'),
+                    'description' => 'Historia, propósito y valores de DSG Perú Technology.',
+                    'inLanguage' => 'es-PE',
+                ],
+            ],
+        ]);
+    }
+    
+    public function precio(): string
+    {
+        return $this->renderPublicPage('precio', [
+            'titulo' => 'Precios de software para negocios | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Revisá planes y módulos de nuestro software para ventas, caja, inventario, clientes e informes. Encontrá la opción adecuada para tu negocio.',
+            'canonical' => base_url('precio'),
+            'ogImage' => base_url('images/market.png'),
+            'ogImageAlt' => 'Planes y módulos del software de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CollectionPage',
+                    'name' => 'Precios de software para negocios | DSG PERU TECHNOLOGY',
+                    'url' => base_url('precio'),
+                    'description' => 'Página de planes y módulos de software de DSG Perú Technology.',
+                    'inLanguage' => 'es-PE',
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'OfferCatalog',
+                    'name' => 'Planes de software DSG PERU TECHNOLOGY',
+                    'url' => base_url('precio'),
+                    'itemListElement' => [
+                        ['@type' => 'Offer', 'name' => 'Plan 1'],
+                        ['@type' => 'Offer', 'name' => 'Plan 2'],
+                        ['@type' => 'Offer', 'name' => 'Plan 3'],
+                    ],
+                ],
+            ],
+        ]);
+    }
+    
+    public function servicios(): string
+    {
+        return $this->renderPublicPage('servicios', [
+            'titulo' => 'Servicios y soluciones de software | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Descubrí nuestras soluciones de software para restaurantes, boticas, farmacias, minimarkets y otros negocios que necesitan control operativo y soporte continuo.',
+            'canonical' => base_url('servicios'),
+            'ogImage' => base_url('images/restaurant.png'),
+            'ogImageAlt' => 'Servicios de software especializados de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Service',
+                    'name' => 'Servicios de software DSG PERU TECHNOLOGY',
+                    'url' => base_url('servicios'),
+                    'description' => 'Implementación de software especializado para restaurantes, boticas, farmacias, minimarkets y otros negocios.',
+                    'provider' => [
+                        '@type' => 'Organization',
+                        'name' => 'DSG PERU TECHNOLOGY',
+                    ],
+                    'areaServed' => [
+                        '@type' => 'Country',
+                        'name' => 'Perú',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function controlDeInventario(): string
+    {
+        return $this->renderPublicPage('landings/control-inventario', [
+            'titulo' => 'Software de inventario y control de stock | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Software de inventario y control de stock para negocios: reposición, productos, almacén, vencimientos y reportes. Reducí quiebres y mejorá tu operación.',
+            'canonical' => base_url('control-de-inventario'),
+            'ogImage' => base_url('images/og-control-inventario.svg'),
+            'ogImageAlt' => 'Imagen promocional de software de inventario y control de stock de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Service',
+                    'name' => 'Software de inventario y control de stock',
+                    'url' => base_url('control-de-inventario'),
+                    'description' => 'Software de inventario para controlar stock, reposición, productos, almacén, movimientos y reportes en negocios con operación diaria.',
+                    'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                    'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => [
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Para qué tipo de negocio sirve un software de inventario?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sirve para negocios con movimiento diario de productos, reposición frecuente o necesidad de controlar stock, almacén y rotación con más precisión.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Ayuda a reducir quiebres y faltantes?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sí. Un sistema de inventario permite ver existencias, niveles mínimos, rotación y movimientos para anticiparse a faltantes y ordenar la reposición.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Puede integrarse con ventas y reportes?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sí. La idea es conectar stock con ventas, productos y reportes para que el inventario no quede aislado y realmente ayude a tomar decisiones.',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function cajaYPuntoDeVenta(): string
+    {
+        return $this->renderPublicPage('landings/caja-punto-venta', [
+            'titulo' => 'Sistema de caja y punto de venta POS | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Sistema de caja y punto de venta POS para negocios: cobros rápidos, arqueo de caja, ventas, productos y reportes. Mejorá atención y control diario.',
+            'canonical' => base_url('caja-y-punto-de-venta'),
+            'ogImage' => base_url('images/og-caja-punto-venta.svg'),
+            'ogImageAlt' => 'Imagen promocional de sistema de caja y punto de venta POS de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Service',
+                    'name' => 'Sistema de caja y punto de venta POS',
+                    'url' => base_url('caja-y-punto-de-venta'),
+                    'description' => 'Sistema POS para caja y punto de venta con cobros, ventas rápidas, arqueo de caja, control comercial y reportes.',
+                    'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                    'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => [
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Qué mejora un sistema de caja y punto de venta POS?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Mejora la velocidad de cobro, el orden en caja, el control de productos y la visibilidad sobre tickets, ventas y movimientos diarios.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Sirve para negocios con atención rápida en mostrador?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sí. Un POS es especialmente útil cuando hay atención continua, alto volumen de cobros o necesidad de reducir fricción en el proceso de venta.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Incluye reportes y control comercial?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sí. Un buen sistema POS no solo cobra: también registra movimientos, ayuda con arqueo y aporta reportes para entender mejor el rendimiento comercial.',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function reportesDeVentas(): string
+    {
+        return $this->renderPublicPage('landings/reportes-ventas', [
+            'titulo' => 'Sistema con reportes de ventas y análisis comercial | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Sistema con reportes de ventas para negocios: productos más vendidos, tickets, horarios pico y análisis comercial. Tomá decisiones con datos claros.',
+            'canonical' => base_url('reportes-de-ventas'),
+            'ogImage' => base_url('images/og-reportes-ventas.svg'),
+            'ogImageAlt' => 'Imagen promocional de sistema con reportes de ventas y análisis comercial de DSG Perú Technology',
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Service',
+                    'name' => 'Sistema con reportes de ventas y análisis comercial',
+                    'url' => base_url('reportes-de-ventas'),
+                    'description' => 'Sistema con reportes de ventas, productos, tickets, horarios pico y rendimiento comercial para decisiones más claras.',
+                    'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                    'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => [
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Qué tipo de reportes de ventas conviene mirar primero?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Lo más útil al empezar suele ser ventas por período, productos más vendidos, tickets promedio y horarios pico, porque ayudan a detectar patrones rápidos de operación.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Los reportes sirven solo para grandes negocios?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'No. Incluso negocios chicos ganan claridad cuando dejan de decidir solo por intuición y empiezan a mirar ventas, márgenes, rotación y comportamiento comercial con datos.',
+                            ],
+                        ],
+                        [
+                            '@type' => 'Question',
+                            'name' => '¿Se pueden relacionar reportes con inventario y caja?',
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => 'Sí. Ese es el mayor valor: conectar ventas con stock, tickets, cobros y operación diaria para tomar decisiones más completas.',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function softwareRestaurantes(): string
+    {
+        return $this->renderPublicPage('landings/restaurantes', [
+            'titulo' => 'Software para restaurantes | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Software para restaurantes con control de mesas, pedidos, cocina, delivery, caja e inventario. Mejorá la operación diaria con DSG Perú Technology.',
+            'canonical' => base_url('software-para-restaurantes'),
+            'ogImage' => base_url('images/restaurant.png'),
+            'ogImageAlt' => 'Software para restaurantes de DSG Perú Technology',
+            'structuredData' => [[
+                '@context' => 'https://schema.org',
+                '@type' => 'Service',
+                'name' => 'Software para restaurantes',
+                'url' => base_url('software-para-restaurantes'),
+                'description' => 'Sistema para restaurantes con pedidos, mesas, cocina, delivery, inventario y caja.',
+                'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+            ]],
+        ]);
+    }
+
+    public function softwareBoticasFarmacias(): string
+    {
+        return $this->renderPublicPage('landings/boticas-farmacias', [
+            'titulo' => 'Software para boticas y farmacias | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Software para boticas y farmacias con control de lotes, vencimientos, stock, ventas y reportes. Ordená la operación con DSG Perú Technology.',
+            'canonical' => base_url('software-para-boticas-farmacias'),
+            'ogImage' => base_url('images/botica.png'),
+            'ogImageAlt' => 'Software para boticas y farmacias de DSG Perú Technology',
+            'structuredData' => [[
+                '@context' => 'https://schema.org',
+                '@type' => 'Service',
+                'name' => 'Software para boticas y farmacias',
+                'url' => base_url('software-para-boticas-farmacias'),
+                'description' => 'Sistema para boticas y farmacias con control de stock, lotes, vencimientos, ventas y reportes.',
+                'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+            ]],
+        ]);
+    }
+
+    public function softwareMinimarkets(): string
+    {
+        return $this->renderPublicPage('landings/minimarkets', [
+            'titulo' => 'Software para minimarkets | DSG PERU TECHNOLOGY',
+            'descripcion' => 'Software para minimarkets con punto de venta, inventario, promociones, proveedores y reportes. Ganá control diario con DSG Perú Technology.',
+            'canonical' => base_url('software-para-minimarkets'),
+            'ogImage' => base_url('images/minimark.png'),
+            'ogImageAlt' => 'Software para minimarkets de DSG Perú Technology',
+            'structuredData' => [[
+                '@context' => 'https://schema.org',
+                '@type' => 'Service',
+                'name' => 'Software para minimarkets',
+                'url' => base_url('software-para-minimarkets'),
+                'description' => 'Sistema para minimarkets con ventas rápidas, inventario, promociones, proveedores y reportes.',
+                'provider' => ['@type' => 'Organization', 'name' => 'DSG PERU TECHNOLOGY'],
+                'areaServed' => ['@type' => 'Country', 'name' => 'Perú'],
+            ]],
+        ]);
+    }
+
+    public function sitemap(): ResponseInterface
+    {
+        $pages = [
+            [
+                'loc' => base_url('/'),
+                'changefreq' => 'weekly',
+                'priority' => '1.0',
+            ],
+            [
+                'loc' => base_url('servicios'),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => base_url('precio'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('dsg'),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => base_url('control-de-inventario'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('caja-y-punto-de-venta'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('reportes-de-ventas'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('software-para-restaurantes'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('software-para-boticas-farmacias'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => base_url('software-para-minimarkets'),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+        ];
+
+        $xml = view('seo/sitemap', [
+            'pages' => $pages,
+            'lastmod' => date('Y-m-d'),
+        ]);
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->setBody($xml);
+    }
+
+    // Para probar conexión BD
+    public function testDB()
+    {
+        $db = Database::connect();
+        if ($db->connect()) {
+            echo "Base de datos conectada correctamente";
+        } else {
+            echo "Error al conectar a la base de datos";
+        }
+    }
+}

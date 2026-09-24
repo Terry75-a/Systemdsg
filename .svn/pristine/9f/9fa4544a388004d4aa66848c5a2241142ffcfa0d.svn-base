@@ -1,0 +1,210 @@
+.pricing-section {
+    padding: 100px 0;
+    background-color: #ffffff;
+}
+
+.pricing-header span {
+    color: #3b82f6; /* Azul del título */
+}
+
+.pricing-table-wrapper {
+    margin-top: 50px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pricing-table-hint {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #475569;
+}
+
+.pricing-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: separate;
+    border-spacing: 15px 0; /* Espacio entre columnas */
+}
+
+/* Encabezados de Planes */
+.plan-header {
+    padding: 30px 20px;
+    border-radius: 12px 12px 0 0;
+    color: white;
+    min-width: 200px;
+}
+
+.plan-header h3 { margin: 0; font-size: 18px; }
+.plan-header .price { font-size: 14px; margin-top: 10px; }
+.plan-header .price span { font-size: 24px; font-weight: 800; }
+
+.basic { background-color: #6da5ff; }
+.regular { background-color: #3b82f6; }
+.pro { background-color: #807777; }
+
+/* Filas de la tabla */
+.pricing-table td {
+    padding: 15px 20px;
+    text-align: center;
+    border: 1px solid #eef2f6;
+    background: #f8fafd;
+}
+
+.pricing-table th {
+    padding: 15px 20px;
+}
+
+.pricing-table tbody th {
+    text-align: left;
+    font-weight: 600;
+    color: #444;
+    background: #fff;
+    border: none;
+}
+
+.pricing-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: #444;
+    background: #fff;
+    border: none;
+}
+
+/* Categorías (Azul claro) */
+.category-row td {
+    background-color: #f0f7ff;
+    color: #0a2540;
+}
+
+/* Sub-items (Gris muy claro) */
+.sub-row td {
+    background-color: #ffffff;
+    font-size: 14px;
+    color: #666;
+}
+
+.pricing-table i {
+    color: #4ade80; /* Verde del check */
+    font-size: 18px;
+}
+.pricing-table i.fa-circle-xmark {
+    color: #ef4444; /* Rojo del X */
+}
+
+/* Globo Planes Lite */
+.lite-plan-info {
+    background: #f0f7ff;
+    padding: 20px;
+    border-radius: 50px 50px 0 50px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #e1eefb;
+}
+
+.lite-plan-info a {
+    color: #3b82f6;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .pricing-table-wrapper {
+        position: relative;
+        padding-bottom: 8px;
+    }
+
+    .pricing-table {
+        border-spacing: 8px 0;
+        min-width: 700px;
+    }
+
+    .pricing-table th,
+    .pricing-table td {
+        padding: 12px 14px;
+    }
+
+    .pricing-table .feature-col,
+    .pricing-table tbody th {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        box-shadow: 8px 0 14px rgba(15, 23, 42, 0.08);
+    }
+
+    .pricing-table .feature-col {
+        z-index: 3;
+    }
+}
+
+/* Estilos del pie de precios */
+.pricing-cta {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.cta-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.cta-main h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+/* Botón azul tipo imagen */
+.btn-demo-blue {
+    background-color: #4285f4; /* El azul de tu imagen */
+    color: white;
+    padding: 14px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-demo-blue:hover {
+    background-color: #3367d6;
+}
+
+/* Texto de ayuda inferior */
+.cta-help {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.cta-help a {
+    color: #4285f4;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.cta-help a:hover {
+    border-bottom: 2px solid #4285f4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cta-main {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .cta-main h3 {
+        font-size: 22px;
+    }
+    .cta-help {
+        font-size: 15px;
+        padding: 0 10px;
+    }
+}

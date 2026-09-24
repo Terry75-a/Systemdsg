@@ -1,0 +1,204 @@
+/* ═══════════════════════════════════════════════
+   PRECIO ASISTEN — Planes de Asisten DSG
+   ═══════════════════════════════════════════════ */
+
+/* ─── PLANES GRID ─── */
+.precio-asisten-plans { background: var(--a-surface); padding: 0 0 96px; }
+.precio-asisten-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+.precio-asisten-card {
+  background: var(--a-bg);
+  border: 1px solid var(--a-border);
+  border-radius: 22px;
+  padding: 36px 30px;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.precio-asisten-card:hover {
+  border-color: var(--a-accent);
+  box-shadow: 0 12px 32px -12px rgba(28, 91, 64, 0.2);
+}
+.precio-asisten-card.is-featured {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 24px 48px -16px rgba(16, 35, 26, 0.5);
+}
+.precio-asisten-card.is-featured:hover {
+  border-color: var(--a-accent);
+}
+.precio-asisten-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--a-accent);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* — head — */
+.precio-asisten-head { margin-bottom: 28px; }
+.precio-asisten-tag {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--a-faint);
+  margin-bottom: 12px;
+}
+.is-featured .precio-asisten-tag { color: #9fd3b8; }
+.precio-asisten-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 10px; }
+.precio-asisten-amount {
+  font-size: clamp(32px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.is-featured .precio-asisten-amount { color: #ffffff; }
+.precio-asisten-period {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--a-muted);
+}
+.is-featured .precio-asisten-period { color: #9fd3b8; }
+.precio-asisten-desc {
+  font-size: 14.5px;
+  color: var(--a-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.is-featured .precio-asisten-desc { color: #c4ddd0; }
+
+/* — features list — */
+.precio-asisten-list {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.precio-asisten-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.precio-asisten-list li i { font-size: 13px; color: var(--a-accent); flex-shrink: 0; }
+.precio-asisten-list li.no { color: var(--a-faint); }
+.precio-asisten-list li.no i { color: var(--a-faint); }
+.is-featured .precio-asisten-list li { color: #e5e5e5; }
+.is-featured .precio-asisten-list li i { color: #9fd3b8; }
+.is-featured .precio-asisten-list li.no { color: #6b7a72; }
+.is-featured .precio-asisten-list li.no i { color: #6b7a72; }
+
+/* — btn — */
+.btn-precio-asisten {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-family: var(--a-font);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  border: 1.5px solid var(--a-accent);
+  color: var(--a-accent);
+  background: transparent;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-precio-asisten:hover {
+  background: var(--a-accent);
+  color: #ffffff;
+  border-color: var(--a-accent);
+}
+.btn-precio-asisten.is-primary {
+  background: #ffffff;
+  color: var(--a-ink);
+  border-color: #ffffff;
+}
+.btn-precio-asisten.is-primary:hover {
+  background: #F2F2F2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+a.btn-precio-asisten:hover { color: #ffffff; }
+a.btn-precio-asisten.is-primary:hover { color: var(--a-ink); }
+
+/* ═══════════════════════════════════════════════
+   FAQ
+   ═══════════════════════════════════════════════ */
+.faq-asisten {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.faq-asisten-item {
+  background: var(--a-surface);
+  border: 1px solid var(--a-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.faq-asisten-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border: none;
+  background: transparent;
+  font-family: var(--a-font);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--a-text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+.faq-asisten-q:hover { background: var(--a-bg); }
+.faq-asisten-q i { font-size: 14px; color: var(--a-faint); transition: transform 0.2s ease; flex-shrink: 0; }
+.faq-asisten-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.faq-asisten-a p {
+  padding: 0 24px 20px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--a-muted);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .precio-asisten-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+  .precio-asisten-card.is-featured { transform: none; }
+}
+@media (max-width: 640px) {
+  .precio-asisten-plans { padding: 0 0 68px; }
+  .faq-asisten-q { padding: 16px 18px; font-size: 14px; }
+  .faq-asisten-a p { padding: 0 18px 16px; }
+}

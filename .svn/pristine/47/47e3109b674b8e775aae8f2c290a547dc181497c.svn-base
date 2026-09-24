@@ -1,0 +1,502 @@
+<?php
+// app/Views/Permisos.php
+// Variables disponibles desde PermisosController::index():
+//   $permisos → array de objetos con los permisos + nombres
+//   $personas → para el select del modal NUEVO
+//   $roles    → para el select del modal NUEVO
+//   $menus    → para el select del modal NUEVO
+?>
+
+<div class="container-fluid px-4">
+
+    <!-- ── Alertas flash (POST normal sin AJAX) ── -->
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success alert-dismissible fade show mt-3">
+            <?= session()->getFlashdata('success') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show mt-3">
+            <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow mb-4 mt-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fa-solid fa-shield-halved me-2"></i>Configuración de Permisos
+            </h6>
+            <!-- Abre el modal para CREAR nuevo permiso -->
+            <button class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalNuevo">
+                <i class="fa-solid fa-plus me-1"></i> Nuevo Permiso
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle" id="tablaPermisos">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Persona</th>
+                            <th>Rol</th>
+                            <th>Módulo</th>
+                            <th class="text-center"><i class="fa-solid fa-eye"></i> Ver</th>
+                            <th class="text-center"><i class="fa-solid fa-plus"></i> Crear</th>
+                            <th class="text-center"><i class="fa-solid fa-pen"></i> Editar</th>
+                            <th class="text-center"><i class="fa-solid fa-trash"></i> Eliminar</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($permisos)): ?>
+                            <?php foreach ($permisos as $index => $p): ?>
+                            <tr>
+                                <td><?= $index + 1 ?></td>
+                                <td>
+                                    <i class="fa-solid fa-user me-1 text-secondary"></i>
+                                    <?= esc($p->persona_nombre ?? '-') . ' ' . esc($p->apellido_paterno ?? '') ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        <?= esc($p->rol_nombre ?? 'Sin rol') ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <i class="fa-solid fa-folder me-1 text-warning"></i>
+                                    <?= esc($p->menu_nombre ?? 'Sin módulo') ?>
+                                </td>
+                                <td class="text-center">
+                                    <?= $p->read   == 1 ? '<i class="fa-solid fa-circle-check text-success fs-5"></i>' : '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>' ?>
+                                </td>
+                                <td class="text-center">
+                                    <?= $p->insert == 1 ? '<i class="fa-solid fa-circle-check text-success fs-5"></i>' : '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>' ?>
+                                </td>
+                                <td class="text-center">
+                                    <?= $p->update == 1 ? '<i class="fa-solid fa-circle-check text-success fs-5"></i>' : '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>' ?>
+                                </td>
+                                <td class="text-center">
+                                    <?= $p->delete == 1 ? '<i class="fa-solid fa-circle-check text-success fs-5"></i>' : '<i class="fa-solid fa-circle-xmark text-danger fs-5"></i>' ?>
+                                </td>
+                                <td class="text-center d-flex gap-1 justify-content-center">
+                                    <!-- ✅ BOTÓN EDITAR — lleva el id_permiso en data-id -->
+                                    <button class="btn btn-sm btn-warning btnEditar"
+                                            data-id="<?= $p->id_permiso ?>"
+                                            title="Editar permisos">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <!-- BOTÓN ELIMINAR -->
+                                    <button class="btn btn-sm btn-danger btnEliminar"
+                                            data-id="<?= $p->id_permiso ?>"
+                                            title="Eliminar permiso">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fa-solid fa-lock me-2"></i>
+                                    No hay permisos configurados. Usa el botón <strong>Nuevo Permiso</strong>.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL NUEVO — Crear un permiso nuevo eligiendo todas las opciones -->
+<!-- Se abre con el botón "Nuevo Permiso" del card-header           -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-shield-halved me-2"></i>Nuevo Permiso
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevo">
+                    <?= csrf_field() ?>
+
+                    <div class="row mb-3">
+                        <!-- Select Persona -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-user me-1"></i>Persona <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_persona" id="nuevo_persona" class="form-select" required>
+                                <option value="">-- Seleccionar --</option>
+                                <?php foreach ($personas as $persona): ?>
+                                    <option value="<?= $persona->id_persona ?>">
+                                        <?= esc($persona->nombre) . ' ' . esc($persona->apellido_paterno) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <!-- Select Rol -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-users-gear me-1"></i>Rol <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_rol" id="nuevo_rol" class="form-select" required>
+                                <option value="">-- Seleccionar --</option>
+                                <?php foreach ($roles as $rol): ?>
+                                    <option value="<?= $rol->id_rol ?>">
+                                        <?= esc($rol->nombre) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <!-- Select Módulo/Menú -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-folder me-1"></i>Módulo <span class="text-danger">*</span>
+                            </label>
+                            <select name="menu_id" id="nuevo_menu" class="form-select" required>
+                                <option value="">-- Seleccionar --</option>
+                                <?php foreach ($menus as $menu): ?>
+                                    <option value="<?= $menu->id ?>">
+                                        <?= esc($menu->nombre) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Switches de acciones -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-key me-1"></i>Acciones Permitidas
+                        </label>
+                        <div class="d-flex gap-4 flex-wrap p-3 border rounded bg-light">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="nuevo_read"   name="read"   value="1" role="switch">
+                                <label class="form-check-label" for="nuevo_read"><i class="fa-solid fa-eye text-primary me-1"></i> Ver</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="nuevo_insert" name="insert" value="1" role="switch">
+                                <label class="form-check-label" for="nuevo_insert"><i class="fa-solid fa-plus text-success me-1"></i> Crear</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="nuevo_update" name="update" value="1" role="switch">
+                                <label class="form-check-label" for="nuevo_update"><i class="fa-solid fa-pen text-warning me-1"></i> Editar</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="nuevo_delete" name="delete" value="1" role="switch">
+                                <label class="form-check-label" for="nuevo_delete"><i class="fa-solid fa-trash text-danger me-1"></i> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="alertaNuevo"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarNuevo">
+                    <span id="spinnerNuevo" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <i class="fa-solid fa-floppy-disk me-1" id="iconoNuevo"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- ✅ MODAL EDITAR — Solo cambia read/insert/update/delete        -->
+<!-- Se abre al hacer clic en ✏️ de una fila                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-pen me-2"></i>Editar Permisos
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Campo oculto con el id_permiso que se va a editar -->
+                <input type="hidden" id="edit_id_permiso" value="">
+
+                <!-- Información de la fila (solo lectura, no se puede cambiar) -->
+                <div class="alert alert-light border mb-3 p-2">
+                    <div class="row text-sm">
+                        <div class="col-4 fw-semibold text-muted">Persona:</div>
+                        <div class="col-8" id="edit_persona_label">—</div>
+                        <div class="col-4 fw-semibold text-muted">Rol:</div>
+                        <div class="col-8" id="edit_rol_label">—</div>
+                        <div class="col-4 fw-semibold text-muted">Módulo:</div>
+                        <div class="col-8" id="edit_menu_label">—</div>
+                    </div>
+                </div>
+
+                <!-- Switches: SOLO estos 4 se pueden cambiar -->
+                <label class="form-label fw-semibold">
+                    <i class="fa-solid fa-key me-1"></i>Acciones Permitidas
+                </label>
+                <div class="d-flex gap-4 flex-wrap p-3 border rounded bg-light">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="edit_read"   role="switch">
+                        <label class="form-check-label" for="edit_read"><i class="fa-solid fa-eye text-primary me-1"></i> Ver</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="edit_insert" role="switch">
+                        <label class="form-check-label" for="edit_insert"><i class="fa-solid fa-plus text-success me-1"></i> Crear</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="edit_update" role="switch">
+                        <label class="form-check-label" for="edit_update"><i class="fa-solid fa-pen text-warning me-1"></i> Editar</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="edit_delete" role="switch">
+                        <label class="form-check-label" for="edit_delete"><i class="fa-solid fa-trash text-danger me-1"></i> Eliminar</label>
+                    </div>
+                </div>
+
+                <div id="alertaEditar" class="mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-warning" id="btnGuardarEdicion">
+                    <span id="spinnerEditar" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <i class="fa-solid fa-floppy-disk me-1" id="iconoEditar"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT — Conecta la vista con los 4 métodos del controlador -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+const BASE_URL  = '<?= base_url() ?>/';
+let csrfName    = '<?= csrf_token() ?>';
+let csrfHash    = '<?= csrf_hash() ?>';
+
+// Función auxiliar para construir el FormData con CSRF
+function buildForm(data = {}) {
+    const fd = new FormData();
+    fd.append(csrfName, csrfHash);
+    for (const [key, val] of Object.entries(data)) {
+        fd.append(key, val);
+    }
+    return fd;
+}
+
+// Función auxiliar para actualizar el CSRF después de cada request
+// (CI4 rota el token en cada petición POST)
+function refreshCsrf(response) {
+    if (response.headers.get('X-CSRF-TOKEN-NAME')) {
+        csrfName = response.headers.get('X-CSRF-TOKEN-NAME');
+        csrfHash = response.headers.get('X-CSRF-TOKEN');
+    }
+}
+
+// ── 1. GUARDAR NUEVO PERMISO ──────────────────────────────────────
+// Ruta: POST /permisos/guardar
+// Controlador: PermisosController::guardar()
+document.getElementById('btnGuardarNuevo').addEventListener('click', async function () {
+    const alerta  = document.getElementById('alertaNuevo');
+    const spinner = document.getElementById('spinnerNuevo');
+    const icono   = document.getElementById('iconoNuevo');
+
+    const persona = document.getElementById('nuevo_persona').value;
+    const rol     = document.getElementById('nuevo_rol').value;
+    const menu    = document.getElementById('nuevo_menu').value;
+
+    // Validar que los 3 selects tengan valor
+    if (!persona || !rol || !menu) {
+        alerta.innerHTML = `<div class="alert alert-warning py-2 mt-2">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+            Debes seleccionar Persona, Rol y Módulo.
+        </div>`;
+        return;
+    }
+
+    spinner.classList.remove('d-none');
+    icono.classList.add('d-none');
+    this.disabled = true;
+    alerta.innerHTML = '';
+
+    const fd = buildForm({
+        id_persona : persona,
+        id_rol     : rol,
+        menu_id    : menu,
+        read       : document.getElementById('nuevo_read').checked   ? 1 : 0,
+        insert     : document.getElementById('nuevo_insert').checked ? 1 : 0,
+        update     : document.getElementById('nuevo_update').checked ? 1 : 0,
+        delete     : document.getElementById('nuevo_delete').checked ? 1 : 0,
+    });
+
+    try {
+        const res  = await fetch(BASE_URL + 'permisos/guardar', { method: 'POST', body: fd });
+        const data = await res.json();
+
+        alerta.innerHTML = data.success
+            ? `<div class="alert alert-success py-2 mt-2"><i class="fa-solid fa-circle-check me-1"></i>${data.message}</div>`
+            : `<div class="alert alert-danger py-2 mt-2"><i class="fa-solid fa-circle-xmark me-1"></i>${data.message}</div>`;
+
+        if (data.success) {
+            setTimeout(() => location.reload(), 1000);
+        }
+
+    } catch (e) {
+        alerta.innerHTML = `<div class="alert alert-danger py-2 mt-2">Error de conexión.</div>`;
+    } finally {
+        spinner.classList.add('d-none');
+        icono.classList.remove('d-none');
+        this.disabled = false;
+    }
+});
+
+// ── 2. ABRIR MODAL EDITAR → pre-llenar datos ──────────────────────
+// Ruta: GET /permisos/obtener/{id}
+// Controlador: PermisosController::obtener()
+document.querySelectorAll('.btnEditar').forEach(function (btn) {
+    btn.addEventListener('click', async function () {
+        const id      = this.dataset.id;
+        const alerta  = document.getElementById('alertaEditar');
+        alerta.innerHTML = '';
+
+        try {
+            // Pedir los datos del permiso al controlador
+            const res  = await fetch(BASE_URL + 'permisos/obtener/' + id);
+            const data = await res.json();
+
+            if (!data.success) {
+                alert('No se pudo cargar el permiso: ' + data.message);
+                return;
+            }
+
+            const p = data.permiso;
+
+            // Guardar el id en el campo oculto (lo usa btnGuardarEdicion)
+            document.getElementById('edit_id_permiso').value = p.id_permiso;
+
+            // Mostrar info de la fila (solo lectura)
+            document.getElementById('edit_persona_label').textContent =
+                (p.persona_nombre ?? '') + ' ' + (p.apellido_paterno ?? '');
+            document.getElementById('edit_rol_label').textContent   = p.rol_nombre   ?? 'Sin rol';
+            document.getElementById('edit_menu_label').textContent  = p.menu_nombre  ?? 'Sin módulo';
+
+            // Marcar/desmarcar los switches con los valores actuales
+            document.getElementById('edit_read').checked   = p.read   == 1;
+            document.getElementById('edit_insert').checked = p.insert == 1;
+            document.getElementById('edit_update').checked = p.update == 1;
+            document.getElementById('edit_delete').checked = p.delete == 1;
+
+            // Abrir el modal de edición
+            new bootstrap.Modal(document.getElementById('modalEditar')).show();
+
+        } catch (e) {
+            alert('Error de conexión al cargar el permiso.');
+        }
+    });
+});
+
+// ── 3. GUARDAR EDICIÓN ────────────────────────────────────────────
+// Ruta: POST /permisos/editar/{id}
+// Controlador: PermisosController::editar()
+// Solo actualiza read/insert/update/delete
+document.getElementById('btnGuardarEdicion').addEventListener('click', async function () {
+    const id      = document.getElementById('edit_id_permiso').value;
+    const alerta  = document.getElementById('alertaEditar');
+    const spinner = document.getElementById('spinnerEditar');
+    const icono   = document.getElementById('iconoEditar');
+
+    spinner.classList.remove('d-none');
+    icono.classList.add('d-none');
+    this.disabled = true;
+    alerta.innerHTML = '';
+
+    const fd = buildForm({
+        read   : document.getElementById('edit_read').checked   ? 1 : 0,
+        insert : document.getElementById('edit_insert').checked ? 1 : 0,
+        update : document.getElementById('edit_update').checked ? 1 : 0,
+        delete : document.getElementById('edit_delete').checked ? 1 : 0,
+    });
+
+    try {
+        const res  = await fetch(BASE_URL + 'permisos/editar/' + id, { method: 'POST', body: fd });
+        const data = await res.json();
+
+        alerta.innerHTML = data.success
+            ? `<div class="alert alert-success py-2 mt-2"><i class="fa-solid fa-circle-check me-1"></i>${data.message}</div>`
+            : `<div class="alert alert-danger py-2 mt-2"><i class="fa-solid fa-circle-xmark me-1"></i>${data.message}</div>`;
+
+        if (data.success) {
+            setTimeout(() => location.reload(), 1000);
+        }
+
+    } catch (e) {
+        alerta.innerHTML = `<div class="alert alert-danger py-2 mt-2">Error de conexión.</div>`;
+    } finally {
+        spinner.classList.add('d-none');
+        icono.classList.remove('d-none');
+        this.disabled = false;
+    }
+});
+
+// ── 4. ELIMINAR ───────────────────────────────────────────────────
+// Ruta: POST /permisos/eliminar/{id}
+// Controlador: PermisosController::eliminar()
+document.querySelectorAll('.btnEliminar').forEach(function (btn) {
+    btn.addEventListener('click', async function () {
+        const id = this.dataset.id;
+
+        if (!confirm('¿Seguro que deseas eliminar este permiso?')) return;
+
+        try {
+            const fd  = buildForm();
+            const res = await fetch(BASE_URL + 'permisos/eliminar/' + id, { method: 'POST', body: fd });
+            const data = await res.json();
+
+            if (data.success) {
+                // Quitar la fila de la tabla sin recargar
+                this.closest('tr').remove();
+            } else {
+                alert('Error al eliminar: ' + data.message);
+            }
+
+        } catch (e) {
+            alert('Error de conexión al eliminar.');
+        }
+    });
+});
+
+// ── 5. LIMPIAR modal NUEVO al cerrarlo ────────────────────────────
+document.getElementById('modalNuevo').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('formNuevo').reset();
+    document.getElementById('alertaNuevo').innerHTML = '';
+});
+
+// ── 6. LIMPIAR modal EDITAR al cerrarlo ───────────────────────────
+document.getElementById('modalEditar').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('alertaEditar').innerHTML = '';
+});
+</script>

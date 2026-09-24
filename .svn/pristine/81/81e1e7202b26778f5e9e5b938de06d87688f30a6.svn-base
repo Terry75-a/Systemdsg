@@ -1,0 +1,51 @@
+<div class="container-fluid p-0">
+    <h1 class="mb-4">Escritorio</h1><p>Estadistica</p>
+
+    <div class="row">
+        <!-- Tarjeta 1 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3><?= $totalClientes ?? 0 ?></h3>
+                    <p>Total Clientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-user-check fa-3x text-success mb-3"></i>
+                    <h3>0</h3>
+                    <p>Clientes Activos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-user-plus fa-3x text-danger mb-6"></i>
+                    <h3><?= $nuevosClientes ?? 0 ?></h3>
+                    <p>Nuevos Este Mes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 4 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-dollar-sign fa-3x text-warning mb-3"></i>
+                    <h3>0</h3>
+                    <p>Ingresos Mes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

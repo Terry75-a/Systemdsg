@@ -1,0 +1,37 @@
+<?php 
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ClientesaddModel extends Model
+{    
+    protected $db;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->db = \Config\Database::connect();
+    }
+
+    public function insertarCliente($data)
+    {
+        $this ->db->table('personas')->insert($data);
+        return $this->db->insertID();
+    }
+
+    public function registarempresa($data)
+    {
+        $this->db->table->table('empresa')->insert($data);
+        return $this->db->insertID();
+    }
+    
+    public function registrarcliente($data)
+    {
+        $this->db->table->table('clientes')->insert($data);
+        return $this->db->insertID();
+    }
+
+    
+
+}

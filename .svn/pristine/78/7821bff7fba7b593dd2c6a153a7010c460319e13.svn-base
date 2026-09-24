@@ -1,0 +1,46 @@
+
+
+<div class="main-content">
+  <div class="container py-3">
+    <div class="card  p-4 mx-auto" style="max-width: 1300px;">
+      
+
+      <form>
+        <!-- Tema -->
+        <div class="mb-3">
+          <label class="form-label" data-key="theme"><i class="fa-solid fa-moon me-2"></i>Tema</label>
+          <select class="form-select">
+            <option data-key="Clear">Claro</option>
+            <option data-key="Dark">Oscuro</option>
+          </select>
+        </div>
+
+        <!-- Idioma -->
+        <div class="mb-3">
+          <label class="form-label" data-key="language"><i class="fa-solid fa-language me-2"></i>Idioma</label>
+          <select class="form-select" id="lenguajeSelector">
+            <option data-key="Spanish" value="es">Español</option>
+            <option value="en">Inglés</option>
+          </select>
+        </div>
+
+        
+
+        
+        
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <?php 
+          $lastPage = session()->get('last_page') ?? 'dashboard';
+          ?>
+          
+          <button type="submit" data-key="Save changes"id="cambios" class="btn btn-success px-4">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="js/ingles.js"></script>
+

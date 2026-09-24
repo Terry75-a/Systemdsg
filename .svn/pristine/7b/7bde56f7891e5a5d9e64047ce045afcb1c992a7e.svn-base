@@ -1,0 +1,128 @@
+<div class="card p-4 shadow-sm border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Gestión de Usuarios</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+             <i class="fa-solid fa-plus me-2"></i> Nuevo Usuario
+ 
+             
+</div>
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol / Permiso</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se cargarán los usuarios desde el controlador -->
+                <tr class="align-middle">
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        <i class="fa-solid fa-circle-info me-2"></i> No hay datos disponibles para mostrar.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header bg-primary text-white">
+                 <h5 class="modal-title">
+                    <i class="fa-solid fa-user-plus me-2"></i> Agregar Nuevo Usuario
+                 </h5>
+                  
+                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    
+                 
+            </div>
+            <div class="modal-body">
+                <form id="FormUsuario">
+                    
+                <?= csrf_field() ?>
+                   <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-user me-2"></i>Usuario <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_usuario" id="nuevo_usuario" class="form-select" required>
+                                <option value="">--Seleccionar--</option>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <option value="<?=  $usuario ->id_usuario ?> ">
+                                        <?= esc($usuario->username) ?>
+
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+
+                   
+
+                   
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibol">
+                                <i class="fa-solid fa-user me-2"></i>Nombre <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_nombre" id="nuevo_nombre" class="form-select" required>
+                                <option value="">--Seleccionar--</option>
+                            </select>
+
+                        </div>
+
+                   </div>
+                   <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibol">
+                                  <i class="fa-solid fa-key me-2"></i>Rol / Permiso <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_rol" id="nuevo_rol" class="form-select" required>
+                                <option value="">--Seleccionar--</option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                 <i class="fa-solid fa-user-check me-2"></i>Estado <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_estado" id="nuevo_estado" class="form-select" required>
+                                <option value="">--Seleccionar--</option>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                     <i class="fa-solid fa-info-circle me-2"></i>Acciones <span class="text-danger">*</span>
+                            </label>
+                            <select name="" id="" class="form-select">
+                                 <option value="">--Seleccionar--</option>
+                            </select>
+
+                        </div>
+                   </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarusuario">
+                    <span id="spinnernuevoxd" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <i class="fa-solid fa-floppy-disk me-1" id="IconoNuevo"></i>Guardar
+                </button>
+
+            </div>
+        </div>
+
+    </div>

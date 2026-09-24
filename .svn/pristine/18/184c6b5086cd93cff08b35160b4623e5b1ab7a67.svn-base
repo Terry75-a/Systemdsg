@@ -1,0 +1,172 @@
+<div>
+    <h1>Tabla de Personas</h1>
+</div>
+
+<main class="container">
+    <div class="my-3 d-flex justify-content-between align-items-center">
+        <a href="personasadd" id="btnAnadir">
+            <button class="btn btn-success"><i class="fa-solid fa-user-plus"></i> Añadir</button>
+        </a>
+
+        <ul class="nav nav-underline" id="pestanasEstado">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-estado="1">Activos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-estado="0">Inactivos</a>
+            </li>
+        </ul>
+    </div>
+
+    <table id="tablaClientes" class="table table-striped table-hover" style="width:100%">
+        <thead class="table-light"> 
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dni</th>
+                <th>Telefono</th>
+                <th>Direccion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</main>
+
+<script>
+
+  
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
+    }
+});
+    var tablaCliente;
+   
+    var estadoActual = 1; 
+
+    $(document).ready(function(){
+        // Inicializamos DataTable
+        tablaCliente = $('#tablaClientes').DataTable({
+            autoWidth: false,
+            lengthChange: false,
+            "ajax" : {
+                
+                "url": "<?= base_url('personas/listar') ?>",
+                "type": "GET",
+                "data": function(d) {
+                    d.estado = estadoActual; 
+                },
+                "dataSrc": "data"
+            },
+            "columns": [
+                {"data" : "id_persona"},
+                {"data" : "nombre"},
+                {"data" : "dni"},
+                {"data" : "telefono"},
+                {"data" : "direccion"}, 
+                {
+                    "data": null,
+                    "render": function(data, type, row){
+                        // Si el estado es 1 (Activo) mostramos el botón Editar y Eliminar (baja)
+                        if (estadoActual == 1) {
+                            return `
+                                <a href="<?= base_url('personasadd/') ?>${row.id_persona}" class="btn btn-sm btn-warning">
+                                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-danger" onclick="cambiarEstado(${row.id_persona}, 0, this)">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </button>
+
+                                <button class="btn btn-sm btn-info">
+                                    <i class="fa-solid fa-inbox"></i> Plan
+                                </button>
+                            `;
+                        } else {
+                            // Si el estado es 0 (Inactivo) mostramos el botón Activar
+                            return `
+                                <button class="btn btn-sm btn-success" onclick="cambiarEstado(${row.id_persona}, 1, this)">
+                                    <i class="fa-solid fa-circle-check"></i> Activar
+                                </button>
+                            `;
+                        }
+                    }
+                }
+            ],
+            "language": {
+    "processing": "Procesando...",
+    "lengthMenu": "Mostrar _MENU_ registros",
+    "zeroRecords": "No se encontraron resultados",
+    "emptyTable": "Ningún dato disponible en esta tabla",
+    "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+    "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "search": "Buscar:",
+    "paginate": {
+        "first": "Primero",
+        "last": "Último",
+        "next": "Siguiente",
+        "previous": "Anterior"
+    }
+}
+        });
+
+        // Evento para cambiar entre pestañas Activos / Inactivos
+        $('#pestanasEstado .nav-link').on('click', function(e) {
+            e.preventDefault();
+            
+            // Quitamos la clase activa a la pestaña anterior y se la ponemos a la cliqueada
+            $('#pestanasEstado .nav-link').removeClass('active');
+            $(this).addClass('active');
+
+            // Actualizamos la variable global con el estado del atributo data-estado (1 o 0)
+            estadoActual = $(this).data('estado');
+
+            // Ocultar o mostrar el botón Añadir según la pestaña
+            if(estadoActual == 0) {
+                $('#btnAnadir').hide();
+            } else {
+                $('#btnAnadir').show();
+            }
+
+            // Recargamos los datos del DataTable mediante AJAX con el nuevo filtro
+            tablaCliente.ajax.reload();
+        });
+    });
+
+    // Esta función reemplaza a tu antigua función eliminar
+    function cambiarEstado(idPersona, nuevoEstado, boton) {
+        if (!idPersona) {
+            alert("ID no válido.");
+            return;
+        }
+
+        // Definimos el texto del mensaje según lo que se va a hacer
+        var textoConfirmacion = (nuevoEstado === 0) ? "¿Estás seguro de dar de baja (desactivar) a esta persona?" : "¿Estás seguro de activar de nuevo a esta persona?";
+
+        if (confirm(textoConfirmacion)) {
+            var fila = $(boton).closest('tr');
+
+            $.ajax({
+                // Mandamos la petición a tu controlador de eliminar
+                url: "<?= base_url('personas/eliminar/') ?>" + idPersona,
+                type: "POST",
+                dataType: "json",
+                // Enviamos el nuevo estado en el cuerpo del POST para que el backend lo reciba
+                data: { estado: nuevoEstado }, 
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Removemos la fila de la vista actual de la tabla
+                        tablaCliente.row(fila).remove().draw(false); 
+                        alert(response.message || "Estado actualizado con éxito.");
+                    } else {
+                        alert("No se pudo cambiar el estado en la base de datos.");
+                    }
+                },
+                error: function() {
+                    alert("Error de comunicación con el servidor.");
+                }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,559 @@
+<?php
+$menusPayload = array_map(static fn($menu) => [
+    'id' => (int) $menu->id,
+    'nombre' => $menu->nombre,
+], $menus ?? []);
+?>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1"><i class="fa-solid fa-users me-2 text-primary"></i>Gestión de Usuarios</h4>
+            <p class="text-muted mb-0">Alta, edición, estado y permisos asociados al rol.</p>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+            <i class="fa-solid fa-user-plus me-2"></i>Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tablaUsuarios">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Persona</th>
+                            <th>Contacto</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($usuarios)): ?>
+                            <?php foreach ($usuarios as $index => $usuario): ?>
+                                <?php
+                                $nombreCompleto = trim(implode(' ', array_filter([
+                                    $usuario->nombre ?? '',
+                                    $usuario->apellido_paterno ?? '',
+                                    $usuario->apellido_materno ?? '',
+                                ])));
+                                ?>
+                                <tr>
+                                    <td><?= $index + 1 ?></td>
+                                    <td>
+                                        <div class="fw-semibold"><?= esc($usuario->username) ?></div>
+                                        <small class="text-muted">ID #<?= esc($usuario->id_usuario) ?></small>
+                                    </td>
+                                    <td>
+                                        <div><?= esc($nombreCompleto !== '' ? $nombreCompleto : 'Sin nombre registrado') ?></div>
+                                        <small class="text-muted">DNI: <?= esc($usuario->dni ?? '—') ?></small>
+                                    </td>
+                                    <td>
+                                        <div><?= esc($usuario->correo ?? '—') ?></div>
+                                    </td>
+                                    <td><?= esc($usuario->rol_nombre ?? 'Sin rol') ?></td>
+                                    <td>
+                                        <?php if ((int) ($usuario->estado ?? 0) === 1): ?>
+                                            <span class="badge text-bg-success">Activo</span>
+                                        <?php else: ?>
+                                            <span class="badge text-bg-secondary">Inactivo</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary btn-editar-usuario"
+                                                data-id="<?= esc($usuario->id_usuario) ?>" title="Editar usuario">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info btn-permisos-usuario"
+                                                data-id="<?= esc($usuario->id_usuario) ?>" title="Permisos del rol">
+                                                <i class="fa-solid fa-shield-halved"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="btn <?= (int) ($usuario->estado ?? 0) === 1 ? 'btn-outline-warning' : 'btn-outline-success' ?> btn-toggle-estado"
+                                                data-id="<?= esc($usuario->id_usuario) ?>"
+                                                data-estado="<?= esc($usuario->estado) ?>"
+                                                title="<?= (int) ($usuario->estado ?? 0) === 1 ? 'Desactivar' : 'Activar' ?> usuario">
+                                                <i class="fa-solid <?= (int) ($usuario->estado ?? 0) === 1 ? 'fa-user-slash' : 'fa-user-check' ?>"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fa-solid fa-circle-info me-2"></i>No hay usuarios registrados todavía.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="formNuevoUsuario">
+                <?= csrf_field() ?>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-user-plus me-2"></i>Registrar usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="alertNuevoUsuario"></div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="nuevo_nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nuevo_nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_apellido_paterno" class="form-label fw-semibold">Apellido paterno <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nuevo_apellido_paterno" name="apellido_paterno" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_apellido_materno" class="form-label fw-semibold">Apellido materno</label>
+                            <input type="text" class="form-control" id="nuevo_apellido_materno" name="apellido_materno">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_dni" class="form-label fw-semibold">DNI <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nuevo_dni" name="dni" maxlength="15" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_correo" class="form-label fw-semibold">Correo <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="nuevo_correo" name="correo" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_telefono" class="form-label fw-semibold">Teléfono</label>
+                            <input type="text" class="form-control" id="nuevo_telefono" name="telefono" maxlength="20">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_username" class="form-label fw-semibold">Usuario <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nuevo_username" name="username" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_password" class="form-label fw-semibold">Contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="nuevo_password" name="password" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nuevo_id_rol" class="form-label fw-semibold">Rol <span class="text-danger">*</span></label>
+                            <select name="id_rol" id="nuevo_id_rol" class="form-select" required>
+                                <option value="">-- Seleccionar rol --</option>
+                                <?php foreach ($roles as $rol): ?>
+                                    <option value="<?= esc($rol->id_rol) ?>"><?= esc($rol->nombre) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="formEditarUsuario">
+                <?= csrf_field() ?>
+                <input type="hidden" id="editar_id_usuario">
+                <div class="modal-header bg-warning-subtle">
+                    <h5 class="modal-title"><i class="fa-solid fa-user-pen me-2"></i>Editar usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="alertEditarUsuario"></div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="editar_nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editar_nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_apellido_paterno" class="form-label fw-semibold">Apellido paterno <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editar_apellido_paterno" name="apellido_paterno" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_apellido_materno" class="form-label fw-semibold">Apellido materno</label>
+                            <input type="text" class="form-control" id="editar_apellido_materno" name="apellido_materno">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_dni" class="form-label fw-semibold">DNI <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editar_dni" name="dni" maxlength="15" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_correo" class="form-label fw-semibold">Correo <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="editar_correo" name="correo" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_telefono" class="form-label fw-semibold">Teléfono</label>
+                            <input type="text" class="form-control" id="editar_telefono" name="telefono" maxlength="20">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_username" class="form-label fw-semibold">Usuario <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editar_username" name="username" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_password" class="form-label fw-semibold">Nueva contraseña</label>
+                            <input type="password" class="form-control" id="editar_password" name="password">
+                            <small class="text-muted">Dejalo vacío si no querés cambiarla.</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editar_id_rol" class="form-label fw-semibold">Rol <span class="text-danger">*</span></label>
+                            <select name="id_rol" id="editar_id_rol" class="form-select" required>
+                                <option value="">-- Seleccionar rol --</option>
+                                <?php foreach ($roles as $rol): ?>
+                                    <option value="<?= esc($rol->id_rol) ?>"><?= esc($rol->nombre) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>Actualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPermisosUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="formPermisosUsuario">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-shield-halved me-2"></i>Permisos del rol</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="alertPermisosUsuario"></div>
+                    <div class="alert alert-warning small">
+                        <strong>Ojo:</strong> el diseño actual guarda permisos por <strong>rol</strong>, no por usuario individual.
+                        Cualquier cambio impacta a todos los usuarios que compartan ese rol.
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="text-muted small">Usuario</div>
+                                <div class="fw-semibold" id="permisoUsuarioLabel">—</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="text-muted small">Rol afectado</div>
+                                <div class="fw-semibold" id="permisoRolLabel">—</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="permisos_id_usuario">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Módulo</th>
+                                    <th class="text-center">Ver</th>
+                                    <th class="text-center">Crear</th>
+                                    <th class="text-center">Editar</th>
+                                    <th class="text-center">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaPermisosBody">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Seleccioná un usuario para cargar sus permisos.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>Guardar permisos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = '<?= rtrim(base_url(), '/') ?>/';
+    const CSRF_HEADER = 'X-CSRF-TOKEN';
+    const CSRF_HASH = '<?= csrf_hash() ?>';
+    const MENUS = <?= json_encode($menusPayload, JSON_UNESCAPED_UNICODE) ?>;
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function buildAlert(type, content) {
+        return `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${content}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+    }
+
+    function renderErrors(errors = {}) {
+        const items = Object.values(errors).filter(Boolean);
+        if (!items.length) {
+            return 'Ocurrió un error inesperado.';
+        }
+
+        return `<ul class="mb-0 ps-3">${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+    }
+
+    function setAlert(containerId, type, html) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = html ? buildAlert(type, html) : '';
+    }
+
+    function clearAlert(containerId) {
+        setAlert(containerId, '', '');
+    }
+
+    function fullName(usuario) {
+        return [usuario.nombre, usuario.apellido_paterno, usuario.apellido_materno]
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+    }
+
+    function fillUserForm(prefix, usuario) {
+        document.getElementById(`${prefix}_nombre`).value = usuario.nombre ?? '';
+        document.getElementById(`${prefix}_apellido_paterno`).value = usuario.apellido_paterno ?? '';
+        document.getElementById(`${prefix}_apellido_materno`).value = usuario.apellido_materno ?? '';
+        document.getElementById(`${prefix}_dni`).value = usuario.dni ?? '';
+        document.getElementById(`${prefix}_correo`).value = usuario.correo ?? '';
+        document.getElementById(`${prefix}_telefono`).value = usuario.telefono ?? '';
+        document.getElementById(`${prefix}_username`).value = usuario.username ?? '';
+        document.getElementById(`${prefix}_id_rol`).value = usuario.id_rol ?? '';
+    }
+
+    function renderPermissions(permisos = []) {
+        const tbody = document.getElementById('tablaPermisosBody');
+        const permisosMap = new Map(permisos.map(permiso => [Number(permiso.menu_id), permiso]));
+
+        if (!MENUS.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No hay menús configurados para asignar permisos.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = MENUS.map(menu => {
+            const permiso = permisosMap.get(Number(menu.id)) ?? {};
+
+            return `
+                <tr data-menu-id="${menu.id}">
+                    <td>${escapeHtml(menu.nombre)}</td>
+                    <td class="text-center"><input class="form-check-input permiso-check" type="checkbox" data-action="read" ${Number(permiso.read) === 1 ? 'checked' : ''}></td>
+                    <td class="text-center"><input class="form-check-input permiso-check" type="checkbox" data-action="insert" ${Number(permiso.insert) === 1 ? 'checked' : ''}></td>
+                    <td class="text-center"><input class="form-check-input permiso-check" type="checkbox" data-action="update" ${Number(permiso.update) === 1 ? 'checked' : ''}></td>
+                    <td class="text-center"><input class="form-check-input permiso-check" type="checkbox" data-action="delete" ${Number(permiso.delete) === 1 ? 'checked' : ''}></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                ...options.headers,
+            },
+            ...options,
+        });
+
+        return response.json();
+    }
+
+    document.getElementById('formNuevoUsuario').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearAlert('alertNuevoUsuario');
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetchJson(`${BASE_URL}usuarios/registrar`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.success) {
+                setAlert('alertNuevoUsuario', 'danger', renderErrors(response.errors ?? { general: response.message }));
+                return;
+            }
+
+            this.reset();
+            bootstrap.Modal.getInstance(document.getElementById('modalNuevoUsuario')).hide();
+            location.reload();
+        } catch (error) {
+            setAlert('alertNuevoUsuario', 'danger', 'No se pudo registrar el usuario.');
+            console.error(error);
+        }
+    });
+
+    document.querySelectorAll('.btn-editar-usuario').forEach(button => {
+        button.addEventListener('click', async function () {
+            clearAlert('alertEditarUsuario');
+
+            try {
+                const response = await fetchJson(`${BASE_URL}usuarios/obtener/${this.dataset.id}`);
+
+                if (!response.success) {
+                    setAlert('alertEditarUsuario', 'danger', escapeHtml(response.message ?? 'No se pudo cargar el usuario.'));
+                    new bootstrap.Modal(document.getElementById('modalEditarUsuario')).show();
+                    return;
+                }
+
+                document.getElementById('editar_id_usuario').value = response.data.id_usuario;
+                document.getElementById('editar_password').value = '';
+                fillUserForm('editar', response.data);
+
+                new bootstrap.Modal(document.getElementById('modalEditarUsuario')).show();
+            } catch (error) {
+                setAlert('alertEditarUsuario', 'danger', 'No se pudo cargar el usuario.');
+                new bootstrap.Modal(document.getElementById('modalEditarUsuario')).show();
+                console.error(error);
+            }
+        });
+    });
+
+    document.getElementById('formEditarUsuario').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearAlert('alertEditarUsuario');
+
+        const idUsuario = document.getElementById('editar_id_usuario').value;
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetchJson(`${BASE_URL}usuarios/actualizar/${idUsuario}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.success) {
+                setAlert('alertEditarUsuario', 'danger', renderErrors(response.errors ?? { general: response.message }));
+                return;
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario')).hide();
+            location.reload();
+        } catch (error) {
+            setAlert('alertEditarUsuario', 'danger', 'No se pudo actualizar el usuario.');
+            console.error(error);
+        }
+    });
+
+    document.querySelectorAll('.btn-permisos-usuario').forEach(button => {
+        button.addEventListener('click', async function () {
+            clearAlert('alertPermisosUsuario');
+
+            try {
+                const response = await fetchJson(`${BASE_URL}usuarios/obtener/${this.dataset.id}`);
+
+                if (!response.success) {
+                    setAlert('alertPermisosUsuario', 'danger', escapeHtml(response.message ?? 'No se pudieron cargar los permisos.'));
+                    new bootstrap.Modal(document.getElementById('modalPermisosUsuario')).show();
+                    return;
+                }
+
+                const usuario = response.data;
+                document.getElementById('permisos_id_usuario').value = usuario.id_usuario;
+                document.getElementById('permisoUsuarioLabel').textContent = `${usuario.username} · ${fullName(usuario) || 'Sin nombre registrado'}`;
+                document.getElementById('permisoRolLabel').textContent = usuario.rol_nombre ?? 'Sin rol';
+                renderPermissions(usuario.permisos ?? []);
+
+                new bootstrap.Modal(document.getElementById('modalPermisosUsuario')).show();
+            } catch (error) {
+                setAlert('alertPermisosUsuario', 'danger', 'No se pudieron cargar los permisos.');
+                new bootstrap.Modal(document.getElementById('modalPermisosUsuario')).show();
+                console.error(error);
+            }
+        });
+    });
+
+    document.getElementById('formPermisosUsuario').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearAlert('alertPermisosUsuario');
+
+        const idUsuario = document.getElementById('permisos_id_usuario').value;
+        const payload = Array.from(document.querySelectorAll('#tablaPermisosBody tr[data-menu-id]')).map(row => ({
+            menu_id: Number(row.dataset.menuId),
+            read: row.querySelector('[data-action="read"]').checked ? 1 : 0,
+            insert: row.querySelector('[data-action="insert"]').checked ? 1 : 0,
+            update: row.querySelector('[data-action="update"]').checked ? 1 : 0,
+            delete: row.querySelector('[data-action="delete"]').checked ? 1 : 0,
+        }));
+
+        try {
+            const response = await fetchJson(`${BASE_URL}usuarios/permisos/${idUsuario}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [CSRF_HEADER]: CSRF_HASH,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.success) {
+                setAlert('alertPermisosUsuario', 'danger', escapeHtml(response.message ?? 'No se pudieron guardar los permisos.'));
+                return;
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('modalPermisosUsuario')).hide();
+            location.reload();
+        } catch (error) {
+            setAlert('alertPermisosUsuario', 'danger', 'No se pudieron guardar los permisos.');
+            console.error(error);
+        }
+    });
+
+    document.querySelectorAll('.btn-toggle-estado').forEach(button => {
+        button.addEventListener('click', async function () {
+            const accion = Number(this.dataset.estado) === 1 ? 'desactivar' : 'activar';
+
+            if (!confirm(`¿Querés ${accion} este usuario?`)) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('<?= csrf_token() ?>', CSRF_HASH);
+
+            try {
+                const response = await fetchJson(`${BASE_URL}usuarios/estado/${this.dataset.id}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.success) {
+                    alert(response.message ?? 'No se pudo actualizar el estado.');
+                    return;
+                }
+
+                location.reload();
+            } catch (error) {
+                alert('No se pudo actualizar el estado.');
+                console.error(error);
+            }
+        });
+    });
+</script>

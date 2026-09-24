@@ -1,0 +1,67 @@
+/* ── Panel practicante: topbar, saludo y cabeceras de pagina ── */
+
+.pra-greeting h1 {
+    font-size: 26px; font-weight: 400; font-family: var(--g-font-display);
+    letter-spacing: -0.01em; margin: 0; color: var(--g-text);
+}
+.pra-greeting h1 strong { font-weight: 700; }
+.pra-greeting p { font-size: 13.5px; color: var(--g-text-secondary); margin: 5px 0 0; line-height: 1.5; }
+
+.pra-page-meta { display: flex; align-items: center; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
+.pra-date,
+.pra-clock-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--g-surface); border: 1px solid var(--g-border);
+    border-radius: 999px; padding: 6px 13px;
+    font-size: 12px; color: var(--g-text-secondary); font-weight: 500;
+}
+.pra-clock-pill { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.pra-date .material-symbols-outlined,
+.pra-clock-pill .material-symbols-outlined { font-size: 15px; color: var(--g-primary); }
+
+/* ── Cabecera de pagina compartida (back + titulo + sub) ── */
+.page-head { margin-bottom: 20px; }
+.page-back {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12.5px; font-weight: 500; text-decoration: none;
+    color: var(--g-text-secondary);
+    background: var(--g-surface); border: 1px solid var(--g-border);
+    border-radius: 999px; padding: 6px 14px; margin-bottom: 14px;
+    transition: border-color 180ms, color 180ms, transform 180ms;
+}
+.page-back .material-symbols-outlined { font-size: 16px; }
+.page-back:hover { color: var(--g-primary); border-color: var(--g-primary); transform: translateX(-2px); }
+.page-title { display: flex; align-items: center; gap: 10px; }
+.page-title .material-symbols-outlined { color: var(--g-primary); font-size: 26px; }
+.page-title h2 {
+    font-size: 21px; font-weight: 700; font-family: var(--g-font-display);
+    margin: 0; letter-spacing: -0.01em;
+}
+.page-sub { font-size: 13px; color: var(--g-text-secondary); margin: 6px 0 0; line-height: 1.5; }
+
+@media (max-width: 768px) {
+    .pra-greeting h1 { font-size: 22px; }
+    .pra-page-meta { margin-top: 9px; }
+    .page-title h2 { font-size: 19px; }
+}
+
+/* ── Sin recuadro azul al hacer clic ── */
+.dev-layout button,
+.dev-layout a,
+.dev-layout .as-cell,
+.dev-layout input,
+.dev-layout textarea,
+.dev-layout select {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+.dev-layout button:focus-visible,
+.dev-layout a:focus-visible,
+.dev-layout .as-cell:focus-visible,
+.dev-layout input:focus-visible,
+.dev-layout textarea:focus-visible,
+.dev-layout select:focus-visible {
+    outline: 2px solid var(--g-primary);
+    outline-offset: 2px;
+    border-radius: 8px;
+}

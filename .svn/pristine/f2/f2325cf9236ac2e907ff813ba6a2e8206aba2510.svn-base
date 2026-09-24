@@ -1,0 +1,483 @@
+CRITICAL - 2025-10-24 04:35:26 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:35:59 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:40:18 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:43:43 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:47:09 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:49:09 --> ErrorException: require_once(C:\xampp\htdocs\dsi\project-root\app\vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 12.
+ 1 APPPATH\Controllers\EmailController.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require_once(C:\\xampp\\htdocs\\dsi\\project-root\\app\\vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 12)
+ 2 APPPATH\Controllers\EmailController.php(12): require_once()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:49:20 --> ErrorException: require_once(C:\xampp\htdocs\dsi\project-root\app\vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 12.
+ 1 APPPATH\Controllers\EmailController.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require_once(C:\\xampp\\htdocs\\dsi\\project-root\\app\\vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 12)
+ 2 APPPATH\Controllers\EmailController.php(12): require_once()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:49:55 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 12.
+ 1 APPPATH\Controllers\EmailController.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 12)
+ 2 APPPATH\Controllers\EmailController.php(12): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:50:37 --> ErrorException: require(../../vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 12.
+ 1 APPPATH\Controllers\EmailController.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(../../vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 12)
+ 2 APPPATH\Controllers\EmailController.php(12): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:50:40 --> ErrorException: require(../../vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 12.
+ 1 APPPATH\Controllers\EmailController.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(../../vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 12)
+ 2 APPPATH\Controllers\EmailController.php(12): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:52:00 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 22.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:58:22 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 23.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 04:59:13 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 23.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:03:05 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 4.
+ 1 APPPATH\Controllers\EmailController.php(4): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 4)
+ 2 APPPATH\Controllers\EmailController.php(4): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:16:56 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 23.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:19:01 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 23.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:23:45 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:26:08 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:31:54 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:33:17 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:35:03 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:36:54 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:41:00 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:44:46 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:46:36 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 20.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:52:00 --> ErrorException: require(C:\xampp\htdocs\dsi\project-root\app\ThirdParty/PHPMailer/src/Exception.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 5.
+ 1 APPPATH\Controllers\EmailController.php(5): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(C:\\xampp\\htdocs\\dsi\\project-root\\app\\ThirdParty/PHPMailer/src/Exception.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 5)
+ 2 APPPATH\Controllers\EmailController.php(5): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:53:56 --> ErrorException: require_once(C:\xampp\htdocs\dsi\project-root\app\ThirdParty/PHPMailer/src/Exception.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 14.
+ 1 APPPATH\Controllers\EmailController.php(14): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require_once(C:\\xampp\\htdocs\\dsi\\project-root\\app\\ThirdParty/PHPMailer/src/Exception.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 14)
+ 2 APPPATH\Controllers\EmailController.php(14): require_once()
+ 3 SYSTEMPATH\CodeIgniter.php(903): App\Controllers\EmailController->__construct()
+ 4 SYSTEMPATH\CodeIgniter.php(498): CodeIgniter\CodeIgniter->createController()
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:57:19 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 13.
+ 1 APPPATH\Controllers\EmailController.php(13): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 13)
+ 2 APPPATH\Controllers\EmailController.php(13): require()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 05:57:31 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 27.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:35:46 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 27.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:39:08 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 27.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:40:09 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 27.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:41:58 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 27.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:46:12 --> ErrorException: require(vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 4.
+ 1 APPPATH\Controllers\EmailController.php(4): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 4)
+ 2 APPPATH\Controllers\EmailController.php(4): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:48:23 --> ErrorException: require(/app/vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 8.
+ 1 APPPATH\Controllers\EmailController.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(/app/vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 8)
+ 2 APPPATH\Controllers\EmailController.php(8): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:49:19 --> ErrorException: require(/app/vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 8.
+ 1 APPPATH\Controllers\EmailController.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(/app/vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 8)
+ 2 APPPATH\Controllers\EmailController.php(8): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:49:25 --> ErrorException: require(/vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 8.
+ 1 APPPATH\Controllers\EmailController.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(/vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 8)
+ 2 APPPATH\Controllers\EmailController.php(8): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:49:27 --> ErrorException: require(/vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 8.
+ 1 APPPATH\Controllers\EmailController.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(/vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 8)
+ 2 APPPATH\Controllers\EmailController.php(8): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:51:11 --> ErrorException: require(../../vendor/autoload.php): Failed to open stream: No such file or directory
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 8.
+ 1 APPPATH\Controllers\EmailController.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'require(../../vendor/autoload.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php', 8)
+ 2 APPPATH\Controllers\EmailController.php(8): require()
+ 3 VENDORPATH\composer\ClassLoader.php(576): include('C:\\xampp\\htdocs\\dsi\\project-root\\app\\Controllers\\EmailController.php')
+ 4 VENDORPATH\composer\ClassLoader.php(427): Composer\Autoload\{closure}('C:\\xampp\\htdocs\\dsi\\project-root\\vendor\\composer/../../app\\Controllers\\EmailController.php')
+ 5 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Controllers\\EmailController')
+ 6 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\EmailController', true)
+ 7 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 14:55:20 --> Error: Class "PHPMailer\PHPMailer\PHPMailer" not found
+[Method: POST, Route: enviar]
+in APPPATH\Controllers\EmailController.php on line 21.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmailController->enviar()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmailController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-10-24 14:59:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:01:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:10:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-10-24 15:16:30 --> CodeIgniter\Filters\Exceptions\FilterException: "session" filter must have a matching alias defined.
+[Method: GET, Route: /]
+in SYSTEMPATH\Filters\Filters.php on line 842.
+ 1 SYSTEMPATH\Filters\Filters.php(842): CodeIgniter\Filters\Exceptions\FilterException::forNoAlias('session')
+ 2 SYSTEMPATH\Filters\Filters.php(487): CodeIgniter\Filters\Filters->processAliasesToClass('before')
+ 3 SYSTEMPATH\Filters\Filters.php(218): CodeIgniter\Filters\Filters->initialize('')
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 15:16:43 --> CodeIgniter\Filters\Exceptions\FilterException: "session" filter must have a matching alias defined.
+[Method: GET, Route: /]
+in SYSTEMPATH\Filters\Filters.php on line 842.
+ 1 SYSTEMPATH\Filters\Filters.php(842): CodeIgniter\Filters\Exceptions\FilterException::forNoAlias('session')
+ 2 SYSTEMPATH\Filters\Filters.php(487): CodeIgniter\Filters\Filters->processAliasesToClass('before')
+ 3 SYSTEMPATH\Filters\Filters.php(218): CodeIgniter\Filters\Filters->initialize('')
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-24 15:16:46 --> CodeIgniter\Filters\Exceptions\FilterException: "session" filter must have a matching alias defined.
+[Method: GET, Route: /]
+in SYSTEMPATH\Filters\Filters.php on line 842.
+ 1 SYSTEMPATH\Filters\Filters.php(842): CodeIgniter\Filters\Exceptions\FilterException::forNoAlias('session')
+ 2 SYSTEMPATH\Filters\Filters.php(487): CodeIgniter\Filters\Filters->processAliasesToClass('before')
+ 3 SYSTEMPATH\Filters\Filters.php(218): CodeIgniter\Filters\Filters->initialize('')
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-10-24 15:18:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:18:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:18:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:20:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:21:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:24:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:27:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:34:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:38:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:42:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:43:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:45:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 15:56:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 16:03:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 16:04:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 16:35:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-10-24 21:59:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

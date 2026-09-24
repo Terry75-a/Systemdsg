@@ -1,0 +1,109 @@
+
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border-radius: 20px;
+  }
+  
+  .show {
+    display: block;
+    margin: 10px auto;
+    width: 150px;
+    height: 50px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.919);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(237, 226, 226, 0.73);
+    box-shadow: 0 8px 32px rgba(216, 213, 213, 0.634);
+    border-radius: 50px;
+    color: #000;
+    font-weight: 600;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Itim';
+    font-display: swap;
+  }
+  
+  .show:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(251, 251, 251, 0.648);
+    background: rgb(255, 255, 255);
+  }
+  
+  .show:active {
+    transform: translateY(1px);
+  }
+
+  
+  .show::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+    
+  }
+  
+  .show:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(50, 50);
+      opacity: 0;
+    }
+  }
+  
+  #close{
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    color: #000;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Material Icons';
+  }
+  
+  #close:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  #close:active {
+    transform: scale(0.95);
+  }

@@ -1,0 +1,53 @@
+<?php
+$currentPath = trim(service('uri')->getPath(), '/');
+$isHome = $currentPath === '';
+$isServicios = $currentPath === 'servicios';
+$isDsg = $currentPath === 'dsg';
+$isPrecio = $currentPath === 'precio';
+?>
+<nav class="navbar-stripe public-shell" aria-label="Navegación principal del sitio">
+    <div class="nav-left">
+        <a href="<?= base_url('/') ?>" class="nav-logo">
+            <img src="<?= base_url('images/logo_3.1.png') ?>" alt="Logo de DSG Perú Technology">
+            <span></span>
+        </a>
+    </div>
+
+    <ul class="nav-center" id="navLinks">
+        <li><a href="<?= base_url('/') ?>" class="link"<?= $isHome ? ' aria-current="page"' : '' ?>>Inicio</a></li>
+        <li>
+            <a href="<?= base_url('servicios') ?>" class="link"<?= $isServicios ? ' aria-current="page"' : '' ?>>
+               Soluciones
+            </a>
+        </li>
+        <li><a href="<?= base_url('servicios') ?>#casos-de-uso" class="link">Casos de uso</a></li>
+        <li>
+            <a href="<?= base_url('dsg') ?>" class="link"<?= $isDsg ? ' aria-current="page"' : '' ?>>
+                DSG
+            </a>
+        </li>
+        <li><a href="<?= base_url('precio') ?>" class="link"<?= $isPrecio ? ' aria-current="page"' : '' ?>>Precios</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <a href="<?= base_url('/#contacto') ?>" class="btn-contact-sales public-cta-primary">
+             Solicitar demo
+        </a>
+        <a href="<?= base_url('login') ?>" class="btn-sign-in public-cta-secondary">Iniciar sesión</a>
+        
+        
+        <button class="mobile-toggle" id="mobile-menu-toggle" type="button" aria-label="Abrir menú principal" aria-expanded="false" aria-controls="mobile-container">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+    </div>
+</nav>
+
+<div class="mobile-container" id="mobile-container" aria-label="Menú móvil" aria-hidden="true">
+    <a href="<?= base_url('/') ?>" class="mobile-menu-item"<?= $isHome ? ' aria-current="page"' : '' ?>>Inicio</a>
+    <a href="<?= base_url('servicios') ?>" class="mobile-menu-item"<?= $isServicios ? ' aria-current="page"' : '' ?>>Soluciones</a>
+    <a href="<?= base_url('servicios') ?>#casos-de-uso" class="mobile-menu-item">Casos de uso</a>
+    <a href="<?= base_url('dsg') ?>" class="mobile-menu-item"<?= $isDsg ? ' aria-current="page"' : '' ?>>DSG</a>
+    <a href="<?= base_url('precio') ?>" class="mobile-menu-item"<?= $isPrecio ? ' aria-current="page"' : '' ?>>Precios</a>
+    <a href="<?= base_url('/#contacto') ?>" class="mobile-menu-item">Solicitar demo</a>
+    <a href="<?= base_url('login') ?>" class="mobile-menu-item">Iniciar sesión</a>
+</div>

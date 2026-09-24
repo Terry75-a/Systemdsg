@@ -1,0 +1,16 @@
+<?php 
+
+namespace App\Controllers;
+
+use CodeIgniter\Model;
+use PHPUnit\Util\Json;
+
+class BusquedaController extends Model
+{
+    public function ObtenerDni($dni)
+    {
+        $url = 'http://www.dsgperutech.com/api-customer/v1/dni/'. $dni;
+
+        
+    }
+}

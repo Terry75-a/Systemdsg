@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - DSG</title>
+
+  
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  
+  <link rel="stylesheet" href="<?= base_url('css/login/loginindex.css') ?>" />
+  
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <h2 class="title">ACCESO AL SISTEMA</h2>
+      <?php if (session()->getFlashdata('error')): ?>
+  <div class="alerta-error" style="color:red; margin-bottom:10px;">
+      <?= session()->getFlashdata('error') ?>
+  </div>
+<?php endif; ?>
+      <form class="formularioxd" method="post" action="<?= site_url('login/auth')?>">
+        <?= csrf_field()?>
+        <div class="form-group">
+          <label for="username">Usuario:</label>
+          <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña:</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required />
+            <i class="fa-solid fa-eye" id="togglePassword"></i>
+            
+          </div>
+        </div>
+        <div class="form-group">
+          <a href="">
+            
+          </a>
+        </div>
+
+        <div class="btn-group">
+          <a href="<?= base_url('/') ?>" class="btn volver">Volver
+            
+          </a>
+          <button type="submit" class="btn acceder">Entrar
+            
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="<?= base_url('js/eyepassword.js') ?>"></script>
+</body>
+</html>

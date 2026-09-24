@@ -1,0 +1,176 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PermisosModel extends Model
+{
+    protected $table = 'permisos';
+    protected $primaryKey = 'id_permiso';
+    protected $returnType = 'object';
+
+    protected $allowedFields = [
+        'id_persona',
+        'id_rol',
+        'menu_id',
+        'read',
+        'insert',
+        'update',
+        'delete',
+    ];
+
+    // ══════════════════════════════════════════════════════════════
+    // GUARDAR O CREAR — Si ya existe persona+menú: UPDATE completo
+    //                   Si no existe: INSERT nuevo
+    // Ruta: POST /permisos/guardar
+    // ══════════════════════════════════════════════════════════════
+    public function guardarOActualizar(int $id_persona, int $id_rol, int $menu_id, array $permisos): bool
+    {
+        $existente = $this->where('id_persona', $id_persona)
+            ->where('menu_id', $menu_id)
+            ->first();
+
+        $data = [
+            'id_persona' => $id_persona,
+            'id_rol' => $id_rol,
+            'menu_id' => $menu_id,
+            'read' => $permisos['read'] ?? 0,
+            'insert' => $permisos['insert'] ?? 0,
+            'update' => $permisos['update'] ?? 0,
+            'delete' => $permisos['delete'] ?? 0,
+        ];
+
+        if ($existente) {
+            return $this->update($existente->id_permiso, $data);
+        }
+
+        return $this->insert($data) !== false;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // OBTENER TODOS — Lista completa con nombres para la tabla
+    // ══════════════════════════════════════════════════════════════
+    public function obtenerTodos(): array
+    {
+        return $this->db->table('permisos p')
+            ->select('
+                p.id_permiso,
+                p.id_persona,
+                p.id_rol,
+                p.menu_id,
+                p.read,
+                p.insert,
+                p.update,
+                p.delete,
+                pe.nombre          AS persona_nombre,
+                pe.apellido_paterno,
+                r.nombre           AS rol_nombre,
+                m.nombre           AS menu_nombre,
+                m.link             AS menu_link
+            ')
+            ->join('personas pe', 'p.id_persona = pe.id_persona', 'left')
+            ->join('roles r', 'p.id_rol     = r.id_rol', 'left')
+            ->join('menus m', 'p.menu_id    = m.id', 'left')
+            ->orderBy('pe.nombre', 'ASC')
+            ->get()
+            ->getResultObject();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // OBTENER POR USUARIO — Permisos de una persona específica
+    // ══════════════════════════════════════════════════════════════
+    public function obtenerPermisosUsuario(int $id_persona, int $id_rol = null): array
+    {
+        $builder = $this->db->table('permisos p')
+            ->select('
+                p.*,
+                pe.nombre          AS persona_nombre,
+                pe.apellido_paterno,
+                r.nombre           AS rol_nombre,
+                m.nombre           AS menu_nombre,
+                m.link
+            ')
+            ->join('personas pe', 'p.id_persona = pe.id_persona', 'left')
+            ->join('roles r', 'p.id_rol     = r.id_rol', 'left')
+            ->join('menus m', 'p.menu_id    = m.id', 'left')
+            ->where('p.id_persona', $id_persona);
+
+        if ($id_rol) {
+            $builder->orWhere('p.id_rol', $id_rol);
+        }
+
+        return $builder->get()->getResultObject();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // VERIFICAR — ¿Puede esta persona hacer esta acción en este menú?
+    // ══════════════════════════════════════════════════════════════
+    public function verificarPermiso(int $id_persona, int $menu_id, string $accion): bool
+    {
+        $permiso = $this->where('id_persona', $id_persona)
+            ->where('menu_id', $menu_id)
+            ->first();
+
+        return $permiso && isset($permiso->$accion) && $permiso->$accion == 1;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ELIMINAR POR USUARIO — Borra todos los permisos de una persona
+    // ══════════════════════════════════════════════════════════════
+    public function eliminarPermisosUsuario(int $id_persona): bool
+    {
+        return $this->where('id_persona', $id_persona)->delete();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — OBTENER POR ID
+    // Busca un permiso específico por su id_permiso
+    // Devuelve nombre de persona, rol y menú (para pre-llenar el modal)
+    // ══════════════════════════════════════════════════════════════
+    public function obtenerPorId(int $id_permiso): ?object
+    {
+        return $this->db->table('permisos p')
+            ->select('
+                p.id_permiso,
+                p.id_persona,
+                p.id_rol,
+                p.menu_id,
+                p.read,
+                p.insert,
+                p.update,
+                p.delete,
+                pe.nombre          AS persona_nombre,
+                pe.apellido_paterno,
+                r.nombre           AS rol_nombre,
+                m.nombre           AS menu_nombre
+            ')
+            ->join('personas pe', 'p.id_persona = pe.id_persona', 'left')
+            ->join('roles r', 'p.id_rol     = r.id_rol', 'left')
+            ->join('menus m', 'p.menu_id    = m.id', 'left')
+            ->where('p.id_permiso', $id_permiso)
+            ->get()
+            ->getRowObject(); // devuelve UN objeto o null
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — EDITAR PERMISOS
+    // Actualiza SOLO read/insert/update/delete de un permiso existente
+    // Recibe el id_permiso directamente (el botón ✏️ de la tabla)
+    // NO cambia la persona, el rol ni el menú
+    // ══════════════════════════════════════════════════════════════
+    public function editarPermisos(int $id_permiso, array $permisos): bool
+    {
+        // Verificar que el permiso exista antes de actualizar
+        if (!$this->find($id_permiso)) {
+            return false;
+        }
+
+        return $this->update($id_permiso, [
+            'read' => $permisos['read'] ?? 0,
+            'insert' => $permisos['insert'] ?? 0,
+            'update' => $permisos['update'] ?? 0,
+            'delete' => $permisos['delete'] ?? 0,
+        ]);
+    }
+}

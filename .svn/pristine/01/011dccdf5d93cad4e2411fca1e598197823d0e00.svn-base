@@ -1,0 +1,35 @@
+<nav class="navbar-stripe">
+    <div class="nav-left">
+        <a href="<?= base_url('/') ?>" class="nav-logo">
+            <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
+            <span></span>
+        </a>
+    </div>
+
+    <ul class="nav-center" id="navLinks">
+        <li><a href="<?= base_url('/') ?>" class="link">Inicio</a></li>
+        <li>
+            <a href="<?= base_url('servicios') ?>" class="link">
+               Servicios</i>
+            </a>
+        </li>
+        <li>
+            <a href="<?= base_url('dsg') ?>" class="link">
+                DSG
+            </a>
+        </li>
+        <li><a href="<?= base_url('precio') ?>" class="link">Precios</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <a href="<?= base_url('/#contacto') ?>" class="btn-contact-sales">
+             Solicitar demo
+        </a>
+        <a href="<?= base_url('login') ?>" class="btn-sign-in">Iniciar sesión</a>
+        
+        
+        <button class="mobile-toggle" id="mobile-menu-toggle" type="button" aria-label="Abrir menú principal">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+    </div>
+</nav>

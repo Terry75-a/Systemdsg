@@ -1,0 +1,158 @@
+
+
+<main class="dsg-page">
+    <div class="container dsg-flex-container">
+        <div class="dsg-content">
+            <span class="badge-date">Desde 2010</span>
+            <h1 class="dsg-title">Transformando la manera de hacer negocios en Perú</h1>
+            <p class="dsg-description">
+                Somos una empresa peruana especializada en desarrollo de software a medida para pequeñas y medianas empresas. 
+                Nuestra misión es democratizar la tecnología y llevar soluciones innovadoras a cada rincón del país.
+            </p>
+        </div>
+
+        <div class="dsg-stats-cards">
+            <div class="stat-card">
+                <h2 class="stat-card-number">15+</h2>
+                <p class="stat-card-label">Años de experiencia</p>
+            </div>
+
+            <div class="stat-card">
+                <h2 class="stat-card-number">500+</h2>
+                <p class="stat-card-label">Empresas atendidas</p>
+            </div>
+
+            <div class="stat-card">
+                <h2 class="stat-card-number">8</h2>
+                <p class="stat-card-label">Sectores especializados</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<section class="timeline-section">
+    <div class="container">
+        <div class="timeline-header">
+            <span class="badge-trajectory">Nuestra Trayectoria</span>
+            <h2 class="timeline-main-title">Una historia de innovación constante</h2>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-item left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2010</div>
+                <div class="timeline-content">
+                    <h3>Los Inicios</h3>
+                    <p>DSG Peru Technology nace con la visión de modernizar los procesos de pequeños negocios peruanos mediante soluciones tecnológicas accesibles.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2015</div>
+                <div class="timeline-content">
+                    <h3>Expansión Nacional</h3>
+                    <p>Alcanzamos las 100 empresas clientes y expandimos nuestros servicios a nivel nacional, consolidando nuestro primer sistema especializado para restaurantes.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2019</div>
+                <div class="timeline-content">
+                    <h3>Especialización Sectorial</h3>
+                    <p>Desarrollamos sistemas específicos para 8 sectores diferentes: restaurantes, farmacias, minimarkets, veterinarias, y más.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="dedication-section">
+    <div class="container">
+        <div class="dedication-header">
+            <span class="badge-purpose">Nuestro Propósito</span>
+            <h2 class="dsg-section-title">¿A qué nos dedicamos?</h2>
+        </div>
+
+        <div class="dedication-grid">
+            <div class="dedication-card">
+                <div class="dedication-icon bg-light-green">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h3>Software a Medida</h3>
+                <p>Desarrollamos soluciones personalizadas que se adaptan perfectamente a las necesidades específicas de cada negocio.</p>
+            </div>
+
+            <div class="dedication-card">
+                <div class="dedication-icon bg-light-green">
+                    <i class="fa-solid fa-desktop"></i>
+                </div>
+                <h3>Soporte Técnico 24/7</h3>
+                <p>Equipo especializado disponible las 24 horas para garantizar que tu negocio nunca se detenga.</p>
+            </div>
+
+            <div class="dedication-card featured-dedication">
+                <div class="dedication-icon bg-solid-green">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <h3>Capacitación Continua</h3>
+                <p>Formamos a tu equipo para que aproveche al máximo todas las funcionalidades de nuestros sistemas.</p>
+            </div>
+
+            <div class="dedication-card">
+                <div class="dedication-icon bg-light-green">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3>Seguridad Garantizada</h3>
+                <p>Encriptación de nivel bancario y copias de seguridad automáticas para proteger tu información.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="values-section">
+    <div class="container">
+        <div class="values-header">
+            <span class="badge-essence">Nuestra Esencia</span>
+            <h2 class="values-title">Los valores que nos guían</h2>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-number">01</div>
+                <h3>Innovación</h3>
+                <p>Buscamos constantemente nuevas formas de mejorar y simplificar los procesos de nuestros clientes.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-number">02</div>
+                <h3>Compromiso</h3>
+                <p>Nos involucramos completamente en el éxito de cada empresa que confía en nosotros.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-number">03</div>
+                <h3>Accesibilidad</h3>
+                <p>Creemos que la tecnología de calidad debe estar al alcance de todos los emprendedores.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-number">04</div>
+                <h3>Excelencia</h3>
+                <p>Cada línea de código y cada interacción refleja nuestro estándar de calidad.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="cta-final-section">
+    <div class="container">
+        <div class="cta-card">
+            <h2 class="cta-title">¿Quieres ser parte de nuestra historia?</h2>
+            <p class="cta-subtitle">Únete a las más de 500 empresas que ya transformaron su negocio con DSG Peru Technology.</p>
+            <div class="cta-button-container">
+                <a href="<?= base_url('contacto') ?>" class="btn-dark-blue">Contáctanos</a>
+            </div>
+        </div>
+    </div>
+</section>

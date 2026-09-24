@@ -1,0 +1,28 @@
+<div class="card p-4 mx-auto shadow-sm border-0" style="max-width: 100%;">
+  <form>
+    <!-- Tema -->
+    <div class="mb-4">
+      <label class="form-label fw-bold" data-key="theme"><i class="fa-solid fa-moon me-2"></i>Tema</label>
+      <select class="form-select">
+        <option data-key="Clear">Claro</option>
+        <option data-key="Dark">Oscuro</option>
+      </select>
+    </div>
+
+    <!-- Idioma -->
+    <div class="mb-4">
+      <label class="form-label fw-bold" data-key="language"><i class="fa-solid fa-language me-2"></i>Idioma</label>
+      <select class="form-select" id="lenguajeSelector">
+        <option data-key="Spanish" value="es">Español</option>
+        <option value="en">Inglés</option>
+      </select>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="submit" data-key="Save changes" id="cambios" class="btn btn-success px-4">Guardar cambios</button>
+    </div>
+  </form>
+</div>
+
+<script src="<?= base_url('js/ingles.js') ?>"></script>

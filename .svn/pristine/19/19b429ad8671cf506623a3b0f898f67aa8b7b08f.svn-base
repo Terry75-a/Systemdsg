@@ -1,0 +1,379 @@
+<?php
+// Vista: app/Views/Permisos.php
+// Corregida para BD sistemadsgfffff — columnas con guión bajo
+?>
+
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0"><i class="fas fa-shield-alt me-2 text-primary"></i>Configuración de Permisos</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuevoPermiso">
+            <i class="fas fa-plus me-1"></i> Asignar / Actualizar Permiso
+        </button>
+    </div>
+
+    <!-- Alertas flash -->
+    <?php
+    $flashMessage = session()->getFlashdata('msg');
+    $flashTypeRaw = (string) (session()->getFlashdata('tipo') ?? 'info');
+    $allowedFlashTypes = ['success', 'danger', 'warning', 'info', 'primary', 'secondary', 'light', 'dark'];
+    $flashType = in_array($flashTypeRaw, $allowedFlashTypes, true) ? $flashTypeRaw : 'info';
+    ?>
+    <?php if ($flashMessage): ?>
+        <div class="alert alert-<?= esc($flashType) ?> alert-dismissible fade show">
+            <?= esc((string) $flashMessage) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tabla de permisos -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle mb-0" id="tablaPermisos">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Rol</th>
+                            <th>Módulo</th>
+                            <th class="text-center">Ver</th>
+                            <th class="text-center">Crear</th>
+                            <th class="text-center">Editar</th>
+                            <th class="text-center">Eliminar</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($permisos)): ?>
+                            <?php foreach ($permisos as $index => $p): ?>
+                                <tr>
+                                    <td><?= $index + 1 ?></td>
+                                    <td><?= esc($p->rol_nombre ?? 'Sin rol') ?></td>
+                                    <td><?= esc($p->menu_nombre ?? 'Sin módulo') ?></td>
+                                    <td class="text-center">
+                                        <?= $p->read == 1 ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?= $p->insert == 1 ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?= $p->update == 1 ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?= $p->delete == 1 ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-warning btn-editar" data-id="<?= $p->id_permiso ?>"
+                                            title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger btn-eliminar" data-id="<?= $p->id_permiso ?>"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    No hay permisos configurados. Usa el botón <strong>Asignar / Actualizar Permiso</strong>.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL — ASIGNAR / ACTUALIZAR PERMISO                          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalNuevoPermiso" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formNuevoPermiso">
+                <?= csrf_field() ?>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Asignar / Actualizar Permiso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Rol -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Rol <span class="text-danger">*</span></label>
+                        <select name="id_rol" class="form-select" required>
+                            <option value="">-- Selecciona un rol --</option>
+                            <?php foreach ($roles as $r): ?>
+                                <option value="<?= $r->id_rol ?>"><?= esc($r->nombre) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <!-- Módulo -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Módulo <span class="text-danger">*</span></label>
+                        <select name="menu_id" class="form-select" required>
+                            <option value="">-- Selecciona un módulo --</option>
+                            <?php foreach ($menus as $m): ?>
+                                <option value="<?= $m->id ?>"><?= esc($m->nombre) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="alert alert-info py-2 px-3 small mb-3" role="status">
+                        Si ya existe un permiso para este rol y módulo, se actualizará el registro existente.
+                    </div>
+                    <!-- Permisos -->
+                    <label class="form-label fw-semibold">Acciones permitidas</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="read" id="nuevo_read" value="1">
+                                <label class="form-check-label" for="nuevo_read">Ver</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="insert" id="nuevo_insert"
+                                    value="1">
+                                <label class="form-check-label" for="nuevo_insert">Crear</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="update" id="nuevo_update"
+                                    value="1">
+                                <label class="form-check-label" for="nuevo_update">Editar</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="delete" id="nuevo_delete"
+                                    value="1">
+                                <label class="form-check-label" for="nuevo_delete">Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL — EDITAR PERMISO                                        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalEditarPermiso" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEditarPermiso">
+                <?= csrf_field() ?>
+                <input type="hidden" id="edit_id_permiso" name="id_permiso">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Editar Permiso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">
+                        Rol: <strong id="edit_rol_nombre">—</strong> |
+                        Módulo: <strong id="edit_menu_nombre">—</strong>
+                    </p>
+                    <label class="form-label fw-semibold">Acciones permitidas</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="read" id="edit_read" value="1">
+                                <label class="form-check-label" for="edit_read">Ver</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="insert" id="edit_insert"
+                                    value="1">
+                                <label class="form-check-label" for="edit_insert">Crear</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="update" id="edit_update"
+                                    value="1">
+                                <label class="form-check-label" for="edit_update">Editar</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="delete" id="edit_delete"
+                                    value="1">
+                                <label class="form-check-label" for="edit_delete">Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-save me-1"></i>Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                                     -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+    const BASE_URL = '<?= base_url() ?>';
+    const csrfFieldName = '<?= csrf_token() ?>';
+    const modalNuevoPermisoElement = document.getElementById('modalNuevoPermiso');
+    const modalEditarPermisoElement = document.getElementById('modalEditarPermiso');
+    const formNuevoPermiso = document.getElementById('formNuevoPermiso');
+    const formEditarPermiso = document.getElementById('formEditarPermiso');
+
+    function getCsrfValue(form = document) {
+        const csrfInput = form.querySelector(`input[name="${csrfFieldName}"]`);
+        return csrfInput ? csrfInput.value : '';
+    }
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, options);
+        const data = await response.json().catch(() => ({
+            success: false,
+            message: 'La respuesta del servidor no fue válida.'
+        }));
+
+        if (!response.ok) {
+            throw new Error(data.message || 'La solicitud no se pudo completar.');
+        }
+
+        return data;
+    }
+
+    function resetEditModal() {
+        formEditarPermiso.reset();
+        document.getElementById('edit_id_permiso').value = '';
+        document.getElementById('edit_rol_nombre').textContent = '—';
+        document.getElementById('edit_menu_nombre').textContent = '—';
+    }
+
+    modalNuevoPermisoElement.addEventListener('hidden.bs.modal', () => formNuevoPermiso.reset());
+    modalEditarPermisoElement.addEventListener('hidden.bs.modal', resetEditModal);
+
+    // ── GUARDAR NUEVO ──────────────────────────────────────────────
+    formNuevoPermiso.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        try {
+            const res = await fetchJson(BASE_URL + 'permisos/guardar', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+
+            if (!res.success) {
+                alert(res.message || 'Error al guardar.');
+                return;
+            }
+
+            const modalNuevoPermiso = bootstrap.Modal.getInstance(modalNuevoPermisoElement);
+            if (modalNuevoPermiso) {
+                modalNuevoPermiso.hide();
+            }
+            location.reload();
+        } catch (error) {
+            alert(error.message || 'Error de conexión.');
+        }
+    });
+
+    // ── ABRIR MODAL EDITAR ────────────────────────────────────────
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
+            resetEditModal();
+
+            fetchJson(BASE_URL + 'permisos/obtener/' + id, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => {
+                    if (!res.success) {
+                        alert(res.message || 'No se pudo cargar el permiso.');
+                        return;
+                    }
+
+                    const p = res.permiso;
+
+                    document.getElementById('edit_id_permiso').value = p.id_permiso;
+                    document.getElementById('edit_rol_nombre').textContent = p.rol_nombre ?? '—';
+                    document.getElementById('edit_menu_nombre').textContent = p.menu_nombre ?? '—';
+                    document.getElementById('edit_read').checked = Number(p.read) === 1;
+                    document.getElementById('edit_insert').checked = Number(p.insert) === 1;
+                    document.getElementById('edit_update').checked = Number(p.update) === 1;
+                    document.getElementById('edit_delete').checked = Number(p.delete) === 1;
+
+                    new bootstrap.Modal(modalEditarPermisoElement).show();
+                })
+                .catch(error => alert(error.message || 'Error al cargar el permiso.'));
+        });
+    });
+
+    // ── GUARDAR EDICIÓN ───────────────────────────────────────────
+    formEditarPermiso.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const id = document.getElementById('edit_id_permiso').value;
+        const formData = new FormData(this);
+
+        try {
+            const res = await fetchJson(BASE_URL + 'permisos/editar/' + id, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+
+            if (!res.success) {
+                alert(res.message || 'Error al actualizar.');
+                return;
+            }
+
+            const modalEditarPermiso = bootstrap.Modal.getInstance(modalEditarPermisoElement);
+            if (modalEditarPermiso) {
+                modalEditarPermiso.hide();
+            }
+            location.reload();
+        } catch (error) {
+            alert(error.message || 'Error de conexión.');
+        }
+    });
+
+    // ── ELIMINAR ──────────────────────────────────────────────────
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!confirm('¿Eliminar este permiso?')) return;
+            const id = this.dataset.id;
+
+            fetchJson(BASE_URL + 'permisos/eliminar/' + id, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    [csrfFieldName]: getCsrfValue(formNuevoPermiso)
+                }).toString()
+            })
+                .then(res => {
+                    if (!res.success) {
+                        alert(res.message || 'Error al eliminar.');
+                        return;
+                    }
+
+                    location.reload();
+                })
+                .catch(error => alert(error.message || 'Error de conexión.'));
+        });
+    });
+</script>

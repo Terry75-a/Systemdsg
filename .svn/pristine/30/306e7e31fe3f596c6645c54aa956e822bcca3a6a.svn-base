@@ -1,0 +1,289 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\EmpresaModel;
+use App\Models\ClientesModel;
+use App\Models\PersonasAddModel;
+use App\Services\External\DocumentoLookupService;
+use App\Services\Personas\PersonaFormService;
+use App\Services\Personas\PersonaValidationService;
+use App\Support\PersonasCatalog;
+
+class PersonasAddController extends BaseController
+{
+    protected $db;
+    protected DocumentoLookupService $documentoLookupService;
+    protected PersonaFormService $personaFormService;
+    protected PersonaValidationService $personaValidationService;
+    protected PersonasAddModel $personaModel;
+    protected EmpresaModel $empresaModel;
+    protected ClientesModel $clientesModel;
+
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+        $this->documentoLookupService = service('documentoLookup');
+        $this->personaFormService = service('personaForm');
+        $this->personaValidationService = service('personaValidation');
+        $this->personaModel = new PersonasAddModel();
+        $this->empresaModel = new EmpresaModel();
+        $this->clientesModel = new ClientesModel();
+    }
+
+    private function verificarSesion(): mixed
+    {
+        return $this->verificarSesionActiva();
+    }
+
+    private function requerirPermisoPersonas(string $accion): mixed
+    {
+        helper('auth');
+
+        return requerir_permiso(PersonasCatalog::MENU_ID, $accion);
+    }
+
+    private function normalizarTexto(?string $value): ?string
+    {
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
+    }
+
+    private function obtenerDepartamentos(): array
+    {
+        try {
+            return $this->db
+                ->table('ubigeo_peru_departments')
+                ->orderBy('name', 'ASC')
+                ->get()
+                ->getResultObject();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function obtenerEmpresaPorPersona(int $idPersona): ?object
+    {
+        return $this->empresaModel->obtenerPorPersona($idPersona);
+    }
+
+    private function obtenerPrimerErrorValidacion(): string
+    {
+        $errors = $this->validator?->getErrors() ?? [];
+
+        if ($errors === []) {
+            return 'Hay errores de validación al registrar la persona.';
+        }
+
+        return (string) array_values($errors)[0];
+    }
+
+    private function responderErrorRegistro(string $message, string $type = 'warning')
+    {
+        session()->setFlashdata('msg', $message);
+        session()->setFlashdata('tipo', $type);
+
+        return redirect()->to(base_url('personasadd'))->withInput();
+    }
+
+    private function guardarPersona(array $dataPersona, ?int $idPersonaInt): int
+    {
+        if ($idPersonaInt !== null) {
+            if (! $this->personaModel->update($idPersonaInt, $dataPersona)) {
+                throw new \RuntimeException('No se pudo actualizar la persona.');
+            }
+
+            return $idPersonaInt;
+        }
+
+        $dataPersona['created_at'] = date('Y-m-d H:i:s');
+
+        if (! $this->personaModel->insert($dataPersona)) {
+            throw new \RuntimeException('No se pudo registrar la persona.');
+        }
+
+        return (int) $this->personaModel->getInsertID();
+    }
+
+    private function guardarEmpresaPorRuc(array $input, string $ruc, int $idPersona): void
+    {
+        $empresaData = $this->personaFormService->construirDataEmpresa(
+            $input,
+            $ruc,
+            $idPersona
+        );
+
+        $this->empresaModel->guardarPorRuc($ruc, $empresaData);
+    }
+
+    private function esEmpresaLegacySeleccionada(array $input): bool
+    {
+        return (string) ($input['empresa'] ?? '') === '1';
+    }
+
+    private function guardarRelacionClienteLegacy(int $idPersona): void
+    {
+        $clienteExistente = $this->clientesModel->find($idPersona);
+
+        if ($clienteExistente !== null) {
+            return;
+        }
+
+        $dataCliente = [
+            'id_cliente' => $idPersona,
+            'id_persona' => $idPersona,
+            'id_empresa' => 1,
+            'estado' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+
+        if (! $this->clientesModel->insert($dataCliente)) {
+            throw new \RuntimeException('No se pudo registrar la relación comercial legacy.');
+        }
+    }
+
+    public function index($id = null)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir) {
+            return $redir;
+        }
+
+        $permiso = $this->requerirPermisoPersonas('insert');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        $persona = null;
+        $empresa = null;
+
+        if ($id !== null) {
+            $persona = $this->personaModel->find((int) $id);
+            if (! $persona) {
+                return $this->redirigirConFlash('personas', 'Persona no encontrada.', 'warning');
+            }
+
+            $empresa = $this->obtenerEmpresaPorPersona((int) $id);
+        }
+
+        $data = $this->crearDatosVistaAdmin($id === null ? 'Agregar Persona' : 'Editar Persona', 'personas', [
+            'departamentos' => $this->obtenerDepartamentos(),
+            'persona' => $persona,
+            'empresa' => $empresa,
+        ]);
+
+        return $this->renderAdminPage('personas/personasadd', $data);
+    }
+
+    public function buscarDni()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir) {
+            return $redir;
+        }
+
+        $permiso = $this->requerirPermisoPersonas('insert');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        $serviceResult = $this->documentoLookupService->buscarDni((string) $this->request->getPost('dni'));
+
+        return $this->responderResultadoServicio($serviceResult);
+    }
+
+    public function buscarRuc()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir) {
+            return $redir;
+        }
+
+        $permiso = $this->requerirPermisoPersonas('insert');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        $serviceResult = $this->documentoLookupService->buscarRuc((string) $this->request->getPost('ruc'));
+
+        return $this->responderResultadoServicio($serviceResult);
+    }
+
+    public function guardar_todo()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir) {
+            return $redir;
+        }
+
+        $permiso = $this->requerirPermisoPersonas('insert');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        $idPersona = $this->normalizarTexto($this->request->getPost('id_persona'));
+        $idPersonaInt = $idPersona !== null ? (int) $idPersona : null;
+        $input = $this->request->getPost() ?? [];
+
+        if (! $this->validate(
+            $this->personaValidationService->reglasRegistro($idPersonaInt),
+            $this->personaValidationService->erroresRegistro()
+        )) {
+            return $this->responderErrorRegistro($this->obtenerPrimerErrorValidacion());
+        }
+
+        $dni = trim((string) $this->request->getPost('dni'));
+        $correo = trim((string) $this->request->getPost('correo'));
+
+        if ($idPersonaInt !== null) {
+            $errorDuplicados = $this->personaFormService->validarDuplicadosEdicion($idPersonaInt, $dni, $correo);
+            if ($errorDuplicados !== null) {
+                return $this->responderErrorRegistro($errorDuplicados);
+            }
+        }
+
+        $dataPersona = $this->personaFormService->construirDataPersona(
+            $input,
+            $dni,
+            $correo
+        );
+
+        $this->db->transBegin();
+
+        try {
+            $idGenerado = $this->guardarPersona($dataPersona, $idPersonaInt);
+
+            $ruc = $this->normalizarTexto($this->request->getPost('ruc'));
+            if ($ruc !== null) {
+                $this->guardarEmpresaPorRuc($input, $ruc, $idGenerado);
+            }
+
+            if ($this->esEmpresaLegacySeleccionada($input)) {
+                $this->guardarRelacionClienteLegacy($idGenerado);
+            }
+
+            if ($this->db->transStatus() === false) {
+                throw new \RuntimeException('La transacción quedó en estado inválido.');
+            }
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+
+            log_message('error', '[personas.guardar_todo] {exception}: {message}', [
+                'exception' => $e::class,
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->responderErrorRegistro('No se pudo guardar la persona.', 'danger');
+        }
+
+        $this->db->transCommit();
+
+        return $this->redirigirConFlash('personas', 'Persona registrada correctamente.');
+    }
+
+    public function registrar_persona()
+    {
+        return $this->guardar_todo();
+    }
+}

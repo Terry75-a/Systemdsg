@@ -1,0 +1,40 @@
+<?php
+
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PersonasAddModel extends Model
+{
+    protected $table = 'personas';
+    //protected $primaryKey = 'id_persona';
+    protected $allowedFields = [
+        'nombre',
+        'apellido_paterno',
+        'apellido_materno',
+        'dni',
+        'telefono',
+        'correo',
+        'direccion',
+        'fecha_nacimiento',
+        'id_pais',
+        'id_tipo_documento',
+        'id_distrito',
+        'id_departamento',
+        'id_provincia',
+        'imagen',
+        'created_at'
+    ];
+    public $useTimestamps = false;
+
+
+   public function ExisteDni($dni){
+
+     return $this->where('dni', $dni)-> first() !==null;
+
+   }
+ 
+
+
+}

@@ -1,0 +1,690 @@
+<?php
+?>
+
+<div class="container-fluid px-2">
+
+    <!-- Mensajes flash -->
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= session()->getFlashdata('success') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fa-solid fa-user-plus me-2"></i>Registrar Nueva Persona
+            </h6>
+        </div>
+        <div class="card-body">
+
+            <form action="<?= base_url('personas/add') ?>" method="POST" id="formPersona">
+                <?= csrf_field() ?>
+
+                <!-- ══════════════════════════════════════════════ -->
+                <!-- SECCIÓN: DATOS PERSONALES                      -->
+                <!-- ══════════════════════════════════════════════ -->
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">
+                    <i class="fa-solid fa-id-card me-1"></i> Datos Personales
+                </h6>
+
+                <!-- FILA 1: DNI + Botón Buscar -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="dni" class="form-label fw-semibold">
+                            DNI <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="text"
+                                   id="dni"
+                                   name="dni"
+                                   class="form-control"
+                                   maxlength="8"
+                                   placeholder="Ej: 12345678"
+                                   required>
+                            <!-- BOTÓN QUE DISPARA LA BÚSQUEDA -->
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    id="btnBuscarDni"
+                                    title="Buscar por DNI">
+                                <span id="spinnerDni" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <i class="fa-solid fa-magnifying-glass" id="iconoDni"></i>
+                                Buscar
+                            </button>
+                        </div>
+                        <!-- Alerta debajo del campo DNI -->
+                        <div id="alertaDni" class="mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- FILA 2: Nombre + Apellido Paterno + Apellido Materno -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label fw-semibold">
+                            Nombre(s) <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="nombre"
+                               name="nombre"
+                               class="form-control"
+                               placeholder="Se llena automáticamente"
+                               required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="apellido_paterno" class="form-label fw-semibold">
+                            Apellido Paterno <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="apellido_paterno"
+                               name="apellido_paterno"
+                               class="form-control"
+                               placeholder="Se llena automáticamente"
+                               required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="apellido_materno" class="form-label fw-semibold">
+                            Apellido Materno
+                        </label>
+                        <input type="text"
+                               id="apellido_materno"
+                               name="apellido_materno"
+                               class="form-control"
+                               placeholder="Se llena automáticamente">
+                    </div>
+                </div>
+
+                <!-- FILA 3: Teléfono + Correo + Fecha nacimiento -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="telefono" class="form-label fw-semibold">Teléfono</label>
+                        <input type="text"
+                               id="telefono"
+                               name="telefono"
+                               class="form-control"
+                               maxlength="20"
+                               placeholder="Ej: 999888777">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo" class="form-label fw-semibold">Correo</label>
+                        <input type="email"
+                               id="correo"
+                               name="correo"
+                               class="form-control"
+                               placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fecha_nacimiento" class="form-label fw-semibold">
+                            Fecha de Nacimiento
+                        </label>
+                        <input type="date"
+                               id="fecha_nacimiento"
+                               name="fecha_nacimiento"
+                               class="form-control">
+                    </div>
+                </div>
+
+                <!-- FILA 4: Dirección + Departamento + Provincia + Distrito -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="direccion_rep" class="form-label fw-semibold">
+                            Dirección Personal
+                        </label>
+                        <input type="text"
+                               id="direccion_rep"
+                               name="direccion_rep"
+                               class="form-control"
+                               placeholder="Av. / Jr. / Calle...">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="departamento_rep" class="form-label fw-semibold">
+                            Departamento
+                        </label>
+                        <select id="departamento_rep" name="departamento_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                            <?php foreach ($departamentos as $dep): ?>
+                                <option value="<?= $dep->id ?>">
+                                    <?= esc($dep->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="provincia_rep" class="form-label fw-semibold">
+                            Provincia
+                        </label>
+                        <select id="provincia_rep" name="provincia_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="distrito_rep" class="form-label fw-semibold">
+                            Distrito
+                        </label>
+                        <select id="distrito_rep" name="distrito_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════ -->
+                <!-- SECCIÓN: DATOS EMPRESARIALES (opcional)        -->
+                <!-- ══════════════════════════════════════════════ -->
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
+                    <i class="fa-solid fa-building me-1"></i> Datos Empresariales
+                    <small class="text-muted fw-normal">(opcional)</small>
+                </h6>
+
+                <!-- FILA 5: RUC + Botón Buscar RUC -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="ruc" class="form-label fw-semibold">RUC</label>
+                        <div class="input-group">
+                            <input type="text"
+                                   id="ruc"
+                                   name="ruc"
+                                   class="form-control"
+                                   maxlength="11"
+                                   placeholder="Ej: 20123456789">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    id="btnBuscarRuc"
+                                    title="Buscar por RUC">
+                                <span id="spinnerRuc" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <i class="fa-solid fa-magnifying-glass" id="iconoRuc"></i>
+                                Buscar
+                            </button>
+                        </div>
+                        <div id="alertaRuc" class="mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- FILA 6: Razón social + Correo empresarial + Dirección fiscal -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="razon_social" class="form-label fw-semibold">Razón Social</label>
+                        <input type="text"
+                               id="razon_social"
+                               name="razon_social"
+                               class="form-control"
+                               placeholder="Se llena automáticamente">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo_empresa" class="form-label fw-semibold">
+                            Correo Empresarial
+                        </label>
+                        <input type="email"
+                               id="correo_empresa"
+                               name="correo_empresa"
+                               class="form-control"
+                               placeholder="empresa@correo.com">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="direccion_fiscal" class="form-label fw-semibold">
+                            Dirección Fiscal
+                        </label>
+                        <input type="text"
+                               id="direccion_fiscal"
+                               name="direccion_fiscal"
+                               class="form-control"
+                               placeholder="Se llena automáticamente">
+                    </div>
+                </div>
+
+                <!-- FILA 7: Código de cliente + Departamento + Provincia + Distrito + Sucursales -->
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label for="" class="form-label fw-semibold">
+                            Codigo de cliente
+                        </label>
+                        <input type="number" class="form-control">
+
+                    </div>
+                    <div class="col-md-2">
+                        <label for="departamento_rep" class="form-label fw-semibold">
+                            Departamento
+                        </label>
+                        <select id="departamento_repdos" name="departamento_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                            <?php foreach ($departamentos as $dep): ?>
+                                <option value="<?= $dep->id ?>">
+                                    <?= esc($dep->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="provincia_repdos" class="form-label fw-semibold">
+                            Provincia
+                        </label>
+                        <select id="provincia_repdos" name="provincia_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="distrito_repdos" class="form-label fw-semibold">
+                            Distrito
+                        </label>
+                        <select id="distrito_repdos" name="distrito_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                    <!--<div class="col-md-2">
+                        <label for="" class="form-label fw-semibold">
+                            Surcusal
+                        </label>
+                        <input type="text" class="form-control">
+                    </div>
+                            -->
+                    <div class="col-md-2 d-flex align-items-end">
+                     <button type="button" data-bs-target="#ModalSucursal" data-bs-toggle="modal" class="btn btn-outline-info btn-sm w-100 mb-3" style="height: 38px; font-weight: 500;">
+                      <i class="fa-solid fa-plus-circle me-1"></i>
+                       agregar mas Sucursales
+                        </button>
+                    </div>
+                </div>
+                <div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white py-2">
+                <h6 class="m-0 mb-0" style="font-size: 0.9rem;">
+                    
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="tablaSucursales">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-3">Nombre Sucursal</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th class="text-center">Acción</th>
+                                <th class="text-center">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySucursales">
+                            <tr id="filaVacia">
+                                <td colspan="5" class="text-center text-muted py-3">
+                                    No hay sucursales agregadas todavía.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- BOTONES -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4" id="btnGuardar">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Persona
+                    </button>
+                    <a href="<?= base_url('personas') ?>" class="btn btn-secondary px-4">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Cancelar
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container-fluid-px-4">
+      
+</div>
+<div class="modal fade" id="ModalSucursal" tabindex="1" aria-hidden="true">
+ <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Registrar Sucursal</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <form id="formSucursal">
+                <div class="mb-3">
+                    <label for="nombre_sucursal" class="form-label">Razón Social(*):</label>
+                    <input type="text" class="form-control" id="nombre_sucursal" name="nombre_sucursal" placeholder="Ej: Sucursal Lima Centro">
+                </div>
+                <div class="mb-3">
+                    <label for="direccion_sucursal" class="form-label">Dirección (*):</label>
+                    <input type="text" class="form-control" id="direccion_sucursal" name="direccion_sucursal" placeholder="Ej: Av. Arequipa 1234, Lima">
+                </div>
+                <div class="mb-3">
+                    <label for="telefono_sucursal" class="form-label">Teléfono (*):</label>
+                    <input type="text" class="form-control" id="telefono_sucursal" name="telefono_sucursal" placeholder="Ej: 012345678">
+                </div>
+                <div class="mb-3">
+                    <label for="correo_sucursal" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="correo_sucursal" name="correo_sucursal" placeholder="Ej: aquria@gmail.com">
+                </div>
+                <div class="mb-3">
+                   <label for="representante_sucursal" class="form-label">Representante (*):</label>
+                   <input type="text" class="form-control" id="representante_sucursal" name="representante_sucursal" placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="mb-3">
+                   <label for="estado_label" class="form-label">Estado (*):</label>
+                   <select class="form-control" id="estado_label" name="estado_label">
+                       <option value="1">Activo</option>
+                       <option value="0">Inactivo</option>
+                   </select>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Sucursal
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-xmark me-1"></i> Cancelar
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+ <style>
+.body-wrapper {
+  padding-top: 20px !important;
+}
+</style>
+<script>
+// ── TOKEN CSRF (necesario para todos los POST en CI4)
+const csrfName  = '<?= csrf_token() ?>';
+const csrfHash  = '<?= csrf_hash() ?>';
+
+// ── BASE URL del proyecto
+const BASE_URL  = '<?= base_url() ?>';
+
+// ════════════════════════════════════════════════════
+// BÚSQUEDA POR DNI
+// El controlador devuelve: { success, nombres, apellido_paterno, apellido_materno }
+// Ruta: POST /personas/buscar-dni
+// ════════════════════════════════════════════════════
+document.getElementById('btnBuscarDni').addEventListener('click', async function () {
+
+    const dni = document.getElementById('dni').value.trim();
+    const alerta = document.getElementById('alertaDni');
+
+    // Limpiar alerta anterior
+    alerta.innerHTML = '';
+
+    // Validar que el DNI tenga exactamente 8 dígitos
+    if (!/^\d{8}$/.test(dni)) {
+        alerta.innerHTML = `<small class="text-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            El DNI debe tener exactamente 8 dígitos numéricos.
+        </small>`;
+        return;
+    }
+
+    // Mostrar spinner, ocultar ícono
+    document.getElementById('spinnerDni').classList.remove('d-none');
+    document.getElementById('iconoDni').classList.add('d-none');
+    this.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append('dni', dni);
+        formData.append(csrfName, csrfHash); // token CSRF obligatorio en CI4
+
+        // POST a la ruta definida en Routes.php
+        const response = await fetch(`${BASE_URL}personas/buscar-dni`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // ✅ Llenar los campos automáticamente con los datos del API
+            document.getElementById('nombre').value           = data.nombres          ?? '';
+            document.getElementById('apellido_paterno').value = data.apellido_paterno ?? '';
+            document.getElementById('apellido_materno').value = data.apellido_materno ?? '';
+
+            // Mostrar mensaje de éxito
+            alerta.innerHTML = `<small class="text-success">
+                <i class="fa-solid fa-circle-check"></i>
+                Datos encontrados correctamente.
+            </small>`;
+
+            // Enfocar el campo teléfono para que el usuario continúe llenando
+            document.getElementById('telefono').focus();
+
+        } else {
+            // ❌ DNI no encontrado — limpiar campos y mostrar error
+            document.getElementById('nombre').value           = '';
+            document.getElementById('apellido_paterno').value = '';
+            document.getElementById('apellido_materno').value = '';
+
+            alerta.innerHTML = `<small class="text-danger">
+                <i class="fa-solid fa-circle-xmark"></i>
+                ${data.message ?? 'DNI no encontrado o error en el servicio.'}
+            </small>`;
+        }
+
+    } catch (error) {
+        alerta.innerHTML = `<small class="text-danger">
+            <i class="fa-solid fa-circle-xmark"></i>
+            Error de conexión. Intenta nuevamente.
+        </small>`;
+        console.error('Error en búsqueda DNI:', error);
+
+    } finally {
+        // Restaurar botón y spinner siempre, haya error o no
+        document.getElementById('spinnerDni').classList.add('d-none');
+        document.getElementById('iconoDni').classList.remove('d-none');
+        this.disabled = false;
+    }
+});
+
+// También buscar al presionar Enter en el campo DNI
+document.getElementById('dni').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault(); // evitar submit del form
+        document.getElementById('btnBuscarDni').click();
+    }
+});
+
+// ════════════════════════════════════════════════════
+// BÚSQUEDA POR RUC
+// El controlador devuelve: { success, razon, direccion }
+// Ruta: POST /personas/buscar-ruc
+// ════════════════════════════════════════════════════
+document.getElementById('btnBuscarRuc').addEventListener('click', async function () {
+
+    const ruc    = document.getElementById('ruc').value.trim();
+    const alerta = document.getElementById('alertaRuc');
+
+    alerta.innerHTML = '';
+
+    // Validar que el RUC tenga 11 dígitos
+    if (!/^\d{11}$/.test(ruc)) {
+        alerta.innerHTML = `<small class="text-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            El RUC debe tener exactamente 11 dígitos numéricos.
+        </small>`;
+        return;
+    }
+
+    document.getElementById('spinnerRuc').classList.remove('d-none');
+    document.getElementById('iconoRuc').classList.add('d-none');
+    this.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append('ruc', ruc);
+        formData.append(csrfName, csrfHash);
+
+        const response = await fetch(`${BASE_URL}personas/buscar-ruc`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('razon_social').value    = data.razon    ?? '';
+            document.getElementById('direccion_fiscal').value = data.direccion ?? '';
+
+            alerta.innerHTML = `<small class="text-success">
+                <i class="fa-solid fa-circle-check"></i>
+                Empresa encontrada correctamente.
+            </small>`;
+
+        } else {
+            document.getElementById('razon_social').value    = '';
+            document.getElementById('direccion_fiscal').value = '';
+
+            alerta.innerHTML = `<small class="text-danger">
+                <i class="fa-solid fa-circle-xmark"></i>
+                ${data.message ?? 'RUC no encontrado o error en el servicio.'}
+            </small>`;
+        }
+
+    } catch (error) {
+        alerta.innerHTML = `<small class="text-danger">
+            <i class="fa-solid fa-circle-xmark"></i>
+            Error de conexión. Intenta nuevamente.
+        </small>`;
+        console.error('Error en búsqueda RUC:', error);
+
+    } finally {
+        document.getElementById('spinnerRuc').classList.add('d-none');
+        document.getElementById('iconoRuc').classList.remove('d-none');
+        this.disabled = false;
+    }
+});
+
+// También buscar al presionar Enter en el campo RUC
+document.getElementById('ruc').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('btnBuscarRuc').click();
+    }
+});
+
+// ════════════════════════════════════════════════════
+// UBIGEO EN CASCADA (Departamento → Provincia → Distrito)
+// Ruta: GET /ubigeo/provincias/{id_dep}
+// Ruta: GET /ubigeo/distritos/{id_prov}
+// ════════════════════════════════════════════════════
+
+document.getElementById('departamento_repdos').addEventListener('change', async function (){
+    const idDep         = this.value;
+    const selectProvDos = document.getElementById('provincia_repdos');
+    const selectDistDos = document.getElementById('distrito_repdos');
+
+    selectProvDos.innerHTML = '<option value="">-- Seleccionar --</option>';
+    selectDistDos.innerHTML = '<option value="">-- Seleccionar --</option>';
+
+
+    if(!idDep) return;
+
+    try{
+         const res = await fetch(`${BASE_URL}ubigeo/provincias/${idDep}`);
+         const data = await res.json();
+
+         data.forEach(prov => {
+            const opt = document.createElement('option');
+            opt.value = prov.id;
+            opt.textContent = prov.name;
+            selectProvDos.appendChild(opt);
+            
+         });
+    } catch(e){
+        console.error('Error cargando provincias:', e);
+    }
+});
+document.getElementById('departamento_rep').addEventListener('change', async function () {
+    const idDep        = this.value;
+    const selectProv   = document.getElementById('provincia_rep');
+    const selectDist   = document.getElementById('distrito_rep');
+    
+    
+
+    
+    // Resetear provincia y distrito
+    selectProv.innerHTML = '<option value="">-- Seleccionar --</option>';
+    selectDist.innerHTML = '<option value="">-- Seleccionar --</option>';
+    
+    
+    
+
+    if (!idDep) return;
+
+    try {
+        const res  = await fetch(`${BASE_URL}ubigeo/provincias/${idDep}`);
+        const data = await res.json();
+
+        data.forEach(prov => {
+            const opt = document.createElement('option');
+            opt.value       = prov.id;
+            opt.textContent = prov.name;
+            selectProv.appendChild(opt);
+        });
+    } catch (e) {
+        console.error('Error cargando provincias:', e);
+    }
+});
+
+document.getElementById('provincia_rep').addEventListener('change', async function () {
+    const idProv     = this.value;
+    const selectDist = document.getElementById('distrito_rep');
+    
+   
+
+     
+   
+
+    selectDist.innerHTML = '<option value="">-- Seleccionar --</option>';
+
+   
+    
+
+    if (!idProv) return;
+
+    try {
+        const res  = await fetch(`${BASE_URL}ubigeo/distritos/${idProv}`);
+        const data = await res.json();
+
+        data.forEach(dist => {
+            const opt = document.createElement('option');
+            opt.value       = dist.id;
+            opt.textContent = dist.name;
+            selectDist.appendChild(opt);
+        });
+    } catch (e) {
+        console.error('Error cargando distritos:', e);
+    }
+});
+document.getElementById('provincia_repdos').addEventListener('change', async function () {
+    const idProv = this.value;
+    const selectDistDos = document.getElementById('distrito_repdos');
+
+    selectDistDos.innerHTML = '<option value="">-- Seleccionar --</option>';
+
+    if (!idProv) return;
+
+    try {
+        const res  = await fetch(`${BASE_URL}ubigeo/distritos/${idProv}`);
+        const data = await res.json();
+
+        data.forEach(dist => {
+            const opt = document.createElement('option');
+            opt.value = dist.id;
+            opt.textContent = dist.name;
+            selectDistDos.appendChild(opt);
+        });
+    } catch (e) {
+        console.error('Error cargando distritos:', e);
+    }
+});
+</script>

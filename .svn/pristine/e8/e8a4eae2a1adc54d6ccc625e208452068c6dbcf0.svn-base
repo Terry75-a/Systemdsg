@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Controllers;
+use CodeIgniter\Controller;
+
+class ClientesController extends BaseController
+{
+    public function index()
+    {  
+        $data['titulo'] = 'Gestión de Clientes';
+        session()->set('last_page', 'clientes');
+
+        echo view('layouts/header');
+        echo view('layouts/sidebar'); // <-- primero sidebar
+        echo view('layouts/topbar', $data); // <-- luego topbar
+        echo view('clientes/clientes', $data); // <-- contenido principal
+
+        
+
+    }
+}
+
+
+

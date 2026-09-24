@@ -1,0 +1,190 @@
+/* Sección principal */
+.contact-section {
+  position: relative;
+  padding: 100px 20px 60px;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 35px;
+}
+
+/* Píldora */
+.contact-badge {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* Texto intro */
+.contact-intro {
+  margin-top: 40px;
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin-inline: auto;
+  line-height: 1.5;
+}
+
+/* Tarjeta glass */
+.glass {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 35px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* Formulario */
+.contact-card {
+  margin: 40px auto;
+  padding: 40px;
+  max-width: 900px;
+  text-align: left;
+}
+
+.contact-card h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.contact-sub {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #bbb;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+/* Botón */
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit .arrow {
+  margin-left: 8px;
+  transition: transform 0.3s;
+}
+
+.btn-submit:hover {
+  background: #0f0;
+  color: #000;
+}
+
+.btn-submit:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Grid de info */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.info-card {
+  padding: 25px;
+  text-align: center;
+}
+
+.info-card h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.info-card p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.info-card a {
+  color: #0f0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.info-card small {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+/* Botón mapa */
+.map-btn {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 6px 14px;
+  background: #0f0;
+  color: #000 !important;
+  font-weight: 600;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.map-btn:hover {
+  background: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .contact-card {
+    padding: 25px;
+  }
+
+  .btn-submit {
+    width: 100%;
+  }
+}

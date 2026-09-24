@@ -1,0 +1,89 @@
+<main class="container-fluid py-4 admin-page" id="main-content">
+  <section class="card border-0 shadow-sm overflow-hidden">
+    <div class="card-body p-4 p-lg-5">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+          <p class="text-uppercase text-muted fw-semibold small mb-1">Mi cuenta</p>
+          <h1 class="h4 mb-1"><i class="fa-solid fa-id-badge me-2 text-primary" aria-hidden="true"></i>Perfil del usuario</h1>
+          <p class="text-muted mb-0">Actualizá tu nombre y tu contraseña sin salir del panel.</p>
+        </div>
+      </div>
+
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-4">
+          <div class="admin-muted-block p-4 text-center h-100">
+            <img id="fotoPerfil" src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Vista previa de la foto de perfil" class="rounded-circle border border-3 border-white shadow-sm mb-3" width="112" height="112" style="object-fit: cover;">
+            <h5 class="mb-1"><?= esc($perfil['nombre'] ?? 'Usuario') ?></h5>
+            <p class="text-muted small mb-3">Podés previsualizar una imagen antes de guardarla.</p>
+            <button type="button" class="btn btn-outline-success" onclick="document.getElementById('Byimagen').click()" aria-describedby="ayudaFotoPerfil">
+              <i class="fa-solid fa-image me-2" aria-hidden="true"></i>Elegir imagen
+            </button>
+            <input type="file" id="Byimagen" accept="image/*" class="visually-hidden" onchange="Most(event)" aria-describedby="ayudaFotoPerfil">
+            <p class="small text-muted mb-0 mt-3" id="ayudaFotoPerfil">Formatos sugeridos: JPG o PNG. Esta acción solo cambia la vista previa hasta guardar.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <?php if (session()->getFlashdata('msg')): ?>
+            <div class="alert alert-<?= esc(session()->getFlashdata('tipo') ?? 'success') ?> d-flex align-items-start gap-2" role="alert" aria-live="polite">
+              <i class="fa-solid fa-circle-info mt-1" aria-hidden="true"></i>
+              <div><?= esc(session()->getFlashdata('msg')) ?></div>
+            </div>
+          <?php endif; ?>
+
+          <form action="<?= base_url('perfil/actualizar') ?>" method="post" class="admin-muted-block p-4 bg-white" aria-labelledby="perfil-form-title">
+            <?= csrf_field() ?>
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+              <div>
+                <h5 class="mb-1" id="perfil-form-title">Datos principales</h5>
+                <p class="text-muted mb-0 small">Mantené actualizada tu información de acceso.</p>
+              </div>
+              <span class="badge text-bg-light border text-secondary">Campos sensibles protegidos por sesión</span>
+            </div>
+
+            <div class="mb-4">
+              <label for="perfil_nombre" class="form-label fw-semibold">Nombre</label>
+              <input type="text" class="form-control" id="perfil_nombre" name="nombre" value="<?= esc(old('nombre', $perfil['nombre'])) ?>" autocomplete="name">
+              <div class="form-text">Es el nombre visible dentro del panel administrativo.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label fw-semibold">Nueva contraseña</label>
+              <div class="input-group">
+                <input type="password" class="form-control border-end-0" id="password" name="password" placeholder="••••••••••" autocomplete="new-password" aria-describedby="passwordHelp">
+                <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePasswordVisibility()" aria-controls="password" aria-label="Mostrar u ocultar contraseña">
+                  <i class="fa-solid fa-eye-slash" id="togglePasswordIcon" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="form-text" id="passwordHelp">Dejalo vacío si no querés cambiarla.</div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-4">
+              <button type="submit" class="btn btn-success px-4">
+                <i class="fa-solid fa-floppy-disk me-2" aria-hidden="true"></i>Guardar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="<?= base_url('js/subirimage.js') ?>"></script>
+<script>
+  function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const icon = document.getElementById('togglePasswordIcon');
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    } else {
+      passwordInput.type = 'password';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    }
+  }
+</script>

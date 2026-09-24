@@ -1,0 +1,73 @@
+<div class="container-fluid p-0">
+    <h1 class="mb-4">Bienvenido, <?= $username ?></h1>
+
+    <div class="row">
+        <!-- Tarjeta 1 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3><?= $totalClientes ?? 0 ?></h3>
+                    <p>Total Clientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-user-check fa-3x text-success mb-3"></i>
+                    <h3>0</h3>
+                    <p>Clientes Activos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-user-plus fa-3x text-info mb-3"></i>
+                    <h3><?= $nuevosClientes ?? 0 ?></h3>
+                    <p>Nuevos Este Mes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 4 -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-dollar-sign fa-3x text-warning mb-3"></i>
+                    <h3>0</h3>
+                    <p>Ingresos Mes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Accesos Rápidos</h3>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="<?= base_url('clientes') ?>" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-users me-2"></i>
+                Ver Clientes
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-info btn-lg w-100">
+                <i class="fas fa-chart-bar me-2"></i>
+                Reportes
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="<?= base_url('configuracion')?>" class="btn btn-secondary btn-lg w-100">
+                <i class="fas fa-cog me-2"></i>
+                Configuración
+            </a>
+        </div>
+    </div>
+</div>

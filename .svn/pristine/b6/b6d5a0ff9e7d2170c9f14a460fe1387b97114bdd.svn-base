@@ -1,0 +1,109 @@
+
+
+<div class="main-content">
+  <div class="content-area">
+    <div class="container mt-5">
+      <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="fw-bold mb-0">Lista de Clientes</h3>
+          <a href="<?=  base_url('clientesadd') ?>">
+            <button class="btn btn-success"><i class="fa-solid fa-user-plus"></i></button>
+          </a>
+          
+        </div>
+
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="me-2 text-black fw-semibold">Mostrar</label>
+              <select class="form-select d-inline-block" style="width: 80px;">
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+              </select>
+              <label class="ms-2 text-black fw-semibold">registros</label>
+            </div>
+
+            <div>
+              <label class="me-2 text-black fw-semibold">Buscar:</label>
+              <input type="text" class="form-control d-inline-block" style="width: 200px;" placeholder="Nombre o empresa...">
+            </div>
+          </div>
+
+          <div class="table-responsive rounded-3">
+            <table class="table  table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Razón social</th>
+                  <th>RUC</th>
+                  <th>Juegos</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Juan Pérez</td>
+                  <td>juan@empresa.com</td>
+                  <td>999999999</td>
+                  <td>DSG PERU</td>
+                  <td>20604816123</td>
+                  <td>Warzone</td>
+                  <td>
+                    <button class="btn btn-success btn-sm"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Sofía Rojas</td>
+                  <td>sofia@empresa.com</td>
+                  <td>987654321</td>
+                  <td>TechGroup</td>
+                  <td>20604816123</td>
+                  <td>Half Life</td>
+                  <td>
+                    <button class="btn btn-success btn-sm"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Camilo Ruiz</td>
+                  <td>camilo@empresa.com</td>
+                  <td>999777555</td>
+                  <td>InnovaPro</td>
+                  <td>20604816123</td>
+                  <td>CSGO</td>
+                  <td>
+                    <button class="btn btn-success btn-sm"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <small class="text-black">Mostrando registros del 1 al 3 de un total de 8</small>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><a class="page-link">Anterior</a></li>
+                <li class="page-item active"><a class="page-link">1</a></li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item"><a class="page-link">Siguiente</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

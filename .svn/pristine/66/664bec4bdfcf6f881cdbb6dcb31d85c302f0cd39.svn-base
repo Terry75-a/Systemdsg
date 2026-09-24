@@ -1,0 +1,19 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/Terry75-a/systemaxdd.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+<<<<<<< .mine	gk-last-accessed = 2026-02-13T14:52:12.879Z
+	gk-last-modified = 2026-02-10T15:41:15.619Z
+=======[gui]
+	wmstate = normal
+	geometry = 1109x563+160+160 216 255
+>>>>>>> .theirs

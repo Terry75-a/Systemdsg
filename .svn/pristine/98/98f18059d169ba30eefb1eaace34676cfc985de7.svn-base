@@ -1,0 +1,58 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\UsuariosModel;
+use CodeIgniter\Controller;
+
+class LoginController extends Controller
+{
+    public function index()
+{
+    if (session()->get('logged_in')) {
+        return redirect()->to(base_url('dashboard'));
+    }
+    return view('login');
+}
+
+    public function auth()
+    {   
+        
+        $session = session();
+        $model= new UsuariosModel();
+        
+        
+       
+        $username = $this->request->getPost('username');
+        $password = $this->request->getPost('password');
+
+        $user = $model->obtenerUsuario($username);
+        
+
+
+        if ($user) {
+            $pass = $user['password'];
+            if (password_verify($password, $pass)) {
+                $ses_data = [
+                    'id_usuario' => $user['id_usuario'],
+                    'username'   => $user['username'],
+                    'logged_in'  => TRUE
+                ];
+                $session->set($ses_data);
+                return redirect()->to(base_url('dashboard'));
+            } else {
+                $session->setFlashdata('msg', 'Contraseña incorrecta');
+                return redirect()->to(base_url('login'));
+            }
+        } else {
+            $session->setFlashdata('msg', 'Usuario no encontrado');
+            return redirect()->to(base_url('login'));
+        }
+    }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to(base_url('login'));
+    }
+}
+

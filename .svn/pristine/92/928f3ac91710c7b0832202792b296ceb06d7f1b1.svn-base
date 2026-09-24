@@ -1,0 +1,223 @@
+<?php
+// app/Controllers/PermisosController.php
+namespace App\Controllers;
+
+use App\Models\PermisosModel;
+use App\Services\Permisos\PermisoWriterService;
+use App\Services\Shared\BusinessException;
+use App\Services\Shared\ServiceResult;
+
+class PermisosController extends BaseController
+{
+    protected PermisosModel $permisosModel;
+    protected PermisoWriterService $permisoWriterService;
+
+    public function __construct()
+    {
+        $this->permisosModel = new PermisosModel();
+        $this->permisoWriterService = service('permisoWriter');
+    }
+
+    private function verificarAccesoAdmin(): mixed
+    {
+        return $this->requerirAdminBackend('Solo un administrador puede administrar permisos del sistema.');
+    }
+
+    private function obtenerPayloadPermisos(): array
+    {
+        return [
+            'read' => $this->request->getPost('read') ? 1 : 0,
+            'insert' => $this->request->getPost('insert') ? 1 : 0,
+            'update' => $this->request->getPost('update') ? 1 : 0,
+            'delete' => $this->request->getPost('delete') ? 1 : 0,
+        ];
+    }
+
+    private function obtenerRolesDisponibles(): array
+    {
+        return \Config\Database::connect()->table('roles')
+            ->select('id_rol, nombre')
+            ->orderBy('nombre', 'ASC')
+            ->get()
+            ->getResultObject();
+    }
+
+    private function obtenerMenusDisponibles(): array
+    {
+        return \Config\Database::connect()->table('menus')
+            ->select('id, nombre')
+            ->orderBy('nombre', 'ASC')
+            ->get()
+            ->getResultObject();
+    }
+
+    private function responderResultadoGuardado(ServiceResult $result)
+    {
+        if ($this->esperaJson()) {
+            return $this->responderResultadoServicio($result);
+        }
+
+        return $this->redirigirConFlash('permisos', $result->getMessage(), $result->isSuccess() ? 'success' : 'danger');
+    }
+
+    private function manejarGuardadoPermiso(int $rolId, int $menuId, array $permissionFlags)
+    {
+        try {
+            $result = $this->permisoWriterService->guardarPorRolYMenu($rolId, $menuId, $permissionFlags);
+
+            return $this->responderResultadoGuardado($result);
+        } catch (BusinessException $e) {
+            if ($this->esperaJson()) {
+                return $this->responderErrorNegocio($e);
+            }
+
+            return $this->redirigirConFlash('permisos', $e->getMessage(), 'warning');
+        } catch (\Throwable $e) {
+            if ($this->esperaJson()) {
+                return $this->responderExcepcion($e, 'No se pudo guardar el permiso.', 'permisos.guardar');
+            }
+
+            log_message(
+                'error',
+                '[permisos.guardar] {exception}: {message} in {file}:{line}',
+                [
+                    'exception' => $e::class,
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]
+            );
+
+            return $this->redirigirConFlash('permisos', 'No se pudo guardar el permiso.', 'danger');
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // INDEX — Tabla principal de permisos
+    // Ruta: GET /permisos
+    // ══════════════════════════════════════════════════════════════
+    public function index()
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        $data = $this->crearDatosVistaAdmin('Configuración de Permisos', 'Permisos', [
+            'permisos' => $this->permisosModel->obtenerTodos(),
+            'roles' => $this->obtenerRolesDisponibles(),
+            'menus' => $this->obtenerMenusDisponibles(),
+        ]);
+
+        return $this->renderAdminPage('Permisos', $data);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // GUARDAR — Crea un permiso nuevo (con opciones elegidas)
+    // Ruta: POST /permisos/guardar
+    // Recibe: id_rol, menu_id, read, insert, update, delete
+    // ══════════════════════════════════════════════════════════════
+    public function guardar()
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        $rolId = (int) $this->request->getPost('id_rol');
+        $menuId = (int) ($this->request->getPost('menu_id') ?? $this->request->getPost('id_menu'));
+        $permissionFlags = $this->obtenerPayloadPermisos();
+
+        return $this->manejarGuardadoPermiso($rolId, $menuId, $permissionFlags);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — OBTENER
+    // Devuelve en JSON los datos de UN permiso para pre-llenar el modal
+    // Ruta: GET /permisos/obtener/{id_permiso}
+    // La vista lo llama cuando el usuario hace clic en ✏️ Editar
+    // ══════════════════════════════════════════════════════════════
+    public function obtener(int $id)
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        try {
+            $permiso = $this->permisosModel->obtenerPorId($id);
+        } catch (\Throwable $e) {
+            return $this->responderExcepcion($e, 'No se pudo cargar el permiso.', 'permisos.obtener');
+        }
+
+        if (!$permiso) {
+            return $this->responderJson(false, 'Permiso no encontrado.', 404);
+        }
+
+        return $this->responderJson(true, 'Permiso cargado correctamente.', 200, [
+            'permiso' => $permiso,
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — EDITAR
+    // Actualiza SOLO los 4 checks de un permiso existente
+    // Ruta: POST /permisos/editar/{id_permiso}
+    // NO cambia persona, rol ni menú — solo las acciones
+    // ══════════════════════════════════════════════════════════════
+    public function editar(int $id)
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->permisoWriterService->editarPorId($id, $this->obtenerPayloadPermisos()),
+            'No se pudo actualizar el permiso.',
+            'permisos.editar'
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ELIMINAR — Borra un permiso por id_permiso
+    // Ruta: POST /permisos/eliminar/{id}
+    // ══════════════════════════════════════════════════════════════
+    public function eliminar(int $id)
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->permisoWriterService->eliminarPorId($id),
+            'No se pudo eliminar el permiso.',
+            'permisos.eliminar'
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // POR USUARIO/ROL — Devuelve los permisos efectivos del rol asociado a una persona
+    // Ruta: GET /permisos/usuario/{id_persona}
+    // ══════════════════════════════════════════════════════════════
+    public function porUsuario(int $id_persona)
+    {
+        $redir = $this->verificarAccesoAdmin();
+        if ($redir) {
+            return $redir;
+        }
+
+        try {
+            $permisos = $this->permisosModel->obtenerPermisosUsuario($id_persona);
+        } catch (\Throwable $e) {
+            return $this->responderExcepcion($e, 'No se pudieron cargar los permisos.', 'permisos.porUsuario');
+        }
+
+        return $this->responderJson(true, 'Permisos cargados correctamente.', 200, [
+            'permisos' => $permisos,
+            'scope' => 'rol',
+            'legacy_param' => 'id_persona',
+        ]);
+    }
+}

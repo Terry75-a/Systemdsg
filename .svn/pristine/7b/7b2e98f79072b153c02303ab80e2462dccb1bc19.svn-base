@@ -1,0 +1,240 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\UsuarioModel;
+use App\Models\PermisosModel;
+use App\Models\RolModel;
+use App\Models\MenuModel;
+use App\Services\Usuarios\UsuarioWriterService;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class UsuariosController extends BaseController
+{
+    protected UsuarioModel $usuarioModel;
+    protected PermisosModel $permisosModel;
+    protected RolModel $rolModel;
+    protected MenuModel $menuModel;
+    protected UsuarioWriterService $usuarioWriterService;
+
+    public function __construct()
+    {
+        $this->usuarioModel = new UsuarioModel();
+        $this->permisosModel = new PermisosModel();
+        $this->rolModel = new RolModel();
+        $this->menuModel = new MenuModel();
+        $this->usuarioWriterService = service('usuarioWriter');
+    }
+
+    private function obtenerPayloadPersona(): array
+    {
+        return [
+            'nombre' => trim((string) $this->request->getPost('nombre')),
+            'apellido_paterno' => trim((string) $this->request->getPost('apellido_paterno')),
+            'apellido_materno' => trim((string) $this->request->getPost('apellido_materno')),
+            'dni' => trim((string) $this->request->getPost('dni')),
+            'correo' => trim((string) $this->request->getPost('correo')),
+            'telefono' => trim((string) $this->request->getPost('telefono')),
+        ];
+    }
+
+    private function obtenerPayloadUsuario(): array
+    {
+        return [
+            'username' => trim((string) $this->request->getPost('username')),
+            'password' => (string) $this->request->getPost('password'),
+            'id_rol' => (int) $this->request->getPost('id_rol'),
+        ];
+    }
+
+    private function obtenerPayloadPermisos(): array
+    {
+        $permissionsByMenu = $this->request->getJSON(true);
+
+        if (isset($permissionsByMenu['permisos']) && is_array($permissionsByMenu['permisos'])) {
+            return $permissionsByMenu['permisos'];
+        }
+
+        return is_array($permissionsByMenu) ? $permissionsByMenu : [];
+    }
+
+    private function validarPayloadUsuario(?int $usuarioId = null): ?ResponseInterface
+    {
+        if ($this->validate($this->obtenerReglasUsuario($usuarioId))) {
+            return null;
+        }
+
+        return $this->responderValidacion($this->validator->getErrors());
+    }
+
+    private function obtenerReglasUsuario(?int $usuarioId = null): array
+    {
+        $usernameRule = $usuarioId === null
+            ? 'required|min_length[4]|max_length[50]|is_unique[usuarios.username]'
+            : "required|min_length[4]|max_length[50]|is_unique[usuarios.username,id_usuario,{$usuarioId}]";
+
+        return [
+            'nombre' => 'required|min_length[2]|max_length[100]',
+            'apellido_paterno' => 'required|min_length[2]|max_length[50]',
+            'apellido_materno' => 'permit_empty|max_length[50]',
+            'dni' => 'required|min_length[8]|max_length[15]',
+            'correo' => 'required|valid_email|max_length[100]',
+            'telefono' => 'permit_empty|max_length[20]',
+            'username' => $usernameRule,
+            'password' => $usuarioId === null ? 'required|min_length[6]' : 'permit_empty|min_length[6]',
+            'id_rol' => 'required|integer|greater_than[0]',
+        ];
+    }
+
+    private function obtenerUsuarioConPermisos(int $usuarioId): ?object
+    {
+        $usuario = $this->usuarioModel->getUsuarioCompleto($usuarioId);
+
+        if (!$usuario) {
+            return null;
+        }
+
+        $usuario->permisos = $this->permisosModel
+            ->obtenerPermisosUsuario($usuario->id_persona, $usuario->id_rol);
+
+        return $usuario;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // MÉTODO PRIVADO: Endurece acceso a gestión de usuarios
+    // ══════════════════════════════════════════════════════════════════
+    private function verificarSesion(): mixed
+    {
+        return $this->requerirAdminBackend('Solo un administrador puede gestionar usuarios y permisos de seguridad.');
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // INDEX — Vista principal con lista de usuarios
+    // ══════════════════════════════════════════════════════════════════
+    public function index()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $data = $this->crearDatosVistaAdmin('Gestión de Usuarios', 'Usuarios', [
+            'usuarios' => $this->usuarioModel->listarUsuarios(),
+            'roles' => $this->rolModel->findAll(),
+            'menus' => $this->menuModel->findAll(),
+        ]);
+
+        return $this->renderAdminPage('Usuarios', $data);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // REGISTRAR — Crea persona + usuario en una sola transacción
+    // ══════════════════════════════════════════════════════════════════
+    public function registrar()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $validationResponse = $this->validarPayloadUsuario();
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->usuarioWriterService->registrarUsuario(
+                $this->obtenerPayloadPersona(),
+                $this->obtenerPayloadUsuario()
+            ),
+            'No se pudo registrar el usuario.',
+            'usuarios.registrar'
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // OBTENER — Devuelve datos de un usuario para el modal de edición
+    // ══════════════════════════════════════════════════════════════════
+    public function obtener(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        try {
+            $usuario = $this->obtenerUsuarioConPermisos($id);
+
+            if (!$usuario) {
+                return $this->responderNoEncontrado('Usuario no encontrado.');
+            }
+
+            return $this->responderJson(true, 'Usuario cargado correctamente.', 200, [
+                'data' => $usuario,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->responderExcepcion(
+                $e,
+                'No se pudo cargar el usuario.',
+                'usuarios.obtener'
+            );
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ACTUALIZAR — Edita persona + usuario
+    // ══════════════════════════════════════════════════════════════════
+    public function actualizar(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $validationResponse = $this->validarPayloadUsuario($id);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->usuarioWriterService->actualizarUsuario(
+                $id,
+                $this->obtenerPayloadPersona(),
+                $this->obtenerPayloadUsuario()
+            ),
+            'No se pudo actualizar el usuario.',
+            'usuarios.actualizar'
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ASIGNAR PERMISOS — Guarda permisos CRUD por menú para un usuario
+    // ══════════════════════════════════════════════════════════════════
+    public function asignarPermisos(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->usuarioWriterService->actualizarPermisosPorUsuario(
+                $id,
+                $this->obtenerPayloadPermisos()
+            ),
+            'No se pudieron actualizar los permisos del usuario.',
+            'usuarios.asignarPermisos'
+        );
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // CAMBIAR ESTADO — Toggle activo (1) / inactivo (0)
+    // ══════════════════════════════════════════════════════════════════
+    public function cambiarEstado(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        return $this->ejecutarAccionDeServicio(
+            fn() => $this->usuarioWriterService->cambiarEstadoUsuario($id),
+            'No se pudo actualizar el estado del usuario.',
+            'usuarios.cambiarEstado'
+        );
+    }
+}

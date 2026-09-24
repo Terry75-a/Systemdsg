@@ -1,0 +1,162 @@
+<?php 
+namespace App\Controllers;
+
+use CodeIgniter\Controller;
+use Config\Services;
+
+class ClientesAddController extends BaseController
+{
+    public function index()
+    {
+        $data['titulo'] = 'Agregar Clientes';
+
+        echo view('layouts/header_dashboard');
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('clientes/clientesadd');
+    }
+
+    
+    public function buscarDni()
+    {
+        
+        $dni = $this->request->getPost('dni');
+
+        if (!$dni) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Debe enviar un DNI'
+            ]);
+        }
+
+        
+        $url = 'http://www.dsgperutech.com/api-customer/v1/dni/' . $dni;
+
+        // 3. Usar el cliente HTTP de CodeIgniter
+        $client = Services::curlrequest();
+
+        $options = [
+            'headers' => [
+                'Content-length' => '0',
+                'Content-type'   => 'application/json',
+                'Authorization'  => '3d524a53c110e4c22463b10ed32cef9d', // el token que te pasaron
+            ],
+            'http_errors' => false, // para que no lance excepción si responde 4xx o 5xx
+        ];
+
+        // 4. Hacer la petición al API
+        $apiResponse = $client->get($url, $options);
+
+        $status  = $apiResponse->getStatusCode();
+        $body    = $apiResponse->getBody();
+        $dataApi = json_decode($body);
+
+        // 5. Validar respuesta
+        if ($status !== 200 || !$dataApi || empty($dataApi->success)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'DNI no encontrado o error en el servicio'
+            ]);
+        }
+
+        // 6. Armar respuesta limpia para el front
+        return $this->response->setJSON([
+            'success'          => true,
+            'apellido_paterno' => $dataApi->result->paternal  ?? '',
+            'apellido_materno' => $dataApi->result->maternal  ?? '',
+            'nombres'          => $dataApi->result->name      ?? '',
+        ]);
+    }
+
+    public function buscarRuc()
+    {
+        $ruc = $this->request->getPost('ruc');
+
+        if(!$ruc){
+            return $this->response->setJSON([
+             'success' => false,
+             'message' => 'Debe enviar una Ruc'
+            ]);
+        }
+
+        $url = 'http://www.dsgperutech.com/api-customer/v1/ruc/' . $ruc;
+
+        $client = Services::curlrequest(); 
+
+        $options = [
+            
+            'headers' => [
+                'Content-length' => '0',
+                'Content-Type' => 'application/json',
+                'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
+
+            ],
+            'http_errors' => false,
+
+        ];
+
+        $apiResponse =  $client->get($url, $options);
+        
+        $status = $apiResponse->getStatusCode();
+        $body  = $apiResponse->getBody();
+        $dataApi = json_decode($body);
+
+        if($status !==200 || !$dataApi || empty($dataApi->success)){
+           return $this->response->setJSON([
+              'success' => false,
+              'message' => 'ruc no encontrado'
+           ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'razon'     => $dataApi->result->name ?? '',
+            'direccion' => $dataApi->result->address ?? '',
+        ]);
+    }
+
+    public function registrar()
+{
+    $model = new \App\Models\ClientesaddModel();
+
+    
+    $persona = [
+        'nombre'            => $this->request->getPost('nombre'),
+        'apellido_paterno'  => $this->request->getPost('apellido_paterno'),
+        'apellido_materno'  => $this->request->getPost('apellido_materno'),
+        'dni'               => $this->request->getPost('dni'),
+        'telefono'          => $this->request->getPost('telefono'),
+        'correo'            => $this->request->getPost('correo_persona'),
+        'pais'              => 'PE',
+        'id_departamento'   => $this->request->getPost('departamento'),
+        'id_provincia'      => $this->request->getPost('provincia'),
+        'id_distrito'       => $this->request->getPost('distrito'),
+    ];
+
+    $idPersona = $model->registrarPersona($persona);
+
+
+    $empresa = [
+        'razon_social' => $this->request->getPost('razon_social'),
+        'ruc'          => $this->request->getPost('ruc'),
+        'correo'       => $this->request->getPost('correo_empresa'),
+        'telefono'     => $this->request->getPost('telefono_empresa'),
+        'direccion'    => $this->request->getPost('direccion'),
+        'id_persona'   => $idPersona
+    ];
+
+    $idEmpresa = $model->registrarEmpresa($empresa);
+
+    // 3. REGISTRO DEL CLIENTE
+    $cliente = [
+        'id_empresa' => $idEmpresa
+    ];
+
+    $model->registrarCliente($cliente);
+
+    return redirect()->to(base_url('clientes'))
+        ->with('success', 'Cliente registrado correctamente');
+}
+
+}
+

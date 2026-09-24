@@ -1,0 +1,1138 @@
+/* =========================================
+   MODO OSCURO - DSG PERU (BLANCO Y NEGRO)
+   ========================================= */
+
+/* Variables de color para modo oscuro */
+:root {
+    --dark-bg-primary: #000000;
+    --dark-bg-secondary: #111111;
+    --dark-bg-tertiary: #222222;
+    --dark-text-primary: #ffffff;
+    --dark-text-secondary: #ffffff;
+    --dark-text-tertiary: #cccccc;
+    --dark-accent: #333333;
+    --dark-accent-hover: #555555;
+    --dark-border: #333333;
+    --dark-glass-bg: rgba(0, 0, 0, 0.8);
+    --dark-glass-border: rgba(255, 255, 255, 0.2);
+}
+
+/* Estado oscuro del body */
+body.dark-mode {
+    background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
+    color: var(--dark-text-primary);
+}
+
+/* Reset global para modo oscuro */
+body.dark-mode * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Modal de menú en modo oscuro */
+body.dark-mode #menuModal .modal-header {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #menuModal .modal-header h2 {
+    color: #ffffff;
+}
+
+body.dark-mode #menuModal .modal-header .close-btn {
+    color: #ffffff;
+}
+
+body.dark-mode #menuModal .modal-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+body.dark-mode #menuModal .modal-content {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #menuModal ul li a {
+    color: #ffffff;
+}
+
+body.dark-mode #menuModal ul li a:hover {
+    background: #333333;
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode #menuModal .modal-actions .btn-dark-mode-modal {
+    background: #333333;
+    color: white;
+}
+
+body.dark-mode #menuModal .modal-actions .btn-dark-mode-modal:hover {
+    background: #555555;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #menuModal .modal-actions .btn-demo {
+    background: #333333;
+    color: white;
+}
+
+body.dark-mode #menuModal .modal-actions .btn-demo:hover {
+    background: #555555;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #menuModal .modal-actions .btn-login {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid #333333;
+}
+
+body.dark-mode #menuModal .modal-actions .btn-login:hover {
+    background: #333333;
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Tablets Responsive - entre 900px y 1200px en modo oscuro */
+@media (max-width: 1200px) and (min-width: 901px) {
+    body.dark-mode .menu-button {
+        display: flex !important;
+    }
+
+    body.dark-mode .nav-actions {
+        display: none !important;
+    }
+
+    body.dark-mode .nav-menu {
+        display: none !important;
+    }
+
+    body.dark-mode .navbar {
+        padding: 0 20px !important;
+        height: 64px !important;
+        width: calc(100% - 32px) !important;
+    }
+
+    body.dark-mode .logo {
+        margin-left: 0 !important;
+    }
+
+    /* Modal en tablets - misma anchura que en móviles */
+    body.dark-mode #menuModal {
+        max-width: 400px !important;
+        width: 90vw !important;
+        margin-left: 25px !important;
+        margin-top: 85px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    /* Ocultar elementos desktop en móviles */
+    body.dark-mode div.nav-actions {
+        display: none !important;
+    }
+    
+    /* Mostrar botón menú en móviles */
+    body.dark-mode button.menu-button {
+        display: flex !important;
+    }
+    
+    /* Ocultar menú */
+    body.dark-mode ul.nav-menu {
+        display: none !important;
+    }
+}
+
+/* Navbar en modo oscuro */
+body.dark-mode .navbar {
+    background: var(--dark-glass-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid var(--dark-glass-border);
+    box-shadow: none;
+    outline: none;
+}
+
+/* Desktop: Asegurar que los botones sean visibles en modo oscuro */
+@media (min-width: 1201px) {
+    body.dark-mode .nav-actions {
+        display: flex !important;
+    }
+    
+    body.dark-mode .menu-button {
+        display: none !important;
+    }
+}
+
+body.dark-mode .logo-text {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .nav-toggle-line {
+    background: var(--dark-text-primary);
+}
+
+body.dark-mode .btn-links .links a {
+    color: var(--dark-text-primary);
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+body.dark-mode .btn-links .links a:hover,
+body.dark-mode .btn-links .links a:focus,
+body.dark-mode .btn-links .links a:active,
+body.dark-mode .btn-links .links a:visited {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+body.dark-mode .btn-links .links a:hover {
+    background: var(--dark-accent);
+    color: white;
+}
+
+/* Botón de modo oscuro */
+.btn-dark-mode {
+    background: transparent;
+    border: 2px solid #333333;
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+
+.btn-dark-mode:hover {
+    background: #333333;
+    border-color: #333333;
+    color: white;
+    transform: rotate(180deg);
+}
+
+body.dark-mode .btn-dark-mode {
+    border-color: #333333;
+    color: #ffffff;
+}
+
+body.dark-mode .btn-dark-mode:hover {
+    background: #333333;
+    border-color: #333333;
+    color: white;
+}
+
+/* Botones Demo y Login en modo oscuro */
+body.dark-mode .btn-demo {
+    background: #333333;
+    color: white;
+}
+
+body.dark-mode .btn-demo:hover {
+    background: #555555;
+}
+
+body.dark-mode .btn-login {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid #333333;
+}
+
+body.dark-mode .btn-login:hover {
+    background: #333333;
+    color: white;
+}
+
+/* Hero 1 en modo oscuro */
+body.dark-mode .hero-1 {
+    background: #ffffff;
+}
+
+body.dark-mode .title-1 {
+    color: #000000;
+}
+
+body.dark-mode .subtitle-1 {
+    color: #333333;
+}
+
+body.dark-mode .btn-contact-hero2 {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+}
+
+body.dark-mode .btn-contact-hero2:hover {
+    background: var(--dark-accent-hover);
+    transform: scale(1.05);
+}
+
+/* Hero 2 - Contadores en modo oscuro */
+body.dark-mode .box-title-1,
+body.dark-mode .box-title-2,
+body.dark-mode .box-title-3 {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .box-subtitle-1,
+body.dark-mode .box-subtitle-2,
+body.dark-mode .box-subtitle-3 {
+    color: var(--dark-text-secondary);
+}
+
+/* Hero 3 en modo oscuro */
+body.dark-mode .box-title-box2 {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .pedir_demo,
+body.dark-mode .servicios {
+    background: #ffffff;
+    color: #000000;
+    border: none;
+}
+
+body.dark-mode .pedir_demo:hover,
+body.dark-mode .servicios:hover {
+    background: #999999;
+    color: #ffffff;
+}
+
+/* Hero 4 en modo oscuro */
+body.dark-mode .box-title-hero4-primer {
+    color: var(--dark-text-tertiary);
+}
+
+body.dark-mode .box-subtitle-hero4-secur {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .text-der {
+    color: var(--dark-text-secondary);
+}
+
+body.dark-mode .video-hero4 {
+    border: 2px solid var(--dark-border);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Botones de servicios en modo oscuro */
+body.dark-mode .btn-serv-1,
+body.dark-mode .btn-serv-2,
+body.dark-mode .btn-serv-3,
+body.dark-mode .btn-serv-4,
+body.dark-mode .btn-serv-5,
+body.dark-mode .btn-serv-6,
+body.dark-mode .btn-serv-7,
+body.dark-mode .btn-serv-8 {
+    background: var(--dark-accent);
+    color: white;
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode .btn-serv-1:hover,
+body.dark-mode .btn-serv-2:hover,
+body.dark-mode .btn-serv-3:hover,
+body.dark-mode .btn-serv-4:hover,
+body.dark-mode .btn-serv-5:hover,
+body.dark-mode .btn-serv-6:hover,
+body.dark-mode .btn-serv-7:hover,
+body.dark-mode .btn-serv-8:hover {
+    background: var(--dark-accent-hover);
+    transform: scale(1.05);
+}
+
+/* Hero 5 - Características en modo oscuro */
+body.dark-mode .hero-card-5 {
+    background: #ffffff;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode .box-title-hero5-primer {
+    color: var(--dark-text-tertiary);
+}
+
+body.dark-mode .box-subtitle-hero5-secur {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .card-1,
+body.dark-mode .card-2,
+body.dark-mode .card-3,
+body.dark-mode .card-4,
+body.dark-mode .card-5,
+body.dark-mode .card-6 {
+    background: var(--dark-bg-tertiary);
+    border: 2px solid var(--dark-border);
+}
+
+body.dark-mode .card-1:hover,
+body.dark-mode .card-2:hover,
+body.dark-mode .card-3:hover,
+body.dark-mode .card-4:hover,
+body.dark-mode .card-5:hover,
+body.dark-mode .card-6:hover {
+    background: var(--dark-bg-secondary);
+    transform: translateY(-5px);
+}
+
+body.dark-mode .card-title-5 {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .card-text-51,
+body.dark-mode .card-text-52,
+body.dark-mode .card-text-53,
+body.dark-mode .card-text-54,
+body.dark-mode .card-text-55,
+body.dark-mode .card-text-56 {
+    color: var(--dark-text-secondary);
+}
+
+/* Hero 6 - Contacto en modo oscuro */
+body.dark-mode .hero-card-6 {
+    background: #ffffff;
+    border: 1px solid #333333;
+}
+
+body.dark-mode .box-title-hero6-primer {
+    color: var(--dark-text-tertiary);
+}
+
+body.dark-mode .box-subtitle-hero6-secur {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .hero6-title {
+    color: #000000;
+}
+
+body.dark-mode .hero6-text {
+    color: #000000;
+}
+
+/* Formularios en modo oscuro */
+body.dark-mode input,
+body.dark-mode textarea {
+    background: var(--dark-bg-tertiary);
+    color: var(--dark-text-primary);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--dark-text-tertiary);
+}
+
+body.dark-mode button {
+    background: var(--dark-accent);
+    color: white;
+    border: none;
+}
+
+body.dark-mode button:hover {
+    background: var(--dark-accent-hover);
+}
+
+/* Footer en modo oscuro */
+body.dark-mode .footer {
+    background: var(--dark-glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--dark-border);
+}
+
+body.dark-mode .footer-content h3 {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .footer-links a {
+    color: var(--dark-text-secondary);
+}
+
+body.dark-mode .footer-links a:hover {
+    color: var(--dark-text-primary);
+}
+
+body.dark-mode .footer-bottom {
+    border-top: 1px solid var(--dark-border);
+    color: var(--dark-text-tertiary);
+}
+
+/* Botón WhatsApp en modo oscuro */
+body.dark-mode .whatsapp-float {
+    background: #128c7e;
+}
+
+body.dark-mode .whatsapp-float:hover {
+    background: #075e54;
+}
+
+/* Menú móvil en modo oscuro */
+body.dark-mode .nav-menu {
+    background: var(--dark-glass-bg);
+    backdrop-filter: blur(14px);
+    
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid var(--dark-glass-border);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .nav-menu .btn-links .links a {
+    color: var(--dark-text-primary);
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+body.dark-mode .nav-menu .btn-links .links a:hover,
+body.dark-mode .nav-menu .btn-links .links a:focus,
+body.dark-mode .nav-menu .btn-links .links a:active,
+body.dark-mode .nav-menu .btn-links .links a:visited {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+body.dark-mode .nav-menu .btn-links .links a:hover {
+    background: var(--dark-accent);
+    color: white;
+    transform: translateX(5px);
+}
+
+body.dark-mode .nav-actions-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .nav-actions-mobile .btn-demo {
+    background: var(--dark-accent);
+    color: white;
+}
+
+body.dark-mode .nav-actions-mobile .btn-demo:hover {
+    background: var(--dark-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .nav-actions-mobile .btn-login {
+    background: transparent;
+    color: var(--dark-text-primary);
+    border: 2px solid var(--dark-accent);
+}
+
+body.dark-mode .nav-actions-mobile .btn-login:hover {
+    background: var(--dark-accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .nav-actions-mobile .btn-demo a,
+body.dark-mode .nav-actions-mobile .btn-login a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Overlay en modo oscuro */
+body.dark-mode .navbar.is-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Navbar scroll en modo oscuro */
+body.dark-mode .navbar-scroll {
+    background: var(--dark-glass-bg);
+    border: 1.5px solid var(--dark-glass-border);
+    width: 1738px;
+    height: 60px;
+    top: 10px;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Animaciones de scroll para modo oscuro - ajustadas para no chocar */
+body.dark-mode .navbar-scroll .logo-img,
+body.dark-mode .navbar-scroll .logo-text {
+    transform: translateX(40px); /* reducido de 60px a 40px */
+}
+
+body.dark-mode .navbar-scroll .btn-demo,
+body.dark-mode .navbar-scroll .btn-login {
+    transform: translateX(-20px); /* reducido de 60px a 40px */
+}
+
+/* Botón de modo oscuro sin animación de scroll */
+body.dark-mode .navbar-scroll .btn-dark-mode {
+    transform: translateX(0) !important; /* no se mueve */
+}
+
+/* Transiciones suaves para modo oscuro */
+body.dark-mode .logo-img,
+body.dark-mode .logo-text,
+body.dark-mode .btn-demo,
+body.dark-mode .btn-login,
+body.dark-mode .btn-dark-mode {
+    transition: all 0.45s cubic-bezier(.4,0,.2,1);
+}
+
+/* Select en modo oscuro */
+body.dark-mode select {
+    background: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode select option {
+    background: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+}
+
+/* Modal en modo oscuro */
+body.dark-mode dialog {
+    background: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode dialog button {
+    background: var(--dark-accent);
+    color: white;
+    border: none;
+}
+
+body.dark-mode dialog button:hover {
+    background: var(--dark-accent-hover);
+}
+
+/* Scrollbar en modo oscuro */
+body.dark-mode::-webkit-scrollbar {
+    width: 8px;
+}
+
+body.dark-mode::-webkit-scrollbar-track {
+    background: var(--dark-bg-secondary);
+}
+
+body.dark-mode::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 4px;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-accent);
+}
+
+/* Icono del botón de modo oscuro */
+body.dark-mode .btn-dark-mode i::before {
+    content: "\f185"; /* Icono de sol */
+}
+
+body.dark-mode .hero-card-6 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px auto 0;
+    width: 1860px;
+    height: auto;
+    background-color: rgb(255, 255, 255);
+    margin-left: -3px;
+    border-radius: 20px;
+    padding: 60px 40px;
+}
+
+body.dark-mode .hero6-title {
+    margin-left: 0;
+    position: static;
+    margin-top: 0;
+    font-size: 50px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+body.dark-mode .hero6-text {
+    margin-left: 0;
+    position: static;
+    margin-top: 0;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    max-width: 900px;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+
+
+/* Responsive para modo oscuro - COMPLETO */
+@media (max-width: 768px) {
+    body.dark-mode .navbar {
+        background: var(--dark-glass-bg);
+        border: 1.5px solid var(--dark-glass-border);
+    }
+    
+    body.dark-mode .nav-menu {
+        background: var(--dark-glass-bg);
+        border: 1.5px solid var(--dark-glass-border);
+    }
+    
+    body.dark-mode .btn-dark-mode {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+/* Footer Responsive */
+@media (max-width: 900px) {
+    body.dark-mode .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    body.dark-mode .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    body.dark-mode .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 20px;
+    }
+
+    body.dark-mode .service-item {
+        padding: 10px 12px;
+    }
+
+    body.dark-mode .service-name {
+        font-size: 13px;
+    }
+
+    body.dark-mode .whatsapp-float {
+        width: 55px;
+        height: 55px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    body.dark-mode .whatsapp-float svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Responsive principal - max-width: 1200px */
+@media (max-width: 1200px) {
+    body.dark-mode .container {
+        width: 100%;
+        max-width: 1200px;
+        padding: 0 24px;
+    }
+
+    body.dark-mode .hero-1,
+    body.dark-mode .hero-2,
+    body.dark-mode .hero-5,
+    body.dark-mode .hero-6 {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    body.dark-mode .hero-1 {
+        height: auto;
+        padding: 120px 24px 80px;
+    }
+
+    body.dark-mode .btn-contact-hero2 {
+        position: relative;
+        margin-top: 40px !important;
+    }
+
+    body.dark-mode .hero-2 {
+        padding: 60px 20px;
+        height: auto;
+    }
+
+    body.dark-mode .box-1 {
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 0;
+    }
+
+    body.dark-mode .hero-3 .box-2 {
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 0;
+    }
+
+    body.dark-mode .pedir_demo,
+    body.dark-mode .servicios {
+        position: relative;
+        margin: 0;
+    }
+
+    body.dark-mode .hero-4 {
+        margin-top: 80px;
+    }
+
+    body.dark-mode .text-der {
+        margin: 20px 0 0;
+        width: 100%;
+    }
+
+    body.dark-mode .video-hero4 {
+        width: 100%;
+    }
+
+    body.dark-mode .lin-btns-serv {
+        margin: 40px 0 0;
+        margin-left: 0;
+        gap: 20px;
+        position: static;
+    }
+
+    body.dark-mode .lin-btns-serv button {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        padding: 20px;
+    }
+
+    body.dark-mode .hero-card-5,
+    body.dark-mode .hero-card-6 {
+        width: 100%;
+        height: auto;
+    }
+
+    body.dark-mode .space-1,
+    body.dark-mode .space-2 {
+        position: static;
+        flex-direction: column;
+        width: 100%;
+        transform: none;
+        margin: 0;
+    }
+
+    body.dark-mode .hero-card-5 {
+        padding: 40px 20px;
+        gap: 24px;
+        flex-direction: column;
+    }
+
+    body.dark-mode .hero-card-6 {
+        padding: 40px 20px 60px;
+    }
+
+    body.dark-mode .hero6-title,
+    body.dark-mode .hero6-text {
+        position: static;
+        margin: 0;
+        text-align: center;
+    }
+
+    body.dark-mode .hero6-title {
+        font-size: 2.4rem;
+        margin-bottom: 12px;
+    }
+
+    body.dark-mode .hero6-text {
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto 20px;
+    }
+
+    body.dark-mode .contact-form {
+        margin: 40px 0 0;
+    }
+
+    body.dark-mode .row {
+        flex-direction: column;
+    }
+
+    body.dark-mode .card-text-51,
+    body.dark-mode .card-text-52,
+    body.dark-mode .card-text-53,
+    body.dark-mode .card-text-54,
+    body.dark-mode .card-text-55,
+    body.dark-mode .card-text-56 {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    body.dark-mode .card-title-55 {
+        margin-left: 0;
+    }
+
+    body.dark-mode .title-1 {
+        font-size: 2.6rem;
+        line-height: 1.1;
+    }
+
+    body.dark-mode .subtitle-1 {
+        font-size: 1.1rem;
+        padding: 0 10px;
+    }
+
+    body.dark-mode .box-title-1,
+    body.dark-mode .box-title-2,
+    body.dark-mode .box-title-3 {
+        font-size: 3rem;
+    }
+
+    body.dark-mode .box-subtitle-1,
+    body.dark-mode .box-subtitle-2,
+    body.dark-mode .box-subtitle-3 {
+        font-size: 1.1rem;
+    }
+
+    body.dark-mode .box-title-hero4-secur,
+    body.dark-mode .box-subtitle-hero5-secur,
+    body.dark-mode .box-subtitle-hero6-secur {
+        font-size: 2.4rem;
+    }
+
+    body.dark-mode .box-title-hero5,
+    body.dark-mode .box-title-hero6 {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    body.dark-mode .box-title-box2 {
+        padding: 0 10px;
+        line-height: 1.6;
+    }
+}
+
+
+@media (max-width: 600px) {
+    body.dark-mode  .hero-1 {
+        padding: 100px 16px 60px;
+    }
+
+    body.dark-mode .hero-2 {
+        padding: 40px 16px;
+    }
+
+    body.dark-mode .hero-5 {
+        margin-top: 60px;
+    }
+
+    body.dark-mode .hero-card-5 {
+        padding: 30px 16px;
+        gap: 20px;
+    }
+
+    body.dark-mode .space-1,
+    body.dark-mode .space-2 {
+        gap: 16px;
+    }
+
+    body.dark-mode .card-1,
+    body.dark-mode .card-2,
+    body.dark-mode .card-3,
+    body.dark-mode .card-4,
+    body.dark-mode .card-5,
+    body.dark-mode .card-6 {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    body.dark-mode .card-title-5 {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .card-text-51,
+    body.dark-mode .card-text-52,
+    body.dark-mode .card-text-53,
+    body.dark-mode .card-text-54,
+    body.dark-mode .card-text-55,
+    body.dark-mode .card-text-56 {
+        font-size: 0.95rem;
+        padding: 0;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    body.dark-mode .card-title-55 {
+        margin-left: 0;
+        font-size: 1.2rem;
+    }
+
+    body.dark-mode .hero-card-6 {
+        padding: 30px 16px;
+    }
+
+    body.dark-mode .hero6-title {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    body.dark-mode .hero6-text {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    body.dark-mode .contact-form {
+        margin: 20px 0 0;
+    }
+
+    body.dark-mode .row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    body.dark-mode .row input {
+        width: 100%;
+    }
+
+    body.dark-mode .full {
+        width: 100%;
+    }
+
+    body.dark-mode textarea {
+        width: 100%;
+        min-height: 120px;
+    }
+
+    body.dark-mode .btn-container {
+        justify-content: center;
+        margin-top: 16px;
+    }
+
+    body.dark-mode .btn-container button {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    body.dark-mode .title-1 {
+        font-size: 2.1rem;
+        line-height: 1.1;
+    }
+
+    body.dark-mode .subtitle-1 {
+        font-size: 1rem;
+    }
+
+    body.dark-mode .box-title-1,
+    body.dark-mode .box-title-2,
+    body.dark-mode .box-title-3 {
+        font-size: 2.6rem;
+    }
+
+    body.dark-mode .box-title-box2 {
+        font-size: 1.05rem;
+    }
+
+    body.dark-mode .pedir_demo,
+    body.dark-mode .servicios,
+    body.dark-mode .btn-contact-hero2 {
+        height: 48px;
+    }
+
+    body.dark-mode .box-subtitle-hero4-secur,
+    body.dark-mode .box-subtitle-hero5-secur,
+    body.dark-mode .box-subtitle-hero6-secur {
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+
+    body.dark-mode .lin-btns-serv button {
+        max-width: 520px;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode input, textarea {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+
+    body.dark-mode .btn-container {
+        justify-content: center;
+    }
+
+    body.dark-mode .hero-card-5,
+    body.dark-mode .hero-card-6 {
+        border-radius: 16px;
+    }
+
+    body.dark-mode .btn-contact-hero2,
+    body.dark-mode .pedir_demo,
+    body.dark-mode .servicios {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 420px) {
+    .navbar {
+        height: 60px;
+    }
+
+    .logo-text {
+        font-size: 15px;
+    }
+
+    .logo-img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .nav-menu {
+        top: 74px;
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    body.dark-mode .title-1 {
+        font-size: 1.9rem;
+    }
+
+    body.dark-mode .box-title-1,
+    body.dark-mode .box-title-2,
+    body.dark-mode .box-title-3 {
+        font-size: 2.3rem;
+    }
+
+    body.dark-mode .hero6-title {
+        font-size: 2rem;
+    }
+}

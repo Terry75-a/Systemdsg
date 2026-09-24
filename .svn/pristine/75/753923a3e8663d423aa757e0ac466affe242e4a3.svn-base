@@ -1,0 +1,54 @@
+<main id="main-content" class="admin-page" aria-labelledby="configuracion-page-title">
+<section class="admin-surface p-4 mx-auto" style="max-width: 100%;" aria-describedby="configuracion-page-subtitle">
+  <header class="admin-page-header mb-4">
+    <div>
+      <h1 class="h4 admin-page-title mb-1" id="configuracion-page-title">Configuración administrativa</h1>
+      <p class="admin-page-subtitle mb-0" id="configuracion-page-subtitle">Landing interna para acceder solo a acciones hoy implementadas dentro del scope administrativo.</p>
+    </div>
+    <span class="badge bg-secondary-subtle text-secondary border px-3 py-2">Sin guardado</span>
+  </header>
+
+  <div class="alert alert-info mb-4" role="status" aria-live="polite">
+    <h5 class="mb-2"><i class="fa-solid fa-circle-info me-2" aria-hidden="true"></i>Estado del módulo</h5>
+    <p class="mb-0">Esta pantalla no persiste tema, idioma ni preferencias globales. Se mantiene como panel de referencia hasta que exista backend real para configuración.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <section class="admin-muted-block h-100 shadow-sm" aria-labelledby="configuracion-accesos-title">
+        <div class="p-3 p-md-4">
+          <h2 class="h5 card-title mb-3" id="configuracion-accesos-title"><i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Accesos realmente disponibles</h2>
+          <div class="d-flex flex-column gap-3">
+            <?php foreach (($modulosAdministracion ?? []) as $modulo): ?>
+              <a href="<?= esc($modulo['ruta']) ?>" class="text-decoration-none text-reset" aria-label="Ir a <?= esc($modulo['nombre']) ?>">
+                <div class="border rounded p-3 bg-white h-100 admin-module-link-card">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                    <h6 class="mb-0"><?= esc($modulo['nombre']) ?></h6>
+                    <span class="badge <?= ($modulo['estado'] === 'Disponible') ? 'bg-success-subtle text-success border' : 'bg-warning-subtle text-warning border' ?>">
+                      <?= esc($modulo['estado']) ?>
+                    </span>
+                  </div>
+                  <p class="text-muted mb-0"><?= esc($modulo['descripcion']) ?></p>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-5">
+      <aside class="admin-muted-block h-100 shadow-sm" aria-labelledby="configuracion-limitaciones-title">
+        <div class="p-3 p-md-4">
+          <h2 class="h5 card-title" id="configuracion-limitaciones-title"><i class="fa-solid fa-clipboard-list me-2" aria-hidden="true"></i>Limitaciones actuales</h2>
+          <ul class="mb-0 ps-3">
+            <?php foreach (($limitaciones ?? []) as $limitacion): ?>
+              <li class="mb-2"><?= esc($limitacion) ?></li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>

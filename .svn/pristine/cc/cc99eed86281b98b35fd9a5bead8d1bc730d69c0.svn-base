@@ -1,0 +1,424 @@
+<?php
+$flashMsg = session()->getFlashdata('msg');
+$flashTipo = session()->getFlashdata('tipo') ?? 'success';
+$flashRole = in_array($flashTipo, ['danger', 'warning'], true) ? 'alert' : 'status';
+$legacySuccess = session()->getFlashdata('success');
+$legacyError = session()->getFlashdata('error');
+
+$persona = $persona ?? null;
+$empresa = $empresa ?? null;
+$departamentos = $departamentos ?? [];
+
+$value = static function (string $key, $personaValue = '', $empresaValue = '') {
+    $oldValue = old($key);
+    if ($oldValue !== null && trim((string) $oldValue) !== '') {
+        return $oldValue;
+    }
+
+    if ($personaValue !== '') {
+        return $personaValue;
+    }
+
+    return $empresaValue;
+};
+
+$personaDepartamento = (string) $value('departamento_rep', $persona->id_departamento ?? '');
+$personaProvincia = (string) $value('provincia_rep', $persona->id_provincia ?? '');
+$personaDistrito = (string) $value('distrito_rep', $persona->id_distrito ?? '');
+
+$empresaDepartamento = (string) $value('departamento_repdos', '', $empresa->id_departamento ?? '');
+$empresaProvincia = (string) $value('provincia_repdos', '', $empresa->id_provincia ?? '');
+$empresaDistrito = (string) $value('distrito_repdos', '', $empresa->id_distrito ?? '');
+?>
+
+<div class="container-fluid px-2">
+    <?php if ($flashMsg): ?>
+        <div class="alert alert-<?= esc($flashTipo) ?> alert-dismissible fade show" role="<?= esc($flashRole) ?>" aria-live="polite">
+            <?= esc($flashMsg) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($legacySuccess): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="status" aria-live="polite">
+            <?= esc($legacySuccess) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($legacyError): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= esc($legacyError) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2">
+                <div>
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="fa-solid fa-user-plus me-2" aria-hidden="true"></i>
+                        <?= $persona ? 'Editar Persona' : 'Registrar Nueva Persona' ?>
+                    </h6>
+                    <p class="text-muted mb-0 mt-2">Completá los datos personales y, si corresponde, asociá también la información empresarial.</p>
+                </div>
+                <span class="badge text-bg-light border text-uppercase">Formulario unificado</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id="lookup-feedback-persona" class="visually-hidden" aria-live="polite"></div>
+
+            <form action="<?= base_url('personas/guardar-todo') ?>" method="POST" id="formPersona">
+                <?= csrf_field() ?>
+                <input type="hidden" name="id_persona" value="<?= esc((string) ($persona->id_persona ?? old('id_persona', ''))) ?>">
+
+                <div class="rounded-3 border bg-light-subtle px-3 py-2 mb-3 small text-muted">
+                    Los campos marcados con <span class="text-danger fw-semibold">*</span> son obligatorios. Usá las búsquedas de DNI y RUC para completar datos más rápido.
+                </div>
+
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">
+                    <i class="fa-solid fa-id-card me-1"></i> Datos Personales
+                </h6>
+
+                <div class="row g-3 mb-1">
+                    <div class="col-md-4">
+                        <label for="dni" class="form-label fw-semibold">DNI <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="dni" name="dni" class="form-control" maxlength="8" inputmode="numeric"
+                                   value="<?= esc((string) $value('dni', $persona->dni ?? '')) ?>" placeholder="Ej: 12345678" required>
+                            <button type="button" class="btn btn-primary" id="btnBuscarDni" aria-label="Buscar datos por DNI">
+                                <span id="spinnerDni" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <i class="fa-solid fa-magnifying-glass" id="iconoDni" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div id="alertaDni" class="mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-1">
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label fw-semibold">Nombre(s) <span class="text-danger">*</span></label>
+                        <input type="text" id="nombre" name="nombre" class="form-control"
+                               value="<?= esc((string) $value('nombre', $persona->nombre ?? '')) ?>" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="apellido_paterno" class="form-label fw-semibold">Apellido Paterno <span class="text-danger">*</span></label>
+                        <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control"
+                               value="<?= esc((string) $value('apellido_paterno', $persona->apellido_paterno ?? '')) ?>" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="apellido_materno" class="form-label fw-semibold">Apellido Materno</label>
+                        <input type="text" id="apellido_materno" name="apellido_materno" class="form-control"
+                               value="<?= esc((string) $value('apellido_materno', $persona->apellido_materno ?? '')) ?>">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-1">
+                    <div class="col-md-4">
+                        <label for="telefono" class="form-label fw-semibold">Teléfono</label>
+                        <input type="text" id="telefono" name="telefono" class="form-control" maxlength="20"
+                               value="<?= esc((string) $value('telefono', $persona->telefono ?? '')) ?>" placeholder="Ej: 999888777">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo" class="form-label fw-semibold">Correo <span class="text-danger">*</span></label>
+                        <input type="email" id="correo" name="correo" class="form-control"
+                               value="<?= esc((string) $value('correo', $persona->correo ?? '')) ?>" placeholder="correo@ejemplo.com" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fecha_nacimiento" class="form-label fw-semibold">Fecha de Nacimiento</label>
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
+                               value="<?= esc((string) $value('fecha_nacimiento', $persona->fecha_nacimiento ?? '')) ?>">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="direccion_rep" class="form-label fw-semibold">Dirección Personal</label>
+                        <input type="text" id="direccion_rep" name="direccion_rep" class="form-control"
+                               value="<?= esc((string) $value('direccion_rep', $persona->direccion ?? '')) ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="departamento_rep" class="form-label fw-semibold">Departamento</label>
+                        <select id="departamento_rep" name="departamento_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                            <?php foreach ($departamentos as $dep): ?>
+                                <option value="<?= esc((string) $dep->id) ?>" <?= $personaDepartamento === (string) $dep->id ? 'selected' : '' ?>>
+                                    <?= esc($dep->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="provincia_rep" class="form-label fw-semibold">Provincia</label>
+                        <select id="provincia_rep" name="provincia_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="distrito_rep" class="form-label fw-semibold">Distrito</label>
+                        <select id="distrito_rep" name="distrito_rep" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
+                    <i class="fa-solid fa-building me-1"></i> Datos Empresariales
+                    <small class="text-muted fw-normal">(opcional)</small>
+                </h6>
+
+                <div class="row g-3 mb-1">
+                    <div class="col-md-4">
+                        <label for="ruc" class="form-label fw-semibold">RUC</label>
+                        <div class="input-group">
+                            <input type="text" id="ruc" name="ruc" class="form-control" maxlength="11" inputmode="numeric"
+                                   value="<?= esc((string) $value('ruc', '', $empresa->ruc ?? '')) ?>" placeholder="Ej: 20123456789">
+                            <button type="button" class="btn btn-secondary" id="btnBuscarRuc" aria-label="Buscar datos por RUC">
+                                <span id="spinnerRuc" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <i class="fa-solid fa-magnifying-glass" id="iconoRuc" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div id="alertaRuc" class="mt-1"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="razon_social" class="form-label fw-semibold">Razón Social</label>
+                        <input type="text" id="razon_social" name="razon_social" class="form-control"
+                               value="<?= esc((string) $value('razon_social', '', $empresa->razon_social ?? '')) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo_empresa" class="form-label fw-semibold">Correo Empresarial</label>
+                        <input type="email" id="correo_empresa" name="correo_empresa" class="form-control"
+                               value="<?= esc((string) $value('correo_empresa', '', $empresa->correo ?? '')) ?>">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-1">
+                    <div class="col-md-6">
+                        <label for="direccion" class="form-label fw-semibold">Dirección Fiscal</label>
+                        <input type="text" id="direccion" name="direccion" class="form-control"
+                               value="<?= esc((string) $value('direccion', '', $empresa->direccion ?? '')) ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="codigo_cliente" class="form-label fw-semibold">Código de Cliente</label>
+                        <input type="number" id="codigo_cliente" name="codigo_cliente" class="form-control"
+                               value="<?= esc((string) $value('codigo_cliente', '', $empresa->codigo_cliente ?? '')) ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="departamento_repdos" class="form-label fw-semibold">Departamento</label>
+                        <select id="departamento_repdos" name="departamento_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                            <?php foreach ($departamentos as $dep): ?>
+                                <option value="<?= esc((string) $dep->id) ?>" <?= $empresaDepartamento === (string) $dep->id ? 'selected' : '' ?>>
+                                    <?= esc($dep->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="provincia_repdos" class="form-label fw-semibold">Provincia</label>
+                        <select id="provincia_repdos" name="provincia_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-2 offset-md-10">
+                        <label for="distrito_repdos" class="form-label fw-semibold">Distrito</label>
+                        <select id="distrito_repdos" name="distrito_repdos" class="form-select">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4" id="btnGuardar">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> <?= $persona ? 'Guardar Cambios' : 'Guardar Persona' ?>
+                    </button>
+                    <a href="<?= base_url('personas') ?>" class="btn btn-secondary px-4">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const csrfName = '<?= csrf_token() ?>';
+const csrfHash = '<?= csrf_hash() ?>';
+const lookupFeedbackPersona = document.getElementById('lookup-feedback-persona');
+
+function announceLookup(message) {
+    if (lookupFeedbackPersona) {
+        lookupFeedbackPersona.textContent = message;
+    }
+}
+
+function showAlert(targetId, type, message) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    target.innerHTML = `<small class="text-${type}">${message}</small>`;
+}
+
+async function lookupDocumento({ inputId, buttonId, spinnerId, iconId, endpoint, payloadKey, onSuccess, onError, alertId, regex, invalidMessage }) {
+    const input = document.getElementById(inputId);
+    const button = document.getElementById(buttonId);
+    const spinner = document.getElementById(spinnerId);
+    const icon = document.getElementById(iconId);
+    const value = (input?.value ?? '').trim();
+
+    if (!regex.test(value)) {
+        showAlert(alertId, 'danger', `<i class="fa-solid fa-triangle-exclamation"></i> ${invalidMessage}`);
+        announceLookup(invalidMessage);
+        return;
+    }
+
+    showAlert(alertId, '', '');
+    spinner.classList.remove('d-none');
+    icon.classList.add('d-none');
+    button.disabled = true;
+    announceLookup(`Buscando datos para ${value}.`);
+
+    try {
+        const body = new URLSearchParams();
+        body.append(payloadKey, value);
+        body.append(csrfName, csrfHash);
+
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            onSuccess(data);
+            showAlert(alertId, 'success', '<i class="fa-solid fa-circle-check"></i> Datos encontrados correctamente.');
+            announceLookup('Datos encontrados correctamente.');
+            return;
+        }
+
+        onError();
+        const msg = data.message ?? 'No encontrado';
+        const type = data.registrado ? 'warning' : 'danger';
+        showAlert(alertId, type, `<i class="fa-solid fa-circle-xmark"></i> ${msg}`);
+        announceLookup(msg);
+    } catch (error) {
+        console.error(error);
+        showAlert(alertId, 'danger', '<i class="fa-solid fa-circle-xmark"></i> Error de conexión. Intenta nuevamente.');
+        announceLookup('Error de conexión. Intenta nuevamente.');
+    } finally {
+        spinner.classList.add('d-none');
+        icon.classList.remove('d-none');
+        button.disabled = false;
+    }
+}
+
+function setupUbigeo(deptId, provId, distId, selectedProv, selectedDist) {
+    const dept = document.getElementById(deptId);
+    const prov = document.getElementById(provId);
+    const dist = document.getElementById(distId);
+
+    const reset = (select) => { select.innerHTML = '<option value="">-- Seleccionar --</option>'; };
+    const fill = (select, items, selected = '') => {
+        reset(select);
+        items.forEach((item) => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = item.name;
+            if (String(item.id) === String(selected)) opt.selected = true;
+            select.appendChild(opt);
+        });
+    };
+
+    const loadDistricts = async (provinceId, selected = '') => {
+        reset(dist);
+        if (!provinceId) return;
+        const res = await fetch(`<?= base_url('ubigeo/distritos') ?>/${provinceId}`);
+        fill(dist, await res.json(), selected);
+    };
+
+    const loadProvinces = async (departmentId, selectedProvince = '', selectedDistrict = '') => {
+        reset(prov);
+        reset(dist);
+        if (!departmentId) return;
+        const res = await fetch(`<?= base_url('ubigeo/provincias') ?>/${departmentId}`);
+        fill(prov, await res.json(), selectedProvince);
+        if (selectedProvince) {
+            await loadDistricts(selectedProvince, selectedDistrict);
+        }
+    };
+
+    dept.addEventListener('change', function () { loadProvinces(this.value); });
+    prov.addEventListener('change', function () { loadDistricts(this.value); });
+
+    if (dept.value) {
+        loadProvinces(dept.value, selectedProv, selectedDist);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    setupUbigeo('departamento_rep', 'provincia_rep', 'distrito_rep', '<?= esc($personaProvincia) ?>', '<?= esc($personaDistrito) ?>');
+    setupUbigeo('departamento_repdos', 'provincia_repdos', 'distrito_repdos', '<?= esc($empresaProvincia) ?>', '<?= esc($empresaDistrito) ?>');
+
+    document.getElementById('btnBuscarDni').addEventListener('click', () => lookupDocumento({
+        inputId: 'dni',
+        buttonId: 'btnBuscarDni',
+        spinnerId: 'spinnerDni',
+        iconId: 'iconoDni',
+        endpoint: '<?= base_url('personas/buscar-dni') ?>',
+        payloadKey: 'dni',
+        alertId: 'alertaDni',
+        regex: /^\d{8}$/,
+        invalidMessage: 'El DNI debe tener exactamente 8 dígitos numéricos.',
+        onSuccess: (data) => {
+            document.getElementById('nombre').value = data.nombres ?? '';
+            document.getElementById('apellido_paterno').value = data.apellido_paterno ?? '';
+            document.getElementById('apellido_materno').value = data.apellido_materno ?? '';
+            document.getElementById('telefono').focus();
+        },
+        onError: () => {
+            document.getElementById('nombre').value = '';
+            document.getElementById('apellido_paterno').value = '';
+            document.getElementById('apellido_materno').value = '';
+        }
+    }));
+
+    document.getElementById('dni').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('btnBuscarDni').click();
+        }
+    });
+
+    document.getElementById('btnBuscarRuc').addEventListener('click', () => lookupDocumento({
+        inputId: 'ruc',
+        buttonId: 'btnBuscarRuc',
+        spinnerId: 'spinnerRuc',
+        iconId: 'iconoRuc',
+        endpoint: '<?= base_url('personas/buscar-ruc') ?>',
+        payloadKey: 'ruc',
+        alertId: 'alertaRuc',
+        regex: /^\d{11}$/,
+        invalidMessage: 'El RUC debe tener exactamente 11 dígitos numéricos.',
+        onSuccess: (data) => {
+            document.getElementById('razon_social').value = data.razon ?? '';
+            document.getElementById('direccion').value = data.direccion ?? '';
+        },
+        onError: () => {
+            document.getElementById('razon_social').value = '';
+            document.getElementById('direccion').value = '';
+        }
+    }));
+
+    document.getElementById('ruc').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('btnBuscarRuc').click();
+        }
+    });
+});
+</script>

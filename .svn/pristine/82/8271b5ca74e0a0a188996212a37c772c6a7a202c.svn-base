@@ -1,0 +1,73 @@
+<?php
+
+use App\Support\PersonasCatalog;
+
+helper('auth');
+?>
+<main class="container-fluid px-2 admin-page" id="main-content">
+<div class="card shadow-lg border-0">
+  <?php if (session()->getFlashdata('msg')): ?>
+    <div class="px-3 pt-3">
+      <div class="alert alert-<?= esc(session()->getFlashdata('tipo') ?? 'success') ?> alert-dismissible fade show" role="status" aria-live="polite">
+        <?= esc(session()->getFlashdata('msg')) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Tabla de Personas</h1>
+      <p class="text-muted mb-0">Consultá el padrón de personas registradas y su información principal.</p>
+    </div>
+    <?php if (puede_insertar(PersonasCatalog::MENU_ID)): ?>
+      <a href="<?= base_url('personas/add') ?>" class="btn btn-success">
+        <i class="fa-solid fa-user-plus me-2" aria-hidden="true"></i>
+        <span>Registrar persona</span>
+      </a>
+    <?php endif; ?>
+  </div>
+
+  <div class="card-body">
+    <?php if (empty($personas)): ?>
+      <div class="border rounded-3 bg-light-subtle text-center py-5 px-4">
+        <h4 class="fw-semibold mb-2">Todavía no hay personas registradas.</h4>
+        <p class="text-muted mb-3">Cuando registres la primera, la vas a ver acá con sus datos principales.</p>
+        <?php if (puede_insertar(PersonasCatalog::MENU_ID)): ?>
+          <a href="<?= base_url('personas/add') ?>" class="btn btn-success">
+            <i class="fa-solid fa-user-plus me-2" aria-hidden="true"></i>Registrar persona
+          </a>
+        <?php endif; ?>
+      </div>
+    <?php else: ?>
+    <div class="table-responsive rounded-3 admin-muted-block">
+      <table class="table table-hover align-middle">
+        <caption class="caption-top text-muted small">Listado de personas con sus datos de contacto y ubicación principal.</caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre Completo</th>
+            <th scope="col">DNI</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Dirección</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($personas as $index => $persona): ?>
+            <tr>
+              <th scope="row"><?= esc((string) ($index + 1)) ?></th>
+              <td><div class="fw-semibold"><?= esc(trim(($persona->nombre ?? '') . ' ' . ($persona->apellido_paterno ?? '') . ' ' . ($persona->apellido_materno ?? ''))) ?></div></td>
+              <td><?= esc($persona->dni ?? '-') ?></td>
+              <td><?= esc($persona->correo ?? '-') ?></td>
+              <td><?= esc($persona->telefono ?? '-') ?></td>
+              <td><?= esc($persona->direccion ?? '-') ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+    <?php endif; ?>
+  </div>
+</div>
+</main>

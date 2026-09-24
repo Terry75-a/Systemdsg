@@ -1,0 +1,38 @@
+<div class="card shadow-sm border-0 w-100 h-100 p-0 m-0">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0">Gestión de Menú (Sidebar)</h2>
+            <button class="btn btn-warning text-white">
+                <i class="fa fa-list-check me-2"></i> Reordenar Menú
+            </button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-action active bg-dark border-dark">
+                        <i class="fa-solid fa-layer-group me-2"></i> Estructura del Menú
+                    </div>
+                    <div class="list-group-item"><i class="fa-solid fa-chart-line me-3"></i> Inicio</div>
+                    <div class="list-group-item"><i class="fa-solid fa-users me-3"></i> Clientes</div>
+                    <div class="list-group-item"><i class="fa-solid fa-calendar me-3"></i> Calendario</div>
+                    <div class="list-group-item bg-light ps-4">
+                         <i class="fa-solid fa-chevron-right me-2 small"></i> <strong>Módulos</strong>
+                         <div class="ms-3 mt-2">
+                            <span class="badge bg-secondary mb-1 d-block w-50">Permisos</span>
+                            <span class="badge bg-secondary mb-1 d-block w-50">Usuarios</span>
+                            <span class="badge bg-secondary mb-1 d-block w-50">Menú</span>
+                         </div>
+                    </div>
+                    <div class="list-group-item"><i class="fa-solid fa-cog me-3"></i> Configuración</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-info border-0 shadow-sm">
+                    <h5><i class="fa-solid fa-lightbulb me-2"></i> Info</h5>
+                    Desde aquí podrá personalizar los accesos directos y el orden de aparición de los módulos en el panel lateral.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+/* === Fondo general === */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  font-family: "Roboto", sans-serif;
+  background-color: #f0f2f5; 
+  /* Opcional: una textura sutil */
+  background-image: radial-gradient(#d1d5db 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* === Tarjeta de login === */
+.login-card {
+  background: #ffffff;
+  border-radius: 5px;
+  width: 420px;
+  overflow: hidden; /* Para que el título verde respete las esquinas */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* === Título como Cabecera === */
+.title {
+  background-color: #43C8BE; /* Verde vibrante */
+  color: #000;
+  margin: 0;
+  padding: 25px;
+  
+  text-align: center;
+  
+  letter-spacing: 1px;
+}
+
+/* === Cuerpo del Formulario === */
+.formularioxd {
+  padding: 25px;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box; /* Crucial para que no se desborde */
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  font-family: 'Itim', cursive;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #00ff88;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+/* === Contenedor de Password e Icono === */
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  cursor: pointer;
+}
+
+/* === Botones === */
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.btn {
+  flex: 1; /* Hace que ambos botones midan lo mismo */
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s, opacity 0.2s;
+  font-family: "Roboto", sans-serif;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.volver {
+  background-color: #1f2937; /* Negro/Gris oscuro */
+  color: #ffffff;
+}
+
+.acceder {
+  background-color: #00ff88; /* Verde */
+  color: #000000;
+}
+
+.volver:hover, .acceder:hover {
+  opacity: 0.9;
+}
+
+/* === Alerta de Error === */
+.alerta-error {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin: 15px 25px -10px 25px; /* Ajuste para que encaje bien */
+  text-align: center;
+}
+
+/* === Animación === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

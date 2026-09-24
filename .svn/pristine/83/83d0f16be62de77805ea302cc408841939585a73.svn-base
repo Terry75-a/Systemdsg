@@ -1,0 +1,13 @@
+const TogglePassword = document.querySelector('#togglePassword');
+const Password = document.querySelector('#password');
+
+TogglePassword.addEventListener('click', function (e){
+
+    if(Password.type === 'password'){
+        Password.type = 'text';
+        this.classList.toggle('fa-eye-slash');
+    } else {
+        Password.type = 'password';
+        this.classList.toggle('fa-eye-slash');
+    }
+})

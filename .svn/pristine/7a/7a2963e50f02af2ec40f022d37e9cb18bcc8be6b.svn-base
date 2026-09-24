@@ -1,0 +1,186 @@
+<main class="services-page" id="main-content">
+    <section class="services-hero py-5 public-hero public-section-tight">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <span class="badge-solutions">Nuestras soluciones</span>
+                    <h1 class="main-title mt-3">Software especializado para operar mejor y crecer con control</h1>
+                    <p class="main-subtitle">
+                        Diseñamos software para restaurantes, boticas, farmacias, minimarkets y negocios de servicios que necesitan controlar ventas, inventario, caja, reportes y atención sin depender de procesos manuales.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <a href="<?= base_url('/#contacto') ?>" class="btn-primary">Solicitar asesoría</a>
+                        <a href="<?= base_url('precio') ?>" class="btn-cyan">Ver planes y precios</a>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <aside class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body p-4">
+                            <p class="text-uppercase small text-muted fw-semibold mb-2">Qué resolvemos</p>
+                            <ul class="list-unstyled mb-0 d-grid gap-3">
+                                <li class="d-flex gap-3 align-items-start">
+                                    <i class="fa-solid fa-bolt text-primary mt-1" aria-hidden="true"></i>
+                                    <span>Implementaciones rápidas con acompañamiento técnico y capacitación.</span>
+                                </li>
+                                <li class="d-flex gap-3 align-items-start">
+                                    <i class="fa-solid fa-chart-line text-primary mt-1" aria-hidden="true"></i>
+                                    <span>Datos claros para ventas, stock, caja y decisiones comerciales.</span>
+                                </li>
+                                <li class="d-flex gap-3 align-items-start">
+                                    <i class="fa-solid fa-headset text-primary mt-1" aria-hidden="true"></i>
+                                    <span>Soporte continuo para que la operación no se detenga.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 public-section" aria-labelledby="servicios-industria-title">
+        <div class="container">
+            <div class="text-center mb-5">
+                <p class="tagline">Industrias</p>
+                <h2 class="services-title" id="servicios-industria-title">Soluciones pensadas para cada tipo de operación</h2>
+                <p class="services-description mx-auto" style="max-width: 760px;">
+                    No vendemos un sistema genérico. Adaptamos cada solución a los procesos críticos de tu rubro para mejorar control operativo, velocidad de atención y visibilidad comercial.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-3">
+                    <article class="product-card h-100">
+                        <div class="product-icon-bg icon-green"><i class="fa-solid fa-utensils" aria-hidden="true"></i></div>
+                        <h3>Restaurantes</h3>
+                        <p class="product-desc">Pedidos, mesas, cocina, delivery y facturación en una sola operación.</p>
+                        <ul class="product-features">
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Mesas y comandas</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Cocina y despacho</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Delivery integrado</li>
+                        </ul>
+                        <a href="<?= base_url('software-para-restaurantes') ?>" class="btn-cyan">Ver landing para restaurantes</a>
+                    </article>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <article class="product-card h-100">
+                        <div class="product-icon-bg icon-mint"><i class="fa-solid fa-capsules" aria-hidden="true"></i></div>
+                        <h3>Boticas y farmacias</h3>
+                        <p class="product-desc">Controlá lotes, vencimientos, recetas y stock sensible sin perder trazabilidad.</p>
+                        <ul class="product-features">
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Lotes y vencimientos</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Alertas de reposición</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Historial de ventas</li>
+                        </ul>
+                        <a href="<?= base_url('software-para-boticas-farmacias') ?>" class="btn-cyan">Ver landing para boticas</a>
+                    </article>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <article class="product-card h-100 featured-border">
+                        <div class="product-icon-bg icon-teal"><i class="fa-solid fa-shop" aria-hidden="true"></i></div>
+                        <h3>Minimarkets</h3>
+                        <p class="product-desc">Venta rápida, lector de códigos, promociones y control de inventario en tiempo real.</p>
+                        <ul class="product-features">
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Punto de venta ágil</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Inventario centralizado</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Gestión de proveedores</li>
+                        </ul>
+                        <a href="<?= base_url('software-para-minimarkets') ?>" class="btn-cyan">Ver landing para minimarkets</a>
+                    </article>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <article class="product-card h-100">
+                        <div class="product-icon-bg icon-green"><i class="fa-solid fa-hotel" aria-hidden="true"></i></div>
+                        <h3>Hoteles y servicios</h3>
+                        <p class="product-desc">Reservas, cobros y seguimiento operativo con más orden para el equipo.</p>
+                        <ul class="product-features">
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reservas y caja</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reportes por sede</li>
+                            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Soporte continuo</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 public-section" id="casos-de-uso" aria-labelledby="servicios-proceso-title">
+        <div class="container">
+            <div class="text-center mb-5">
+                <p class="tagline">Hub de soluciones</p>
+                <h2 class="services-title">Elegí por problema o por rubro</h2>
+                <p class="services-description mx-auto" style="max-width: 760px;">
+                    Esta página ya funciona como punto de entrada para explorar soluciones por industria y por problema operativo, con enlaces directos a inventario, caja y reportes.
+                </p>
+            </div>
+
+            <div class="text-center mb-5">
+                <p class="tagline">Caso de uso</p>
+                <h2 class="services-title">¿Tu dolor principal es el stock? Empezá por inventario</h2>
+                <p class="services-description mx-auto" style="max-width: 760px;">
+                    Si hoy perdés tiempo conciliando productos, reposición o diferencias de stock, tenemos una página específica sobre control de inventario para ayudarte a evaluar mejor la solución.
+                </p>
+                <a href="<?= base_url('control-de-inventario') ?>" class="btn-cyan">Ver landing de control de inventario</a>
+            </div>
+
+            <div class="text-center mb-5">
+                <p class="tagline">Caso de uso</p>
+                <h2 class="services-title">¿Tu cuello de botella está en cobrar y cerrar caja?</h2>
+                <p class="services-description mx-auto" style="max-width: 760px;">
+                    Si necesitás vender más rápido, evitar desorden en caja y tener mejor visibilidad de cobros y movimientos, ya tenés una landing específica sobre caja y punto de venta.
+                </p>
+                <a href="<?= base_url('caja-y-punto-de-venta') ?>" class="btn-cyan">Ver landing de caja y punto de venta</a>
+            </div>
+
+            <div class="text-center mb-5">
+                <p class="tagline">Caso de uso</p>
+                <h2 class="services-title">¿Te falta visibilidad para decidir mejor?</h2>
+                <p class="services-description mx-auto" style="max-width: 760px;">
+                    Si hoy te cuesta leer ventas, productos, tickets u horarios de mayor demanda, sumamos una landing específica sobre reportes de ventas.
+                </p>
+                <a href="<?= base_url('reportes-de-ventas') ?>" class="btn-cyan">Ver landing de reportes de ventas</a>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-5">
+                    <div class="h-100 p-4 p-lg-5 rounded-4 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #164e63 100%);">
+                        <p class="tagline text-white-50">Acompañamiento</p>
+                        <h2 class="section-title text-white" id="servicios-proceso-title">Implementamos con foco en adopción real</h2>
+                        <p class="mb-0 text-white-50">No alcanza con instalar. Te ayudamos a implementar el sistema, capacitar al equipo y medir mejoras en ventas, inventario, caja y operación diaria.</p>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100 rounded-4">
+                                <div class="card-body p-4">
+                                    <span class="fw-bold text-primary">01</span>
+                                    <h3 class="h5 mt-3">Diagnóstico</h3>
+                                    <p class="mb-0 text-muted">Entendemos tu operación actual y detectamos cuellos de botella.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100 rounded-4">
+                                <div class="card-body p-4">
+                                    <span class="fw-bold text-primary">02</span>
+                                    <h3 class="h5 mt-3">Configuración</h3>
+                                    <p class="mb-0 text-muted">Ajustamos módulos, roles y flujos según tu realidad comercial.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100 rounded-4">
+                                <div class="card-body p-4">
+                                    <span class="fw-bold text-primary">03</span>
+                                    <h3 class="h5 mt-3">Seguimiento</h3>
+                                    <p class="mb-0 text-muted">Acompañamos el arranque y resolvemos dudas del equipo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

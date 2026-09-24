@@ -1,0 +1,514 @@
+/* ================================================
+   HERO SECTION - MOBILE RESPONSIVE DESIGN
+   ================================================ */
+
+/* Mobile First Approach - Modern & Minimalist */
+@media (max-width: 768px) {
+  /* Mobile Navbar Adaptation - Less aggressive shrinking */
+  .navbar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    border-radius: 65px;
+    padding: 8px 20px;
+    gap: 15px;
+    width: calc(100% - 20px);
+    max-width: none;
+    justify-content: space-between; /* Ensure proper spacing */
+  }
+  
+  /* Mobile Logo Adaptation */
+  .logo {
+    gap: 8px;
+  }
+  
+  .logo-circle {
+    width: 45px;
+    height: 45px;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Add transition for smooth animation */
+  }
+  
+  .logo-text {
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Add transition for smooth animation */
+  }
+  
+  /* Logo adaptations when scrolled - mobile version */
+  .navbar.navbar-scrolled .logo-circle {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .navbar.navbar-scrolled .logo-text {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+  }
+  
+  .hero-section {
+    min-height: 100vh;
+    padding: 20px 15px 40px !important;
+    margin-top: 80px !important;
+    background-size: cover !important;
+    background-position: center bottom;
+  }
+  
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  /* Mobile Hero Left Column */
+  .hero-left-column {
+    order: 1;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .hero-badge {
+    align-self: center;
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: 40px;
+    margin-bottom: 5px;
+  }
+  
+  .hero-main {
+    padding: 25px 20px;
+    border-radius: 45px;
+    text-align: center;
+    max-width: 100%;
+  }
+  
+  .hero-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  
+  .hero-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+    /* Remove line breaks for mobile */
+    br {
+      display: none;
+    }
+  }
+  
+  /* Mobile Stats Column - Simplified */
+  .hero-stats-column {
+    order: 2;
+    gap: 15px;
+    padding-top: 0;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Mobile Stats - Three Column Layout like PC */
+  .mobile-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Green pill stat */
+  .stat-pill {
+    margin: 0;
+    padding: 16px 12px;
+    min-width: auto;
+    width: 100%;
+    text-align: center;
+    border-radius: 50px;
+    transform: none !important;
+    /* Preserve green background */
+    background: #00ff88;
+    color: #000;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Light stat card */
+  .stat-card.light {
+    margin: 0;
+    padding: 16px 12px;
+    min-width: auto;
+    width: 100%;
+    text-align: center;
+    border-radius: 50px;
+    transform: none !important;
+    /* Preserve light card styling */
+    background: rgba(255, 255, 255, 0.223);
+    color: #000000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.336);
+  }
+  
+  /* Dark stat card */
+  .stat-card.dark {
+    margin: 0;
+    padding: 16px 12px;
+    min-width: auto;
+    width: 100%;
+    text-align: center;
+    border-radius: 50px;
+    transform: none !important;
+    /* Preserve dark card styling */
+    background: rgba(60, 60, 60, 0.9);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .stat-pill .stat-number,
+  .stat-card .stat-number {
+    font-size: 1.6rem;
+    margin: 0;
+  }
+  
+  .stat-pill .stat-label,
+  .stat-card .stat-label {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  
+  /* Remove individual positioning that conflicts with grid */
+  .stat-pill,
+  .stat-card.light,
+  .stat-card.dark {
+    align-self: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Mobile Buttons Container - Force both buttons visible */
+  .buttons-container {
+    margin: 10px 0 0 0 !important;
+    padding: 8px !important;
+    border-radius: 45px !important;
+    align-self: center;
+    width: 100% !important;
+    max-width: 280px !important;
+    position: relative;
+    order: 3;
+    overflow: visible !important;
+  }
+  
+  .stats-actions {
+    gap: 4px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    display: flex !important;
+  }
+  
+  .stats-btn {
+    padding: 8px 12px !important;
+    font-size: 10px !important;
+    min-width: 100px !important;
+    flex: 1 1 50% !important;
+    border-radius: 40px !important;
+    max-width: 130px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    width: 50% !important;
+    display: flex !important;
+    /* Force equal space for both buttons */
+  }
+  
+  .stats-btn span:first-child {
+    font-size: 10px !important;
+    font-weight: 600;
+  }
+  
+  .stats-btn .material-icons {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 10px !important;
+    transform: translateX(23px) !important;
+    background: white !important;
+    color: #000 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    
+  }
+  
+  /* Services button - black circle with white icon */
+  .stats-btn.services-btn .material-icons {
+    background: #000 !important;
+    color: white !important;
+  }
+}
+
+/* Small Mobile Optimization */
+@media (max-width: 480px) {
+  /* Further Mobile Navbar Adaptation */
+  .navbar {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    border-radius: 55px;
+    padding: 6px 15px;
+    gap: 10px;
+    width: calc(100% - 16px);
+  }
+  
+  .logo {
+    gap: 6px;
+  }
+  
+  .logo-circle {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .logo-text {
+    font-size: 12px;
+  }
+  
+  /* Logo adaptations when scrolled - small mobile version */
+  .navbar.navbar-scrolled .logo-circle {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .navbar.navbar-scrolled .logo-text {
+    font-size: 10px;
+    letter-spacing: 0.1px;
+  }
+  
+  .hero-section {
+    min-height: 70vh;
+    padding: 10px 10px 25px;
+    margin-top: 65px;
+  }
+  
+  .hero-content {
+    gap: 20px;
+  }
+  
+  .hero-main {
+    padding: 18px 15px;
+    border-radius: 18px;
+  }
+  
+  .hero-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  
+  .hero-description {
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+  
+  .mobile-stats-grid {
+    gap: 8px;
+  }
+  
+  /* Green pill stat */
+  .stat-pill {
+    padding: 10px 8px;
+    /* Preserve green background */
+    background: #00ff88;
+    color: #000;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Light stat card */
+  .stat-card.light {
+    padding: 10px 8px;
+    /* Preserve light card styling */
+    background: rgba(255, 255, 255, 0.223);
+    color: #000000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.336);
+  }
+  
+  /* Dark stat card */
+  .stat-card.dark {
+    padding: 10px 8px;
+    /* Preserve dark card styling */
+    background: rgba(60, 60, 60, 0.9);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .stat-pill .stat-number,
+  .stat-card .stat-number {
+    font-size: 1.3rem;
+  }
+  
+  .stat-pill .stat-label,
+  .stat-card .stat-label {
+    font-size: 8px;
+  }
+  
+  /* Remove individual positioning that conflicts with grid */
+  .stat-pill,
+  .stat-card.light,
+  .stat-card.dark {
+    align-self: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Even smaller buttons for small mobile */
+  .buttons-container {
+    padding: 3px;
+    max-width: 250px;
+    margin: 8px 0 0 0;
+    border-radius: 45px;
+  }
+  
+  .stats-actions {
+    gap: 3px;
+  }
+  
+  .stats-btn {
+    padding: 5px 10px;
+    font-size: 9px;
+    border-radius: 35px;
+    max-width: 100px;
+    max-height: 40px;
+  }
+  
+  .stats-btn span:first-child {
+    font-size: 9px;
+  }
+  
+  .stats-btn .material-icons {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+    margin-left: 2px;
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  /* Extra Small Mobile Navbar Adaptation */
+  .navbar {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    border-radius: 35px;
+    padding: 5px 12px;
+    gap: 8px;
+    width: calc(100% - 12px);
+  }
+  
+  .logo {
+    gap: 8px;
+  }
+  
+  .logo-circle {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .logo-text {
+    font-size: 11px;
+  }
+  
+  /* Logo adaptations when scrolled - extra small mobile version */
+  .navbar.navbar-scrolled .logo-circle {
+    width: 55px;
+    height: 37px;
+  }
+  
+  .navbar.navbar-scrolled .logo-text {
+    font-size: 9px;
+    letter-spacing: 0.1px;
+  }
+  
+  .hero-section {
+    min-height: 85vh;
+    padding: 12px 10px 20px;
+  }
+  
+  .hero-title {
+    font-size: 1.6rem;
+  }
+  
+  .hero-description {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+  
+  .mobile-stats-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  
+  /* Green pill stat */
+  .stat-pill {
+    /* Preserve green background */
+    background: #00ff88;
+    color: #000;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Light stat card */
+  .stat-card.light {
+    /* Preserve light card styling */
+    background: rgba(255, 255, 255, 0.223);
+    color: #000000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.336);
+  }
+  
+  /* Dark stat card */
+  .stat-card.dark {
+    /* Preserve dark card styling */
+    background: rgba(60, 60, 60, 0.9);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .stat-pill .stat-number,
+  .stat-card .stat-number {
+    font-size: 1.3rem;
+  }
+  
+  .stat-pill .stat-label,
+  .stat-card .stat-label {
+    font-size: 8px;
+  }
+  
+  /* Ultra compact buttons for extra small screens */
+  .buttons-container {
+    max-width: 180px;
+    padding: 4px;
+    margin: 6px 0 0 0;
+    border-radius: 40px;
+  }
+  
+  .stats-actions {
+    gap: 2px;
+  }
+  
+  .stats-btn {
+    padding: 4px 8px;
+    font-size: 8px;
+    border-radius: 10px;
+    max-width: 75px;
+  }
+  
+  .stats-btn span:first-child {
+    font-size: 8px;
+  }
+  
+  .stats-btn .material-icons {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+    transform: translateX(1px);
+  }
+}

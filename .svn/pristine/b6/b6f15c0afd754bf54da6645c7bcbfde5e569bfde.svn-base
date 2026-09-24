@@ -1,0 +1,46 @@
+<aside class="sidebar">
+    <div class="logo">
+        <i class="fa-solid fa-bolt"></i>
+        <h3>DSG</h3>
+    </div>
+
+    <?php $uri = service('uri'); ?>
+    <ul class="menu">
+        <a href="<?= base_url('dashboard') ?>">
+            <li class="<?= ($uri->getSegment(1) == 'dashboard') ? 'active' : '' ?>">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Inicio</span>
+            </li>
+        </a>
+
+        <a href="<?= base_url('clientes') ?>">
+            <li class="<?= ($uri->getSegment(1) == 'clientes') ? 'active' : '' ?>">
+                <i class="fa-solid fa-users"></i>
+                <span>Clientes</span>
+            </li>
+        </a>
+        <a href="<?= base_url('perfil') ?>">
+            <li class="<?=  ($uri->getSegment(1) == 'perfil') ? 'active' : '' ?>">
+                <i class="fa fa-user"></i>
+                <span>Perfil</span>
+            </li>
+        </a>
+        <a href="<?=  base_url('configuracion') ?>">
+            <li class="<?=  ($uri->getSegment(1) == 'configuracion') ? 'active' : '' ?>">
+                <i class="fa fa-cog"></i>
+                <span>Configuracion</span>
+            </li>
+        </a>
+        <a href="<?= base_url('logout') ?>">
+            <li>
+                <i class="fa fa-sign-out"></i>
+                <span>Cerrar Sesion</span>
+            </li>
+        </a>
+        
+        
+
+        
+    </ul>
+</aside>
+   

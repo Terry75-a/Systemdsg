@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-blue: #3b82f6; /* El azul brillante de tu imagen */
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    overflow-y: auto;
+}
+
+.main-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+/* LADO IZQUIERDO */
+.left-side {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    padding: 40px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.journey-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.title-modern {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 35px;
+    color: var(--text-dark);
+}
+
+/* INPUTS CON LABEL EN EL BORDE */
+.form-group-modern {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group-modern label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: white;
+    padding: 0 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    z-index: 2;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 14px 45px 14px 15px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+}
+
+.input-with-icon i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-primary-modern {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* SEPARADOR */
+.separator {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.separator::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.separator span {
+    background: white;
+    padding: 0 10px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    position: relative;
+}
+
+/* BOTONES SOCIALES */
+.social-login {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-social {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid var(--border-color);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.footer-links {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.back-link {
+    display: block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* LADO DERECHO: IMAGEN ARTÍSTICA */
+.right-side {
+    flex: 1;
+    background: url('https://images.pexels.com/photos/30920085/pexels-photo-30920085.jpeg?auto=compress&cs=tinysrgb&w=1600') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 900px) {
+    .right-side { display: none; }
+}

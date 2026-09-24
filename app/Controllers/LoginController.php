@@ -1,0 +1,118 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\UsuarioModel;
+use App\Models\PermisosModel;
+
+class LoginController extends BaseController
+{
+    protected UsuarioModel $usuarioModel;
+    protected PermisosModel $permisosModel;
+
+    public function __construct()
+    {
+        $this->usuarioModel = new UsuarioModel();
+        $this->permisosModel = new PermisosModel();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // INDEX — Muestra el formulario de login
+    // ══════════════════════════════════════════════════════════════
+    public function index()
+    {
+        if (session()->get('logged_in')) {
+            return redirect()->to(base_url('dashboard'));
+        }
+
+        return view('layouts/header_dashboard')
+               .view('login');
+               
+        
+        }
+
+    // ══════════════════════════════════════════════════════════════
+    // AUTH — Procesa el formulario de login (POST)
+    // ══════════════════════════════════════════════════════════════
+    public function auth()
+    {
+        $session = session();
+        $username = trim($this->request->getPost('username'));
+        $password = $this->request->getPost('password');
+
+        // 1. Validar campos vacíos
+        if (empty($username) || empty($password)) {
+            $session->setFlashdata('msg', 'Completa tu usuario y contraseña.');
+            $session->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('login'));
+        }
+
+        // 2. Buscar usuario con JOIN completo (nombre, rol, persona, imagen)
+        $user = $this->usuarioModel->buscarParaLoginCompleto($username);
+
+        // 3. Usuario no encontrado o inactivo
+        if (!$user) {
+            $session->setFlashdata('msg', 'No encontramos tu cuenta. Verifica el usuario o contacta a tu administrador.');
+            $session->setFlashdata('tipo', 'danger');
+            return redirect()->to(base_url('login'));
+        }
+
+        // 4. Verificar contraseña
+        $passwordValida = false;
+
+        if ($this->usuarioModel->isPasswordHash($user->password)) {
+            $passwordValida = password_verify($password, $user->password);
+        } elseif (hash_equals((string) $user->password, (string) $password)) {
+            $passwordValida = true;
+
+            // Compatibilidad mínima para usuarios legacy en texto plano.
+            $this->usuarioModel->update($user->id_usuario, ['password' => $password]);
+        }
+
+        if (! $passwordValida) {
+            $session->setFlashdata('msg', 'La contraseña no es correcta. Inténtalo de nuevo.');
+            $session->setFlashdata('tipo', 'danger');
+            return redirect()->to(base_url('login'));
+        }
+
+        // ══════════════════════════════════════════════════════════
+        // 5. Cargar permisos por ROL
+        // La BD asigna permisos por id_rol → tabla permisos.id_rol
+        // ══════════════════════════════════════════════════════════
+        $permisos = $this->permisosModel->obtenerPermisosPorRol($user->id_rol);
+
+        // Convertir a mapa indexado por menu_id para consultas rápidas en vistas
+        // Ej: session('permisos')[2]->read → 1
+        $permisos_mapa = [];
+        foreach ($permisos as $p) {
+            $permisos_mapa[$p->menu_id] = $p;
+        }
+
+        // ══════════════════════════════════════════════════════════
+        // 6. Guardar sesión con nombres reales de la BD
+        // ══════════════════════════════════════════════════════════
+        $session->regenerate(true);
+
+        $session->set([
+            'logged_in' => true,
+            'id_usuario' => $user->id_usuario,
+            'id_persona' => $user->id_persona,
+            'id_rol' => $user->id_rol,
+            'username' => $user->username,
+            'nombre' => $user->nombre . ' ' . $user->apellido_paterno,
+            'rol_nombre' => $user->rol_nombre,
+            'imagen' => $user->imagen,
+            'permisos' => $permisos_mapa,
+        ]);
+
+        return redirect()->to(base_url('dashboard'));
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // LOGOUT — Destruye la sesión y regresa al login
+    // ══════════════════════════════════════════════════════════════
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to(base_url('login'));
+    }
+}

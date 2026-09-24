@@ -1,0 +1,84 @@
+#--------------------------------------------------------------------
+# Example Environment Configuration file
+#
+# This file can be used as a starting point for your own
+# custom .env files, and contains most of the possible settings
+# available in a default install.
+#
+# By default, all of the settings are commented out. If you want
+# to override the setting, you must un-comment it by removing the '#'
+# at the beginning of the line.
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+# ENVIRONMENT
+#--------------------------------------------------------------------
+
+# CI_ENVIRONMENT = development
+
+#--------------------------------------------------------------------
+# APP
+#--------------------------------------------------------------------
+
+app.baseURL = http://localhost/project-dsgperu/public/
+# If you have trouble with `.`, you could also use `_`.
+# app_baseURL = ''
+# app.forceGlobalSecureRequests = false
+# app.CSPEnabled = false
+
+CI_ENVIRONMENT = development
+
+#--------------------------------------------------------------------
+# DATABASE
+#--------------------------------------------------------------------
+
+database.default.hostname = localhost
+database.default.database = sistemaprincipal
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+# database.default.DBPrefix =
+database.default.port = 3306
+
+# Servicios externos
+external.apiCustomer.baseUrl = https://www.dsgperutech.com/api-customer/v1
+external.apiCustomer.token = 3d524a53c110e4c22463b10ed32cef9d
+external.smtp.host = smtp.gmail.com
+external.smtp.port = 465
+external.smtp.username = aquituariterry@gmail.com
+external.smtp.password = "xpnf hree bgqj lqhc"
+external.smtp.encryption = ssl
+external.smtp.fromEmail = maxterry299@gmail.com
+external.smtp.fromName = "Formulario Web"
+external.smtp.toEmail = aaron235x@gmail.com
+external.smtp.toName = Admin
+
+# If you use MySQLi as tests, first update the values of Config\Database::$tests.
+# database.tests.hostname = localhost
+# database.tests.database = ci4_test
+# database.tests.username = root
+# database.tests.password = root
+# database.tests.DBDriver = MySQLi
+# database.tests.DBPrefix =
+# database.tests.charset = utf8mb4
+# database.tests.DBCollat = utf8mb4_general_ci
+# database.tests.port = 3306
+
+#--------------------------------------------------------------------
+# ENCRYPTION
+#--------------------------------------------------------------------
+
+# encryption.key =
+
+#--------------------------------------------------------------------
+# SESSION
+#--------------------------------------------------------------------
+
+# session.driver = 'CodeIgniter\Session\Handlers\FileHandler'
+# session.savePath = null
+
+#--------------------------------------------------------------------
+# LOGGER
+#--------------------------------------------------------------------
+
+# logger.threshold = 4

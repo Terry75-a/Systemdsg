@@ -1,0 +1,127 @@
+:root {
+    --nav-text: #0a2540;
+    --nav-link-hover: #425466;
+    --stripe-blue: #635bff;
+    --stripe-blue-dark: #0a2540;
+}
+
+.navbar-stripe {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    height: 70px; /* Altura estándar Stripe */
+    background: #ffffff;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2000;
+    box-sizing: border-box;
+    /* Sombras muy sutiles o solo borde inferior */
+    border-bottom: 1px solid rgba(0,0,0,0.05); 
+}
+
+/* LOGO */
+.nav-left .nav-logo {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    color: var(--nav-text);
+    font-size: 1.1rem;
+}
+
+.nav-left img {
+    height: 32px;
+    border-radius: 50%;
+}
+
+/* LINKS CENTRALES */
+.nav-center {
+    display: flex;
+    list-style: none;
+    gap: 35px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-center .link {
+    text-decoration: none;
+    color: var(--nav-text);
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.2s;
+}
+
+.nav-center .link i {
+    font-size: 10px; /* Flechita pequeña */
+    opacity: 0.5;
+}
+
+.nav-center .link:hover {
+    color: var(--nav-link-hover);
+    opacity: 0.7;
+}
+
+/* BOTONES DERECHOS */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-sign-in {
+    text-decoration: none;
+    color: var(--stripe-blue);
+    font-weight: 700;
+    font-size: 14px;
+    transition: 0.2s;
+    border-radius: 10px;
+    padding: 5px 5px;
+    
+    
+}
+
+.btn-sign-in:hover {
+    opacity: 0.8;
+}
+
+.btn-contact-sales {
+    background: var(--stripe-blue);
+    color: white;
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 20px; /* Botón tipo "píldora" */
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-contact-sales i {
+    font-size: 10px;
+}
+
+
+
+/* MOBILE */
+.mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--nav-text);
+    cursor: pointer;
+}
+
+@media (max-width: 950px) {
+    .nav-center { display: none; }
+    .mobile-toggle { display: block; }
+}

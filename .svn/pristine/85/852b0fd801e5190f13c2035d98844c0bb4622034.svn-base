@@ -1,0 +1,63 @@
+/* CONFIGURACIÓN DE PÁGINA */
+.services-page {
+    padding-top: 80px; /* Espacio para el Navbar */
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.services-hero {
+    padding: 100px 20px;
+    text-align: center;
+}
+
+/* EL BADGE (Nuestras Soluciones) */
+.badge-solutions {
+    display: inline-block;
+    background-color: var(--stripe-blue);
+    color: white; /* Verde DSG */
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid #c2f3e5;
+    margin-bottom: 30px;
+    text-transform: capitalize;
+}
+
+/* EL TÍTULO PRINCIPAL */
+.main-title {
+    font-size: 64px; /* Tamaño Saas moderno */
+    font-weight: 800;
+    color: #1a202c;
+    letter-spacing: -2px; /* Letras más juntas como en la imagen */
+    line-height: 1.1;
+    margin-bottom: 30px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* EL SUBTÍTULO */
+.main-subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #4a5568;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 38px;
+        letter-spacing: -1px;
+    }
+    
+    .main-subtitle {
+        font-size: 17px;
+    }
+    
+    .services-hero {
+        padding: 60px 20px;
+    }
+}

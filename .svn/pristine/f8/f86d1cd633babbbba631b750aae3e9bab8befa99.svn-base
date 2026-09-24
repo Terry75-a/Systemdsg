@@ -1,0 +1,774 @@
+.hero-principal{
+  background-color: rgba(91, 89, 89, 0.371);
+  justify-content: center;
+  align-items: center;
+  margin-top: 140px;
+  height: 540px;
+}
+
+/* hero glasseffect */
+.hero-glass{
+  backdrop-filter: blur(5px);
+  border-radius: 20px;
+  padding: 8px 16px;
+  width: 200px;
+  height: 30px;
+  margin-left: 660px;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  transform: translateY(30px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+:root[data-theme="dark"] .hero-glass{
+  border: 1px solid rgba(137, 134, 134, 0.51);
+
+}
+
+.hero-glass:hover{
+  transform: translateY(40px);
+}
+
+/* Estilos para modo claro (por defecto) */
+.hero-glass{
+  background: rgba(124, 124, 124, 0.263);
+  border: 1px solid rgba(71, 69, 69, 0.34);
+  color: rgb(0, 0, 0);
+}
+
+
+.hero-glass-text{
+  margin-left: 33px;
+  margin-top: -3px;
+  font-size: 15px;
+  
+}
+
+/* Estilos para modo claro (por defecto) */
+.hero-glass-text{
+  color: rgba(0, 0, 0, 0.745);
+}
+
+/* Estilos para modo oscuro */
+:root[data-theme="dark"] .hero-glass-text{
+  color: rgb(255, 255, 255);
+}
+
+/* ------------ */
+/* hero-content */
+/* ------------ */
+.hero-content-dsg{
+  margin-top: 80px;
+  justify-content: center;
+  align-items: center;
+  margin-left: 100px;
+}
+
+/* hero-text */
+.hero-text-dsg-h1{
+  font-size: 50px;
+  margin-left: 385px;
+  color: black;
+}
+
+:root[data-theme="dark"] .hero-text-dsg-h1{
+  color: rgb(255, 255, 255);
+}
+
+.hero-text-dsg-p{
+  font-size: 16px;
+  margin-left: 460px;
+}
+
+/* Estilos para modo claro (por defecto) */
+.hero-text-dsg-p{
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Estilos para modo oscuro */
+:root[data-theme="dark"] .hero-text-dsg-p{
+  color: rgba(197, 196, 196, 0.799);
+}
+
+/* texto historia */
+.hero-text-dsg-p-2{
+  font-size: 16px;
+  margin-left: 360px;
+  color: black;
+}
+
+/* Estilos para modo oscuro */
+:root[data-theme="dark"] .hero-text-dsg-p-2{
+  color: rgb(255, 255, 255);
+}
+
+.hero-text-dsg-p-3{
+  font-size: 16px;
+  margin-left: 363px;
+  color: black;
+}
+
+/* Estilos para modo oscuro */
+:root[data-theme="dark"] .hero-text-dsg-p-3{
+  color: rgb(255, 255, 255);
+}
+
+/* videohistoria */
+.hero-video{
+  margin-left: 560px;
+  margin-top: 40px;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------- */
+/* ------------------Styles de vision y mision --------------------- */
+/* ----------------------------------------------------------------- */
+
+
+/* cards 1 */
+.hero-vision{
+  margin-top: 50px;
+}
+
+.hero-vision-glass{
+  background-color: rgb(4, 245, 0);
+  border: 1px solid rgb(4, 245, 0);
+  box-shadow: 0 0 10px rgb(4, 245, 0);
+  border-radius: 45px;
+  padding: 8px 16px;
+  width: 510px;
+  height: 167px;
+  margin-left: 90px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.hero-vision-glass:hover{
+  opacity: 0.95;
+  transform: scale(1.03);
+  box-shadow: 0px 8px 25px rgb(4, 255, 0);
+}
+
+.hero-vision-glass-text{
+  color: rgb(0, 0, 0);
+  margin-top: 20px;
+  font-size: 33px;
+  margin-left: 20px;
+}
+
+.hero-text-vision-p-1{
+  color: rgb(0, 0, 0);
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+/* cards 2 */
+.hero-mision-glass{
+  background-color: rgb(0, 0, 0);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: 0 0 10px rgb(0, 0, 0);
+  border-radius: 45px;
+  padding: 8px 16px;
+  width: 510px;
+  height: 167px;
+  margin-left: 900px;
+  transition: all 0.5s ease;
+  margin-top: -167px;
+  cursor: pointer;
+}
+
+.hero-mision-glass:hover{
+  opacity: 0.95;
+  transform: scale(1.03);
+  box-shadow: 0px 8px 25px rgb(0, 0, 0);
+}
+
+:root[data-theme="dark"] .hero-mision-glass:hover{
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 8px 25px rgb(255, 255, 255);
+}
+
+.hero-mision-glass-text{
+  color: rgb(255, 255, 255);
+  margin-top: 20px;
+  font-size: 33px;
+  margin-left: 20px;
+}
+
+:root[data-theme="dark"] .hero-mision-glass-text{
+  color: rgb(0, 0, 0);
+}
+
+.hero-text-mision-p{
+  color: rgb(255, 255, 255);
+  margin-left: 20px;
+  margin-top: 1px;
+}
+
+:root[data-theme="dark"] .hero-text-mision-p{
+  color: rgb(0, 0, 0);
+}
+
+/* Estilos para modo oscuro */
+:root[data-theme="dark"] .hero-mision-glass{
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(255, 255, 255);
+  box-shadow: 0 0 10px rgb(255, 255, 255);
+}
+
+
+
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----------------------------Historia del DSG ------------------------------- */
+/* ---------------------------------------------------------------------------- */
+
+.glass-container-dsg{
+  background-color: rgba(104, 102, 102, 0.266);
+  box-shadow: 0 0 10px rgba(69, 68, 68, 0.318);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transform: translateY(70px);
+  border-radius: 45px;
+  margin-left: 20px;
+  height: 1090px;
+  width: 1470px;
+}
+
+.historia-dsg{
+  background-color: rgba(91, 89, 89, 0.371);
+  justify-content: center;
+  align-items: center;
+  margin-top:60px;
+  height: 1250px;
+}
+
+.texto-historia-dsg{
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(128, 125, 125, 0.471);
+  background-color: rgba(128, 125, 125, 0.3);
+  border-radius: 20px;
+  padding: 8px 16px;
+  width: 200px;
+  height: 30px;
+  margin-left: 660px;
+  transform: translateY(50px);
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  transform: translateY(30px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.texto-historia-dsg:hover{
+  transform: translateY(40px);
+
+}
+
+.texto-historia-dsg-h2{
+  font-size: 15px;
+  margin-top: -4px;
+  margin-left: 27px;
+}
+
+.container-historia-dsg{
+  margin-top: 30px;
+}
+
+/* Card-1 */
+.card-glas-1{
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0 0 10px rgb(0, 0, 0);
+  width: 516px;
+  height: 140px;
+  margin-left: 150px;
+  margin-top: 100px;
+  border-radius: 80px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.card-glas-1:hover{
+  opacity: 0.95;
+  transform: scale(1.03);
+  box-shadow: 0px 8px 25px rgb(0, 0, 0);
+
+}
+
+.text-card-glas-1{
+  font-size: 25px;
+  color: rgb(255, 255, 255);
+  margin-left: 45px;
+  transform: translateY(20px);
+}
+
+.text-cards-glass-1-p{
+  font-size: 16px;
+  color: rgb(255, 255, 255);
+  margin-left: 45px;
+  transform: translateY(30px);
+  width: 440px;
+}
+
+/* glass btn fecha */
+
+.glass-fecha-1{
+  background-color: rgba(0, 0, 0, 0.958);
+  box-shadow: 0px 8px 25px rgb(0, 0, 0);
+  width: 150px;
+  height: 40px;
+  margin-left: 840px;
+  margin-top: -100px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glass-fecha-1:hover{
+  opacity: 0.95;
+  transform: scale(1.03);
+  box-shadow: 0px 8px 25px rgb(0, 0, 0);
+}
+
+.text-card-glas-fecha-1{
+  font-size: 25px;
+  color: rgb(255, 255, 255);
+  margin-left: 44px;
+  transform: translateY(5px);
+  
+}
+
+
+
+/* Card-2 */
+
+.card-glas-2{
+  background-color: rgba(76, 76, 76, 0.471);
+  box-shadow: 0 0 10px rgb(38, 38, 38);
+  width: 516px;
+  height: 150px;
+  margin-left: 840px;
+  margin-top: 100px;
+  border-radius: 80px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.card-glas-2:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  box-shadow: 0px 8px 25px rgb(76, 76, 76);
+}
+
+.text-card-glas-2{
+  font-size: 25px;
+  color: rgb(3, 3, 3);
+  margin-left: 45px;
+  transform: translateY(20px);
+}
+
+.text-cards-glass-2-p{
+  font-size: 16px;
+  color: rgb(0, 0, 0);
+  margin-left: 45px;
+  transform: translateY(23px);
+  width: 440px;
+}
+
+
+/* glass btn fecha-2 */
+.glass-fecha-2{
+  background-color: rgba(76, 76, 76, 0.471);
+  box-shadow: 0 0 10px rgb(38, 38, 38);
+  width: 150px;
+  height: 40px;
+  margin-left: 510px;
+  margin-top: -100px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glass-fecha-2:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  box-shadow: 0px 8px 25px rgb(76, 76, 76);
+  
+}
+
+.text-card-glas-fecha-2{
+  font-size: 25px;
+  color: rgb(0, 0, 0);
+  margin-left: 44px;
+  transform: translateY(5px);
+}
+
+
+/* card-3 */
+
+.card-glas-3{
+  background-color: rgb(17, 255, 0);
+  box-shadow: 0 0 10px rgb(17, 255, 0);
+  width: 516px;
+  height: 130px;
+  margin-left: 156px;
+  margin-top: 100px;
+  border-radius: 80px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.card-glas-3:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(0, 255, 0);
+  box-shadow: 0 8px 25px rgb(0, 255, 0);
+}
+
+.text-card-glas-3{
+  font-size: 25px;
+  color: rgb(0, 0, 0);
+  margin-left: 45px;
+  transform: translateY(20px);
+}
+
+.text-cards-glass-3-p{
+  font-size: 16px;
+  color: rgb(0, 0, 0);
+  margin-left: 45px;
+  transform: translateY(23px);
+  width: 440px;
+}
+
+
+/* glass btn fecha-3 */
+
+.glass-fecha-3{
+  background-color: rgb(17, 255, 0);
+  box-shadow: 0 0 10px rgb(17, 255, 0);
+  width: 150px;
+  height: 40px;
+  margin-left: 840px;
+  margin-top: -100px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.glass-fecha-3:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(17, 255, 0);
+  box-shadow: 0px 8px 25px rgb(17, 255, 0);
+}
+
+.text-card-glas-fecha-3{
+  font-size: 25px;
+  color: rgb(0, 0, 0);
+  margin-left: 44px;
+  transform: translateY(5px);
+}
+
+
+/* Card-4 */
+.card-glas-4{
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0 10px rgb(255, 255, 255);
+  width: 516px;
+  height: 150px;
+  margin-left: 840px;
+  margin-top: 100px;
+  border-radius: 80px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+.card-glas-4:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 8px 25px rgb(255, 255, 255);
+}
+
+.text-card-glas-4{
+  font-size: 25px;
+  color: rgb(3, 3, 3);
+  margin-left: 45px;
+  transform: translateY(20px);
+}
+
+.text-cards-glass-4-p{
+  font-size: 16px;
+  color: rgb(0, 0, 0);
+  margin-left: 45px;
+  transform: translateY(23px);
+  width: 440px;
+}
+
+
+/* glass btn fecha-4 */
+.glass-fecha-4{
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0 10px rgb(255, 255, 255);
+  width: 150px;
+  height: 40px;
+  margin-left: 510px;
+  margin-top: -100px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.glass-fecha-4:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 8px 25px rgb(255, 255, 255);
+}
+
+.text-card-glas-fecha-4{
+  font-size: 25px;
+  color: rgb(0, 0, 0);
+  margin-left: 44px;
+  transform: translateY(5px);
+}
+
+
+/* card-5 */
+
+.card-glas-5{
+  background-color: rgb(0, 13, 255);
+  box-shadow: 0 0 10px rgb(0, 13, 255);
+  width: 516px;
+  height: 130px;
+  margin-left: 156px;
+  margin-top: 100px;
+  border-radius: 80px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.card-glas-5:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(0, 13, 255);
+  box-shadow: 0 8px 25px rgb(0, 13, 255);
+}
+
+.text-card-glas-5{
+  font-size: 25px;
+  color: rgb(255, 255, 255);
+  margin-left: 45px;
+  transform: translateY(20px);
+}
+
+.text-cards-glass-5-p{
+  font-size: 16px;
+  color: rgb(255, 255, 255);
+  margin-left: 45px;
+  transform: translateY(23px);
+  width: 440px;
+}
+
+
+/* glass btn fecha-5 */
+
+.glass-fecha-5{
+  background-color: rgb(0, 13, 255);
+  box-shadow: 0 0 10px rgb(0, 13, 255);
+  width: 150px;
+  height: 40px;
+  margin-left: 840px;
+  margin-top: -100px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.glass-fecha-5:hover{
+  opacity: 0.95;
+  transform: scale(1.05);
+  background-color: rgb(0, 13, 255);
+  box-shadow: 0px 8px 25px rgb(0, 13, 255);
+}
+
+.text-card-glas-fecha-5{
+  font-size: 25px;
+  color: rgb(255, 255, 255);
+  margin-left: 44px;
+  transform: translateY(5px);
+}
+
+/* ============================= */
+/* 🌐 ADAPTACIÓN A MÓVILES DSG   */
+/* ============================= */
+@media (max-width: 768px) {
+
+  /* --- HERO PRINCIPAL --- */
+  .hero-principal {
+    margin-top: 100px;
+    height: auto;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-content-dsg {
+    margin: 0;
+    text-align: center;
+  }
+
+  .hero-text-dsg-h1 {
+    font-size: 2rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  .hero-text-dsg-p,
+  .hero-text-dsg-p-2,
+  .hero-text-dsg-p-3 {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+  }
+
+  .hero-video {
+    margin: 20px auto;
+    width: 90%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* --- VISIÓN Y MISIÓN --- */
+  .hero-vision {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    text-align: center;
+  }
+
+  .hero-vision-glass,
+  .hero-mision-glass {
+    width: 90%;
+    height: auto;
+    margin: 0;
+    padding: 25px 20px;
+    border-radius: 25px;
+  }
+
+  .hero-vision-glass-text,
+  .hero-mision-glass-text {
+    font-size: 1.5rem;
+    margin: 10px 0;
+  }
+
+  .hero-text-vision-p-1,
+  .hero-text-mision-p {
+    font-size: 0.95rem;
+    margin: 0 auto;
+    max-width: 90%;
+  }
+
+  /* --- HISTORIA CONTAINER --- */
+  .historia-dsg {
+    height: auto;
+    padding: 50px 10px;
+  }
+
+  .glass-container-dsg {
+    width: 95%;
+    height: auto;
+    margin: 0 auto;
+    padding: 30px 15px;
+    border-radius: 25px;
+  }
+
+  .texto-historia-dsg {
+    width: 60%;
+    margin: 0 auto 20px;
+    text-align: center;
+  }
+
+  .texto-historia-dsg-h2 {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  /* --- TARJETAS HISTORIA --- */
+  .container-historia-dsg {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .card-glas-1,
+  .card-glas-2,
+  .card-glas-3,
+  .card-glas-4,
+  .card-glas-5 {
+    width: 90%;
+    height: auto;
+    border-radius: 30px;
+    padding: 25px 20px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .text-card-glas-1,
+  .text-card-glas-2,
+  .text-card-glas-3,
+  .text-card-glas-4,
+  .text-card-glas-5 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+
+  .text-cards-glass-1-p,
+  .text-cards-glass-2-p,
+  .text-cards-glass-3-p,
+  .text-cards-glass-4-p,
+  .text-cards-glass-5-p {
+    font-size: 0.9rem;
+    width: 100%;
+    line-height: 1.5;
+  }
+
+  /* --- FECHAS --- */
+  .glass-fecha-1,
+  .glass-fecha-2,
+  .glass-fecha-3,
+  .glass-fecha-4,
+  .glass-fecha-5 {
+    width: 120px;
+    height: 35px;
+    margin: 10px auto 0;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .text-card-glas-fecha-1,
+  .text-card-glas-fecha-2,
+  .text-card-glas-fecha-3,
+  .text-card-glas-fecha-4,
+  .text-card-glas-fecha-5 {
+    font-size: 1rem;
+    margin: 0;
+  }
+}

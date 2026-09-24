@@ -1,0 +1,14 @@
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ClientesModel extends Model
+{
+    protected $table = 'clientes';
+    protected $primaryKey = 'id_cliente';
+    protected $allowedFields = ['id_cliente', 'id_persona', 'id_empresa', 'tipo_cliente', 'fecha_registro'];
+    public $useTimestamps = false;
+
+    
+}

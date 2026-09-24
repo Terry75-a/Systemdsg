@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dsg Peru Technology</title>
+</head>
+<body> 
+    <!---- Navbar ---->
+        <div class="logo">
+            <img src="" alt="Dsg Peru Technology">
+            <h2>Dsg Peru Technology</h2>
+        </div>
+
+        <ul class="btn-links">
+            <li class="links"><a href="#">Home</a></li>
+            <li class="links"><a href="#">About</a></li>
+            <li class="links"><a href="#">Services</a></li>
+            <li class="links"><a href="#">Contact</a></li>
+        </ul>
+
+        <button><a href="#">Demo</a></button>
+        <button><a href="#">Login</a></button>
+    </nav>
+</body>
+</html>

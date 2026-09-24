@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Controllers;
+use CodeIgniter\Controller;
+
+
+class CalendarioController extends Controller
+{
+  public function index()
+  {
+    $data['titulo'] = 'Calendario';
+    session()->set('last_page', 'calendario');
+    echo view('layouts/header');
+    echo  view('layouts/sidebar');
+    echo view('layouts/topbar', $data);
+    echo view('calendario/calendario', $data);
+
+  }
+  
+
+ 
+}

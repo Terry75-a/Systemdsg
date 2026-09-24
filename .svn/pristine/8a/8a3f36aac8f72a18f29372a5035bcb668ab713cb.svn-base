@@ -1,0 +1,167 @@
+<section class="pricing-section">
+    <div class="container">
+        <div class="pricing-header">
+            <p class="tagline">TE OFRECEMOS</p>
+            <h2 class="section-title"><span>Precios</span> accesibles para todo negocio.</h2>
+            <p class="pricing-desc">Selecciona el plan que se acomoda a tus necesidades.</p>
+        </div>
+
+        <div class="pricing-table-wrapper">
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th class="feature-col">
+                            <div class="lite-plan-info">
+                                También consulta sobre nuestros <a href="#">Planes Lite.</a>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="plan-header basic">
+                                <h3>Plan 1</h3>
+                                <div class="price">Desde <span>S/990</span> / mes</div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="plan-header regular">
+                                <h3>Plan 2r</h3>
+                                <div class="price">Desde <span>S/990</span> / mes</div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="plan-header pro">
+                                <h3>Plan 3</h3>
+                                <div class="price">Desde <span>S/900</span> / mes</div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="category-row">
+                        <td>1. Ventas</td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+                        <td>2. Caja</td>
+                        <td><i class="fa-solid fa-circle-xmark"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>Ingresos y Egresos</td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+                        <td>3. Productos</td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-xmark"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>Combos</td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-xmark"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>Menú</td>
+                        <td><i class="fa-solid fa-circle-xmark"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                        <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Modificadores</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-xmark"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Consumibles</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-xmark"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+                      <td>4.Modulo de cliente</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-xmark"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+
+                    </tr>
+                    <tr class="category-row">
+                      <td>5. Informes</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Ventas</td>
+                      <td><i class="fa-solid fa-circle-xmark"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Financiero</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Consolidados de Compra</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td> 
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+
+                    </tr>
+                    <tr class="sub-row">
+                      <td>Consolidados de Almacén</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+                      <td>6. Ofertas</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+
+                    </tr>
+                    <tr class="category-row">
+                      <td>7. Créditos</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+                      <td>8. Descuentos</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                    <tr class="category-row">
+
+                      <td>9. Reservas</td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                      <td><i class="fa-solid fa-circle-check"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </div>
+        <div class="pricing-cta">
+    <div class="cta-main">
+        <h3>¿Listo para empezar?</h3>
+        <a href="<?= base_url('demo') ?>" class="btn-demo-blue">
+            Solicita tu demo <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+    <p class="cta-help">
+        ¿No encuentras lo que buscas? También consulta sobre nuestros <a href="#">Planes Lite</a>.
+    </p>
+</div>
+    </div>
+</section>

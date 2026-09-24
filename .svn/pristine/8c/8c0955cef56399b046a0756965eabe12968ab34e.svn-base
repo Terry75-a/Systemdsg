@@ -1,0 +1,154 @@
+/* Estilos básicos */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #8aaca0;
+  color: black;
+  padding: 20px 0;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.sidebar .logo i {
+  font-size: 2rem;
+}
+
+.sidebar .logo h3 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar .menu a {
+  text-decoration: none;
+  color: black;
+}
+
+.sidebar .menu li {
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sidebar .menu li:hover {
+  background: #517062;
+}
+
+.sidebar .menu li.active {
+  background: #00e67a;
+  font-weight: bold;
+}
+
+.sidebar .menu li i {
+  font-size: 1.2rem;
+}
+
+/* Topbar */
+.topbar {
+  background: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 250px;
+  right: 0;
+  z-index: 100;
+  overflow: visible !important;
+}
+.dropdown-menu {
+  z-index: 1055 !important;
+}
+
+.topbar h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.notifications {
+  position: relative;
+  cursor: pointer;
+}
+
+.notifications .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 250px;
+  margin-top: 70px;
+  padding: 30px;
+}
+
+.content-area {
+  background: #f4f6f9;
+  min-height: calc(100vh - 70px);
+}
+
+/* Tarjetas */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+  
+  .sidebar .logo h3,
+  .sidebar .menu li span {
+    display: none;
+  }
+  
+  .topbar {
+    left: 70px;
+  }
+  
+  .main-content {
+    margin-left: 70px;
+  }
+}
+

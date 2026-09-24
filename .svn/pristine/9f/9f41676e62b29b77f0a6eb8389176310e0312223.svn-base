@@ -1,0 +1,59 @@
+<div class="card p-4 mx-auto shadow-sm border-0" style="max-width: 100%;">
+  <div class="text-center mb-4">
+    <img id="fotoPerfil" src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" class="rounded-circle border" width="100" height="100" style="object-fit: cover;">
+    <div class="mt-3">
+      <button type="button" class="btn btn-success px-4" onclick="document.getElementById('Byimagen').click()">
+        Subir una imagen
+      </button>
+    </div>
+    <input type="file" id="Byimagen" accept="image/*" hidden onchange="Most(event)">
+  </div>
+
+  <?php if (session()->getFlashdata('msg')): ?>
+    <div class="alert alert-<?= esc(session()->getFlashdata('tipo') ?? 'success') ?> text-center"><?= esc(session()->getFlashdata('msg')) ?></div>
+  <?php endif; ?>
+
+  <form action="<?= base_url('perfil/actualizar') ?>" method="post">
+    <?= csrf_field() ?>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Nombre</label>
+      <input type="text" class="form-control" name="nombre" value="<?= esc(old('nombre', $perfil['nombre'])) ?>">
+    </div>
+
+
+      
+
+    <div class="mb-3 position-relative">
+      <label class="form-label fw-bold">Contraseña</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••••">
+        <span class="input-group-text bg-transparent border-start-0" style="cursor: pointer;" onclick="togglePasswordVisibility()">
+          <i class="fa-solid fa-eye-slash" id="togglePasswordIcon"></i>
+        </span>
+      </div>
+      <small class="text-muted">Deja vacío si no deseas cambiarla</small>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="submit" class="btn btn-success px-4">Guardar cambios</button>
+    </div>
+  </form>
+</div>
+
+<script src="<?= base_url('js/subirimage.js') ?>"></script>
+<script>
+  function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const icon = document.getElementById('togglePasswordIcon');
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    } else {
+      passwordInput.type = 'password';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    }
+  }
+</script>

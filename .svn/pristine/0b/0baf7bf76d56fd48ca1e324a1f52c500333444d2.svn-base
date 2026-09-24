@@ -1,0 +1,185 @@
+<?php
+// app/Controllers/PermisosController.php
+namespace App\Controllers;
+
+use App\Models\PermisosModel;
+
+class PermisosController extends BaseController
+{
+    protected PermisosModel $permisosModel;
+
+    public function __construct()
+    {
+        $this->permisosModel = new PermisosModel();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // INDEX — Tabla principal de permisos
+    // Ruta: GET /permisos
+    // ══════════════════════════════════════════════════════════════
+    public function index()
+    {
+        if (!session()->get('logged_in'))
+            return redirect()->to(base_url('login'));
+
+        session()->set('last_page', 'Permisos');
+        $db = \Config\Database::connect();
+
+        $data['permisos'] = $this->permisosModel->obtenerTodos();
+
+        // ✅ Solo roles y menus — sin personas
+        $data['roles'] = $db->table('roles')
+            ->select('idrol, nombre')
+            ->orderBy('nombre', 'ASC')
+            ->get()->getResultObject();
+
+        $data['menus'] = $db->table('menus')
+            ->select('id, nombre')
+            ->orderBy('nombre', 'ASC')
+            ->get()->getResultObject();
+
+        $data['titulo'] = 'Configuración de Permisos';
+        $data['username'] = session()->get('username');
+
+        echo view('layouts/header', $data);
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('Permisos', $data);
+        echo view('layouts/footer');
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // GUARDAR — Crea un permiso nuevo (con opciones elegidas)
+    // Ruta: POST /permisos/guardar
+    // Recibe: id_persona, id_rol, menu_id, read, insert, update, delete
+    // ══════════════════════════════════════════════════════════════
+    public function guardar()    {
+        if (!session()->get('logged_in'))
+            return redirect()->to(base_url('login'));
+
+        $idrol = (int)$this->request->getPost('idrol');
+        $menuid = (int)$this->request->getPost('menuid');
+
+        $permisos = [
+            'read' => $this->request->getPost('read') ? 1 : 0,
+            'insert' => $this->request->getPost('insert') ? 1 : 0,
+            'update' => $this->request->getPost('update') ? 1 : 0,
+            'delete' => $this->request->getPost('delete') ? 1 : 0,
+        ];
+
+        if (!$idrol || !$menuid) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Debes seleccionar Rol y Módulo.',
+            ]);
+        }
+
+        // ✅ Ya no necesita id_persona
+        $ok = $this->permisosModel->guardarOActualizar($idrol, $menuid, $permisos);
+
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => $ok,
+                'message' => $ok ? 'Permiso guardado.' : 'Error al guardar.',
+            ]);
+        }
+
+        return redirect()->to(base_url('permisos'));    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — OBTENER
+    // Devuelve en JSON los datos de UN permiso para pre-llenar el modal
+    // Ruta: GET /permisos/obtener/{id_permiso}
+    // La vista lo llama cuando el usuario hace clic en ✏️ Editar
+    // ══════════════════════════════════════════════════════════════
+    public function obtener(int $id)
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Sin sesión']);
+        }
+
+        // Llama al nuevo método del modelo
+        $permiso = $this->permisosModel->obtenerPorId($id);
+
+        if (!$permiso) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Permiso no encontrado.',
+            ]);
+        }
+
+        // Devuelve el objeto completo con nombres incluidos
+        // La vista usará: permiso.read, permiso.insert, permiso.update,
+        //                 permiso.delete, permiso.persona_nombre, etc.
+        return $this->response->setJSON([
+            'success' => true,
+            'permiso' => $permiso,
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ✅ NUEVO — EDITAR
+    // Actualiza SOLO los 4 checks de un permiso existente
+    // Ruta: POST /permisos/editar/{id_permiso}
+    // NO cambia persona, rol ni menú — solo las acciones
+    // ══════════════════════════════════════════════════════════════
+    public function editar(int $id)
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Sin sesión']);
+        }
+
+        $permisos = [
+            'read' => $this->request->getPost('read') ? 1 : 0,
+            'insert' => $this->request->getPost('insert') ? 1 : 0,
+            'update' => $this->request->getPost('update') ? 1 : 0,
+            'delete' => $this->request->getPost('delete') ? 1 : 0,
+        ];
+
+        // Llama al nuevo método del modelo
+        $ok = $this->permisosModel->editarPermisos($id, $permisos);
+
+        return $this->response->setJSON([
+            'success' => $ok,
+            'message' => $ok
+            ? 'Permiso actualizado correctamente.'
+            : 'Error: permiso no encontrado.',
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ELIMINAR — Borra un permiso por id_permiso
+    // Ruta: POST /permisos/eliminar/{id}
+    // ══════════════════════════════════════════════════════════════
+    public function eliminar(int $id)
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['success' => false]);
+        }
+
+        $ok = $this->permisosModel->delete($id);
+
+        return $this->response->setJSON([
+            'success' => $ok,
+            'message' => $ok ? 'Permiso eliminado correctamente.' : 'Error al eliminar.',
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // POR USUARIO — Devuelve permisos de una persona en JSON
+    // Ruta: GET /permisos/usuario/{id_persona}
+    // ══════════════════════════════════════════════════════════════
+    public function porUsuario(int $id_persona)
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['success' => false]);
+        }
+
+        $permisos = $this->permisosModel->obtenerPermisosUsuario($id_persona);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'permisos' => $permisos,
+        ]);
+    }
+}

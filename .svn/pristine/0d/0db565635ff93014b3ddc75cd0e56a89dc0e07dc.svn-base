@@ -1,0 +1,22 @@
+ body {
+  background-color: #f7f9fb;
+  font-family: "Poppins", sans-serif;
+}
+
+.card {
+  border-radius: 15px;
+  background: #fff;
+}
+
+.card h3 {
+  color: #333;
+}
+
+.btn-outline-primary {
+  border-radius: 20px;
+}
+
+.btn-success {
+  border-radius: 20px;
+}
+

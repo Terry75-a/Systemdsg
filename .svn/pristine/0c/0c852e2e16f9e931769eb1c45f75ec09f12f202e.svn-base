@@ -1,0 +1,46 @@
+
+       <div class="topbar">
+        <h2><?= esc($titulo ?? 'Panel de Control') ?></h2>
+
+
+        <div class="d-flex align-items-center gap-4">
+
+          
+          <div class="notifications">
+            <i class="fa-solid fa-bell fa-lg text-secondary"></i>
+            <span class="badge bg-danger rounded-circle"></span>
+          </div>
+
+          <!-- Menú del usuario -->
+          <!-- Menú del usuario -->
+<div class="dropdown">
+  <a 
+    class=" d-flex align-items-center text-dark fw-medium"
+    href="#"
+    role="button"
+    id="dropdownUser"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    fa-lg me-2
+    style="text-decoration: none;"
+  >
+     <img id="fotoTopbar" 
+     src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
+     style="width: 30px; height:30px; border-radius:50%; object-fit:cover;"
+     class="fa-lg me-2">
+
+    <?= session()->get('username'); ?>
+  </a>
+
+  
+</div>
+<script src="<?= base_url('js/subirimage.js') ?>"></script>
+
+        </div>
+        
+</div>
+
+
+      
+
+      

@@ -1,0 +1,100 @@
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class UsuarioModel extends Model
+{
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+    protected $returnType = 'object';
+
+    protected $allowedFields = [
+        'username',
+        'password',
+        'estado',
+        'id_rol',
+        'id_persona',
+    ];
+
+    // ══════════════════════════════════════════════════════════════
+    // OBTENER POR ID — para ver/editar un usuario
+    // ══════════════════════════════════════════════════════════════
+    public function obtenerPorId(int $id): object|null
+    {
+        return $this->db->table('usuarios u')
+            ->select('
+                u.id_usuario,
+                u.username,
+                u.estado,
+                u.id_rol,
+                u.id_persona,
+                p.nombre,
+                p.apellido_paterno,
+                p.apellido_materno,
+                p.dni,
+                p.correo,
+                p.telefono,
+                p.imagen,
+                r.nombre AS rol_nombre
+            ')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol     = r.id_rol', 'left')
+            ->where('u.id_usuario', $id)
+            ->get()->getRow();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // LISTAR TODOS — tabla de usuarios con datos personales y rol
+    // ══════════════════════════════════════════════════════════════
+    public function listarUsuarios(): array
+    {
+        return $this->db->table('usuarios u')
+            ->select('
+                u.id_usuario,
+                u.username,
+                u.estado,
+                u.id_rol,
+                u.id_persona,
+                p.nombre,
+                p.apellido_paterno,
+                p.apellido_materno,
+                p.dni,
+                p.correo,
+                r.nombre AS rol_nombre
+            ')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol     = r.id_rol', 'left')
+            ->orderBy('u.id_usuario', 'DESC')
+            ->get()->getResultObject();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // PARA LOGIN — busca por username con todos los datos necesarios
+    // El LoginController usa: $user->id_usuario, $user->id_rol,
+    //   $user->id_persona, $user->nombre, $user->apellido_paterno,
+    //   $user->imagen, $user->rol_nombre, $user->password
+    // ══════════════════════════════════════════════════════════════
+    public function buscarParaLoginCompleto(string $username): object|null
+    {
+        return $this->db->table('usuarios u')
+            ->select('
+                u.id_usuario,
+                u.username,
+                u.password,
+                u.estado,
+                u.id_rol,
+                u.id_persona,
+                p.nombre,
+                p.apellido_paterno,
+                p.apellido_materno,
+                p.imagen,
+                r.nombre AS rol_nombre
+            ')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol     = r.id_rol', 'left')
+            ->where('u.username', $username)
+            ->where('u.estado', 1)
+            ->get()->getRow();
+    }
+}

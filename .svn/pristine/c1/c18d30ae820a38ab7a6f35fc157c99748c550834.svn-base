@@ -1,0 +1,389 @@
+<div class="main-content">
+    <div class="cotent-area">
+    
+    <form method="POST" action="<?= base_url('clientes/registrar') ?>">
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="rep-tab" data-bs-toggle="tab"
+                        data-bs-target="#rep" type="button" role="tab">
+                    Representante Legal
+                </button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="empresa-tab" data-bs-toggle="tab" 
+                        data-bs-target="#empresa" type="button" role="tab">
+                    Empresa
+                </button>
+            </li>
+        </ul>
+
+        
+        <div class="tab-content mt-3" id="myTabContent">
+
+            
+            <div class="tab-pane fade show active" id="rep" role="tabpanel">
+
+                
+                    <div class="row">
+                        <div class="col">
+                            <p class="mb-1">Nombre:</p>
+                            <input type="text" class="form-control" id="nombre" name="nombre">
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Direccion</p>
+                            <input type="text" class="form-control" id="nombre" name="nombre">
+
+                        </div>
+                        
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Apellido paterno:</p>
+                            <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno">
+
+                        </div>
+                        <div class="col">
+                           <p class="mb-1">Apellido materno:</p>
+                           <input type="text" class="form-control" id="apellido_materno" name="apellido_materno">
+                        </div>
+
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                             <p class="mb-1">DNI:</p>
+                             <div class="input-group">
+                                <input type="text" class="form-control" id="dni" name="dni" maxlength="8">
+                                <button type="button" class="btn btn-outline-secondary" id="btnBuscarDni">
+                                    <i class="fa fa-search"></i>
+                                </button>
+
+                             </div>
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Telefono:</p>
+                            <input type="text" class="form-control" id="telefono" name="telefono" maxlength="9">
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Correo:</p>
+                           <input type="email" class="form-control" id="correo" name="correo">
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Fecha de nacimiento:</p>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Departamento:</p>
+                            <select name="departamento" id="departamento" class="form-select">
+                                <option selected disabled>Seleccionar</option>
+                            </select>
+                        </div>
+
+                        <div class="col">
+                              <p class="mb-1">Provincia:</p>
+                                <select name="provincia" id="provincia" class="form-select">
+                                    <option selected disabled>Seleccionar</option>
+                                </select>
+                        </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Distrito:</p>
+                            <select name="distrito" id="distrito" class="form-select">
+                                   <option selected disabled>Seleccionar</option>
+                            </select>
+
+                        </div>
+
+                         
+
+                     <?php
+                        /*<div class="col">
+                            <p class="mb-1">Pais:</p>
+                            <select name="pais" id="pais" class="form-select">
+                                <option selected disabled>Selecciona un pais</option>
+                                <?php foreach($paises as $pais): ?>
+                                    <option value="<?= $pais['id_pais'] ?>"><?= $pais['nombre'] ?></option>
+                                <?php endforeach; ?>
+                                
+                            </select>
+                        </div>*/
+                      ?>
+
+                    </div>
+                        
+                    </div>
+
+                    
+                    
+                
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+
+               <a href="<?= base_url('clientes') ?>" class="btn btn-outline-secondary px-4">
+                   <i class="fa fa-arrow-left"></i>
+                    Volver
+                   </a>
+
+                  <button type="submit" class="btn btn-success px-4">
+                    <i class="fa fa-plus"></i>
+                    Agregar
+                    </button>
+                 
+
+            </div>
+
+            </div>
+
+            
+            <div class="tab-pane fade " id="empresa" role="tabpanel">
+
+                <form>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Razon social:</p>
+                            <input type="text" class="form-control" id="razon_social" name="razon_social">
+                        </div>
+                        
+                        
+                        
+                        <div class="col">
+                            <p class="mb-1">RUC:</p>
+                            <div class="input-group">
+                            <input type="text" class="form-control" maxlength="11" id="ruc" name="ruc">
+                            <button type="button" class="btn btn-outline-secondary" id="btnBuscarRuc">
+                              <i class="fa fa-search"></i>
+                            </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Correo empresarial:</p>
+                            <input type="email" class="form-control" id="correo_empresa">
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Teléfono:</p>
+                            <input type="text" class="form-control" maxlength="9" id="telefono_empresa">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Dirección:</p>
+                            <input type="text" class="form-control" id="direccion" name="direccion">
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Pais:</p>
+                            <select name="id_pais" id="id_pais" class="form-select">
+                                <option  selected disabled>Selecciona un pais</option>
+                                <?php foreach($paises as $pais): ?>
+                                    <option value="<?= $pais['id_pais'] ?>"><?= $pais['nombre'] ?></option>
+                                    <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                      <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Departamento:</p>
+                            <select name="departamento" id="departamento" class="form-select">
+                                <option selected disabled>Seleccionar</option>
+                            </select>
+
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Provincia</p>
+                            <select name="provincia" id="provincia" class="form-select">
+                                <option selected disabled>Seleccionar</option>
+                            </select>
+                        </div>
+
+                      </div>
+                     
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="mb-1">Distrito:</p>
+                            <select name="distrito" id="distrito" class="form-select">
+                                <option selected disabled>Selecciona un distrito</option>
+                            </select>
+                        </div>
+
+                    </div>
+                 
+                </form>
+                
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                  <a href="<?=  base_url('clientes') ?>" class="btn btn-outline-secondary px-4">
+                    <i class="fa fa-arrow-left"></i>
+                    Volver
+                  </a>
+                 
+                  <button type="submit"  class="btn btn-success px-4">
+                    <i class="fa fa-plus"></i>
+                     Agregar
+                  </button>
+                
+                </div>
+                
+                
+
+            </div>
+
+        </div>
+    </form>   
+    </div>
+</div>
+
+
+<script>
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    
+
+    fetch("<?= base_url('ubigeo/departamentos') ?>")
+        .then(res => res.json())
+        .then(data => {
+            let deptSelect = document.getElementById("departamento");
+            data.forEach(d => {
+                deptSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+            });
+        });
+
+    document.getElementById("departamento").addEventListener("change", function(){
+        let departamentoId = this.value;
+
+        fetch("<?= base_url('ubigeo/provincias') ?>/" + departamentoId)
+            .then(res => res.json())
+            .then(data => {
+                let provSelect = document.getElementById("provincia");
+                provSelect.innerHTML = `<option selected disabled>Seleccionar</option>`;
+
+                data.forEach(p => {
+                    provSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                });
+
+                document.getElementById("distrito").innerHTML =
+                    `<option selected disabled>Selecciona un distrito</option>`;
+            });
+    });
+
+    document.getElementById("provincia").addEventListener("change", function(){
+        let provinciaId = this.value;
+
+        fetch("<?= base_url('ubigeo/distritos') ?>/" + provinciaId)
+            .then(res => res.json())
+            .then(data => {
+                let distSelect = document.getElementById("distrito");
+                distSelect.innerHTML = `<option selected disabled>Selecciona un distrito</option>`;
+
+                data.forEach(d => {
+                    distSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                });
+            });
+    });
+
+
+    
+
+    const btnBuscarDni = document.getElementById('btnBuscarDni');
+    const inputDni     = document.getElementById('dni');
+    const inputNombre  = document.getElementById('nombre');
+    const inputApellido= document.getElementById('apellido');
+    const inputApellidoMaterno = document.getElementById('apellido_materno');
+    const inputApellidoPaterno = document.getElementById('apellido_paterno');
+
+    btnBuscarDni.addEventListener('click', function () {
+
+        const dni = inputDni.value.trim();
+
+        if (dni.length !== 8 || isNaN(dni)) {
+            alert("El DNI debe tener 8 dígitos numéricos");
+            return;
+        }
+
+        fetch('<?= base_url("clientes/buscar-dni") ?>', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "dni=" + encodeURIComponent(dni)
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.success) {
+                inputNombre.value   = data.nombres;
+                inputApellidoMaterno.value = data.apellido_materno;
+                inputApellidoPaterno.value = data.apellido_paterno;
+
+            } else {
+                alert(data.message || "No se encontró el DNI");
+                inputNombre.value = "";
+                inputApellido.value = "";
+            }
+
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error al consultar el DNI");
+        });
+
+    });
+
+
+
+
+    const btnBuscarRuc = document.getElementById('btnBuscarRuc');
+    const inputRuc     = document.getElementById('ruc');
+    const inputRazon  = document.getElementById('razon_social');
+    const inputDireccion = document.getElementById('direccion');
+
+    btnBuscarRuc.addEventListener('click' , function (){
+        const ruc = inputRuc.value.trim();
+
+        if(ruc.length !== 11 || isNaN(ruc)){
+          alert('EL RUC DEBE SER DE 12  DIGITOS')
+          return;
+        }
+
+        fetch('<?= base_url("clientes/buscar-ruc") ?>', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "ruc=" + encodeURIComponent(ruc)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                inputRazon.value = data.razon;
+                inputDireccion.value = data.direccion;
+            }else{
+                alert(data.message || "Nose encontre la RUC");
+                inputRazon.value = "";
+                inputDireccion.value = "";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Nose encontre el RUC");
+        });
+    });
+
+});
+</script>
+

@@ -1,0 +1,300 @@
+<main class="stripe-wrapper">
+    <div class="stripe-background">
+        <div class="stripe-canvas"></div>
+    </div>
+
+    <section class="hero-1 container">
+        <div class="hero-text">
+            <h1 class="title-0">DSG PERÚ TECHNOLOGY</h1>
+            <p class="subtitle-1">Revoluciona tu Negocio con Software Inteligente</p>
+            <div class="cta-buttons">
+                <a href="<?= base_url("demo") ?>" class="btn-primary">Empezar <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+        </div>
+
+        <div class="stats-container" id="stas">
+            <div class="stat-item">
+                <h2 class="stat-number" id="stas-number">0</h2>
+                <p class="stat-label">EMPRESAS ATENDIDAS</p>
+            </div>
+            <div class="stat-item">
+                <h2 class="stat-number" id="experience-years">0</h2>
+                <p class="stat-label">AÑOS DE EXPERIENCIA</p>
+            </div>
+            <div class="stat-item">
+                <h2 class="stat-number" id="uptime-guaranteed">0</h2>
+                <p class="stat-label">UPTIME GARANTIZADO</p>
+            </div>
+        </div>
+
+        <div class="solutions-section">
+            <p class="solutions-text">
+                Soluciones tecnológicas especializadas para restaurantes, boticas, minimarkets y más. 
+                Automatiza procesos, optimiza operaciones y acelera el crecimiento de tu empresa.
+            </p>
+            <div class="solutions-buttons">
+                
+                <a href="<?= base_url("servicios") ?>" class="btn-cyan">Servicios</a>
+            </div>
+        </div>
+    </section>
+</main> 
+<section class="services-popular">
+    <div class="container">
+        <div class="services-header">
+            <p class="tagline">Servicios Populares</p>
+            <h2 class="services-title">Soluciones Especializadas para cada Industria</h2>
+            <p class="services-description">
+                Desarrollamos software a medida que se adapte perfectamente a las necesidades específicas de tu negocio en el sector.
+            </p>
+        </div>
+
+        <div class="services-content-vertical">
+            <div class="video-preview-vertical">
+                <div data-aos="zoom-in">
+                <video autoplay muted loop playsinline class="video-portrait">
+                    <source src="<?= base_url("videos/dsg_peru.mp4") ?>" type="video/mp4">
+                    Tu navegador no soporta videos.
+                </video>
+                </div>
+            </div>
+
+            <section class="services-popular">
+    <div class="container">
+        <div class="services-header">
+            <p class="tagline">Servicios Populares</p>
+            <h2 class="services-title">Soluciones Especializadas para cada Industria</h2>
+            <p class="services-description">Software diseñado para optimizar los procesos críticos de tu sector.</p>
+        </div>
+
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-icon-bg icon-green">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <h3>Sistema para Restaurantes</h3>
+                <p class="product-desc">Gestión completa de mesas, pedidos, cocina y facturación. Integrado con delivery.</p>
+                <ul class="product-features">
+                    <li><i class="fa-solid fa-check"></i> Gestión de mesas y pedidos</li>
+                    <li><i class="fa-solid fa-check"></i> Control de cocina (KDS)</li>
+                    <li><i class="fa-solid fa-check"></i> Facturación electrónica</li>
+                    <li><i class="fa-solid fa-check"></i> Integración con delivery apps</li>
+                </ul>
+                
+            </div>
+
+            <div class="product-card">
+                <div class="product-icon-bg icon-mint">
+                    <i class="fa-solid fa-capsules"></i>
+                </div>
+                <h3>Sistema para Boticas/Farmacias</h3>
+                <p class="product-desc">Control de inventario de medicamentos, lotes, fechas de vencimiento y recetas.</p>
+                <ul class="product-features">
+                    <li><i class="fa-solid fa-check"></i> Control de lotes y vencimientos</li>
+                    <li><i class="fa-solid fa-check"></i> Gestión de recetas médicas</li>
+                    <li><i class="fa-solid fa-check"></i> Alertas de stock mínimo</li>
+                    <li><i class="fa-solid fa-check"></i> Integración con DIGEMID</li>
+                </ul>
+                
+            </div>
+
+            <div class="product-card featured-border">
+                <div class="product-icon-bg icon-teal">
+                    <i class="fa-solid fa-shop"></i>
+                </div>
+                <h3>Sistema para Minimarkets</h3>
+                <p class="product-desc">Punto de venta rápido, control de inventario en tiempo real y gestión de proveedores.</p>
+                <ul class="product-features">
+                    <li><i class="fa-solid fa-check"></i> Punto de venta táctil rápido</li>
+                    <li><i class="fa-solid fa-check"></i> Lector de código de barras</li>
+                    <li><i class="fa-solid fa-check"></i> Control de inventario</li>
+                    <li><i class="fa-solid fa-check"></i> Gestión de proveedores</li>
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</section>
+        </div>
+    </div>
+</section>
+<section class="features-section">
+    <div class="container">
+        <div class="features-header">
+            <p class="tagline">Características</p>
+            <h2 class="section-title">¿Por qué elegir DSG PERU?</h2>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Seguridad Garantizada</h3>
+                <p>Protección de datos con encriptación de nivel bancario y copias de seguridad automáticas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Implementación Rápida</h3>
+                <p>Puesta en marcha en menos de 24 horas con capacitación completa incluida.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎧</div>
+                <h3>Soporte 24/7</h3>
+                <p>Equipo técnico especializado disponible las 24 horas para resolver cualquier inconveniente.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Actualizaciones Constantes</h3>
+                <p>Nuestro sistema se actualiza constantemente para garantizar compatibilidad y rendimiento.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Acceso al movil</h3>
+                <p>Controla tu negocio desde cualquier lugar</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Atención Personalizada</h3>
+                <p>Asesor asignado para cada cliente, brindando seguimiento continuo a tus necesidades.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="testimonials-section">
+    <div class="container">
+        <div class="features-header">
+            <p class="tagline">Testimonios</p>
+            <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+        </div>
+
+        <div class="swiper testimonialSwiper">
+            <div class="swiper-wrapper">
+                
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="card-top">
+                            <div class="quote-circle"><i class="fa-solid fa-quote-left"></i></div>
+                            <div class="country-box">
+                                <img src="https://flagcdn.com/w40/pe.png" alt="Perú">
+                                <span>Perú</span>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">
+                            Restaurant.pe es un sistema fácil e increíble. Nos da control total del negocio, simplifica todo y ahora tengo más tiempo para lo importante.
+                        </p>
+                        <div class="card-footer-blue">
+                            <img src="<?= base_url('images/vifarma.png') ?>" alt="Juan Alberto" class="user-avatar">
+                            <div class="user-meta">
+                                <h4>Juan Alberto</h4>
+                                <p>Dueño de "Vifarma"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="card-top">
+                            <div class="quote-circle"><i class="fa-solid fa-quote-left"></i></div>
+                            <div class="country-box">
+                                <img src="https://flagcdn.com/w40/co.png" alt="Colombia">
+                                <span>Colombia</span>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">
+                            DSG Perú ha sido clave para el crecimiento de mi restaurante. Me permite controlar todo desde cualquier lugar y simplifica la operación diaria.
+                        </p>
+                        <div class="card-footer-blue">
+                            <img src="<?= base_url('images/farma.png') ?>" alt="Alessandro" class="user-avatar">
+                            <div class="user-meta">
+                                <h4>Alessandro Macchi</h4>
+                                <p>Dueño de "Pizzería Carpaneto"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="card-top">
+                            <div class="quote-circle"><i class="fa-solid fa-quote-left"></i></div>
+                            <div class="country-box">
+                                <img src="https://flagcdn.com/w40/gt.png" alt="Guatemala">
+                                <span>Guatemala</span>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">
+                            Restaurant.pe ha optimizado nuestros procesos con su excelente soporte y herramientas. Totalmente recomendado por su innovación.
+                        </p>
+                        <div class="card-footer-blue">
+                            <img src="<?= base_url('images/huellitas.png') ?>" alt="Sara Marín" class="user-avatar">
+                            <div class="user-meta">
+                                <h4>Sara Marín</h4>
+                                <p>Fundadora de "huellitas"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</section>
+<section class="contact-modern">
+    <div class="container">
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <p class="tagline">Información</p>
+                <h2 class="contact-title">Contáctanos hoy y verás la diferencia</h2>
+                <p class="contact-desc">¿Tienes alguna pregunta o comentario? Estamos aquí para ayudarte. Nuestro equipo te responderá en menos de 24 horas.</p>
+                
+                <div class="info-list">
+                    <div class="info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <span>Escríbenos</span>
+                            <p>soporte@dsgperu.com</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <span>Llámanos</span>
+                            <p>+51 923 942 001</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <span>Visítanos</span>
+                            <p>Pucallpa, Perú</p>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3947.2940800138344!2d-74.55927542543665!3d-8.372705984411823!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91a3bd22a238dd3f%3A0xdb55cc6384f0f0e9!2sDSG%20Peru%20Technology!5e0!3m2!1ses-419!2spe!4v1773334830351!5m2!1ses-419!2spe" width="200" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-aos="zoom-in">
+            <div class="contact-form-card">
+                <form action="enviar" method="POST">
+                    <div class="form-group">
+                        <input type="text" name="nombre" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="email" name="correo" placeholder="Gmail" required>
+                        <input type="text" name="empresa" placeholder="Empresa">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" name="telefono" placeholder="Teléfono">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="mensaje" rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Enviar</i></button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>

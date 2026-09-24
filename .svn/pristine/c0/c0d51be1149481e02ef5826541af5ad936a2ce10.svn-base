@@ -1,0 +1,121 @@
+<?php $uri = service('uri'); ?>
+
+<!-- Sidebar Start -->
+<aside class="left-sidebar" style="height: calc(100vh - 70px) !important; position: fixed !important; top: 70px !important; overflow-y: auto;">
+  <!-- Sidebar scroll-->
+  <div>
+    <div class="brand-logo d-flex align-items-center justify-content-between">
+      <a href="<?= base_url('dashboard') ?>" class="text-nowrap logo-img d-flex align-items-center gap-2" style="text-decoration: none;">
+        <img src="<?= base_url('images/logo_3.1.png') ?>" alt="Logo" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;" />
+        <span class="fw-bold text-dark" style="letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem;">dsg peru</span>
+      </a>
+      <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+        <i class="ti ti-x fs-8"></i>
+      </div>
+    </div>
+    <!-- Sidebar navigation-->
+    <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+
+      <ul id="sidebarnav">
+        <li class="nav-small-cap">
+          <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+          <span class="hide-menu">Navegación Principal</span>
+        </li>
+        
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'dashboard') ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>" aria-expanded="false">
+            <iconify-icon icon="solar:home-2-linear"></iconify-icon>
+            <span class="hide-menu">Inicio</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'personas') ? 'active' : '' ?>" href="<?= base_url('personas') ?>" aria-expanded="false">
+            <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+            <span class="hide-menu">Personas</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'calendario') ? 'active' : '' ?>" href="<?= base_url('calendario') ?>" aria-expanded="false">
+            <iconify-icon icon="solar:calendar-minimalistic-linear"></iconify-icon>
+            <span class="hide-menu">Calendario</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'perfil') ? 'active' : '' ?>" href="<?= base_url('perfil') ?>" aria-expanded="false">
+            <iconify-icon icon="solar:user-circle-linear"></iconify-icon>
+            <span class="hide-menu">Mi Perfil</span>
+          </a>
+        </li>
+
+        <li>
+          <span class="sidebar-divider lg"></span>
+        </li>
+
+        <li class="nav-small-cap">
+          <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+          <span class="hide-menu">Administración</span>
+        </li>
+
+        <!-- Sección de Módulos -->
+        <?php 
+          $active_modules = ['permisos', 'usuarios', 'menu'];
+          $is_modulo_active = in_array($uri->getSegment(1), $active_modules);
+        ?>
+        <li class="sidebar-item">
+          <a class="sidebar-link justify-content-between has-arrow <?= $is_modulo_active ? 'active' : '' ?>" href="javascript:void(0)" aria-expanded="<?= $is_modulo_active ? 'true' : 'false' ?>">
+            <div class="d-flex align-items-center gap-3">
+              <span class="d-flex">
+                <iconify-icon icon="solar:widget-2-linear"></iconify-icon>
+              </span>
+              <span class="hide-menu">Módulos</span>
+            </div>
+          </a>
+          <ul aria-expanded="<?= $is_modulo_active ? 'true' : 'false' ?>" class="collapse first-level <?= $is_modulo_active ? 'in' : '' ?>">
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'permisos') ? 'active' : '' ?>" href="<?= base_url('permisos') ?>">
+                <span class="icon-small"></span>
+                <span class="hide-menu">Permisos</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'usuarios') ? 'active' : '' ?>" href="<?= base_url('usuarios') ?>">
+                <span class="icon-small"></span>
+                <span class="hide-menu">Usuarios</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?= ($uri->getSegment(1) == 'menu') ? 'active' : '' ?>" href="<?= base_url('menu') ?>">
+                <span class="icon-small"></span>
+                <span class="hide-menu">Menú</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link <?= ($uri->getSegment(1) == 'configuracion') ? 'active' : '' ?>" href="<?= base_url('configuracion') ?>" aria-expanded="false">
+            <iconify-icon icon="solar:settings-linear"></iconify-icon>
+            <span class="hide-menu">Configuración</span>
+          </a>
+        </li>
+
+        <li>
+          <span class="sidebar-divider lg"></span>
+        </li>
+
+        <li class="sidebar-item mt-4">
+          <a class="sidebar-link text-danger" href="<?= base_url('logout') ?>" aria-expanded="false" style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;">
+            <iconify-icon icon="solar:logout-linear" class="text-danger"></iconify-icon>
+            <span class="hide-menu fw-bold">Cerrar Sesión</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- End Sidebar navigation -->
+  </div>
+  <!-- End Sidebar scroll-->
+</aside>
+<!--  Sidebar End -->

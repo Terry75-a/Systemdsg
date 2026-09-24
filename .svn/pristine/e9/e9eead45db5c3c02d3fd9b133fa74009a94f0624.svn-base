@@ -1,0 +1,3 @@
+<?php
+// Compatibilidad legacy: el layout del sitio público ahora vive en header_public.php.
+echo view('layouts/header_public', get_defined_vars());

@@ -1,0 +1,74 @@
+<div>
+    <h1>Tabla </h1>
+</div>
+
+
+
+<main class="container">
+    <div class="my-3">
+        <a href="personasadd">
+            <button class="btn btn-success"><i class="fa-solid fa-user-plus"></i>Añadir</button>
+        </a>
+     
+     
+    </div>
+    <table id="tablaClientes" class="table table-striped table-hover" >
+    <thead class="table-light"> <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dni</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+         
+       
+
+        </tbody>
+</table>
+
+</main>
+
+
+
+<script>
+    $(document).ready(function(){
+        $('#tablaClientes').DataTable({
+            autoWidth: false,
+            lengthChange: false,
+            "ajax" : {
+                "url": "<?= base_url('personas/listar') ?>",
+                "type": "GET",
+                "dataSrc": "data"
+            },
+            "columns": [
+                {"data" : "id_persona"},
+                {"data" : "nombre"},
+                {"data" : "dni"},
+                {"data" : "telefono"},
+                {"data" : "direccion"}, 
+                {
+                    "data": null,
+                    "render": function(data,type,row){
+                        return `
+                        <a href="<?= base_url('personasadd/') ?>${row.id_persona}" class="btn btn-sm btn-warning">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                          </a>
+        
+        <button class="btn btn-sm btn-danger" onclick="eliminar(${row.id_persona})">
+            <i class="fa-solid fa-trash"></i> Eliminar
+        </button>
+                    `;
+                    }
+                }
+                
+
+            ],
+            "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        }
+        });
+    });
+</script>

@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+
+ class paismodel extends Model
+{
+    protected $table = 'pais';
+    protected $primaryKey = 'id_pais';
+    protected $allowedFields = ['codigo','nombre' , 'nacionalidad' , 'estado' , 'create_at'];
+}

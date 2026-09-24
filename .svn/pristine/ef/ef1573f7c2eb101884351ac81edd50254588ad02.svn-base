@@ -1,0 +1,32 @@
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PerfilModel extends Model
+{
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+    protected $allowedFields = ['username', 'password'];
+
+    // Obtener datos del usuario + persona
+    public function getPerfil($idUsuario)
+    {
+        return $this->select('usuarios.id_usuario, usuarios.username, usuarios.password, personas.nombre, personas.id_persona')
+                    ->join('permisos', 'permisos.id_permiso = usuarios.id_permiso')
+                    ->join('personas', 'personas.id_persona = permisos.id_persona')
+                    ->where('usuarios.id_usuario', $idUsuario)
+                    ->first();
+    }
+
+    // Actualizar usuario y persona
+    public function actualizarPerfil($idUsuario, $dataUsuario, $dataPersona)
+    {
+        $this->update($idUsuario, $dataUsuario);
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('personas');
+        $builder->where('id_persona', $dataPersona['id_persona']);
+        $builder->update($dataPersona);
+    }
+}

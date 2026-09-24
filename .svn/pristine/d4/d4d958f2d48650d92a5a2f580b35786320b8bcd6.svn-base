@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class UsuarioModel extends Model
+{
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+    protected $useAutoIncrement = true;
+    protected $returnType = 'object';
+
+    protected $allowedFields = [
+        'username',
+        'password',
+        'id_persona',
+        'id_rol',
+        'estado'
+    ];
+
+    protected $useTimestamps = true;
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
+
+    // Encriptar password ANTES de insertar o actualizar
+    protected $beforeInsert = ['hashPassword'];
+    protected $beforeUpdate = ['hashPassword'];
+
+    protected function hashPassword(array $data): array
+    {
+        if (!empty($data['data']['password'])) {
+            $data['data']['password'] = password_hash(
+                $data['data']['password'],
+                PASSWORD_BCRYPT
+            );
+        }
+        return $data;
+    }
+
+    // JOIN completo: usuario + persona + rol
+    public function getUsuarioCompleto(int $id): object|null
+    {
+        return $this->db->table('usuarios u')
+            ->select('u.id_usuario, u.username, u.estado, u.id_rol, u.id_persona,
+                      p.nombre, p.apellido_paterno, p.apellido_materno,
+                      p.dni, p.correo, p.telefono, p.imagen,
+                      r.nombre as rol_nombre')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol = r.id_rol', 'left')
+            ->where('u.id_usuario', $id)
+            ->get()->getRow();
+    }
+
+    // Listar todos con datos personales y rol
+    public function listarUsuarios(): array
+    {
+        return $this->db->table('usuarios u')
+            ->select('u.id_usuario, u.username, u.estado, u.id_rol, u.id_persona,
+                      p.nombre, p.apellido_paterno, p.apellido_materno,
+                      p.dni, p.correo,
+                      r.nombre as rol_nombre')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol = r.id_rol', 'left')
+            ->orderBy('u.id_usuario', 'DESC')
+            ->get()->getResultObject();
+    }
+
+    // Para login: busca por username y estado activo
+    public function buscarParaLoginCompleto(string $username): object|null
+    {
+        return $this->db->table('usuarios u')
+            ->select('
+            u.id_usuario,
+            u.username,
+            u.password,
+            u.estado,
+            u.id_rol,
+            u.id_persona,
+            p.nombre,
+            p.apellido_paterno,
+            p.apellido_materno,
+            p.imagen,
+            r.nombre as rol_nombre
+        ')
+            ->join('personas p', 'u.id_persona = p.id_persona', 'left')
+            ->join('roles r', 'u.id_rol = r.id_rol', 'left')
+            ->where('u.username', $username)
+            ->where('u.estado', 1)
+            ->get()->getRow(); // getRow() devuelve objeto o null
+    }
+}

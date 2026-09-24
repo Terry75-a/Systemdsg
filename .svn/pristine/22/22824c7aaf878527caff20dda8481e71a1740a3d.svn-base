@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /perfil
+Disallow: /calendario
+Disallow: /login
+Disallow: /usuarios
+Disallow: /permisos
+Disallow: /clientes
+Disallow: /personas
+
+Sitemap: /sitemap.xml

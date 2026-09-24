@@ -1,0 +1,341 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\UsuarioModel;
+use App\Models\PersonaModel;
+use App\Models\PermisosModel;
+use App\Models\RolModel;
+use App\Models\MenuModel;
+
+class UsuariosController extends BaseController
+{
+    protected UsuarioModel $usuarioModel;
+    protected PersonaModel $personaModel;
+    protected PermisosModel $permisosModel;
+    protected RolModel $rolModel;
+    protected MenuModel $menuModel;
+
+    public function __construct()
+    {
+        $this->usuarioModel = new UsuarioModel();
+        $this->personaModel = new PersonaModel();
+        $this->permisosModel = new PermisosModel();
+        $this->rolModel = new RolModel();
+        $this->menuModel = new MenuModel();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // MÉTODO PRIVADO: Verificación de sesión (tu lógica original)
+    // ══════════════════════════════════════════════════════════════════
+    private function verificarSesion(): mixed
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
+        }
+        return null;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // INDEX — Vista principal con lista de usuarios
+    // ══════════════════════════════════════════════════════════════════
+    public function index()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        session()->set('last_page', 'Usuarios');
+
+        $data['titulo'] = 'Gestión de Usuarios';
+        $data['username'] = session()->get('username');
+
+        // Nuevos datos enviados a la vista
+        $data['usuarios'] = $this->usuarioModel->listarUsuarios();
+        $data['roles'] = $this->rolModel->findAll();
+        $data['menus'] = $this->menuModel->findAll();
+
+        echo view('layouts/header', $data);
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('Usuarios', $data);
+        echo view('layouts/footer');
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // REGISTRAR — Crea persona + usuario en una sola transacción
+    // ══════════════════════════════════════════════════════════════════
+    public function registrar()
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        // 1. Validar datos del formulario
+        if (!$this->validate([
+        'nombre' => 'required|min_length[2]|max_length[100]',
+        'apellido_paterno' => 'required|min_length[2]|max_length[50]',
+        'apellido_materno' => 'permit_empty|max_length[50]',
+        'dni' => 'required|min_length[8]|max_length[15]',
+        'correo' => 'required|valid_email|max_length[100]',
+        'telefono' => 'permit_empty|max_length[20]',
+        'username' => 'required|min_length[4]|max_length[50]|is_unique[usuarios.username]',
+        'password' => 'required|min_length[6]',
+        'id_rol' => 'required|integer|greater_than[0]',
+        ])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // 2. Verificar DNI duplicado manualmente (más claro que is_unique)
+        if ($this->personaModel->dniExiste($this->request->getPost('dni'))) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors' => ['dni' => 'Este DNI ya está registrado en el sistema'],
+            ]);
+        }
+
+        // 3. Transacción: persona → usuario (si uno falla, se revierte todo)
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            // 3a. Insertar en tabla personas
+            $this->personaModel->insert([
+                'nombre' => strtoupper($this->request->getPost('nombre')),
+                'apellido_paterno' => strtoupper($this->request->getPost('apellido_paterno')),
+                'apellido_materno' => strtoupper($this->request->getPost('apellido_materno') ?? ''),
+                'dni' => $this->request->getPost('dni'),
+                'correo' => $this->request->getPost('correo'),
+                'telefono' => $this->request->getPost('telefono') ?? '',
+                'id_pais' => 1, // Perú por defecto
+            ]);
+            $id_persona = $this->personaModel->getInsertID();
+
+            // 3b. Insertar en tabla usuarios (el hook hashPassword encripta el password)
+            $this->usuarioModel->insert([
+                'username' => $this->request->getPost('username'),
+                'password' => $this->request->getPost('password'),
+                'id_persona' => $id_persona,
+                'id_rol' => (int)$this->request->getPost('id_rol'),
+                'estado' => 1,
+            ]);
+            $id_usuario = $this->usuarioModel->getInsertID();
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Usuario registrado correctamente',
+                'id_usuario' => $id_usuario,
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            $db->transRollback();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error interno: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // OBTENER — Devuelve datos de un usuario para el modal de edición
+    // ══════════════════════════════════════════════════════════════════
+    public function obtener(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $usuario = $this->usuarioModel->getUsuarioCompleto($id);
+
+        if (!$usuario) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Usuario no encontrado',
+            ]);
+        }
+
+        // Agregar los permisos actuales del usuario
+        $usuario->permisos = $this->permisosModel
+            ->obtenerPermisosUsuario($usuario->id_persona, $usuario->id_rol);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'data' => $usuario,
+        ]);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ACTUALIZAR — Edita persona, usuario y permisos
+    // ══════════════════════════════════════════════════════════════════
+    public function actualizar(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $usuario = $this->usuarioModel->find($id);
+        if (!$usuario) {
+            return $this->response->setJSON(['success' => false, 'message' => 'No encontrado']);
+        }
+
+        // Reglas base
+        $rules = [
+            'correo' => 'required|valid_email|max_length[100]',
+            'telefono' => 'permit_empty|max_length[20]',
+            'apellido_paterno' => 'required|min_length[2]',
+            'apellido_materno' => 'permit_empty|max_length[50]',
+            'id_rol' => 'required|integer|greater_than[0]',
+        ];
+
+        // Solo validar username si fue modificado
+        $nuevoUsername = $this->request->getPost('username');
+        if ($nuevoUsername !== $usuario->username) {
+            $rules['username'] = "required|min_length[4]|is_unique[usuarios.username,id_usuario,{$id}]";
+        }
+
+        // Solo validar password si se envió
+        $nuevaPassword = $this->request->getPost('password');
+        if (!empty($nuevaPassword)) {
+            $rules['password'] = 'min_length[6]';
+        }
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            // Actualizar datos personales
+            $this->personaModel->update($usuario->id_persona, [
+                'apellido_paterno' => strtoupper($this->request->getPost('apellido_paterno')),
+                'apellido_materno' => strtoupper($this->request->getPost('apellido_materno') ?? ''),
+                'correo' => $this->request->getPost('correo'),
+                'telefono' => $this->request->getPost('telefono') ?? '',
+            ]);
+
+            // Actualizar datos del usuario
+            $updateUsuario = [
+                'username' => $nuevoUsername,
+                'id_rol' => (int)$this->request->getPost('id_rol'),
+            ];
+            if (!empty($nuevaPassword)) {
+                $updateUsuario['password'] = $nuevaPassword; // hashPassword lo encripta
+            }
+            $this->usuarioModel->update($id, $updateUsuario);
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Usuario actualizado correctamente',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            $db->transRollback();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error interno: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ASIGNAR PERMISOS — Guarda permisos CRUD por menú para un usuario
+    // ══════════════════════════════════════════════════════════════════
+    public function asignarPermisos(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        $usuario = $this->usuarioModel->getUsuarioCompleto($id);
+        if (!$usuario) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Usuario no encontrado']);
+        }
+
+        // Espera un JSON con array de permisos por menú:
+        // [{ "menu_id": 1, "read": 1, "insert": 1, "update": 0, "delete": 0 }, ...]
+        $permisosRecibidos = $this->request->getJSON(true); // true = array asociativo
+
+        if (empty($permisosRecibidos)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'No se recibieron permisos']);
+        }
+
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            foreach ($permisosRecibidos as $p) {
+                $this->permisosModel->asignarPermisos(
+                    (int)$usuario->id_persona,
+                    (int)$usuario->id_rol,
+                    (int)$p['menu_id'],
+                [
+                    'read' => $p['read'] ?? 0,
+                    'insert' => $p['insert'] ?? 0,
+                    'update' => $p['update'] ?? 0,
+                    'delete' => $p['delete'] ?? 0,
+                ]
+                );
+            }
+
+            $db->transCommit();
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Permisos asignados correctamente',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            $db->transRollback();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error al asignar permisos: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // CAMBIAR ESTADO — Toggle activo (1) / inactivo (0)
+    // ══════════════════════════════════════════════════════════════════
+    public function cambiarEstado(int $id)
+    {
+        $redir = $this->verificarSesion();
+        if ($redir)
+            return $redir;
+
+        // Proteger al admin principal (id_usuario = 1)
+        if ($id === 1) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No puedes desactivar al administrador principal',
+            ]);
+        }
+
+        $usuario = $this->usuarioModel->find($id);
+        if (!$usuario) {
+            return $this->response->setJSON(['success' => false, 'message' => 'No encontrado']);
+        }
+
+        $nuevoEstado = $usuario->estado == 1 ? 0 : 1;
+        $this->usuarioModel->update($id, ['estado' => $nuevoEstado]);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'estado' => $nuevoEstado,
+            'message' => $nuevoEstado ? 'Usuario activado' : 'Usuario desactivado',
+        ]);
+    }
+}

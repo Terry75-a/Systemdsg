@@ -1,0 +1,22 @@
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ClientesModel extends Model
+{
+    protected $table = 'clientes';
+    protected $primaryKey = 'id_cliente';
+    protected $allowedFields = ['id_cliente', 'id_empresa', 'created_at', 'estado'];
+    public $useTimestamps = false;
+
+    public function obtenerClientesConDatos()
+    {
+        return $this->select('clientes.*, personas.nombre, personas.apellido_paterno, personas.apellido_materno, personas.dni, personas.correo, personas.telefono, empresa.razon_social, empresa.ruc')
+                    ->join('personas', 'personas.id_persona = clientes.id_cliente')
+                    ->leftJoin('empresa', 'empresa.id_empresa = clientes.id_empresa')
+                    ->findAll();
+    }
+
+
+}

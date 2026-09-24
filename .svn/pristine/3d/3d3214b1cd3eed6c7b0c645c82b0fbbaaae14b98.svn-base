@@ -1,0 +1,64 @@
+  <!--  Header Start -->
+  <header class="app-header">
+    <nav class="navbar navbar-expand-lg navbar-light w-100">
+      <ul class="navbar-nav">
+        <li class="nav-item d-block d-xl-none">
+          <button type="button" class="nav-link sidebartoggler nav-icon-hover border-0 bg-transparent" id="headerCollapse" aria-label="Abrir menú lateral">
+            <i class="ti ti-menu-2" aria-hidden="true"></i>
+          </button>
+        </li>
+      </ul>
+      <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+        <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+         
+          <li class="nav-item">
+            <button type="button" class="btn btn-link text-dark text-decoration-none notifications me-3 position-relative p-0" aria-label="Notificaciones del sistema, pendientes por implementar">
+              <i class="fa-solid fa-bell" aria-hidden="true"></i>
+              <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle p-1" aria-hidden="true"></span>
+            </button>
+          </li>
+          <li class="nav-item dropdown">
+            <button type="button" class="nav-link nav-icon-hover border-0 bg-transparent" id="drop2" data-bs-toggle="dropdown"
+              aria-expanded="false" aria-label="Abrir menú de usuario">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+                <span class="fs-3 fw-bold text-dark d-none d-md-block"><?= session()->get('username'); ?></span>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+              <div class="message-body">
+                <a href="<?= base_url('perfil') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                  <i class="ti ti-user fs-6" aria-hidden="true"></i>
+                  <p class="mb-0 fs-3">Mi Perfil</p>
+                </a>
+                <?php if ((int) session()->get('id_rol') === 1): ?>
+                <a href="<?= base_url('configuracion') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                  <i class="ti ti-settings fs-6" aria-hidden="true"></i>
+                  <p class="mb-0 fs-3">Configuración</p>
+                </a>
+                <?php endif; ?>
+                <form method="post" action="<?= base_url('logout') ?>" class="mx-3 mt-2">
+                  <?= csrf_field() ?>
+                  <button type="submit" class="btn btn-outline-primary d-block w-100">Cerrar Sesión</button>
+                </form>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!--  Header End -->
+
+  <!-- Contenedor Principal (Sidebar a la izquierda, Contenido a la derecha) -->
+  <div class="body-wrapper">
+    <div class="container-fluid admin-content-shell">
+      <div class="admin-page-intro" role="status" aria-live="polite">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2">
+          <div>
+            <div class="small text-uppercase text-primary fw-semibold">Panel administrativo</div>
+            <div class="text-muted">Gestioná clientes, personas, usuarios y configuración desde una navegación unificada.</div>
+          </div>
+          <div class="small text-muted">Sesión activa: <strong><?= esc((string) session()->get('username')) ?></strong></div>
+        </div>
+      </div>

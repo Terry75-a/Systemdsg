@@ -1,0 +1,205 @@
+/* ================================================
+   BUTTONS COMPONENT STYLES
+   ================================================ */
+
+/* Demo Button */
+.demo-btn {
+  background: #000000e7;
+  color: white;
+  border: none;
+  height: 40px;
+  width: 90px;
+  padding: 6px 24px;
+  border-radius: 45px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Itim', cursive;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(5x);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.993);
+}
+
+.demo-text{
+  margin-left: 1px;
+}
+
+.demo-btn .material-icons {
+  background: white;
+  color: #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transform: translateX(19px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.993);
+}
+
+.demo-btn:hover {
+  transform: translateX(1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.993);
+  background: #000000;
+}
+
+.demo-btn:hover .material-icons {
+  background: white;
+  color: #000;
+  border-radius: 50%;
+  transform: translateX(17px);
+  transition-duration: 1ms;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.993);
+}
+
+/* Card Demo Button - Green Style */
+.card-btn.demo-btn {
+  background: #00ff95;
+  color: #000000;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 4px;
+  transform: none;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+  transition: all 0.3s ease;
+}
+
+.card-btn.demo-btn .material-icons {
+  background: #000000;
+  color: #08ea81;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  transform: translateX(10px);
+}
+
+.card-btn.demo-btn:hover {
+  background: #00ff80;
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.7);
+}
+
+.card-btn.demo-btn:hover .material-icons {
+  background: #000000;
+  color: #08f084;
+}
+
+/* Card Contact Button - Black Style */
+.card-btn.contact-btn {
+  background: #000;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 4px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  font-family: 'Itim', cursive;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.card-btn.contact-btn .material-icons {
+  background: white;
+  color: #000;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transform: translatex(7px);
+}
+
+.card-btn.contact-btn:hover {
+  background: #010101;
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+.card-btn.contact-btn:hover .material-icons {
+  background: white;
+  color: #0c0c0ce4;
+}
+
+/* Dark mode styles - completely inverted */
+[data-theme="dark"] .card-btn.contact-btn {
+  background: white;
+  color: #000;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .card-btn.contact-btn .material-icons {
+  background: #000;
+  color: white;
+}
+
+[data-theme="dark"] .card-btn.contact-btn:hover {
+  background: #f0f0f0;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] .card-btn.contact-btn:hover .material-icons {
+  background: #000;
+  color: white;
+}
+
+/* Login Button */
+.login-btn {
+  background: var(--login-bg);
+  border: none;
+  border-radius: 35px;
+  padding: 6px 20px;
+  cursor: pointer;
+  height:38px ;
+  width: 85px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Itim', cursive;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  box-shadow: 0 3px 9px rgb(0, 255, 136);
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 9px rgb(0, 255, 136);
+  background: #00ff88;
+}
+
+.login-text-1 {
+  color: #000;
+  font-weight: 500;
+  margin-left: 3px;
+}
+
+.arrow-icon {
+  background: white;
+  border-radius: 70%;
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+}
+
+.material-icons{
+  color: #000000;
+  font-size: 10px;
+  margin-left: 2px;
+}
+
+.login-btn:hover .arrow-icon {
+  transform: translateX(4px);
+}

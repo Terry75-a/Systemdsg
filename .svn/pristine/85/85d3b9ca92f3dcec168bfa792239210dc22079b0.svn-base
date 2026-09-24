@@ -1,0 +1,1271 @@
+DEBUG - 2026-02-10 14:32:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:32:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:32:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:39:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:48:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:51:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 14:52:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:24:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:29:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:29:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:29:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:29:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:29:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:30:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:33:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:33:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:34:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:34:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:34:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:34:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:35:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:35:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:35:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:35:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:35:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:39:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:39:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:40:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:40:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:41:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:42:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:42:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:46:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:46:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:47:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:47:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:47:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:48:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:48:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:49:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:49:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:49:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:49:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-10 15:49:53 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 15:50:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-10 15:51:02 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 15:51:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:51:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 15:59:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:08:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:08:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:09:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:09:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:09:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:09:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:11:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:11:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:11:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:11:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-10 16:11:33 --> ErrorException: Trying to access array offset on value of type null
+[Method: GET, Route: perfil]
+in APPPATH\Views\perfil.php on line 25.
+ 1 APPPATH\Views\perfil.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Trying to access array offset on value of type null', 'C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php', 25)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp8.2.12\\htdocs\\project-dsgperu\\app\\Views\\perfil.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('perfil', [], true)
+ 5 APPPATH\Controllers\PerfilController.php(22): view('perfil', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:13:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:13:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:13:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:13:18 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:13:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:13:18 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:13:18 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:14:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:14:18 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:14:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:14:18 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:14:18 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:14:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:14:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:14:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:14:21 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:14:21 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:14:21 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:14:21 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:19:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:19:58 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:19:58 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:58 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:58 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:19:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:19:59 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:19:59 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:19:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:19:59 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:19:59 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:19:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:19:59 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:19:59 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:19:59 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:20:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:20:00 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:20:00 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:00 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:00 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:20:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:20:00 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:20:00 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:00 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:00 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:20:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:20:01 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:20:01 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:01 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:01 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:20:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:20:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:20:21 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:20:21 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:21 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:20:21 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:23:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:23:07 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:23:07 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:23:07 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:23:07 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:24:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-10 16:24:14 --> CodeIgniter\Exceptions\BadMethodCallException: Call to undefined method App\Models\PerfilModel::getPerfil
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Model.php on line 927.
+ 1 APPPATH\Controllers\PerfilController.php(17): CodeIgniter\Model->__call('getPerfil', [...])
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:25:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:26:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:26:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:26:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:28:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:29:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:29:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:30:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:30:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:30:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:33:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:38:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:39:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:39:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:39:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:39:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:39:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:55:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:56:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 16:59:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:59:29 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:59:29 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:59:29 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:59:29 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:59:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-10 16:59:32 --> mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause' in C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuario...', 0)
+#1 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuario...')
+#2 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuario...')
+#3 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuario...', Array, false)
+#4 C:\xampp8.2.12\htdocs\project-dsgperu\app\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp8.2.12\htdocs\project-dsgperu\app\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+#6 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+#7 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+#8 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp8.2.12\htdocs\project-dsgperu\vendor\codeigniter4\framework\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp8.2.12\htdocs\project-dsgperu\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-10 16:59:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+[Method: GET, Route: perfil]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 2 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:59:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 4 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-10 16:59:32 --> [Caused by] mysqli_sql_exception: Unknown column 'personas.id_usuario' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `usuarios`.`id_usuario`, `usuarios`.`username`, `personas`.`id_persona`, `personas`.`nombre`
+FROM `usuarios`
+JOIN `personas` ON `usuarios`.`id_usuario` = `personas`.`id_usuario`
+WHERE `usuarios`.`id_usuario` = :usuarios.id_usuario:', [...], false)
+ 5 APPPATH\Models\PerfilModel.php(20): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\PerfilController.php(17): App\Models\PerfilModel->getPerfil('3')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\PerfilController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PerfilController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-10 16:59:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:09:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:09:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:09:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:09:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:09:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:11:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-10 17:14:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

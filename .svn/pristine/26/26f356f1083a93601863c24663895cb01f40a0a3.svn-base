@@ -1,0 +1,52 @@
+  <!--  Header Start -->
+  <header class="app-header">
+    <nav class="navbar navbar-expand-lg navbar-light w-100">
+      <ul class="navbar-nav">
+        <li class="nav-item d-block d-xl-none">
+          <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+            <i class="ti ti-menu-2"></i>
+          </a>
+        </li>
+      </ul>
+      <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+        <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+          <li class="nav-item me-4">
+            <h2 class="mb-0 fs-5 fw-semibold text-dark"><?= esc($titulo ?? 'Panel de Control') ?></h2>
+          </li>
+          <li class="nav-item">
+            <div class="notifications me-3 position-relative">
+              <i class="fa-solid fa-bell fa-lg text-secondary"></i>
+              <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle p-1"></span>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <div class="d-flex align-items-center gap-2">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="" width="35" height="35" class="rounded-circle">
+                <span class="fs-3 fw-bold text-dark d-none d-md-block"><?= session()->get('username'); ?></span>
+              </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+              <div class="message-body">
+                <a href="<?= base_url('perfil') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                  <i class="ti ti-user fs-6"></i>
+                  <p class="mb-0 fs-3">Mi Perfil</p>
+                </a>
+                <a href="<?= base_url('configuracion') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                  <i class="ti ti-settings fs-6"></i>
+                  <p class="mb-0 fs-3">Configuración</p>
+                </a>
+                <a href="<?= base_url('logout') ?>" class="btn btn-outline-primary mx-3 mt-2 d-block">Cerrar Sesión</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!--  Header End -->
+
+  <!-- Contenedor Principal (Sidebar a la izquierda, Contenido a la derecha) -->
+  <div class="body-wrapper">
+    <div class="container-fluid" style="padding: 25px;">

@@ -1,0 +1,87 @@
+<div class="card shadow-lg border-0">
+  <div class="calendar"> 
+
+  </div>
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="fw-bold mb-0">Tabla de Personas</h3>
+    <a href="<?=  base_url('personasadd') ?>">
+      <button class="btn btn-success"><i class="fa-solid fa-user-plus"></i></button>
+    </a>
+    
+  </div>
+
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <label class="me-2 text-black fw-semibold">Mostrar</label>
+        <select class="form-select d-inline-block" style="width: 80px;">
+          <option>5</option>
+          <option>10</option>
+          <option>25</option>
+        </select>
+        <label class="ms-2 text-black fw-semibold">registros</label>
+      </div>
+
+      <div>
+        <label class="me-2 text-black fw-semibold">Buscar:</label>
+        <input type="text" id="campo" class="form-control d-inline-block" style="width: 200px;" placeholder="Nombre o DNI..."
+        <?php foreach ($personas as $persona): ?>
+          data-nombre="<?= esc(strtolower($persona->nombre . ' ' . $persona->apellido_paterno . ' ' . $persona->apellido_materno)) ?>"
+          data-dni="<?= esc($persona->dni) ?>"
+        <?php endforeach; ?>
+        >
+      </div>
+    </div>
+
+    <div class="table-responsive rounded-3">
+      <table class="table  table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($personas)): ?>
+            <?php foreach ($personas as $index => $persona): ?>
+              <tr>
+                <td><?= $index + 1 ?></td>
+                <td><?= esc($persona->nombre) . ' ' . esc($persona->apellido_paterno) . ' ' . esc($persona->apellido_materno) ?></td>
+                <td><?= esc($persona->dni) ?></td>
+                <td><?= esc($persona->correo) ?></td>
+                <td><?= esc($persona->telefono) ?></td>
+                <td><?= esc($persona->direccion) ?? '-' ?></td>
+                <td>
+                  <button class="btn btn-success btn-sm"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="7" class="text-center">No hay personas registradas.</td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-black">Mostrando <?= count($personas) ?> registros</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item disabled"><a class="page-link">Anterior</a></li>
+          <li class="page-item active"><a class="page-link">1</a></li>
+          <li class="page-item"><a class="page-link">2</a></li>
+          <li class="page-item"><a class="page-link">Siguiente</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+/* ===== PRICING SECTION ===== */
+.pricing-showcase {
+  background: linear-gradient(145deg, #f9fafb 0%, #f1f1f1 100%);
+  padding: 90px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.pricing-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.pricing-header p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 60px;
+}
+
+/* Grid de precios */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Tarjetas */
+.price-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.price-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.featured {
+  background: linear-gradient(135deg, #00c896, #007e6b);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.featured:hover {
+  transform: scale(1.07);
+}
+
+.badge {
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  background: #fff;
+  color: #00c896;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+/* Títulos */
+.plan-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.plan-subtitle {
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+/* Precio */
+.price-value {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #007e6b;
+  margin-bottom: 20px;
+}
+
+.featured .price-value {
+  color: #fff;
+}
+
+.currency {
+  font-size: 1.2rem;
+  vertical-align: super;
+}
+
+.period {
+  font-size: 1rem;
+  color: #777;
+}
+
+.featured .period {
+  color: rgba(255,255,255,0.8);
+}
+
+/* Lista */
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px;
+  text-align: left;
+}
+
+.plan-features li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+}
+
+.featured .plan-features li {
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Botones */
+.btn-outline, .btn-primary {
+  display: inline-block;
+  width: 100%;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.btn-outline {
+  border: 2px solid #00c896;
+  color: #070b0a;
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: #00c896;
+  color: #fff;
+}
+
+.btn-primary {
+  background: #fff;
+  color: #050707;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #f0f0f0;
+}
+
+/* Animación de entrada */
+.price-card {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.price-card:nth-child(1) { animation-delay: 0.1s; }
+.price-card:nth-child(2) { animation-delay: 0.3s; }
+.price-card:nth-child(3) { animation-delay: 0.5s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== OPTIMIZACIÓN RESPONSIVE PARA MÓVILES ===== */
+@media (max-width: 768px) {
+  .pricing-showcase {
+    padding: 60px 10px;
+  }
+
+  .pricing-header h2 {
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+  }
+
+  .pricing-header p {
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 95%;
+  }
+
+  .price-card {
+    padding: 25px 20px;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .featured {
+    transform: none;
+  }
+
+  .badge {
+    top: 10px;
+    right: 15px;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  .plan-title {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+
+  .plan-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+
+  .price-value {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+  }
+
+  .plan-features li {
+    font-size: 0.88rem;
+    padding: 7px 0;
+  }
+
+  .btn-outline,
+  .btn-primary {
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  /* Arregla el scroll vertical si hay fondo oscuro */
+  body {
+    overflow-x: hidden;
+    background: #f9fafb;
+  }
+
+  /* Mejora contraste en modo oscuro */
+  [data-theme="dark"] .price-card {
+    background: rgba(40, 40, 40, 0.9);
+    color: #fff;
+  }
+
+  [data-theme="dark"] .btn-outline {
+    border-color: #00c896;
+    color: #00c896;
+  }
+
+  [data-theme="dark"] .btn-outline:hover {
+    background: #00c896;
+    color: #111;
+  }
+}
+

@@ -1,0 +1,19 @@
+
+
+
+
+<main class="services-page">
+    <section class="services-hero">
+        <div class="container">
+            <div class="services-intro">
+                <span class="badge-solutions">Nuestras Soluciones</span>
+                <h1 class="main-title">Sistemas especializados para tu industria</h1>
+                <p class="main-subtitle">
+                    Desarrollamos software a medida diseñado específicamente para las necesidades únicas de cada sector. 
+                    Desde restaurantes hasta hoteles, tenemos la solución perfecta para tu negocio.
+                </p>
+            </div>
+            
+            </div>
+    </section>
+</main>

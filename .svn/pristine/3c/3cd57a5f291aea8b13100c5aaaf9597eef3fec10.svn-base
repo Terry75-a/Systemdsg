@@ -1,0 +1,88 @@
+<?php
+use App\Support\ClientesCatalog;
+
+helper('auth');
+$flashMsg = session()->getFlashdata('msg');
+$flashTipo = session()->getFlashdata('tipo') ?? 'success';
+$clientes = $clientes ?? [];
+$totalClientes = $totalClientes ?? count($clientes);
+?>
+
+<main class="container-fluid px-2 admin-page" id="main-content">
+    <?php if ($flashMsg): ?>
+        <div class="alert alert-<?= esc($flashTipo) ?> alert-dismissible fade show" role="status" aria-live="polite">
+            <?= esc($flashMsg) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Tabla de Clientes</h1>
+                <p class="text-muted mb-0">Visualizá el padrón comercial y el estado de cada cliente en un solo lugar.</p>
+            </div>
+            <?php if (puede_insertar(ClientesCatalog::MENU_ID)): ?>
+            <a href="<?= base_url('clientes/add') ?>" class="btn btn-success">
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                <span class="ms-2 d-none d-sm-inline">Registrar cliente</span>
+                <span class="visually-hidden d-sm-none">Registrar cliente</span>
+            </a>
+            <?php endif; ?>
+        </div>
+
+        <div class="card-body">
+            <?php if (empty($clientes)): ?>
+                <div class="border rounded-3 bg-light-subtle text-center py-5 px-4">
+                    <h4 class="fw-semibold mb-2">Todavía no hay clientes registrados.</h4>
+                    <p class="text-muted mb-3">Cuando registres el primero, lo vas a ver acá con sus datos reales.</p>
+                    <?php if (puede_insertar(ClientesCatalog::MENU_ID)): ?>
+                    <a href="<?= base_url('clientes/add') ?>" class="btn btn-success">
+                        <i class="fa-solid fa-user-plus me-1" aria-hidden="true"></i> Registrar cliente
+                    </a>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="table-responsive rounded-3 admin-muted-block">
+                    <table class="table table-hover align-middle">
+                        <caption class="caption-top text-muted small">Listado de clientes con sus datos personales, empresa asociada y estado actual.</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">DNI</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Razón social</th>
+                                <th scope="col">RUC</th>
+                                <th scope="col">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($clientes as $index => $cliente): ?>
+                                <tr>
+                                    <th scope="row"><?= esc((string) ($index + 1)) ?></th>
+                                    <td>
+                                        <div class="fw-semibold"><?= esc((string) ($cliente->nombre_completo ?? '')) ?></div>
+                                    </td>
+                                    <td><?= esc((string) ($cliente->dni ?? '')) ?></td>
+                                    <td><?= esc((string) ($cliente->correo ?? '')) ?></td>
+                                    <td><?= esc((string) ($cliente->telefono ?? '—')) ?></td>
+                                    <td><?= esc((string) ($cliente->razon_social ?? 'Sin empresa asociada')) ?></td>
+                                    <td><?= esc((string) ($cliente->ruc ?? '—')) ?></td>
+                                    <td>
+                                        <span class="badge bg-<?= esc((string) ($cliente->estado_badge ?? 'secondary')) ?>">
+                                            <?= esc((string) ($cliente->estado_label ?? 'Inactivo')) ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+
+            <small class="text-black">Total de clientes: <?= esc((string) $totalClientes) ?></small>
+        </div>
+    </div>
+</main>

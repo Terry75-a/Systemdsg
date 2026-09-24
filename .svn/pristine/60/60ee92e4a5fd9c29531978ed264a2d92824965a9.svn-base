@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Desarrollamos software especializado para restaurantes, boticas, minimarkets y más. Soluciones tecnológicas que impulsan tu negocio.">
+    <title><?= esc($titulo ?? 'DSG PERU TECHNOLOGY') ?></title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Vendors -->
+    <!-- Mover jQuery aquí para que esté disponible en todas las vistas -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- CSS de DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="<?= base_url('assets/css/styles.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/icons/tabler-icons/tabler-icons.css') ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/navbar.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/stileprincipal.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/pricing.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/contactodemo.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dsg.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/servicios.css') ?>">
+         
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+   
+     <!-- Custom Dashboard Styles -->
+    <link rel="stylesheet" href="<?= base_url('css/dashboard/dashboard.css') ?>">
+    
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" > 
+  
+
+    <style>
+      body {
+        overflow-x: hidden;
+      }
+      .app-header {
+        background: #fff !important;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.1) !important;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        width: 100% !important;
+        left: 0 !important;
+        position: fixed !important;
+        top: 0;
+        z-index: 1000 !important;
+      }
+      .body-wrapper {
+        background: #f4f6f9;
+        min-height: 100vh;
+        padding-top: 70px !important;
+        margin-left: 270px;
+        display: flex;
+        flex-direction: column;
+      }
+      #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-fluid {
+        padding-top: 15px !important;
+      }
+      .left-sidebar {
+        height: calc(100vh - 70px) !important;
+        position: fixed !important;
+        top: 70px !important;
+        left: 0;
+        z-index: 10;
+      }
+      .container-fluid {
+        max-width: 100% !important;
+        flex: 1;
+      }
+
+      .admin-page-intro {
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.06));
+        border: 1px solid rgba(13, 110, 253, 0.08);
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .admin-surface {
+        background: #fff;
+        border-radius: 1rem;
+      }
+    </style>
+    
+</head>
+
+<body>
+
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">

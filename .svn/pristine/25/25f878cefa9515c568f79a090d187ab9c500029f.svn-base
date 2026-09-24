@@ -1,0 +1,26 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\DashboardModel;
+
+class DashboardController extends BaseController
+{
+    public function index(): string
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
+        } 
+
+        session()->set('last_page', 'dashboard');
+
+        $dashboardModel = new DashboardModel();
+        $data = [
+            'titulo' => 'Panel de Control',
+            'username' => session()->get('username'),
+            'totalClientes' => $dashboardModel->totalClientes(),
+            'nuevosClientes' => $dashboardModel->nuevosClientesEsteMes(),
+        ];
+
+        return $this->renderAdminPage('dashboard', $data);
+    }
+}

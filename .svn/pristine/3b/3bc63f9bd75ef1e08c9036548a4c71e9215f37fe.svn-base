@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PermisosModel extends Model
+{
+    protected $table            = 'permisos';
+    protected $primaryKey       = 'id_permiso';
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'object';
+
+    protected $allowedFields = [
+        'id_persona',
+        'id_rol',
+        'menu_id',
+        'read',
+        'insert',
+        'update',
+        'delete',
+    ];
+
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = false;
+
+    // Asignar o actualizar permisos de un usuario para un menú
+    public function asignarPermisos(int $id_persona, int $id_rol, int $menu_id, array $permisos): bool
+    {
+        // Si ya existe ese registro, actualiza; si no, inserta
+        $existente = $this->where('id_persona', $id_persona)
+                          ->where('menu_id', $menu_id)
+                          ->first();
+
+        $data = [
+            'id_persona' => $id_persona,
+            'id_rol'     => $id_rol,
+            'menu_id'    => $menu_id,
+            'read'       => $permisos['read']   ?? 0,
+            'insert'     => $permisos['insert'] ?? 0,
+            'update'     => $permisos['update'] ?? 0,
+            'delete'     => $permisos['delete'] ?? 0,
+        ];
+
+        if ($existente) {
+            return $this->update($existente->id_permiso, $data);
+        }
+
+        return $this->insert($data) !== false;
+    }
+
+    // Obtener todos los permisos de un usuario con nombre del menú y link
+    public function obtenerPermisosUsuario(int $id_persona, int $id_rol = null): array
+    {
+        $builder = $this->db->table('permisos p')
+            ->select('p.*, m.nombre as menu_nombre, m.link')
+            ->join('menus m', 'p.menu_id = m.id', 'left')
+            ->where('p.id_persona', $id_persona);
+
+        if ($id_rol) {
+            $builder->orWhere('p.id_rol', $id_rol);
+        }
+
+        return $builder->get()->getResultObject();
+    }
+
+    // Verificar si un usuario tiene permiso para una acción en un menú
+    // $accion puede ser: 'read', 'insert', 'update', 'delete'
+    public function verificarPermiso(int $id_persona, int $menu_id, string $accion): bool
+    {
+        $permiso = $this->where('id_persona', $id_persona)
+                        ->where('menu_id', $menu_id)
+                        ->first();
+
+        return $permiso && isset($permiso->$accion) && $permiso->$accion == 1;
+    }
+
+    // Eliminar todos los permisos de un usuario (útil al desactivarlo)
+    public function eliminarPermisosUsuario(int $id_persona): bool
+    {
+        return $this->where('id_persona', $id_persona)->delete();
+    }
+}

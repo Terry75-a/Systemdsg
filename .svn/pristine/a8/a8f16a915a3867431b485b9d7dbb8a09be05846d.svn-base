@@ -1,0 +1,375 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\PersonasAddModel;
+use App\Models\Empresamodel;
+
+class PersonasAddController extends BaseController
+{
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+    }
+
+    private function verificarSesion(): mixed
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
+        }
+        return null;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // INDEX
+    // ══════════════════════════════════════════════════════════════════
+
+    
+    // ══════════════════════════════════════════════════════════════════
+// INDEX
+// ══════════════════════════════════════════════════════════════════
+public function index($id = null)
+{
+    $redir = $this->verificarSesion();
+    if ($redir) return $redir;
+
+    $empresaModel = new \App\Models\EmpresaModel(); 
+    $data['empresa'] = null;
+
+    $personaModel = new \App\Models\PersonasAddModel(); // Asegúrate de apuntar al modelo correcto
+    $data['persona'] = null;
+    $data['sucursales'] = []; // Inicializamos siempre como un array vacío
+
+    // Si viene un ID, buscamos los datos para editar
+    if ($id !== null) {
+        $data['persona'] = $personaModel->find($id);
+        if (!$data['persona']) {
+            return redirect()->to(base_url('personas'))->with('error', 'Persona no encontrada.');
+        }
+        
+        $empresa = $empresaModel->where('id_persona', $id)->first();
+        $data['empresa'] = $empresa;
+
+        // Si la persona tiene empresa, cargamos sus sucursales
+        if ($empresa) {
+            $empresaSucursalModel = new \App\Models\empresaSucursalModel();
+            $data['sucursales'] = $empresaSucursalModel->where('id_empresa', $empresa->id_empresa)->findAll();
+        }
+    }
+    
+    try {
+        $data['departamentos'] = $this->db
+            ->table('ubigeo_peru_departments')
+            ->orderBy('name', 'ASC')
+            ->get()->getResultObject();
+    }
+    catch (\Throwable $e) {
+        $data['departamentos'] = [];
+    }
+
+    $data['titulo'] = ($id === null) ? 'Agregar Persona' : 'Editar Persona';
+    $data['username'] = session()->get('username');
+
+    echo view('layouts/header', $data);
+    echo view('layouts/sidebar');
+    echo view('layouts/topbar', $data);
+    echo view('personas/personasadd', $data);
+    echo view('layouts/footer');
+}
+
+    // ══════════════════════════════════════════════════════════════════
+    // BUSCAR DNI
+    // CAMBIOS: http → https, allow_redirects: true, sin bloque debug
+    // ══════════════════════════════════════════════════════════════════
+    public function buscarDni()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+
+        $dni = $this->request->getPost('dni');
+
+        if (!$dni || !preg_match('/^\d{8}$/', $dni)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'El DNI debe tener 8 dígitos numéricos'
+            ]);
+        }
+        $personaModel = new \App\Models\PersonasAddModel();
+    if ($personaModel->existeDni($dni)) {
+        return $this->response->setJSON([
+            'success' => false,
+            'registrado' => true, // Bandera extra para identificar que ya existe
+            'message' => 'El DNI ya se encuentra registrada en el sistema.'
+        ]);
+    }
+
+
+        try {
+            $url = 'https://www.dsgperutech.com/api-customer/v1/dni/' . $dni; // ← https
+            $client = \Config\Services::curlrequest();
+
+            $apiResponse = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
+                ],
+                'http_errors' => false,
+                'timeout' => 10,
+                'allow_redirects' => true, // ← sigue redirecciones 301/302
+            ]);
+
+            $status = $apiResponse->getStatusCode();
+            $body = $apiResponse->getBody();
+            $dataApi = json_decode($body);
+
+            if ($status !== 200 || !$dataApi || empty($dataApi->success)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'DNI no encontrado en el servicio externo'
+                ]);
+            }
+            
+
+            return $this->response->setJSON([
+                'success' => true,
+                'nombres' => $dataApi->result->name ?? '',
+                'apellido_paterno' => $dataApi->result->paternal ?? '',
+                'apellido_materno' => $dataApi->result->maternal ?? '',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error al conectar con el servicio: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // BUSCAR RUC
+    // CAMBIOS: http → https, allow_redirects: true
+    // ══════════════════════════════════════════════════════════════════
+    public function buscarRuc()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+
+        $ruc = $this->request->getPost('ruc');
+
+        if (!$ruc || !preg_match('/^\d{11}$/', $ruc)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'El RUC debe tener 11 dígitos numéricos'
+            ]);
+        }
+         $empresaModel = new \App\Models\EmpresaModel();
+
+         if ($empresaModel->ExisteRuc($ruc)) {
+        return $this->response->setJSON([
+            'success' => false,
+            'registrado' => true,
+            'message' => 'Esta empresa ya se encuentra registrada.'
+        ]);
+    }
+
+        try {
+            $url = 'https://www.dsgperutech.com/api-customer/v1/ruc/' . $ruc; // ← https
+            $client = \Config\Services::curlrequest();
+
+            $apiResponse = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
+                ],
+                'http_errors' => false,
+                'timeout' => 10,
+                'allow_redirects' => true, // ← sigue redirecciones 301/302
+            ]);
+
+            $status = $apiResponse->getStatusCode();
+            $body = $apiResponse->getBody();
+            $dataApi = json_decode($body);
+
+            if ($status !== 200 || !$dataApi || empty($dataApi->success)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'RUC no encontrado en el servicio externo'
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'razon' => $dataApi->result->name ?? '',
+                'direccion' => $dataApi->result->address ?? '',
+            ]);
+
+        }
+        catch (\Throwable $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error al conectar con el servicio: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // REGISTRAR PERSONA
+    // ══════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════
+    // REGISTRAR / EDITAR PERSONA (GUARDAR TODO)
+    // ══════════════════════════════════════════════════════════════════
+    public function guardar_todo()
+{
+    $redir = $this->verificarSesion();
+    if ($redir) return $redir;
+
+    $dni = $this->request->getPost('dni');
+    $ruc = $this->request->getPost('ruc');
+    $id_persona = $this->request->getPost('id_persona');
+
+    $personaModel = new \App\Models\PersonasAddModel();
+    $empresaModel = new \App\Models\EmpresaModel();
+    $empresaSucursalModel = new \App\Models\empresaSucursalModel();
+
+    // Iniciamos una transacción para asegurar la integridad de los datos
+    $this->db->transStart();
+
+    $idPersonaGenerada = null;
+
+    if (!empty($dni)) {
+        // Validar si el DNI ya pertenece a OTRA persona
+        $existeQuery = $personaModel->where('dni', $dni);
+        if (!empty($id_persona)) {
+            $existeQuery->where('id_persona !=', $id_persona);
+        }
+        $existe = $existeQuery->first();
+
+        if ($existe) {
+            return redirect()->back()->withInput()->with('error', 'El DNI ya pertenece a otra persona.');
+        }
+
+        $dataPersona = [
+            'nombre'            => $this->request->getPost('nombre'),
+            'apellido_paterno'  => $this->request->getPost('apellido_paterno'),
+            'apellido_materno'  => $this->request->getPost('apellido_materno'),
+            'dni'               => $dni,
+            'telefono'          => $this->request->getPost('telefono'),
+            'correo'            => $this->request->getPost('correo'),
+            'direccion'         => $this->request->getPost('direccion_rep'),
+            'id_distrito'       => $this->request->getPost('distrito_rep'),
+            'id_departamento'   => $this->request->getPost('departamento_rep'),
+            'id_provincia'      => $this->request->getPost('provincia_rep'),
+            'fecha_nacimiento'  => $this->request->getPost('fecha_nacimiento'),
+            'id_pais'           => 1,
+            'id_tipo_documento' => 1,
+        ];
+
+        if (!empty($id_persona)) {
+            $personaModel->update($id_persona, $dataPersona);
+            $idPersonaGenerada = $id_persona;
+        } else {
+            $dataPersona['created_at'] = date('Y-m-d H:i:s');
+            $personaModel->insert($dataPersona);
+            $idPersonaGenerada = $personaModel->getInsertID();
+        }
+    }
+
+    // Si hay RUC procesamos la empresa y sus sucursales
+    if (!empty($ruc) && $idPersonaGenerada) {
+        if (strlen($ruc) != 11) {
+            return redirect()->back()->withInput()->with('error', 'El RUC debe tener 11 dígitos.');
+        }
+
+        $existeEmpresaQuery = $empresaModel->where('ruc', $ruc);
+        if (!empty($id_persona)) {
+            $existeEmpresaQuery->where('id_persona !=', $id_persona);
+        }
+        if ($existeEmpresaQuery->first()) {
+            return redirect()->back()->withInput()->with('error', 'El RUC ya está registrado.');
+        }
+
+        $dataEmpresa = [
+            'ruc'              => $ruc,
+            'razon_social'     => $this->request->getPost('razon_social'),
+            'direccion'        => $this->request->getPost('direccion'), 
+            'correo'           => $this->request->getPost('correo_empresa'), 
+            'telefono'         => $this->request->getPost('telefono'),
+            'id_departamento'  => $this->request->getPost('departamento_repdos'),
+            'id_provincia'     => $this->request->getPost('provincia_repdos'),
+            'id_distrito'      => $this->request->getPost('distrito_repdos'),
+            'codigo_cliente'   => $this->request->getPost('codigo_cliente'),
+            'id_persona'       => $idPersonaGenerada,
+            'estado'           => 1,
+        ];
+
+        $empresaExistente = $empresaModel->where('id_persona', $idPersonaGenerada)->first();
+        $idEmpresaGenerada = null;
+
+        if ($empresaExistente) {
+            $empresaModel->update($empresaExistente->id_empresa, $dataEmpresa);
+            $idEmpresaGenerada = $empresaExistente->id_empresa;
+        } else {
+            $dataEmpresa['created_at'] = date('Y-m-d H:i:s');
+            $empresaModel->insert($dataEmpresa);
+            $idEmpresaGenerada = $empresaModel->getInsertID();
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // REGISTRO DE SUCURSALES ENLAZADAS
+        
+$sucursales = $this->request->getPost('sucursales');
+
+if ($idEmpresaGenerada && is_array($sucursales)) {
+    
+    // Limpiamos los registros antiguos asociados a la empresa para refrescar y evitar duplicados en la edición
+    $empresaSucursalModel->where('id_empresa', $idEmpresaGenerada)->delete();
+
+    foreach ($sucursales as $datosSucursal) {
+        
+        $nombreSucursal = $datosSucursal['nombre_sucursal'] ?? '';
+        $direccionSucursal = $datosSucursal['direccion'] ?? '';
+
+        // Validar estrictamente los campos obligatorios por cada iteración independiente
+        if (empty($nombreSucursal) || empty($direccionSucursal)) {
+            continue;
+        }
+
+        $dataSucursal = [
+            'id_empresa'       => (int)$idEmpresaGenerada,
+            //'ruc'              => $ruc,
+            'nombre_sucursal'  => $nombreSucursal,
+            'tipo'             => $datosSucursal['representante'] ?? 'sucursal',
+            'direccion'        => $direccionSucursal,
+            'telefono'         => $datosSucursal['telefono'] ?? '',
+            'correo'           => $datosSucursal['correo'] ?? '',
+            'id_pais'          => 1,
+            'id_departamento'  => null,
+            'id_provincia'     => null,
+            'id_distrito'      => null,
+            'estado'           => isset($datosSucursal['estado']) ? (int)$datosSucursal['estado'] : 1,
+            'created_at'       => date('Y-m-d H:i:s')
+        ];
+
+        try {
+            $empresaSucursalModel->insert($dataSucursal);
+        } catch (\Throwable $e) {
+            log_message('error', 'Error al insertar sucursal: ' . $e->getMessage());
+            continue; 
+        }
+    }
+}
+    }
+
+    // Completamos la transacción de la Base de Datos
+    $this->db->transComplete();
+
+    if ($this->db->transStatus() === false) {
+        return redirect()->back()->withInput()->with('error', 'Ocurrió un error al guardar los datos en el sistema.');
+    }
+
+    $mensaje = !empty($id_persona) ? 'Registro actualizado con éxito.' : 'Registro completado con éxito.';
+    return redirect()->to(base_url('personas'))->with('success', $mensaje);
+}
+    
+}

@@ -1,0 +1,56 @@
+<?php $uri = service('uri'); ?>
+
+<div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
+  <div class="sidebar-header border-bottom">
+    <div class="sidebar-brand">
+      <img class="imglogoxd" src="<?= base_url('images/logo_3.1.png') ?>" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%;">
+      <span class="ms-2 fw-bold">dsg</span>
+    </div>
+    <button class="btn-close d-lg-none" type="button" data-coreui-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+    <li class="nav-title">MENU</li>
+
+    <li class="nav-item">
+      <a class="nav-link <?= ($uri->getSegment(1) == 'dashboard') ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>">
+        <i class="nav-icon fa-solid fa-chart-line"></i> Inicio
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link <?= ($uri->getSegment(1) == 'clientes') ? 'active' : '' ?>" href="<?= base_url('clientes') ?>">
+        <i class="nav-icon fa-solid fa-users"></i> Clientes
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link <?= ($uri->getSegment(1) == 'calendario') ? 'active' : '' ?>" href="<?= base_url('calendario') ?>">
+        <i class="nav-icon fa fa-calendar"></i> Calendario
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link <?= ($uri->getSegment(1) == 'perfil') ? 'active' : '' ?>" href="<?= base_url('perfil') ?>">
+        <i class="nav-icon fa fa-user"></i> Perfil
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link <?= ($uri->getSegment(1) == 'configuracion') ? 'active' : '' ?>" href="<?= base_url('configuracion') ?>">
+        <i class="nav-icon fa fa-cog"></i> Configuración
+      </a>
+    </li>
+
+    <li class="nav-item mt-auto">
+      <a class="nav-link text-danger" href="<?= base_url('logout') ?>">
+        <i class="nav-icon fa fa-sign-out"></i> Cerrar Sesión
+      </a>
+    </li>
+  </ul>
+  
+  <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
+  <script src="<?= base_url('js/main.js') ?>"></script>
+  <script src="<?= base_url('js/chart.min.js') ?>"></script>
+</div>
+   

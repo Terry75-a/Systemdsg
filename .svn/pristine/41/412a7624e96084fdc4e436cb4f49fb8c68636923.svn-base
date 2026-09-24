@@ -1,0 +1,150 @@
+<?php
+
+
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('Home');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+$routes->setAutoRoute(false); // IMPORTANTE: desactivar autorutas en CI4
+
+// ══════════════════════════════════════════════════════════════
+// RUTAS PÚBLICAS — Sin filtro de autenticación
+// ══════════════════════════════════════════════════════════════
+
+// Página web pública (landing page)
+$routes->get('/', 'Home::index');
+$routes->get('dsg', 'Home::dsg');
+$routes->get('precio', 'Home::precio');
+$routes->get('servicios', 'Home::servicios');
+$routes->post('enviar', 'EmailController::enviar'); // Formulario de contacto
+
+// Login / Logout
+$routes->get('login', 'LoginController::index');
+$routes->post('login', 'LoginController::auth');
+$routes->post('login/auth', 'LoginController::auth'); // Compatibilidad con la vista actual
+$routes->post('login/authentication', 'LoginController::auth'); // Compatibilidad con la petición del usuario
+$routes->get('logout', 'LoginController::logout');
+
+// ══════════════════════════════════════════════════════════════
+// RUTAS PROTEGIDAS — Solo sesión activa (filter: auth)
+// ══════════════════════════════════════════════════════════════
+
+// Dashboard
+$routes->get('dashboard', 'DashboardController::index', ['filter' => 'auth']);
+
+// Perfil del usuario logueado
+$routes->get('perfil', 'PerfilController::index', ['filter' => 'auth']);
+$routes->post('perfil/actualizar', 'PerfilController::actualizar', ['filter' => 'auth']);
+
+// Calendario
+$routes->get('calendario', 'CalendarioController::index', ['filter' => 'auth']);
+
+// ── UBIGEO (API interna — requiere sesión para no quedar expuesta)
+// CORRECCIÓN: se agrega 'filter' => 'auth' que faltaba
+$routes->group('ubigeo', ['filter' => 'auth'], function ($routes) {
+    $routes->get('departamentos', 'UbigeoController::obtenerdepartamento');
+    $routes->get('provincias/(:any)', 'UbigeoController::obtenerProvincia/$1');
+    $routes->get('distritos/(:any)', 'UbigeoController::obtenerDistrito/$1');
+});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: CLIENTES
+// CORRECCIÓN: 'CLientesAddController' → 'ClientesAddController'
+//             'registar_cliente'      → 'registrar_cliente'
+// ══════════════════════════════════════════════════════════════
+//$routes->get('clientes',    'ClientesController::index',    ['filter' => 'auth']);
+//$routes->get('clientesadd', 'ClientesAddController::index', ['filter' => 'auth']);
+
+//$routes->group('clientes', ['filter' => 'auth'], function ($routes) {
+//$routes->post('buscar-dni',  'ClientesAddController::buscarDni');
+//$routes->post('buscar-ruc',  'ClientesAddController::buscarRuc');   // ← CORREGIDO typo 'CLientes'
+//$routes->post('registrar',   'ClientesAddController::registrar_cliente'); // ← CORREGIDO 'registar'
+// NUEVAS — faltaban estas rutas para completar el CRUD
+//$routes->get( 'obtener/(:num)',    'ClientesController::obtener/$1');
+//$routes->post('actualizar/(:num)', 'ClientesController::actualizar/$1');
+//$routes->post('estado/(:num)',     'ClientesController::cambiarEstado/$1');
+//});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: PERSONAS
+// ══════════════════════════════════════════════════════════════
+$routes->get('personas', 'PersonasController::index', ['filter' => 'auth']);
+$routes->get('personasadd', 'PersonasAddController::index', ['filter' => 'auth']);
+
+$routes->group('personas', ['filter' => 'auth'], function ($routes) {
+    $routes->post('buscar-dni', 'PersonasAddController::buscarDni');
+    $routes->post('buscar-ruc', 'PersonasAddController::buscarRuc');
+    $routes->post('add', 'PersonasAddController::registrar_persona');
+});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: USUARIOS
+// CORRECCIÓN: 'Usuarios' en mayúscula → 'usuarios' en minúscula (convención CI4)
+// NUEVAS: registrar, obtener, actualizar, permisos, estado
+// ══════════════════════════════════════════════════════════════
+$routes->group('usuarios', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'UsuariosController::index');
+    $routes->post('registrar', 'UsuariosController::registrar'); // ← NUEVA
+    $routes->get('obtener/(:num)', 'UsuariosController::obtener/$1'); // ← NUEVA
+    $routes->post('actualizar/(:num)', 'UsuariosController::actualizar/$1'); // ← NUEVA
+    $routes->post('permisos/(:num)', 'UsuariosController::asignarPermisos/$1'); // ← NUEVA
+    $routes->post('estado/(:num)', 'UsuariosController::cambiarEstado/$1'); // ← NUEVA
+});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: PERMISOS
+// CORRECCIÓN: 'Permisos' → 'permisos' (minúscula)
+// NUEVAS: guardar y eliminar permisos
+// ══════════════════════════════════════════════════════════════
+$routes->group('permisos', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'PermisosController::index');
+    $routes->post('guardar', 'PermisosController::guardar'); // ← NUEVA
+    $routes->post('eliminar/(:num)', 'PermisosController::eliminar/$1'); // ← NUEVA
+    $routes->get('usuario/(:num)', 'PermisosController::porUsuario/$1'); // ← NUEVA: permisos de un usuario específico
+});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: MENÚS
+// CORRECCIÓN: 'Menu' → 'menu' (minúscula)
+// NUEVAS: guardar y cambiar estado de menú
+// ══════════════════════════════════════════════════════════════
+$routes->group('menu', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'MenuController::index');
+    $routes->post('guardar', 'MenuController::guardar'); // ← NUEVA
+    $routes->post('estado/(:num)', 'MenuController::cambiarEstado/$1'); // ← NUEVA
+});
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO: CONFIGURACIÓN
+// Solo accesible por administrador (id_rol = 1)
+// ══════════════════════════════════════════════════════════════
+$routes->get('configuracion', 'ConfiguracionController::index', ['filter' => 'auth:1']);
+
+// ══════════════════════════════════════════════════════════════
+// PLANTILLAS para futuros módulos del ERP
+// Descomenta cuando crees los controladores correspondientes
+// ══════════════════════════════════════════════════════════════
+
+// ── PRODUCTOS / INVENTARIO
+// $routes->group('productos', ['filter' => 'auth'], function ($routes) {
+//     $routes->get('',                    'ProductosController::index');
+//     $routes->post('registrar',          'ProductosController::registrar');
+//     $routes->get('obtener/(:num)',      'ProductosController::obtener/$1');
+//     $routes->post('actualizar/(:num)',  'ProductosController::actualizar/$1');
+//     $routes->post('estado/(:num)',      'ProductosController::cambiarEstado/$1');
+// });
+
+// ── VENTAS (roles: admin=1, vendedor=2)
+// $routes->group('ventas', ['filter' => 'auth:1,2'], function ($routes) {
+//     $routes->get('',                    'VentasController::index');
+//     $routes->post('registrar',          'VentasController::registrar');
+//     $routes->get('obtener/(:num)',      'VentasController::obtener/$1');
+// });
+
+// ── REPORTES (roles: admin=1, contador=4)
+// $routes->group('reportes', ['filter' => 'auth:1,4'], function ($routes) {
+//     $routes->get('',            'ReportesController::index');
+//     $routes->get('ventas',      'ReportesController::ventas');
+//     $routes->get('inventario',  'ReportesController::inventario');
+// });

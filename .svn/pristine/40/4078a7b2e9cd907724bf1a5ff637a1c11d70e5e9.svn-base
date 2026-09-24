@@ -1,0 +1,19 @@
+<?php 
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ClientesaddModel extends Model
+{    
+    protected $table = 'personas';
+    protected $primaryKey = 'id_persona';
+    protected $allowedFields =  [ 'nombre', 'apellido', 'dni', 'telefono', 'correo' ,'id_pais' , 'created_at'];
+    public $useTimestamps = false;
+
+
+
+
+    
+
+}

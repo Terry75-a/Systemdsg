@@ -1,0 +1,24 @@
+<?php
+namespace App\Controllers;
+
+use CodeIgniter\Controller;
+
+class UsuariosController extends Controller
+{
+    public function index()
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('login'));
+        }
+
+        session()->set('last_page', 'Usuarios');
+        $data['titulo'] = 'Gestión de Usuarios';
+        $data['username'] = session()->get('username');
+
+        echo view('layouts/header', $data);
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('Usuarios', $data);
+        echo view('layouts/footer');
+    }
+}

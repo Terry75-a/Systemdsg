@@ -1,0 +1,52 @@
+<div class="card p-4 shadow-sm border-0">
+  <div id='calendar'></div>
+</div>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            
+            initialView: 'dayGridMonth', 
+            locale: 'es', 
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay' 
+            },
+
+            buttonText: {
+                'today': 'Hoy',
+                'month' : 'Mes',
+                'week' : 'Semanas',
+                'day' : 'Dia'
+            },
+            // Opciones para interactuar con los eventos
+            selectable: true,
+            editable: true,
+            
+            // Ejemplo de manejadores de eventos (CRUD)
+            select: function(info) {
+                // Lógica para añadir un nuevo evento (ej: mostrar un modal)
+                 alert('Seleccionaste desde ' + info.startStr + ' hasta ' + info.endStr);
+            },
+            eventClick: function(info) {
+                // Lógica para editar/ver un evento existente (ej: mostrar modal de edición)
+                alert('Evento clickeado: ' + info.event.title);
+            },
+            eventDrop: function(info) {
+                // Lógica para actualizar la fecha/hora del evento en la DB (si es editable)
+                if (!confirm("¿Estás seguro de este cambio?")) {
+                    info.revert();
+                } else {
+                    // AJAX para guardar el cambio en el backend
+                }
+            }
+        });
+
+        calendar.render();
+    });
+    
+</script>

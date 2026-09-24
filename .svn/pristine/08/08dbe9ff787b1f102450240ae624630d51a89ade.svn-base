@@ -1,0 +1,64 @@
+<main class="container-fluid px-0 admin-page" id="main-content" aria-labelledby="calendario-title">
+  <section class="admin-surface p-4" aria-describedby="calendario-subtitle">
+    <header class="admin-page-header mb-4">
+      <div>
+        <h1 class="h4 admin-page-title mb-1" id="calendario-title">Calendario operativo</h1>
+        <p class="admin-page-subtitle mb-0" id="calendario-subtitle">Vista mensual, semanal y diaria para revisar eventos y movimientos del calendario administrativo.</p>
+      </div>
+      <span class="badge bg-secondary-subtle text-secondary border px-3 py-2">Vista interactiva</span>
+    </header>
+    <div class="admin-muted-block p-2 p-md-3 calendar-shell">
+      <div id='calendar' aria-label="Calendario administrativo interactivo" role="region"></div>
+    </div>
+  </section>
+</main>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            
+            initialView: 'dayGridMonth', 
+            locale: 'es', 
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay' 
+            },
+
+            buttonText: {
+                'today': 'Hoy',
+                'month' : 'Mes',
+                'week' : 'Semanas',
+                'day' : 'Dia'
+            },
+            // Opciones para interactuar con los eventos
+            selectable: true,
+            editable: true,
+            
+            // Ejemplo de manejadores de eventos (CRUD)
+            select: function(info) {
+                // Lógica para añadir un nuevo evento (ej: mostrar un modal)
+                 window.adminUI.notify('Seleccionaste desde ' + info.startStr + ' hasta ' + info.endStr, 'info');
+            },
+            eventClick: function(info) {
+                // Lógica para editar/ver un evento existente (ej: mostrar modal de edición)
+                window.adminUI.notify('Evento clickeado: ' + info.event.title, 'info');
+            },
+            eventDrop: async function(info) {
+                // Lógica para actualizar la fecha/hora del evento en la DB (si es editable)
+                const confirmed = await window.adminUI.confirm('¿Estás seguro de este cambio?', { okText: 'Confirmar' });
+                if (!confirmed) {
+                    info.revert();
+                } else {
+                    // AJAX para guardar el cambio en el backend
+                }
+            }
+        });
+
+        calendar.render();
+    });
+    
+</script>

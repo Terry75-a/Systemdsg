@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= esc($titulo ?? 'DSG LOGIN') ?></title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Vendors -->
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="<?= base_url('assets/css/styles.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/icons/tabler-icons/tabler-icons.css') ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="<?= base_url('css/login/loginindex.css?v=' . filemtime(FCPATH . 'css/login/loginindex.css')) ?>" />
+    <link rel="stylesheet" href="<?= base_url('css/login/cambiarcolor.css') ?>" />
+    <!-- Custom Dashboard Styles -->
+    <link rel="stylesheet" href="<?= base_url('css/dashboard/dashboard.css') ?>">
+    
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" > 
+
+    <style>
+      body {
+        overflow-x: hidden;
+      }
+      .app-header {
+        background: #fff !important;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.1) !important;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        width: 100% !important;
+        left: 0 !important;
+        
+        top: 0;
+        z-index: 1000 !important;
+      }
+      .body-wrapper {
+        background: #f4f6f9;
+        min-height: 100vh;
+        padding-top: 0 !important;
+        margin-left: 270px;
+        display: flex;
+        flex-direction: column;
+      }
+      #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-fluid {
+        padding-top: 15px !important;
+      }
+      .left-sidebar {
+        height: calc(100vh - 70px) !important;
+        position: fixed !important;
+        top: 70px !important;
+        left: 0;
+        z-index: 10;
+      }
+      .container-fluid {
+        max-width: 100% !important;
+        flex: 1;
+        padding: 15px;
+      }
+    </style>
+</head>
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">

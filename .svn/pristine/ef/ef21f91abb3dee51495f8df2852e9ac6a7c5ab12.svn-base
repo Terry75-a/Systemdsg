@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\PersonaModel;
+use App\Support\PersonasCatalog;
+
+class PersonasController extends BaseController
+{
+    protected PersonaModel $personaModel;
+
+    public function __construct()
+    {
+        $this->personaModel = new PersonaModel();
+    }
+
+    public function index()
+    {
+        $redir = $this->verificarSesionActiva();
+        if ($redir) {
+            return $redir;
+        }
+
+        helper('auth');
+        $permiso = requerir_permiso(PersonasCatalog::MENU_ID, 'read');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        $data = $this->crearDatosVistaAdmin('Gestión de Personas', 'personas', [
+            'personas' => $this->personaModel->findAll(),
+        ]);
+
+        return $this->renderAdminPage('personas/personas', $data);
+    }
+
+    public function listar()
+    {
+        $redir = $this->verificarSesionActiva();
+        if ($redir) {
+            return $redir;
+        }
+
+        helper('auth');
+        $permiso = requerir_permiso(PersonasCatalog::MENU_ID, 'read');
+        if ($permiso) {
+            return $permiso;
+        }
+
+        return $this->response->setJSON([
+            'data' => $this->personaModel->findAll(),
+        ]);
+    }
+}

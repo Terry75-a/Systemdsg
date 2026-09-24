@@ -1,0 +1,21 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\ConfiguracionModel;
+use CodeIgniter\Controller;
+
+class ConfiguracionController extends Controller
+{
+    public function index()
+    {
+        session()->get('last_page', 'dashbaord');
+        
+        $data['titulo'] = 'Configuracion';
+        session()->set('last_page', 'configuracion');
+
+        echo view('layouts/header' , $data);
+        echo view('layouts/sidebar');
+        echo view('layouts/topbar', $data);
+        echo view('configuracion');
+    }
+}

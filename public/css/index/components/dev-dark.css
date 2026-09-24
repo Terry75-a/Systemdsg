@@ -1,0 +1,254 @@
+/* ═══════════════════════════════════════
+   DSG PERU — Dark Mode (Pure Black)
+   ═══════════════════════════════════════ */
+
+html.dark:has(.dev-main) {
+  color-scheme: dark;
+  --g-bg: #000000;
+  --g-surface: #0a0a0a;
+  --g-surface-variant: #1a1a1a;
+  --g-surface-hover: #222222;
+  --g-border: #2a2a2a;
+  --g-text: #e8eaed;
+  --g-text-secondary: #9aa0a6;
+  --g-text-disabled: #5f6368;
+  --g-primary: #34a853;
+  --g-primary-hover: #2d9249;
+  --g-primary-light: #0d2818;
+  --g-success: #34a853;
+  --g-success-light: #0d2818;
+  --g-error: #ea4335;
+  --g-error-light: #2d1210;
+  --g-warning: #fbbc04;
+  --g-warning-light: #2d2410;
+  --g-sidebar: #000000;
+  --g-nav-active: #0d2818;
+}
+
+/* ── Body ── */
+html.dark body { background: #000000; color: #e8eaed; }
+
+/* ── Sidebar ── */
+html.dark .dev-sidebar { background: #000000; }
+html.dark .dev-sidebar-head { background: #000000; }
+html.dark .dev-sidebar-footer { background: #000000; }
+
+/* ── Nav Links ── */
+html.dark .dev-nav-link { color: #9aa0a6; }
+html.dark .dev-nav-link:hover { background: #1a1a1a; color: #e8eaed; }
+html.dark .dev-nav-link.is-active { background: #0d2818; color: #34a853; }
+html.dark .dev-nav-section { color: #5f6368; }
+html.dark .dev-nav-badge { background: #34a853; }
+
+/* ── Sidebar User ── */
+html.dark .dev-sidebar-user:hover { background: #1a1a1a; }
+html.dark .dev-sidebar-avatar { background: #34a853; }
+
+/* ── Topbar ── */
+html.dark .dev-topbar { background: transparent; }
+
+/* ── Cards ── */
+html.dark .dev-card { background: #0a0a0a; border-color: #2a2a2a; }
+html.dark .dev-card:hover { border-color: #34a853; }
+html.dark .dev-card-head { border-bottom-color: #2a2a2a; background: #0a0a0a; }
+html.dark .dev-card-foot { border-top-color: #2a2a2a; }
+
+/* ── Stat Cards ── */
+html.dark .dev-stat-card { background: #0a0a0a; border-color: #2a2a2a; }
+html.dark .dev-stat-card:hover { border-color: #34a853; }
+html.dark .dev-stat-icon.si-green { background: #0d2818; color: #34a853; }
+html.dark .dev-stat-icon.si-accent { background: #0d2818; color: #34a853; }
+html.dark .dev-stat-icon.si-amber { background: #2d2410; color: #fbbc04; }
+html.dark .dev-stat-icon.si-red { background: #2d1210; color: #ea4335; }
+
+/* ── Tables ── */
+html.dark .dev-table-wrap { border-color: #2a2a2a; background: #0a0a0a; }
+html.dark .dev-table { background: #0a0a0a; }
+html.dark .dev-table th { color: #9aa0a6; border-bottom-color: #2a2a2a; background: #0a0a0a; }
+html.dark .dev-table td { border-bottom-color: #2a2a2a; color: #e8eaed; }
+html.dark .dev-table tbody tr:hover td { background: rgba(52, 168, 83, 0.08); }
+html.dark .dev-table tbody tr:active td { background: rgba(52, 168, 83, 0.12); }
+
+/* ── Personal Table ── */
+html.dark .personal-table th { background: #0a0a0a; border-bottom-color: #2a2a2a; color: #9aa0a6; }
+html.dark .personal-table td { color: #e8eaed; }
+html.dark .personal-table tbody tr:hover td { background: rgba(52, 168, 83, 0.08); }
+
+/* ── Forms ── */
+html.dark .dev-field input,
+html.dark .dev-field select,
+html.dark .dev-field textarea {
+  background: #0a0a0a;
+  border-color: #333333;
+  color: #e8eaed;
+}
+html.dark .dev-field input::placeholder { color: #5f6368; }
+html.dark .dev-field input:focus,
+html.dark .dev-field select:focus,
+html.dark .dev-field textarea:focus {
+  border-color: #34a853;
+  box-shadow: none;
+}
+
+/* ── Buttons ── */
+html.dark .dev-btn-primary { background: #34a853; color: #000000; }
+html.dark .dev-btn-primary:hover { background: #2d9249; }
+html.dark .dev-btn-outline { background: transparent; border-color: #333333; color: #9aa0a6; }
+html.dark .dev-btn-outline:hover { background: #0d2818; border-color: #34a853; color: #34a853; }
+html.dark .dev-btn-text { color: #34a853; }
+html.dark .dev-btn-text:hover { background: #0d2818; }
+html.dark .dev-btn-danger { background: #ea4335; color: #ffffff; }
+html.dark .dev-btn-danger:hover { background: #d33426; }
+html.dark .dev-btn-icon { color: #9aa0a6; }
+html.dark .dev-btn-icon:hover { background: #1a1a1a; color: #e8eaed; }
+html.dark .dev-btn-icon-danger { color: #5f6368; }
+html.dark .dev-btn-icon-danger:hover { color: #ea4335; background: #2d1210; }
+
+/* ── Mobile Card Buttons ── */
+html.dark .mobile-card-btn { background: #1a1a1a; color: #9aa0a6; }
+html.dark .mobile-card-btn:hover { background: #222222; color: #e8eaed; }
+html.dark .mobile-card-btn-danger { color: #ea4335; background: #2d1210; }
+html.dark .mobile-card-btn-danger:hover { background: #3d1a17; }
+
+/* ── Modals ── */
+html.dark .dev-modal-overlay { background: rgba(0, 0, 0, 0.7); }
+html.dark .dev-modal { background: #0a0a0a; }
+html.dark .dev-modal-head { background: #0a0a0a; }
+html.dark .dev-modal-body { background: #0a0a0a; }
+html.dark .dev-modal-footer { border-top-color: #2a2a2a; background: #0a0a0a; }
+html.dark .dev-form-footer { border-top-color: #2a2a2a; }
+html.dark .dev-modal-close:hover { background: #1a1a1a; }
+
+/* ── Alerts ── */
+html.dark .dev-alert-success { background: #0d2818; color: #34a853; }
+html.dark .dev-alert-warning { background: #2d2410; color: #fbbc04; }
+html.dark .dev-alert-danger { background: #2d1210; color: #ea4335; }
+
+/* ── Badges ── */
+html.dark .dev-badge-green { background: #0d2818; color: #34a853; }
+html.dark .dev-badge-blue { background: #0d2818; color: #34a853; }
+html.dark .dev-badge-amber { background: #2d2410; color: #fbbc04; }
+html.dark .dev-badge-red { background: #2d1210; color: #ea4335; }
+
+/* ── Role Badges ── */
+html.dark .role-dev { background: #2a1245; color: #c084fc; }
+html.dark .role-admin { background: #0d2818; color: #34a853; }
+html.dark .role-empleado { background: #0d2818; color: #34a853; }
+html.dark .role-practicante { background: #2d2410; color: #fbbc04; }
+
+/* ── Code ── */
+html.dark .dev-code { background: #0d2818; color: #34a853; }
+html.dark .dev-code:hover { background: #12351f; }
+
+/* ── Status ── */
+html.dark .dev-status.is-active { color: #34a853; }
+html.dark .dev-status.is-used { color: #5f6368; }
+
+/* ── Recent Items ── */
+html.dark .dev-recent-item:hover { background: #1a1a1a; }
+html.dark .dev-recent-avatar { background: #0d2818; color: #34a853; }
+
+/* ── Empty State ── */
+html.dark .dev-empty { color: #5f6368; }
+html.dark .dev-empty .material-symbols-outlined { color: #333333; }
+
+/* ── Profile ── */
+html.dark .dev-profile-avatar { background: #34a853; }
+html.dark .dev-profile-avatar-wrap { border-bottom-color: #2a2a2a; }
+
+/* ── Modal Items ── */
+html.dark .dev-modal-item-avatar { background: #1a1a1a; }
+
+/* ── FAB ── */
+html.dark .dev-fab { background: #34a853; }
+html.dark .dev-fab:hover { background: #2d9249; }
+
+/* ── Mobile Nav ── */
+html.dark .dev-mobile-nav { background: #0a0a0a; border-color: #2a2a2a; }
+html.dark .dev-mobile-nav a { color: #9aa0a6; }
+html.dark .dev-mobile-nav a:hover { background: #1a1a1a; color: #e8eaed; }
+html.dark .dev-mobile-nav a.is-active { background: #0d2818; color: #34a853; }
+
+/* ── Mobile Modal ── */
+html.dark .dev-mobile-modal { background: #34a853; }
+html.dark .dev-mobile-modal-link { color: #9aa0a6; }
+html.dark .dev-mobile-modal-link:hover { background: #1a1a1a; color: #e8eaed; }
+html.dark .dev-mobile-modal-link.is-active { background: #0d2818; color: #34a853; }
+
+/* ── Mobile Dark Button ── */
+html.dark .dev-mobile-dark-btn { background: #0a0a0a; color: #34a853; border-color: #2a2a2a; }
+html.dark .dev-mobile-dark-btn:hover { background: #1a1a1a; }
+
+/* ── Dark Toggle ── */
+.dark-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin: 8px;
+  border-radius: 12px;
+  background: var(--g-surface-variant);
+  transition: background 200ms;
+}
+html.dark .dark-toggle-wrap { background: #1a1a1a; }
+.dark-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--g-text-secondary);
+  font-family: var(--g-font);
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 200ms;
+}
+.dark-toggle:hover { color: var(--g-text); }
+.dark-toggle .material-symbols-outlined { font-size: 20px; }
+.dark-toggle-track {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--g-border);
+  position: relative;
+  cursor: pointer;
+  transition: background 200ms;
+  flex-shrink: 0;
+}
+html.dark .dark-toggle-track { background: var(--g-primary); }
+.dark-toggle-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 200ms;
+}
+html.dark .dark-toggle-thumb { transform: translateX(20px); }
+
+/* ── Focus ── */
+html.dark .dev-btn:focus-visible { outline-color: #34a853; }
+html.dark .dev-btn-icon:focus-visible { outline-color: #34a853; }
+html.dark .dev-nav-link:focus-visible { outline-color: #34a853; }
+html.dark .dev-mobile-nav a:focus-visible { outline-color: #34a853; }
+
+/* ── Input Number Spinner ── */
+html.dark input[type="number"]::-webkit-inner-spin-button { filter: invert(1); }
+
+/* ── Personal Cards ── */
+html.dark .personal-form-card,
+html.dark .personal-stat,
+html.dark .mobile-card {
+  background: #0a0a0a;
+  border-color: #2a2a2a;
+  border-radius: 16px;
+}
+html.dark .personal-stat:hover,
+html.dark .mobile-card:hover {
+  border-color: #34a853;
+}
+html.dark .personal-section-title { color: #e8eaed; }
