@@ -115,7 +115,7 @@ html.dark .pe-page .pdsg-action-danger:active { background: #5c2a28; }
 /* ═══════════════════════════════════════════════════════════════
    MODAL estilo HeroUI (compartido con #tpModal, #plModal)
    Aplica a #peModal y #peEditModal
-   ════════════════════════════════════════════════════════════════ */
+   ═════════════════════════════════════════════════════════════════ */
 #peModal, #peEditModal { --tp-modal-surface: #fff; --tp-modal-text: #202124; --tp-modal-muted: #5f6368; --tp-modal-border: #e8eaed; --tp-modal-soft: #f1f3f4; --tp-accent: var(--g-primary, #1b7a42); }
 
 /* Backdrop con blur sutil (como Modal.Backdrop de HeroUI) — global para nuestros modales */
@@ -141,9 +141,21 @@ html.dark .pe-page .modal-backdrop { --bs-backdrop-bg: rgba(0, 0, 0, .65); backg
   width: 100%;
   padding: 0;
 }
-#peModal.show .modal-dialog, #peEditModal.show .modal-dialog { animation: tpModalIn .2s cubic-bezier(.4, 0, .2, 1) both; opacity: 1 !important; transform: none !important; visibility: visible !important; }
-@keyframes tpModalIn { from { opacity: 0; transform: translateY(12px) scale(.97); visibility: hidden; } to { opacity: 1; transform: none; visibility: visible; } }
-@media (prefers-reduced-motion: reduce) { #peModal.show .modal-dialog, #peEditModal.show .modal-dialog { animation: none; opacity: 1 !important; transform: none !important; visibility: visible !important; } }
+
+/* Usar animación por defecto de Bootstrap (fade) en lugar de custom */
+#peModal.fade .modal-dialog, #peEditModal.fade .modal-dialog {
+  transition: transform .3s ease-out, opacity .3s ease-out;
+  transform: translate(0, -50px);
+  opacity: 0;
+}
+#peModal.show .modal-dialog, #peEditModal.show .modal-dialog {
+  transform: translate(0, 0);
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  #peModal.fade .modal-dialog, #peEditModal.fade .modal-dialog { transition: none; transform: none; opacity: 1; }
+  #peModal.show .modal-dialog, #peEditModal.show .modal-dialog { transform: none; opacity: 1; }
+}
 
 /* CloseTrigger */
 #peModal .tp-modal-close, #peEditModal .tp-modal-close {
