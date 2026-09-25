@@ -39,7 +39,7 @@ $saludo = match (true) {
         <div class="dev-stat-value"><?= esc((string) $totalClientes) ?></div>
     </div>
     <div class="dev-stat-card">
-        <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">person_added</span></div>
+        <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">person_add</span></div>
         <div class="dev-stat-label">Nuevos este mes</div>
         <div class="dev-stat-value"><?= esc((string) $nuevosClientes) ?></div>
     </div>
