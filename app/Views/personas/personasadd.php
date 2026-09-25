@@ -1101,6 +1101,63 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
 });
 
 // ════════════════════════════════════════════════════
+// CALCULAR FECHA DE VENCIMIENTO SEGÚN TIPO DE PLAN
+// ════════════════════════════════════════════════════
+function calcularFechaVencimiento() {
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const idTipoPlan = document.getElementById('selectTipoPlan').value;
+    const fechaVencimiento = document.getElementById('fechaVencimiento');
+    
+    if (!fechaInicio || !idTipoPlan) {
+        fechaVencimiento.value = '';
+        return;
+    }
+    
+    const inicio = new Date(fechaInicio + 'T00:00:00');
+    let mesesAAgregar = 0;
+    
+    // Mapear id_tipo_plan a meses
+    switch (idTipoPlan) {
+        case '1': // Mensual
+            mesesAAgregar = 1;
+            break;
+        case '2': // Trimestral
+            mesesAAgregar = 3;
+            break;
+        case '3': // Semestral
+            mesesAAgregar = 6;
+            break;
+        case '4': // Anual
+            mesesAAgregar = 12;
+            break;
+        default:
+            fechaVencimiento.value = '';
+            return;
+    }
+    
+    inicio.setMonth(inicio.getMonth() + mesesAAgregar);
+    
+    // Formatear como YYYY-MM-DD
+    const yyyy = inicio.getFullYear();
+    const mm = String(inicio.getMonth() + 1).padStart(2, '0');
+    const dd = String(inicio.getDate()).padStart(2, '0');
+    fechaVencimiento.value = `${yyyy}-${mm}-${dd}`;
+}
+
+// Event listeners para recalcular automáticamente
+document.addEventListener('DOMContentLoaded', function () {
+    const fechaInicio = document.getElementById('fechaInicio');
+    const selectTipoPlan = document.getElementById('selectTipoPlan');
+    
+    if (fechaInicio) {
+        fechaInicio.addEventListener('change', calcularFechaVencimiento);
+    }
+    if (selectTipoPlan) {
+        selectTipoPlan.addEventListener('change', calcularFechaVencimiento);
+    }
+});
+
+// ════════════════════════════════════════════════════
 // CARGAR PLANES Y TIPOS DE PLAN EN EL MODAL
 // ════════════════════════════════════════════════════
 async function cargarPlanesYTipos() {
