@@ -1090,12 +1090,48 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
     document.getElementById('idPersonaHidden').value = idPersona;
     document.getElementById('modalClienteNombre').textContent = razonSocial !== '' ? razonSocial : nombreSucursal;
 
-    // 4. Mostrar modal
+    // 4. Cargar planes y tipos de plan
+    cargarPlanesYTipos();
+
+    // 5. Mostrar modal
     const modalPlan = obtenerModalPlan();
     if (modalPlan) {
         modalPlan.show();
     }
 });
+
+// ════════════════════════════════════════════════════
+// CARGAR PLANES Y TIPOS DE PLAN EN EL MODAL
+// ════════════════════════════════════════════════════
+async function cargarPlanesYTipos() {
+    try {
+        // Cargar planes
+        const resPlanes = await fetch(`${BASE_URL}personas/planesDisponibles`);
+        const planes = await resPlanes.json();
+        const selectPlan = document.getElementById('selectPlan');
+        selectPlan.innerHTML = '<option value="">-- Seleccionar --</option>';
+        planes.forEach(plan => {
+            const opt = document.createElement('option');
+            opt.value = plan.id_plan;
+            opt.textContent = plan.nombre_plan;
+            selectPlan.appendChild(opt);
+        });
+
+        // Cargar tipos de plan
+        const resTipos = await fetch(`${BASE_URL}personas/tipoplan`);
+        const tipos = await resTipos.json();
+        const selectTipo = document.getElementById('selectTipoPlan');
+        selectTipo.innerHTML = '<option value="">-- Seleccionar --</option>';
+        tipos.forEach(tipo => {
+            const opt = document.createElement('option');
+            opt.value = tipo.id_tipo_plan;
+            opt.textContent = tipo.nombre_tipo;
+            selectTipo.appendChild(opt);
+        });
+    } catch (error) {
+        console.error('Error cargando planes:', error);
+    }
+}
 
 // ════════════════════════════════════════════════════
 // ANIMACIONES GSAP: MODAL SUCURSAL (CREAR / EDITAR)
