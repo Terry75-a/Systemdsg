@@ -263,7 +263,7 @@ $(document).ready(function () {
 
     $('#peSearch').on('input', function () { tablaPermisos.search(this.value).draw(); });
 
-    // Helper: limpia backdrops huérfanos antes de abrir un modal
+    // Helper: limpia backdrops huérfanos al cerrar un modal
     function cleanBackdrops() {
         document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
         document.body.classList.remove('modal-open');
@@ -271,12 +271,11 @@ $(document).ready(function () {
         document.body.style.removeProperty('padding-right');
     }
 
-    // Limpieza también al cerrar (hidden.bs.modal)
+    // Limpieza al cerrar (hidden.bs.modal)
     $('#peModal, #peEditModal').on('hidden.bs.modal', cleanBackdrops);
 
     // Abrir modal crear (limpia formulario)
     $('#peModal').on('show.bs.modal', function () {
-        cleanBackdrops();
         $('#peForm')[0].reset();
         $('#peId').val('');
         $('#peFormError').hide();
@@ -284,7 +283,7 @@ $(document).ready(function () {
 
     // Abrir modal editar
     $('#peEditModal').on('show.bs.modal', function () {
-        cleanBackdrops();
+        // No limpiar backdrops aquí - Bootstrap los crea después de este evento
     });
 
     // Guardar nuevo / actualizar
@@ -375,6 +374,9 @@ $(document).ready(function () {
     }
 
     // Limpieza explícita al clicar Cancelar / Cerrar (data-bs-dismiss no siempre dispara hidden.bs.modal en test)
-    $('#peModal .tp-modal-cancel, #peModal .tp-modal-close, #peEditModal .tp-modal-cancel, #peEditModal .tp-modal-close').on('click', cleanBackdrops);
+    $('#peModal .tp-modal-cancel, #peModal .tp-modal-close, #peEditModal .tp-modal-cancel, #peEditModal .tp-modal-close').on('click', function() {
+        // hidden.bs.modal se disparará automáticamente, pero por si acaso:
+        setTimeout(cleanBackdrops, 200);
+    });
 });
 </script>
