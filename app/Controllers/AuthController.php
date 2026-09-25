@@ -86,14 +86,16 @@ class AuthController extends BaseController
     public function loginForm()
     {
         if (session()->get('logged_in')) {
-            return redirect()->to($this->homeFor(session()->get('user_role')));
+            $role = session()->get('user_role') ?? 'Empleado';
+            return redirect()->to($this->homeFor($role));
         }
         return view('login-asisten');
     }
 
     // Redirige según el rol a su panel
-    private function homeFor(string $role): string
+    private function homeFor(?string $role): string
     {
+        $role = $role ?? 'Empleado';
         if ($role === 'Dev') return 'dios';
         if ($role === 'Admin') return 'admin';
         return 'mi-panel';
