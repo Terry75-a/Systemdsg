@@ -1,6 +1,6 @@
 <?php $uri = service('uri'); 
 
-      $is_dashboard = in_array($uri->getSegment(1), ['dashboard', 'clientes', 'personasadd', 'calendario', 'perfil', 'personas',  'tipo_plan', 'planesadd' ,'planes','usuarios', 'permisos', 'menu', 'configuracion', 'ReporteVentas', 'ReporteStock', 'ReporteUsuarios']);
+      $is_dashboard = in_array($uri->getSegment(1), ['dashboard', 'clientes', 'personasadd', 'calendario', 'perfil', 'personas',  'tipo_plan', 'planesadd' , 'notificaciones','planes','usuarios', 'permisos', 'menu', 'configuracion', 'ReporteVentas', 'ReporteStock', 'ReporteUsuarios']);
 
 ?>
 

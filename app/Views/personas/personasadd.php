@@ -502,9 +502,13 @@
 </div>
 
 <div class="modal fade" id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <form class="modal-content" id="formAsignarPlan" method="POST">
+      
+      <!-- ID para identificar la sucursal o empresa -->
+      <input type="hidden" id="idSucursalModal" name="id_sucursal" value="">
       <input type="hidden" id="idEmpresaModal" name="id_empresa" value="">
+      
       <div class="pe-ms-head">
         <span class="pe-ms-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span>
         <div class="pe-ms-head-info">
@@ -515,56 +519,50 @@
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="pe-ms-body-wrap">
+
+      <div class="pe-ms-body-wrap" style="overflow-y: auto; max-height: calc(85vh - 160px);">
         <div class="pe-ms-body">
           <div class="alert mb-3" role="alert">
             Asignando plan a: <strong id="modalClienteNombre"></strong>
-            <input type="hidden" id="idPersonaHidden" name="id_persona">
           </div>
 
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="selectPlan">Seleccionar Plan disponible:</label>
-              <select class="form-select" id="selectPlan"></select>
+              <label for="selectPlan">Seleccionar Plan disponible: <span class="text-danger">*</span></label>
+              <select class="form-select" id="selectPlan" name="id_plan" required></select>
             </div>
 
             <div class="col-md-6">
-              <label for="selectTipoPlan">Tipo de plan:</label>
-              <select class="form-select" id="selectTipoPlan"></select>
+              <label for="selectTipoPlan">Tipo de plan: <span class="text-danger">*</span></label>
+              <select class="form-select" id="selectTipoPlan" name="id_tipo_plan" required></select>
             </div>
 
             <div class="col-md-6">
               <label for="fechaInicio">Fecha de Inicio: <span class="text-danger">*</span></label>
-              <input type="date" class="form-control" id="fechaInicio" value="2026-06-19" required>
+              <!-- name="fecha_de_inicio" igual a la BD -->
+              <input type="date" class="form-control" id="fechaInicio" name="fecha_de_inicio" required>
             </div>
 
             <div class="col-md-6">
               <label for="fechaVencimiento">Fecha de Vencimiento:</label>
-              <input type="date" class="form-control" id="fechaVencimiento" readonly placeholder="Cálculo automático">
+              <!-- name="fecha_de_vencimiento" igual a la BD -->
+              <input type="date" class="form-control" id="fechaVencimiento" name="fecha_de_vencimiento" readonly placeholder="Cálculo automático">
             </div>
 
             <div class="col-md-6">
-              <label for="inputPrecio">Precio Cobrado (S/):</label>
-              <input type="number" step="0.01" class="form-control" id="inputPrecio" placeholder="0.00">
-            </div>
-
-            <div class="col-md-6">
-              <label for="selectEstadoPago">Estado del Pago: <span class="text-danger">*</span></label>
-              <select class="form-select" id="selectEstadoPago" required>
-                <option value="Pagado" selected>Pagado</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Cortesia">Cortesía / Demo</option>
-              </select>
+              <label for="inputPrecio">Precio Cobrado (S/): <span class="text-danger">*</span></label>
+              <input type="number" step="0.01" class="form-control" id="inputPrecio" name="precio" placeholder="0.00" required>
             </div>
 
             <div class="col-12">
               <label for="txtObservaciones">Observaciones (Opcional):</label>
-              <textarea class="form-control" id="txtObservaciones" rows="2" placeholder="Ej: Pago adelantado, descuento especial..."></textarea>
+              <textarea class="form-control" id="txtObservaciones" name="observaciones" rows="2" placeholder="Ej: Pago adelantado, descuento especial..."></textarea>
             </div>
           </div>
         </div>
       </div>
-      <div class="pe-ms-footer">
+
+      <div class="pe-ms-footer" style="flex-shrink: 0;">
         <button type="button" class="btn pe-ms-cancel" data-bs-dismiss="modal">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i> Cancelar
         </button>
@@ -572,7 +570,8 @@
           <i class="fa-solid fa-check" aria-hidden="true"></i> Asignar Plan
         </button>
       </div>
-    </div>
+
+    </form>
   </div>
 </div>
 <style>
@@ -1069,7 +1068,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('contenedorSucursales').style.display = 'block';
     }
 });
-
 // ════════════════════════════════════════════════════
 // ABRIR MODAL PARA ASIGNAR PLAN DE SERVICIO
 // ════════════════════════════════════════════════════
@@ -1078,22 +1076,28 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
     if (!btnAsignar) return;
 
     const fila = btnAsignar.closest('tr');
-    const idPersona = btnAsignar.getAttribute('data-id-persona') || fila.getAttribute('data-indice');
+    const indice = btnAsignar.getAttribute('data-id-persona') || fila.getAttribute('data-indice');
     
-    
-    const razonSocial = document.getElementById('razon_social').value.trim();
+    // Obtener el ID real de la sucursal (si viene con 'existing_123', dejamos solo el número)
+    const idSucursal = indice ? indice.replace('existing_', '') : '';
 
-    
+    const razonSocial = document.getElementById('razon_social')?.value.trim() || '';
     const nombreSucursal = fila.querySelector('.txt-nombre')?.textContent.trim() || '';
 
-    // 3. Asignar al modal: Razón Social (o la sucursal si la razón social está vacía)
-    document.getElementById('idPersonaHidden').value = idPersona;
-    document.getElementById('modalClienteNombre').textContent = razonSocial !== '' ? razonSocial : nombreSucursal;
+    // Asignar IDs a los inputs correctos del modal
+    const inputSucursal = document.getElementById('idSucursalModal');
+    if (inputSucursal) inputSucursal.value = idSucursal;
 
-    // 4. Cargar planes y tipos de plan
+    // Nombre a mostrar en el modal
+    const lblCliente = document.getElementById('modalClienteNombre');
+    if (lblCliente) {
+        lblCliente.textContent = nombreSucursal;
+    }
+
+    // Cargar opciones en los selects
     cargarPlanesYTipos();
 
-    // 5. Mostrar modal
+    // Mostrar modal
     const modalPlan = obtenerModalPlan();
     if (modalPlan) {
         modalPlan.show();
@@ -1104,58 +1108,66 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
 // CALCULAR FECHA DE VENCIMIENTO SEGÚN TIPO DE PLAN
 // ════════════════════════════════════════════════════
 function calcularFechaVencimiento() {
-    const fechaInicio = document.getElementById('fechaInicio').value;
-    const idTipoPlan = document.getElementById('selectTipoPlan').value;
-    const fechaVencimiento = document.getElementById('fechaVencimiento');
-    
-    if (!fechaInicio || !idTipoPlan) {
-        fechaVencimiento.value = '';
+    const inputInicio = document.getElementById('fechaInicio');
+    const selectTipo = document.getElementById('selectTipoPlan');
+    const inputVencimiento = document.getElementById('fechaVencimiento');
+
+    if (!inputInicio || !selectTipo || !inputVencimiento) return;
+
+    // Si fechaInicio está vacía, colocar la fecha actual (YYYY-MM-DD)
+    if (!inputInicio.value) {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputInicio.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    const selectedOption = selectTipo.options[selectTipo.selectedIndex];
+    if (!selectedOption || !selectedOption.value) {
+        inputVencimiento.value = '';
         return;
     }
-    
-    const inicio = new Date(fechaInicio + 'T00:00:00');
-    let mesesAAgregar = 0;
-    
-    // Mapear id_tipo_plan a meses
-    switch (idTipoPlan) {
-        case '1': // Mensual
-            mesesAAgregar = 1;
-            break;
-        case '2': // Trimestral
-            mesesAAgregar = 3;
-            break;
-        case '3': // Semestral
-            mesesAAgregar = 6;
-            break;
-        case '4': // Anual
-            mesesAAgregar = 12;
-            break;
-        default:
-            fechaVencimiento.value = '';
-            return;
-    }
-    
-    inicio.setMonth(inicio.getMonth() + mesesAAgregar);
-    
-    // Formatear como YYYY-MM-DD
-    const yyyy = inicio.getFullYear();
-    const mm = String(inicio.getMonth() + 1).padStart(2, '0');
-    const dd = String(inicio.getDate()).padStart(2, '0');
-    fechaVencimiento.value = `${yyyy}-${mm}-${dd}`;
-}
 
-// Event listeners para recalcular automáticamente
-document.addEventListener('DOMContentLoaded', function () {
-    const fechaInicio = document.getElementById('fechaInicio');
-    const selectTipoPlan = document.getElementById('selectTipoPlan');
-    
-    if (fechaInicio) {
-        fechaInicio.addEventListener('change', calcularFechaVencimiento);
+    // Leemos los meses directamente del data-attribute o evaluamos el texto
+    let mesesAAgregar = parseInt(selectedOption.dataset.meses, 10);
+
+    if (isNaN(mesesAAgregar)) {
+        // Alternativa de respaldo por nombre si el backend no envía meses
+        const nombreTipo = selectedOption.textContent.trim().toUpperCase();
+        if (nombreTipo.includes('MENSUAL')) mesesAAgregar = 1;
+        else if (nombreTipo.includes('TRIMESTRAL')) mesesAAgregar = 3;
+        else if (nombreTipo.includes('SEMESTRAL')) mesesAAgregar = 6;
+        else if (nombreTipo.includes('ANUAL')) mesesAAgregar = 12;
+        else if (nombreTipo.includes('UNICO') || nombreTipo.includes('ÚNICO')) mesesAAgregar = 0; // Pago único
+        else mesesAAgregar = 0;
     }
-    if (selectTipoPlan) {
-        selectTipoPlan.addEventListener('change', calcularFechaVencimiento);
+
+    // Si es Pago Único (0 meses), dejamos el vencimiento vacío o indefinido
+    if (mesesAAgregar === 0) {
+        inputVencimiento.value = '';
+        return;
     }
-});
+
+    // Parsear fecha evitando desajustes por zona horaria UTC
+    const [year, month, day] = inputInicio.value.split('-').map(Number);
+    const fecha = new Date(year, month - 1, day);
+
+    // Sumar meses controlando el desbordamiento de fin de mes
+    const diaOriginal = fecha.getDate();
+    fecha.setMonth(fecha.getMonth() + mesesAAgregar);
+
+    // Si el día cambió (ej. de 31 de marzo pasó a 1 o 2 o 3 de mayo), ajustar al último día del mes deseado
+    if (fecha.getDate() !== diaOriginal) {
+        fecha.setDate(0);
+    }
+
+    // Formatear a YYYY-MM-DD
+    const yyyy = fecha.getFullYear();
+    const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dd = String(fecha.getDate()).padStart(2, '0');
+    inputVencimiento.value = `${yyyy}-${mm}-${dd}`;
+}
 
 // ════════════════════════════════════════════════════
 // CARGAR PLANES Y TIPOS DE PLAN EN EL MODAL
@@ -1166,30 +1178,63 @@ async function cargarPlanesYTipos() {
         const resPlanes = await fetch(`${BASE_URL}personas/planesDisponibles`);
         const planes = await resPlanes.json();
         const selectPlan = document.getElementById('selectPlan');
-        selectPlan.innerHTML = '<option value="">-- Seleccionar --</option>';
-        planes.forEach(plan => {
-            const opt = document.createElement('option');
-            opt.value = plan.id_plan;
-            opt.textContent = plan.nombre_plan;
-            selectPlan.appendChild(opt);
-        });
+        
+        if (selectPlan) {
+            selectPlan.innerHTML = '<option value="">-- Seleccionar --</option>';
+            planes.forEach(plan => {
+                const opt = document.createElement('option');
+                opt.value = plan.id_plan;
+                opt.textContent = plan.nombre_plan;
+                selectPlan.appendChild(opt);
+            });
+        }
 
         // Cargar tipos de plan
         const resTipos = await fetch(`${BASE_URL}personas/tipoplan`);
         const tipos = await resTipos.json();
         const selectTipo = document.getElementById('selectTipoPlan');
-        selectTipo.innerHTML = '<option value="">-- Seleccionar --</option>';
-        tipos.forEach(tipo => {
-            const opt = document.createElement('option');
-            opt.value = tipo.id_tipo_plan;
-            opt.textContent = tipo.nombre_tipo;
-            selectTipo.appendChild(opt);
-        });
+        
+        if (selectTipo) {
+            selectTipo.innerHTML = '<option value="">-- Seleccionar --</option>';
+            tipos.forEach(tipo => {
+                const opt = document.createElement('option');
+                opt.value = tipo.id_tipo_plan;
+                opt.textContent = tipo.nombre_tipo;
+
+                // Asignar los meses al dataset según el nombre
+                const nombre = tipo.nombre_tipo.toUpperCase();
+                let meses = 0;
+                if (nombre.includes('MENSUAL')) meses = 1;
+                else if (nombre.includes('TRIMESTRAL')) meses = 3;
+                else if (nombre.includes('SEMESTRAL')) meses = 6;
+                else if (nombre.includes('ANUAL')) meses = 12;
+
+                opt.dataset.meses = meses;
+                selectTipo.appendChild(opt);
+            });
+        }
     } catch (error) {
-        console.error('Error cargando planes:', error);
+        console.error('Error cargando planes y tipos:', error);
     }
 }
 
+// ════════════════════════════════════════════════════
+// EVENT LISTENERS
+// ════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function () {
+    const fechaInicio = document.getElementById('fechaInicio');
+    const selectTipoPlan = document.getElementById('selectTipoPlan');
+
+    if (fechaInicio) {
+        fechaInicio.addEventListener('change', calcularFechaVencimiento);
+    }
+    if (selectTipoPlan) {
+        selectTipoPlan.addEventListener('change', calcularFechaVencimiento);
+    }
+
+    // Inicializar carga de datos
+    cargarPlanesYTipos();
+});
 // ════════════════════════════════════════════════════
 // ANIMACIONES GSAP: MODAL SUCURSAL (CREAR / EDITAR)
 // ════════════════════════════════════════════════════
@@ -1349,5 +1394,45 @@ function pdsgSucursalCerrarForm() {
         });
     }
 })();
+document.getElementById('formAsignarPlan').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
+    const btnSubmit = document.getElementById('btnGuardarPlan');
+    const textoOriginal = btnSubmit.innerHTML;
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Guardando...';
+
+    try {
+        const formData = new FormData(this);
+        // Adjuntar token CSRF requerido por CodeIgniter
+        formData.append(csrfName, csrfHash);
+
+        const res = await fetch(`${BASE_URL}personas/guardarPlan`, {
+            method: 'POST',
+            body: formData,
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfHash
+            }
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'success' || data.success) {
+            const modalEl = document.getElementById('modalPlan');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+
+            alert(data.message || 'Plan asignado correctamente.');
+        } else {
+            alert(data.message || 'Error al guardar el plan');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error en la comunicación con el servidor');
+    } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = textoOriginal;
+    }
+});
 </script>

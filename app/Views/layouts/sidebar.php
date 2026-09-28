@@ -47,11 +47,16 @@ $GLOBALS['__pdsg_seg'] = $seg;
             <span class="material-symbols-outlined">sell</span>
             <span>Planes</span>
         </a>
+        <a href="<?= base_url('notificaciones') ?>" class="dev-nav-link<?= pdsgCls(pdsgSeg('notificaciones')) ?>">
+            <span class="material-symbols-outlined">notifications</span>
+            <span>Notificaciones</span>
+        </a>
 
         <a href="<?= base_url('calendario') ?>" class="dev-nav-link<?= pdsgCls(pdsgSeg('calendario')) ?>">
             <span class="material-symbols-outlined">calendar_month</span>
             <span>Calendario</span>
         </a>
+        
         <a href="<?= base_url('perfil') ?>" class="dev-nav-link<?= pdsgCls(pdsgSeg('perfil')) ?>">
             <span class="material-symbols-outlined">person</span>
             <span>Mi Perfil</span>
@@ -118,6 +123,7 @@ $GLOBALS['__pdsg_seg'] = $seg;
     <a href="<?= base_url('calendario') ?>" class="<?= pdsgSeg('calendario') ? 'is-active' : '' ?>" title="Calendario">
         <span class="material-symbols-outlined">calendar_month</span>
     </a>
+    
 </nav>
 
 <!-- Modal morfo — botón inferior derecho -->

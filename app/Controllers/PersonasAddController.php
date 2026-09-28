@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\PersonasAddModel;
 use App\Models\Empresamodel;
+use AppApp\Models\empresaSucursalModel;
 
 
 class PersonasAddController extends BaseController
@@ -397,5 +398,56 @@ public function index($id = null)
         $mensaje = !empty($id_persona) ? 'Registro actualizado con éxito.' : 'Registro completado con éxito.';
         return $finalizar($mensaje, true);
     }
+     
+    public function guardarPlan()
+{
+    if (!$this->request->isAJAX()) {
+        return $this->response->setStatusCode(400)->setJSON([
+            'status'  => 'error',
+            'message' => 'Petición no permitida.'
+        ]);
+    }
 
+    $sucursalModel = new \App\Models\empresaSucursalModel();
+
+    $idSucursal =$this->request->getPost('id_sucursal');
+    $idEmpresa  =$this->request->getPost('id_empresa');
+
+    $data = [
+        'id_plan'              => $this->request->getPost('id_plan'),
+        'id_tipo_plan'         => $this->request->getPost('id_tipo_plan'),
+        'fecha_de_inicio'      => $this->request->getPost('fecha_de_inicio'),
+        'fecha_de_vencimiento' => !empty($this->request->getPost('fecha_de_vencimiento')) ?$this->request->getPost('fecha_de_vencimiento') : null,
+        'precio'               => $this->request->getPost('precio'),
+        'observaciones'        => $this->request->getPost('observaciones')
+    ];
+
+    // Si tienes el id_sucursal directo:
+    if (!empty($idSucursal)) {
+        $actualizado =$sucursalModel->update($idSucursal,$data);
+    } 
+    // Si manejas por empresa y es su sucursal principal:
+    else if (!empty($idEmpresa)) {$actualizado = $sucursalModel->where('id_empresa',$idEmpresa)
+                                     ->where('tipo', 'principal')
+                                     ->set($data)
+                                     ->update();
+    } else {
+        return $this->response->setJSON([
+            'status'  => 'error',
+            'message' => 'No se identificó la sucursal o empresa a actualizar.'
+        ]);
+    }
+
+    if ($actualizado) {
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => '¡Plan asignado correctamente!'
+        ]);
+    } else {
+        return $this->response->setJSON([
+            'status'  => 'error',
+            'message' => 'No se pudo actualizar el plan en la base de datos.'
+        ]);
+    }
+}
 }
