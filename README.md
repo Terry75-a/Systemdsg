@@ -2,6 +2,7 @@
 
 Si necesitás levantar, configurar, testear y validar lo principal del proyecto, arrancá por acá:
 
+- `docs/asistencia.md` — **módulo de asistencia (login verde, /admin, /mi-panel, /dios)**: rutas, comandos CLI, cron, seguridad y tests.
 - `docs/operacion-rapida-sprint4.md`
 - `docs/testing-strategy-sprint4.md`
 - `tests/README.md`

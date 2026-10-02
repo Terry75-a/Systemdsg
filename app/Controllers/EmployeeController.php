@@ -5,6 +5,7 @@ use App\Models\UserModel;
 use App\Models\AttendanceModel;
 use App\Models\ScheduleModel;
 use App\Models\IncidentModel;
+use App\Models\FestivoModel;
 
 class EmployeeController extends BaseController
 {
@@ -12,6 +13,7 @@ class EmployeeController extends BaseController
     protected AttendanceModel $attendanceModel;
     protected ScheduleModel $scheduleModel;
     protected IncidentModel $incidentModel;
+    protected FestivoModel $festivoModel;
 
     public function __construct()
     {
@@ -19,13 +21,40 @@ class EmployeeController extends BaseController
         $this->attendanceModel = new AttendanceModel();
         $this->scheduleModel   = new ScheduleModel();
         $this->incidentModel   = new IncidentModel();
+        $this->festivoModel    = new FestivoModel();
     }
 
     private function checkEmployee(): ?\CodeIgniter\HTTP\RedirectResponse
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
+        if (! session()->get('logged_in')) {
+            return redirect()->to(base_url('login-verde'));
         }
+
+        $rol = (string) (session()->get('user_role') ?? '');
+        if ($rol === 'Dev') {
+            return redirect()->to(base_url('dios'));
+        }
+        if ($rol === 'Admin') {
+            return redirect()->to(base_url('admin'));
+        }
+
+        $user = $this->userModel->find((int) session()->get('user_id'));
+        if (! $user) {
+            session()->destroy();
+            session()->setFlashdata('msg', 'Tu cuenta ya no existe. Contacta con Recursos Humanos.');
+            session()->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('login-verde'));
+        }
+
+        $estado = (string) ($user['estado'] ?? 'Activo');
+        if ($estado !== 'Activo') {
+            $motivo = $estado === 'Despedido' ? 'Has sido dado de baja.' : 'Tu vinculación ha finalizado.';
+            session()->destroy();
+            session()->setFlashdata('msg', $motivo . ' No puedes usar el panel.');
+            session()->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('login-verde'));
+        }
+
         return null;
     }
 
@@ -71,6 +100,19 @@ class EmployeeController extends BaseController
             elseif ($inc['estado'] === 'Revisión')  $enRevision++;
         }
 
+        // Festivos (los del mes van marcados en el calendario)
+        $festivosMes    = [];
+        $festivosProx   = [];
+        foreach ($this->festivoModel->getAll($adminId > 0 ? $adminId : null) as $f) {
+            $fecha             = (string) ($f['fecha'] ?? '');
+            $nombre            = (string) ($f['nombre'] ?? 'Festivo');
+            $festivosMes[$fecha] = $nombre;
+            if ($fecha >= $hoy) {
+                $festivosProx[$fecha] = $nombre;
+            }
+        }
+        ksort($festivosProx);
+
         return [
             'miInfo'          => $user,
             'miHorario'       => $miHorario,
@@ -82,6 +124,8 @@ class EmployeeController extends BaseController
             'misFaltas'       => $misFaltas,
             'incPendientes'   => $pendientes,
             'incEnRevision'   => $enRevision,
+            'festivosMes'     => $festivosMes,
+            'festivosProximos'=> array_slice($festivosProx, 0, 4, true),
             'bioHuella'       => (int) ($user['huella_registrada'] ?? 0),
             'bioRostro'       => (int) ($user['rostro_registrado'] ?? 0),
             'bioRostroPath'   => (string) ($user['rostro_path'] ?? ''),
@@ -182,6 +226,7 @@ class EmployeeController extends BaseController
         $hoy = date('Y-m-d');
         $ahora = date('H:i:s');
         $adminId = (int) ($user['admin_id'] ?? 0);
+        $geo = $this->ubicacionMarcacion();
 
         $att = $this->attendanceModel->findByUserAndDate($userId, $hoy);
 
@@ -205,6 +250,9 @@ class EmployeeController extends BaseController
                 'status'     => $status,
                 'observacion'=> '',
                 'evidencia'  => $evidencia,
+                'lat'        => $geo['lat'],
+                'lng'        => $geo['lng'],
+                'ip'         => $geo['ip'],
             ]);
             $attId = (int) db_connect()->insertID();
 
@@ -228,7 +276,13 @@ class EmployeeController extends BaseController
         } elseif (empty($att['time_out'])) {
             // SALIDA
             $salida = date('H:i');
-            $this->attendanceModel->update($att['id'], ['time_out' => $ahora, 'evidencia' => $evidencia ?: ($att['evidencia'] ?? '')]);
+            $this->attendanceModel->update($att['id'], [
+                'time_out'  => $ahora,
+                'evidencia' => $evidencia ?: ($att['evidencia'] ?? ''),
+                'lat'       => $geo['lat'],
+                'lng'       => $geo['lng'],
+                'ip'        => $geo['ip'],
+            ]);
 
             // Salida anticipada: si se retira antes de su hora de salida prevista
             $sc = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
@@ -260,25 +314,78 @@ class EmployeeController extends BaseController
         return redirect()->to(base_url('mi-panel'));
     }
 
+    /**
+     * Geolocalización enviada por el navegador (opcional) + IP de origen.
+     * Lo que no sea un par válido se guarda como NULL, nunca inventado.
+     */
+    private function ubicacionMarcacion(): array
+    {
+        $datos = ['lat' => null, 'lng' => null, 'ip' => substr((string) $this->request->getIPAddress(), 0, 45)];
+
+        $lat = $this->request->getPost('lat');
+        $lng = $this->request->getPost('lng');
+
+        if (is_string($lat) && is_string($lng) && is_numeric($lat) && is_numeric($lng)) {
+            $lat = (float) $lat;
+            $lng = (float) $lng;
+            if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180 && ! ($lat === 0.0 && $lng === 0.0)) {
+                $datos['lat'] = $lat;
+                $datos['lng'] = $lng;
+            }
+        }
+
+        return $datos;
+    }
+
+    /** Límites de la imagen biométrica (bytes binarios). */
+    private const BIO_MAX_BIN   = 3145728;   // 3 MB
+    private const BIO_MAX_B64   = 4194304;   // 4 MB en base64
+    private const BIO_MIN_BIN   = 200;
+    private const BIO_DIRS      = ['evidencias', 'rostros'];
+    private const BIO_MIME      = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
     private function saveBioImage(string $dataUrl, string $subdir): string
     {
+        // Sólo los directorios previstos: nada de traversal.
+        if (! in_array($subdir, self::BIO_DIRS, true)) {
+            return '';
+        }
+
         $dataUrl = trim($dataUrl);
-        if ($dataUrl === '' || !str_starts_with($dataUrl, 'data:image/')) {
+        if ($dataUrl === '' || ! preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/i', $dataUrl)) {
             return '';
         }
+
         $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
-        $bin = base64_decode($base64);
-        if ($bin === false || strlen($bin) < 200) {
+        if (strlen($base64) > self::BIO_MAX_B64) {
             return '';
         }
-        $dir = FCPATH . 'uploads/' . $subdir;
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
+
+        $bin = base64_decode($base64, true);
+        if ($bin === false || strlen($bin) < self::BIO_MIN_BIN || strlen($bin) > self::BIO_MAX_BIN) {
+            return '';
         }
-        $name = 'user_' . (int) session()->get('user_id') . '_' . date('YmdHis') . '.jpg';
+
+        // Debe ser una imagen real del tipo declarado (bloquea SVG/HTML embebido).
+        $info = @getimagesizefromstring($bin);
+        $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
+        if (! isset(self::BIO_MIME[$mime])) {
+            return '';
+        }
+
+        $dir = FCPATH . 'uploads/' . $subdir;
+        if (! is_dir($dir) && ! @mkdir($dir, 0775, true)) {
+            return '';
+        }
+
+        $name = 'user_' . (int) session()->get('user_id')
+            . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(4))
+            . '.' . self::BIO_MIME[$mime];
+
         if (@file_put_contents($dir . '/' . $name, $bin) === false) {
             return '';
         }
+
         return $subdir . '/' . $name;
     }
 

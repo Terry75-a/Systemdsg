@@ -34,7 +34,37 @@
 
         .personal-section { margin-bottom: 24px; }
         .personal-section-head {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+            gap: 12px; margin-bottom: 16px;
+        }
+        .pf-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .pf-input {
+            height: 36px; padding: 0 12px 0 34px; border: 1px solid var(--g-border); border-radius: 10px;
+            background: var(--g-surface); color: var(--g-text); font-size: 13px; font-family: inherit;
+            outline: none; min-width: 210px;
+        }
+        .pf-input:focus { border-color: var(--g-primary); box-shadow: 0 0 0 3px rgba(27,122,66,.12); }
+        .pf-search { position: relative; display: flex; align-items: center; }
+        .pf-search > .material-symbols-outlined {
+            position: absolute; left: 10px; font-size: 17px; color: var(--g-text-secondary); pointer-events: none;
+        }
+        .pf-select {
+            height: 36px; padding: 0 30px 0 11px; border: 1px solid var(--g-border); border-radius: 10px;
+            background: var(--g-surface); color: var(--g-text); font-size: 13px; font-family: inherit;
+            outline: none; cursor: pointer;
+        }
+        .pf-select:focus { border-color: var(--g-primary); }
+        .pf-clear {
+            height: 36px; padding: 0 12px; border: 1px solid var(--g-border); border-radius: 10px;
+            background: transparent; color: var(--g-text-secondary); font-size: 13px; font-family: inherit; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .pf-clear:hover { background: var(--g-surface-variant); color: var(--g-text); }
+        .pf-clear .material-symbols-outlined { font-size: 16px; }
+        .pf-empty { display: none; text-align: center; padding: 40px 16px; color: var(--g-text-secondary); font-size: 14px; }
+        @media (max-width: 768px) {
+            .pf-bar { width: 100%; }
+            .pf-search, .pf-input { width: 100%; min-width: 0; }
         }
         .personal-section-title {
             display: flex; align-items: center; gap: 10px;
@@ -302,7 +332,7 @@
                 <div class="personal-stat-icon psi-codes"><span class="material-symbols-outlined">qr_code</span></div>
                 <div>
                     <div class="personal-stat-value"><?= count(array_filter($codes, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
-                    <div class="personal-stat-label">Codigos activos</div>
+                    <div class="personal-stat-label">Códigos activos</div>
                 </div>
             </div>
         </div>
@@ -312,17 +342,58 @@
                 <span class="material-symbols-outlined">person_add</span> Crear empleado
             </button>
             <button type="button" class="dev-btn dev-btn-primary" onclick="openModal('createCodeModal')">
-                <span class="material-symbols-outlined">vpn_key</span> Generar codigo
+                <span class="material-symbols-outlined">vpn_key</span> Generar código
             </button>
         </div>
 
         <div class="personal-section">
+            <?php
+                $areasDisponibles = [];
+                foreach ($empleados as $p) {
+                    $a = trim((string) ($p['area'] ?? ''));
+                    if ($a !== '') { $areasDisponibles[$a] = true; }
+                }
+                $areasDisponibles = array_keys($areasDisponibles);
+                sort($areasDisponibles, SORT_NATURAL | SORT_FLAG_CASE);
+                $totalPersonas = count($empleados);
+            ?>
             <div class="personal-section-head">
                 <h2 class="personal-section-title">
                     <span class="material-symbols-outlined">group</span>
                     Equipo
-                    <span style="font-size:13px; color:var(--g-text-secondary); font-weight:400; margin-left:4px;"><?= count($empleados) ?> personas</span>
+                    <span style="font-size:13px; color:var(--g-text-secondary); font-weight:400; margin-left:4px;" id="personCount"><?= $totalPersonas ?> personas</span>
                 </h2>
+
+                <div class="pf-bar">
+                    <div class="pf-search">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="search" class="pf-input" id="personSearch" placeholder="Buscar por nombre, DNI, código, área..." oninput="filtrarPersonas()">
+                    </div>
+                    <select class="pf-select" id="personRol" onchange="filtrarPersonas()" aria-label="Filtrar por rol">
+                        <option value="">Rol: todos</option>
+                        <option value="Empleado">Empleado</option>
+                        <option value="Practicante">Practicante</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <select class="pf-select" id="personEstado" onchange="filtrarPersonas()" aria-label="Filtrar por estado">
+                        <option value="">Estado: todos</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="Despedido">Despedido</option>
+                        <option value="Retirado">Retirado</option>
+                    </select>
+                    <?php if ($areasDisponibles): ?>
+                    <select class="pf-select" id="personArea" onchange="filtrarPersonas()" aria-label="Filtrar por área">
+                        <option value="">Área: todas</option>
+                        <?php foreach ($areasDisponibles as $a): ?>
+                            <option value="<?= esc($a) ?>"><?= esc($a) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php endif; ?>
+                    <button type="button" class="pf-clear" onclick="limpiarPersonas()" title="Quitar filtros">
+                        <span class="material-symbols-outlined">filter_alt_off</span> Limpiar
+                    </button>
+                </div>
             </div>
 
             <div class="personal-form-card">
@@ -355,7 +426,14 @@
                                     $name = $emp['name'] ?? $emp['nombre'] ?? 'Sin nombre';
                                     $initial = strtoupper(mb_substr($name, 0, 1, 'UTF-8'));
                                 ?>
-                                    <tr onclick="openDetailModal(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)">
+                                    <?php
+                                        $busqueda = mb_strtolower(preg_replace('/\s+/', ' ', trim(
+                                            $name . ' ' . ($emp['dni'] ?? '') . ' ' . ($emp['personal_code'] ?? '') . ' ' . ($emp['email'] ?? '')
+                                            . ' ' . ($emp['area'] ?? '') . ' ' . ($emp['cargo'] ?? '') . ' ' . $role . ' ' . ($emp['estado'] ?? 'Activo')
+                                            . ' ' . (($emp['role'] ?? '') === 'Practicante' ? (($emp['semestre'] ?? '') . ' ' . ($emp['institucion'] ?? '')) : '')
+                                        )));
+                                    ?>
+                                    <tr data-buscar="<?= esc($busqueda) ?>" data-rol="<?= esc($role) ?>" data-estado="<?= esc($emp['estado'] ?? 'Activo') ?>" data-area="<?= esc($emp['area'] ?? '') ?>" onclick="openDetailModal(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)">
                                         <td>
                                             <div class="personal-user">
                                                 <div class="personal-avatar <?= $avatarClass ?>"><?= $initial ?></div>
@@ -411,6 +489,14 @@
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
+                            <tr id="personNoResults" style="display:none;">
+                                <td colspan="12">
+                                    <div class="pf-empty" style="display:block;">
+                                        <span class="material-symbols-outlined" style="font-size:44px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">person_search</span>
+                                        Ninguna persona coincide con el filtro.
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -426,7 +512,14 @@
                             $name = $emp['name'] ?? 'Sin nombre';
                             $initial = strtoupper(mb_substr($name, 0, 1, 'UTF-8'));
                         ?>
-                            <div class="m-card" style="cursor:pointer;" onclick="event.target.closest('.m-card-actions') || openDetailModal(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)">
+                            <?php
+                                $busquedaM = mb_strtolower(preg_replace('/\s+/', ' ', trim(
+                                    $name . ' ' . ($emp['dni'] ?? '') . ' ' . ($emp['personal_code'] ?? '') . ' ' . ($emp['email'] ?? '')
+                                    . ' ' . ($emp['area'] ?? '') . ' ' . ($emp['cargo'] ?? '') . ' ' . $role . ' ' . ($emp['estado'] ?? 'Activo')
+                                    . ' ' . (($emp['role'] ?? '') === 'Practicante' ? (($emp['semestre'] ?? '') . ' ' . ($emp['institucion'] ?? '')) : '')
+                                )));
+                            ?>
+                            <div class="m-card" data-buscar="<?= esc($busquedaM) ?>" data-rol="<?= esc($role) ?>" data-estado="<?= esc($emp['estado'] ?? 'Activo') ?>" data-area="<?= esc($emp['area'] ?? '') ?>" style="cursor:pointer;" onclick="event.target.closest('.m-card-actions') || openDetailModal(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)">
                                 <div class="m-card-top">
                                     <div class="personal-avatar <?= $avatarClass ?>" style="width:42px;height:42px;font-size:16px;flex-shrink:0;"><?= $initial ?></div>
                                     <div class="m-card-info">
@@ -469,6 +562,7 @@
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                    <div class="pf-empty" id="personNoResultsMobile">Ninguna persona coincide con el filtro.</div>
                 </div>
             </div>
         </div>
@@ -477,7 +571,7 @@
             <div class="personal-section-head">
                 <h2 class="personal-section-title">
                     <span class="material-symbols-outlined">vpn_key</span>
-                    Codigos de registro
+                    Códigos de registro
                     <span style="font-size:13px; color:var(--g-text-secondary); font-weight:400; margin-left:4px;"><?= count($codes) ?> total</span>
                 </h2>
             </div>
@@ -710,11 +804,11 @@
     </div>
 </div>
 
-<!-- Modal: Generar codigo -->
+<!-- Modal: Generar código -->
 <div class="dev-modal-overlay" id="createCodeModal">
     <div class="dev-modal">
         <div class="dev-modal-head">
-            <h3><span class="material-symbols-outlined">vpn_key</span> Generar codigo</h3>
+            <h3><span class="material-symbols-outlined">vpn_key</span> Generar código</h3>
             <button type="button" class="dev-btn-icon" onclick="closeModal('createCodeModal')"><span class="material-symbols-outlined">close</span></button>
         </div>
         <form action="<?= site_url('admin/create-code') ?>" method="POST">
@@ -733,7 +827,7 @@
             </div>
             <div class="dev-modal-footer">
                 <button type="button" class="dev-btn" onclick="closeModal('createCodeModal')">Cancelar</button>
-                <button type="submit" class="dev-btn dev-btn-primary"><span class="material-symbols-outlined">add</span> Generar codigo</button>
+                <button type="submit" class="dev-btn dev-btn-primary"><span class="material-symbols-outlined">add</span> Generar código</button>
             </div>
         </form>
     </div>
@@ -1054,6 +1148,47 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        var total = <?= (int) $totalPersonas ?>;
+        window.filtrarPersonas = function () {
+            var q   = (document.getElementById('personSearch').value || '').toLowerCase().trim();
+            var rol = document.getElementById('personRol').value;
+            var est = document.getElementById('personEstado').value;
+            var are = (document.getElementById('personArea') || {}).value || '';
+            var visibles = 0;
+
+            document.querySelectorAll('[data-buscar]').forEach(function (el) {
+                var ok = (!q || (el.getAttribute('data-buscar') || '').indexOf(q) !== -1)
+                      && (!rol || el.getAttribute('data-rol') === rol)
+                      && (!est || el.getAttribute('data-estado') === est)
+                      && (!are || el.getAttribute('data-area') === are);
+                el.style.display = ok ? '' : 'none';
+                if (ok && el.tagName === 'TR') visibles++;
+            });
+
+            var cnt = document.getElementById('personCount');
+            if (cnt) cnt.textContent = (q || rol || est || are)
+                ? visibles + ' de ' + total + ' personas'
+                : total + ' personas';
+
+            var nd = document.getElementById('personNoResults');
+            if (nd) nd.style.display = (q || rol || est || are) && visibles === 0 ? '' : 'none';
+            var nm = document.getElementById('personNoResultsMobile');
+            if (nm) nm.style.display = (q || rol || est || are) && visibles === 0 ? 'block' : 'none';
+        };
+
+        window.limpiarPersonas = function () {
+            document.getElementById('personSearch').value = '';
+            document.getElementById('personRol').value = '';
+            document.getElementById('personEstado').value = '';
+            var ar = document.getElementById('personArea');
+            if (ar) ar.value = '';
+            filtrarPersonas();
+        };
+    })();
+</script>
 
 <script>
 var confirmType = '';

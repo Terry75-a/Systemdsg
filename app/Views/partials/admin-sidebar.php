@@ -26,6 +26,9 @@
         <a href="<?= base_url('admin/incidencias') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'incidencias' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">warning</span>
             <span>Incidencias</span>
+            <?php if (($incPendientes ?? 0) > 0): ?>
+                <span class="dev-nav-badge" title="<?= (int) $incPendientes ?> sin resolver"><?= (int) $incPendientes ?></span>
+            <?php endif; ?>
         </a>
         <a href="<?= base_url('admin/reportes') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'reportes' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">assessment</span>
@@ -96,6 +99,9 @@
         <div class="dev-mobile-modal-section" id="modalSection">
             <a href="<?= base_url('admin/incidencias') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'incidencias' ? 'is-active' : '' ?>">
                 <span class="material-symbols-outlined">warning</span> Incidencias
+                <?php if (($incPendientes ?? 0) > 0): ?>
+                    <span class="dev-nav-badge" style="margin-left:auto;"><?= (int) $incPendientes ?></span>
+                <?php endif; ?>
             </a>
             <a href="<?= base_url('admin/reportes') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'reportes' ? 'is-active' : '' ?>">
                 <span class="material-symbols-outlined">assessment</span> Reportes

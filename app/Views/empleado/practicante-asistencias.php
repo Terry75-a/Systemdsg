@@ -23,6 +23,7 @@
         .as-legend .lg-late i { background: var(--g-warning); }
         .as-legend .lg-absent i { background: var(--g-error); }
         .as-legend .lg-none i { background: var(--g-surface-variant); }
+        .as-legend .lg-fest i { background: #8b5cf6; }
 
         /* ── Calendario del mes ── */
         .as-cal-card { background: var(--g-surface); border: 1px solid var(--g-border); border-radius: 18px; padding: 20px; margin-bottom: 18px; }
@@ -49,6 +50,22 @@
         .as-cell.present .as-st-dot { background: var(--g-success); }
         .as-cell.late .as-st-dot { background: #e37400; }
         .as-cell.absent .as-st-dot { background: var(--g-error); }
+
+        /* ── Festivos ── */
+        .as-cell.festivo { background: #ede9fe; color: #6d28d9; font-weight: 700; }
+        .as-cell.festivo.present { background: var(--g-success-light); }
+        .as-cell.festivo .as-fest-badge {
+            position: absolute; top: 4px; right: 5px; width: 6px; height: 6px;
+            border-radius: 50%; background: #8b5cf6;
+        }
+        .as-fest-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .as-fest-chip {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #f5f3ff; border: 1px solid #ddd6fe; color: #6d28d9;
+            border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600;
+        }
+        .as-fest-chip span { color: #8b5cf6; font-size: 14px; }
+        .as-fest-none { font-size: 12.5px; color: var(--g-text-secondary); margin-top: 12px; }
 
         /* ── Modal del día ── */
         .dm-overlay {
@@ -221,6 +238,7 @@
         <span class="lg-late"><i></i> Tardanza</span>
         <span class="lg-absent"><i></i> Falta</span>
         <span class="lg-none"><i></i> Sin marcar</span>
+        <span class="lg-fest"><i></i> Festivo</span>
     </div>
 </div>
 
@@ -241,7 +259,9 @@
             $date = sprintf('%04d-%02d-%02d', $year, $month, $d);
             $rec = $dayInfo[$date] ?? null;
             $st = $rec ? $rec['st'] : null;
+            $festivo = $festivosMes[$date] ?? null;
             $cls = $st ? ' ' . ($st === 'present' ? 'present' : ($st === 'late' ? 'late' : 'absent')) : '';
+            $cls .= $festivo !== null ? ' festivo' : '';
             $isToday = $date === $hoy;
         ?>
             <button type="button" class="as-cell<?= $cls ?> <?= $isToday ? 'today' : '' ?> js-cal-day"
@@ -252,12 +272,25 @@
                 data-bio="<?= $rec ? $rec['bio'] : 0 ?>"
                 data-obs="<?= $rec ? esc($rec['obs']) : '' ?>"
                 data-inc="<?= isset($dayInc[$date]) ? 1 : 0 ?>"
-                aria-label="<?= $date ?>">
+                data-fest="<?= $festivo !== null ? esc($festivo) : '' ?>"
+                aria-label="<?= $date ?><?= $festivo !== null ? ' · ' . esc($festivo) : '' ?>">
                 <?= $d ?>
+                <?php if ($festivo !== null): ?><span class="as-fest-badge" title="<?= esc($festivo) ?>"></span><?php endif; ?>
                 <?php if ($st): ?><span class="as-st-dot"></span><?php endif; ?>
             </button>
         <?php endfor; ?>
     </div>
+
+    <?php if (! empty($festivosProximos)): ?>
+        <div class="as-fest-list">
+            <?php foreach ($festivosProximos as $fFecha => $fNombre): ?>
+                <span class="as-fest-chip">
+                    <span class="material-symbols-outlined">celebration</span>
+                    <?= esc(date('d/m', strtotime($fFecha))) ?> · <?= esc($fNombre) ?>
+                </span>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <!-- Historial -->
@@ -370,16 +403,20 @@
         dateEl.textContent = fmtFecha(d);
 
         var html, footHtml = '';
+        var fest = cell.dataset.fest || '';
+        var festTag = fest
+            ? '<span class="dm-tag"><span class="material-symbols-outlined">celebration</span> ' + esc(fest) + '</span>'
+            : '';
         if (!st) {
             icBox.className = 'dm-head-ic ic-none';
             icBox.querySelector('.material-symbols-outlined').textContent = 'event_busy';
-            titleEl.textContent = 'Sin registro';
+            titleEl.textContent = fest ? 'Festivo' : 'Sin registro';
             html = '<div class="dm-empty">'
                  + '<span class="material-symbols-outlined">event_busy</span>'
-                 + '<p>No registraste asistencia este día.</p>'
-                 + (date === today ? '<small>Puedes marcar tu asistencia desde Mi Panel.</small>' : '')
+                 + '<p>' + (fest ? esc(fest) : 'No registraste asistencia este día.') + '</p>'
+                 + (date === today && !fest ? '<small>Puedes marcar tu asistencia desde Mi Panel.</small>' : '')
                  + '</div>';
-            if (date === today) {
+            if (date === today && !fest) {
                 footHtml = '<a class="dev-btn dev-btn-primary" href="' + panelUrl + '">'
                          + '<span class="material-symbols-outlined">login</span> Registrar asistencia</a>';
             }
@@ -397,6 +434,7 @@
                  + '<div class="dm-cell' + (cell.dataset.out ? '' : ' off') + '"><span>Salida</span><b>' + esc(cell.dataset.out || '--:--') + '</b></div>'
                  + '</div>'
                  + '<div class="dm-tags">'
+                 + festTag
                  + (cell.dataset.bio === '1' ? '<span class="dm-tag"><span class="material-symbols-outlined">fingerprint</span> Verificada con biometría</span>' : '')
                  + (cell.dataset.obs ? '<span class="dm-tag"><span class="material-symbols-outlined">sticky_note_2</span> ' + esc(cell.dataset.obs) + '</span>' : '')
                  + '</div>';

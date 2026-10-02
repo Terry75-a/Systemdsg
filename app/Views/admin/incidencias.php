@@ -97,6 +97,19 @@
         .in-empty .material-symbols-outlined { font-size: 48px; display: block; margin: 0 auto 14px; opacity: 0.3; }
         .in-empty .in-empty-act { margin-top: 16px; }
 
+        /* ── Filtro por estado ───────────────── */
+        .in-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+        .in-chip {
+            display: inline-flex; align-items: center; gap: 7px;
+            height: 32px; padding: 0 13px; border: 1px solid var(--g-border);
+            border-radius: 999px; background: transparent; color: var(--g-text-secondary);
+            font-size: .8rem; font-weight: 500; font-family: inherit; cursor: pointer;
+        }
+        .in-chip:hover { background: var(--g-surface-variant); color: var(--g-text); }
+        .in-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
+        .in-chip b { font-weight: 700; font-size: .75rem; opacity: .85; }
+        .in-filtered-empty { display: none; text-align: center; padding: 34px 16px; color: var(--g-text-secondary); font-size: 13.5px; }
+
         @media (max-width: 720px) {
             .in-item { padding: 14px; gap: 12px; flex-wrap: wrap; }
             .in-actions { width: 100%; padding-left: 58px; }
@@ -149,8 +162,10 @@
             'Tardanza'          => ['label' => 'Tardanza',          'icon' => 'schedule'],
             'Falta'             => ['label' => 'Falta',             'icon' => 'cancel'],
             'Salida anticipada' => ['label' => 'Salida anticipada', 'icon' => 'logout'],
-            'Sin marcación'     => ['label' => 'Sin marcación',     'icon' => 'event_busy'],
-            'Sin marcacion'     => ['label' => 'Sin marcación',     'icon' => 'event_busy'],
+            'Sin salida'        => ['label' => 'Sin salida',        'icon' => 'event_busy'],
+            'Sin marcación'     => ['label' => 'Sin salida',        'icon' => 'event_busy'],
+            'Sin marcacion'     => ['label' => 'Sin salida',        'icon' => 'event_busy'],
+            'no_exit'           => ['label' => 'Sin salida',        'icon' => 'event_busy'],
             'Otro'              => ['label' => 'Otro',              'icon' => 'help'],
         ];
         $estadoInfo = [
@@ -183,6 +198,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Filtro por estado -->
+        <div class="in-filters" id="inFilters">
+            <button type="button" class="in-chip on" onclick="filtrarEstado('', this)">Todas <b><?= $totalIncidencias ?></b></button>
+            <button type="button" class="in-chip" onclick="filtrarEstado('Pendiente', this)">Pendientes <b><?= $pendientes ?></b></button>
+            <button type="button" class="in-chip" onclick="filtrarEstado('Revisión', this)">En revisión <b><?= $revision ?></b></button>
+            <button type="button" class="in-chip" onclick="filtrarEstado('Justificada', this)">Justificadas <b><?= $justificadas ?></b></button>
+            <button type="button" class="in-chip" onclick="filtrarEstado('Rechazada', this)">Rechazadas <b><?= $rechazadas ?></b></button>
         </div>
 
         <!-- Lista -->
@@ -218,7 +242,7 @@
                     $jb = $e === 'Rechazada' ? 'do_not_disturb_on' : ($e === 'Revisión' ? 'hourglass_top' : ($e === 'Pendiente' ? 'description' : 'verified'));
                     $jMsg = $e === 'Rechazada' ? 'Rechazada por el administrador' : ($e === 'Revisión' ? 'Justificación en revisión' : ($e === 'Pendiente' ? 'Justificación enviada' : 'Justificación aceptada'));
                 ?>
-                    <div class="in-item">
+                    <div class="in-item" data-estado="<?= esc($e) ?>">
                         <div class="in-av"><?= esc($ini) ?></div>
                         <div class="in-main">
                             <div class="in-name">
@@ -237,6 +261,13 @@
                                 <div class="in-just">
                                     <span class="material-symbols-outlined"><?= $jb ?></span>
                                     <p><small><?= $jMsg ?></small><?= esc($inc['justificacion']) ?></p>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($inc['resuelta_en'])): ?>
+                                <div class="in-detalle" style="font-size:11.5px;color:var(--g-text-secondary);">
+                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">verified_user</span>
+                                    Cerrada por <b><?= esc($inc['resuelta_por'] ?? '—') ?></b>
+                                    · <?= esc(date('d/m/Y H:i', strtotime($inc['resuelta_en']))) ?>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -265,6 +296,10 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <div class="in-filtered-empty" id="inFilteredEmpty">
+                    <span class="material-symbols-outlined" style="font-size:40px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">filter_alt_off</span>
+                    Ninguna incidencia con este estado.
+                </div>
             <?php endif; ?>
         </div>
 
@@ -365,6 +400,26 @@
         </form>
     </div>
 </div>
+
+<script>
+    function filtrarEstado(estado, btn) {
+        document.querySelectorAll('#inFilters .in-chip').forEach(function (c) { c.classList.remove('on'); });
+        btn.classList.add('on');
+
+        var visibles = 0;
+        document.querySelectorAll('.in-item[data-estado]').forEach(function (el) {
+            var e = el.getAttribute('data-estado');
+            var ok = estado === '' || (estado === 'Rechazada'
+                ? (e === 'Rechazada' || e === 'Desestimada')
+                : e === estado);
+            el.style.display = ok ? '' : 'none';
+            if (ok) visibles++;
+        });
+
+        var vacio = document.getElementById('inFilteredEmpty');
+        if (vacio) vacio.style.display = visibles === 0 ? 'block' : 'none';
+    }
+</script>
 
 <script>
 function openCreateModal() {

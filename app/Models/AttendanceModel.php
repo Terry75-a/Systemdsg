@@ -12,7 +12,7 @@ class AttendanceModel extends Model
 
     protected $allowedFields = [
         'admin_id', 'user_id', 'name', 'dni', 'date', 'time_in', 'time_out',
-        'status', 'observacion', 'evidencia',
+        'status', 'observacion', 'evidencia', 'lat', 'lng', 'ip',
     ];
 
     public function findByUserAndDate(int $userId, string $date): ?array

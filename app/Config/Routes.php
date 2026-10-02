@@ -44,6 +44,7 @@ $routes->get('dios/admins', 'DevController::admins');
 $routes->get('dios/codigos', 'DevController::codigos');
 $routes->get('dios/empleados', 'DevController::empleados');
 $routes->get('dios/estructura', 'DevController::estructura');
+$routes->get('dios/auditoria', 'DevController::auditoria');
 $routes->get('dios/perfil', 'DevController::perfil');
 $routes->post('dios/update-password', 'DevController::updatePassword');
 $routes->post('dios/create-admin', 'DevController::createAdmin');
@@ -56,55 +57,64 @@ $routes->get('registro-empleado', 'DevController::registerForm');
 $routes->post('dios/register-employee', 'DevController::registerEmployee');
 
 // ══════════════════════════════════════════════════════════════
-// ADMIN — Panel de administrador
+// ADMIN — Panel de administrador (sesión + rol Admin)
 // ══════════════════════════════════════════════════════════════
-$routes->get('admin', 'AdminController::dashboard');
-$routes->get('admin/personal', 'AdminController::personal');
-$routes->get('admin/asistencias', 'AdminController::asistencias');
-$routes->get('admin/horarios', 'AdminController::horarios');
-$routes->get('admin/incidencias', 'AdminController::incidencias');
-$routes->get('admin/reportes', 'AdminController::reportes');
-$routes->get('admin/configuracion', 'AdminController::configuracion');
+$routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
+    $routes->get('', 'AdminController::dashboard');
+    $routes->get('personal', 'AdminController::personal');
+    $routes->get('horarios', 'AdminController::horarios');
 
-// Admin CRUD
-$routes->post('admin/create-employee', 'AdminController::createEmployee');
-$routes->post('admin/update-employee', 'AdminController::updateEmployee');
-$routes->post('admin/reset-password', 'AdminController::resetPassword');
-$routes->post('admin/delete-user', 'AdminController::deleteUser');
-$routes->post('admin/fire-employee', 'AdminController::fireEmployee');
-$routes->post('admin/end-practicante', 'AdminController::endPracticante');
-$routes->post('admin/create-code', 'AdminController::createCode');
-$routes->post('admin/delete-code', 'AdminController::deleteCode');
+    // Asistencia (listado, reportes, edición con auditoría, export)
+    $routes->get('asistencias', 'Admin\AsistenciaAdminController::asistencias');
+    $routes->get('reportes', 'Admin\AsistenciaAdminController::reportes');
+    $routes->get('auditoria/(:num)', 'Admin\AsistenciaAdminController::auditoria/$1');
+    $routes->post('update-attendance', 'Admin\AsistenciaAdminController::updateAttendance');
+    $routes->post('exportar/asistencias', 'Admin\AsistenciaAdminController::exportAsistencias');
 
-// Admin Horarios
-$routes->post('admin/create-schedule', 'AdminController::createSchedule');
-$routes->post('admin/update-schedule', 'AdminController::updateSchedule');
-$routes->post('admin/delete-schedule', 'AdminController::deleteSchedule');
-$routes->post('admin/assign-schedule', 'AdminController::assignSchedule');
+    // Incidencias
+    $routes->get('incidencias', 'Admin\IncidenciaAdminController::incidencias');
+    $routes->post('create-incident', 'Admin\IncidenciaAdminController::createIncident');
+    $routes->post('update-incident', 'Admin\IncidenciaAdminController::updateIncident');
 
-// Admin Asistencia
-$routes->post('admin/update-attendance', 'AdminController::updateAttendance');
+    // Configuración y festivos
+    $routes->get('configuracion', 'Admin\ConfigAdminController::configuracion');
+    $routes->post('save-config', 'Admin\ConfigAdminController::saveConfig');
+    $routes->post('festivos/guardar', 'Admin\ConfigAdminController::saveFestivo');
+    $routes->post('festivos/eliminar', 'Admin\ConfigAdminController::deleteFestivo');
+    $routes->get('festivos/eliminar/(:num)', 'Admin\ConfigAdminController::deleteFestivo/$1');
 
-// Admin Incidencias
-$routes->post('admin/create-incident', 'AdminController::createIncident');
-$routes->post('admin/update-incident', 'AdminController::updateIncident');
+    // Admin CRUD
+    $routes->post('create-employee', 'AdminController::createEmployee');
+    $routes->post('update-employee', 'AdminController::updateEmployee');
+    $routes->post('reset-password', 'AdminController::resetPassword');
+    $routes->post('delete-user', 'AdminController::deleteUser');
+    $routes->post('fire-employee', 'AdminController::fireEmployee');
+    $routes->post('end-practicante', 'AdminController::endPracticante');
+    $routes->post('create-code', 'AdminController::createCode');
+    $routes->post('delete-code', 'AdminController::deleteCode');
 
-// Admin Config
-$routes->post('admin/save-config', 'AdminController::saveConfig');
+    // Admin Horarios
+    $routes->post('create-schedule', 'AdminController::createSchedule');
+    $routes->post('update-schedule', 'AdminController::updateSchedule');
+    $routes->post('delete-schedule', 'AdminController::deleteSchedule');
+    $routes->post('assign-schedule', 'AdminController::assignSchedule');
+});
 $routes->post('enviar', 'EmailController::enviar'); // Formulario de contacto
 
 // ══════════════════════════════════════════════════════════════
-// EMPLEADO / PRACTICANTE — Dashboard propio
+// EMPLEADO / PRACTICANTE — Dashboard propio (sesión + personal)
 // ══════════════════════════════════════════════════════════════
-$routes->get('mi-panel', 'EmployeeController::dashboard');
-$routes->get('mi-panel/asistencias', 'EmployeeController::asistencias');
-$routes->get('mi-panel/horario', 'EmployeeController::horario');
-$routes->get('mi-panel/incidencias', 'EmployeeController::incidencias');
-$routes->post('mi-panel/registrar', 'EmployeeController::registrar');
-$routes->post('mi-panel/justificar-incidencia', 'EmployeeController::justificarIncidencia');
-$routes->get('mi-panel/bio-session', 'EmployeeController::bioSession');
-$routes->post('mi-panel/guardar-huella', 'EmployeeController::guardarHuella');
-$routes->post('mi-panel/guardar-rostro', 'EmployeeController::guardarRostro');
+$routes->group('mi-panel', ['filter' => 'asistencia'], static function ($routes) {
+    $routes->get('', 'EmployeeController::dashboard');
+    $routes->get('asistencias', 'EmployeeController::asistencias');
+    $routes->get('horario', 'EmployeeController::horario');
+    $routes->get('incidencias', 'EmployeeController::incidencias');
+    $routes->post('registrar', 'EmployeeController::registrar');
+    $routes->post('justificar-incidencia', 'EmployeeController::justificarIncidencia');
+    $routes->get('bio-session', 'EmployeeController::bioSession');
+    $routes->post('guardar-huella', 'EmployeeController::guardarHuella');
+    $routes->post('guardar-rostro', 'EmployeeController::guardarRostro');
+});
 
 // Demo pública (sin autenticación, solo para mostrar funcionalidades)
 $routes->get('contacto-demo', 'ContactosController::index');

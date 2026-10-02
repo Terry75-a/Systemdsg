@@ -27,6 +27,10 @@
             <span class="material-symbols-outlined">account_tree</span>
             <span>Estructura</span>
         </a>
+        <a href="<?= base_url('dios/auditoria') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'auditoria' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">history</span>
+            <span>Auditoría</span>
+        </a>
         <a href="<?= base_url('dios/perfil') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'perfil' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">person</span>
             <span>Mi perfil</span>
@@ -91,6 +95,9 @@
         <div class="dev-mobile-modal-section" id="modalSection">
             <a href="<?= base_url('dios/perfil') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'perfil' ? 'is-active' : '' ?>">
                 <span class="material-symbols-outlined">person</span> Mi perfil
+            </a>
+            <a href="<?= base_url('dios/auditoria') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'auditoria' ? 'is-active' : '' ?>">
+                <span class="material-symbols-outlined">history</span> Auditoría
             </a>
         </div>
     </div>
