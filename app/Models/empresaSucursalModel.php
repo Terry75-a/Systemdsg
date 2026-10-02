@@ -24,12 +24,7 @@ class empresaSucursalModel extends Model {
         'id_provincia', 
         'id_distrito', 
         'estado', 
-        'id_plan', 
-        'id_tipo_plan', 
-        'fecha_de_inicio', 
-        'fecha_de_vencimiento', 
-        'precio', 
-        'observaciones',
+        
         'created_at', 
         'updated_at'
     ];

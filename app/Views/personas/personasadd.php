@@ -346,9 +346,11 @@
                                             <td class="text-end">
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
                                                     <i class="fa-solid fa-pen-to-square"></i>
+                                                    
                                                 </button>
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-del btn-eliminar-sucursal" title="Eliminar">
                                                     <i class="fa-solid fa-trash"></i>
+                                                    
                                                 </button>
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-more btn-asignar-plan"
                                                     data-id-persona="<?= esc($idSuc); ?>"
@@ -381,9 +383,7 @@
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Persona
                         <?php endif; ?>
                     </button>
-                    <a href="<?= base_url('personas') ?>" class="btn pdsg-btn-cancel px-4" data-cancelar-modal>
-                        <i class="fa-solid fa-xmark me-1"></i> Cancelar
-                    </a>
+                    
                 </div>
 
             </form>
@@ -543,11 +543,34 @@
               <input type="date" class="form-control" id="fechaInicio" name="fecha_de_inicio" required>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" id="grupoVencimiento">
               <label for="fechaVencimiento">Fecha de Vencimiento:</label>
               <!-- name="fecha_de_vencimiento" igual a la BD -->
               <input type="date" class="form-control" id="fechaVencimiento" name="fecha_de_vencimiento" readonly placeholder="Cálculo automático">
             </div>
+              <div class="col-12 d-none" id="bloqueFinMensual">
+  <label class="form-label fw-bold mb-2">Finalización del plan mensual:</label>
+
+  <div class="form-check mb-2">
+    <input class="form-check-input" type="radio" name="tipo_fin" id="finSinFecha" value="SIN_FIN" checked onchange="actualizarCamposFin()">
+    <label class="form-check-label" for="finSinFecha" style="cursor: pointer;">Sin fecha de finalización</label>
+  </div>
+
+  <div class="form-check d-flex align-items-center gap-2 mb-2">
+    <input class="form-check-input mt-0" type="radio" name="tipo_fin" id="finRepeticiones" value="REPETICIONES" onchange="actualizarCamposFin()">
+    <label class="form-check-label mb-0" for="finRepeticiones" style="cursor: pointer;">Finalizar después de</label>
+    <input type="number" min="1" class="form-control" style="width: 90px; height: 35px;"
+           id="numRepeticiones" name="num_repeticiones" value="12" disabled>
+    <span>repeticiones (meses)</span>
+  </div>
+
+  <div class="form-check d-flex align-items-center gap-2">
+    <input class="form-check-input mt-0" type="radio" name="tipo_fin" id="finFecha" value="FECHA" onchange="actualizarCamposFin()">
+    <label class="form-check-label mb-0" for="finFecha" style="cursor: pointer;">Finalizar el</label>
+    <input type="date" class="form-control" style="width: 190px; height: 35px; min-width: 190px;"
+           id="fechaFinMensual" name="fecha_fin" disabled>
+  </div>
+</div>
 
             <div class="col-md-6">
               <label for="inputPrecio">Precio Cobrado (S/): <span class="text-danger">*</span></label>
@@ -1105,22 +1128,75 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
 });
 
 // ════════════════════════════════════════════════════
-// CALCULAR FECHA DE VENCIMIENTO SEGÚN TIPO DE PLAN
+// FUNCIONES DEL BLOQUE MENSUAL Y VENCIMIENTO
 // ════════════════════════════════════════════════════
+
+function esPlanMensual() {
+    const sel = document.getElementById('selectTipoPlan');
+    if (!sel || sel.selectedIndex < 0) return false;
+    const opt = sel.options[sel.selectedIndex];
+    return !!opt && opt.textContent.trim().toUpperCase().includes('MENSUAL');
+}
+
+// Función en scope global para habilitar/deshabilitar los campos según el radio seleccionado
+// Habilitar / deshabilitar inputs según la opción seleccionada
+function actualizarCamposFin() {
+    const radioSeleccionado = document.querySelector('input[name="tipo_fin"]:checked');
+    const valor = radioSeleccionado ? radioSeleccionado.value : 'SIN_FIN';
+
+    const inputRep = document.getElementById('numRepeticiones');
+    const inputFecha = document.getElementById('fechaFinMensual');
+
+    if (inputRep) {
+        inputRep.disabled = (valor !== 'REPETICIONES');
+        if (valor === 'REPETICIONES') {
+            inputRep.focus();
+        }
+    }
+
+    if (inputFecha) {
+        inputFecha.disabled = (valor !== 'FECHA');
+        if (valor === 'FECHA') {
+            inputFecha.focus();
+        }
+    }
+}
+
+function actualizarBloqueMensual() {
+    const mensual = esPlanMensual();
+    const bloqueFin = document.getElementById('bloqueFinMensual');
+    const grupoVencimiento = document.getElementById('grupoVencimiento');
+
+    if (bloqueFin) bloqueFin.classList.toggle('d-none', !mensual);
+    if (grupoVencimiento) grupoVencimiento.classList.toggle('d-none', mensual);
+
+    if (mensual) {
+        // Habilitar los radio buttons para permitir selección
+        bloqueFin.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = false);
+        actualizarCamposFin();
+    } else {
+        // Deshabilitar todos los inputs del bloque cuando no es mensual
+        bloqueFin.querySelectorAll('input').forEach(i => i.disabled = true);
+    }
+}
+
 function calcularFechaVencimiento() {
+    actualizarBloqueMensual();
+
     const inputInicio = document.getElementById('fechaInicio');
     const selectTipo = document.getElementById('selectTipoPlan');
     const inputVencimiento = document.getElementById('fechaVencimiento');
-
     if (!inputInicio || !selectTipo || !inputVencimiento) return;
 
-    // Si fechaInicio está vacía, colocar la fecha actual (YYYY-MM-DD)
     if (!inputInicio.value) {
         const hoy = new Date();
-        const yyyy = hoy.getFullYear();
-        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-        const dd = String(hoy.getDate()).padStart(2, '0');
-        inputInicio.value = `${yyyy}-${mm}-${dd}`;
+        inputInicio.value = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    }
+
+    // Si es mensual, el vencimiento fijo se limpia
+    if (esPlanMensual()) {
+        inputVencimiento.value = '';
+        return;
     }
 
     const selectedOption = selectTipo.options[selectTipo.selectedIndex];
@@ -1129,45 +1205,38 @@ function calcularFechaVencimiento() {
         return;
     }
 
-    // Leemos los meses directamente del data-attribute o evaluamos el texto
     let mesesAAgregar = parseInt(selectedOption.dataset.meses, 10);
-
     if (isNaN(mesesAAgregar)) {
-        // Alternativa de respaldo por nombre si el backend no envía meses
         const nombreTipo = selectedOption.textContent.trim().toUpperCase();
-        if (nombreTipo.includes('MENSUAL')) mesesAAgregar = 1;
-        else if (nombreTipo.includes('TRIMESTRAL')) mesesAAgregar = 3;
+        if (nombreTipo.includes('TRIMESTRAL')) mesesAAgregar = 3;
         else if (nombreTipo.includes('SEMESTRAL')) mesesAAgregar = 6;
         else if (nombreTipo.includes('ANUAL')) mesesAAgregar = 12;
-        else if (nombreTipo.includes('UNICO') || nombreTipo.includes('ÚNICO')) mesesAAgregar = 0; // Pago único
         else mesesAAgregar = 0;
     }
 
-    // Si es Pago Único (0 meses), dejamos el vencimiento vacío o indefinido
     if (mesesAAgregar === 0) {
         inputVencimiento.value = '';
         return;
     }
 
-    // Parsear fecha evitando desajustes por zona horaria UTC
     const [year, month, day] = inputInicio.value.split('-').map(Number);
     const fecha = new Date(year, month - 1, day);
-
-    // Sumar meses controlando el desbordamiento de fin de mes
     const diaOriginal = fecha.getDate();
+
     fecha.setMonth(fecha.getMonth() + mesesAAgregar);
 
-    // Si el día cambió (ej. de 31 de marzo pasó a 1 o 2 o 3 de mayo), ajustar al último día del mes deseado
+    // Corregir desbordamiento de fin de mes (ej. 31 marzo -> abril)
     if (fecha.getDate() !== diaOriginal) {
         fecha.setDate(0);
     }
 
-    // Formatear a YYYY-MM-DD
     const yyyy = fecha.getFullYear();
     const mm = String(fecha.getMonth() + 1).padStart(2, '0');
     const dd = String(fecha.getDate()).padStart(2, '0');
     inputVencimiento.value = `${yyyy}-${mm}-${dd}`;
 }
+
+
 
 // ════════════════════════════════════════════════════
 // CARGAR PLANES Y TIPOS DE PLAN EN EL MODAL
@@ -1200,6 +1269,7 @@ async function cargarPlanesYTipos() {
                 const opt = document.createElement('option');
                 opt.value = tipo.id_tipo_plan;
                 opt.textContent = tipo.nombre_tipo;
+                
 
                 // Asignar los meses al dataset según el nombre
                 const nombre = tipo.nombre_tipo.toUpperCase();
@@ -1213,6 +1283,7 @@ async function cargarPlanesYTipos() {
                 selectTipo.appendChild(opt);
             });
         }
+        actualizarBloqueMensual();
     } catch (error) {
         console.error('Error cargando planes y tipos:', error);
     }
@@ -1222,6 +1293,9 @@ async function cargarPlanesYTipos() {
 // EVENT LISTENERS
 // ════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function () {
+    function actualizarCamposFin() {
+    // Tu lógica aquí
+}
     const fechaInicio = document.getElementById('fechaInicio');
     const selectTipoPlan = document.getElementById('selectTipoPlan');
 
@@ -1232,7 +1306,12 @@ document.addEventListener('DOMContentLoaded', function () {
         selectTipoPlan.addEventListener('change', calcularFechaVencimiento);
     }
 
-    // Inicializar carga de datos
+    // Escuchar el cambio en todos los radio buttons de tipo_fin
+    document.querySelectorAll('input[name="tipo_fin"]').forEach(radio => {
+        radio.addEventListener('change', actualizarCamposFin);
+    });
+
+    // Cargar los planes iniciales
     cargarPlanesYTipos();
 });
 // ════════════════════════════════════════════════════
@@ -1399,7 +1478,23 @@ document.getElementById('formAsignarPlan').addEventListener('submit', async func
 
     const btnSubmit = document.getElementById('btnGuardarPlan');
     const textoOriginal = btnSubmit.innerHTML;
-    btnSubmit.disabled = true;
+   
+
+
+     if (esPlanMensual()) {
+    const tipoFin = document.querySelector('[name="tipo_fin"]:checked').value;
+    if (tipoFin === 'FECHA') {
+        const ini = document.getElementById('fechaInicio').value;
+        const fin = document.getElementById('fechaFinMensual').value;
+        if (!fin || fin <= ini) {
+            alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = textoOriginal;
+            return;
+        }
+    }
+}
+ btnSubmit.disabled = true;
     btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Guardando...';
 
     try {
@@ -1426,7 +1521,9 @@ document.getElementById('formAsignarPlan').addEventListener('submit', async func
             alert(data.message || 'Plan asignado correctamente.');
         } else {
             alert(data.message || 'Error al guardar el plan');
+
         }
+       
     } catch (err) {
         console.error(err);
         alert('Error en la comunicación con el servidor');

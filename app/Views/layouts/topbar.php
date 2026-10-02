@@ -21,6 +21,10 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
         <header class="dev-topbar">
             <div class="dev-topbar-row">
                 <div class="dev-topbar-actions">
+                     <button type="button" class="dsg-dark-btn dsg-notification-btn"
+                      id="dsgNotificationBtn" title="Notificaciones" aria-label="Ver notificaciones"> 
+                        <span class="material-symbols-outlined">notifications</span> 
+                     </button>
                     <button type="button" class="dsg-dark-btn" id="dsgDarkBtn" title="Modo oscuro" aria-label="Alternar modo oscuro">
                         <span class="material-symbols-outlined" id="dsgDarkIcon">dark_mode</span>
                     </button>

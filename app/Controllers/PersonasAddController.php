@@ -4,7 +4,8 @@ namespace App\Controllers;
 
 use App\Models\PersonasAddModel;
 use App\Models\Empresamodel;
-use AppApp\Models\empresaSucursalModel;
+use App\Models\empresaSucursalModel;
+use App\Models\PagosModel;
 
 
 class PersonasAddController extends BaseController
@@ -345,15 +346,23 @@ public function index($id = null)
             // ══════════════════════════════════════════════════════════════════
             // GESTIÓN DE SUCURSALES (BORRADO Y SINCRONIZACIÓN)
             // ══════════════════════════════════════════════════════════════════
+            // ══════════════════════════════════════════════════════════════════
+            // GESTIÓN DE SUCURSALES (ACTUALIZAR EXISTENTES E INSERTAR NUEVAS)
+            // ══════════════════════════════════════════════════════════════════
             if ($idEmpresaGenerada) {
-                // 1. Siempre limpiamos las sucursales anteriores de esta empresa
-                $empresaSucursalModel->where('id_empresa', $idEmpresaGenerada)->delete();
+                // 1. Eliminar únicamente las sucursales que el usuario borró explícitamente en la vista
+                $sucursalesEliminadas = $this->request->getPost('sucursales_eliminadas');
+                if (!empty($sucursalesEliminadas) && is_array($sucursalesEliminadas)) {
+                    $empresaSucursalModel->where('id_empresa', $idEmpresaGenerada)
+                                         ->whereIn('id_sucursal', $sucursalesEliminadas)
+                                         ->delete();
+                }
 
-                // 2. Si vienen sucursales en la petición, las insertamos
+                // 2. Procesar la lista de sucursales recibidas
                 $sucursales = $this->request->getPost('sucursales');
 
                 if (!empty($sucursales) && is_array($sucursales)) {
-                    foreach ($sucursales as $datosSucursal) {
+                    foreach ($sucursales as $indice => $datosSucursal) {
                         $nombreSucursal = trim($datosSucursal['nombre_sucursal'] ?? '');
 
                         if (empty($nombreSucursal)) {
@@ -373,14 +382,17 @@ public function index($id = null)
                             'id_distrito'      => $datosSucursal['distrito_sucursal'] ?: null,
                             'codigo_cliente'   => $datosSucursal['codigo_cliente_sucursal'] ?: null,
                             'estado'           => isset($datosSucursal['estado']) ? (int)$datosSucursal['estado'] : 1,
-                            'created_at'       => date('Y-m-d H:i:s')
                         ];
 
-                        try {
+                        // Si el índice viene como 'existing_123', es una sucursal que ya existe: la ACTUALIZAMOS
+                        if (strpos((string)$indice, 'existing_') === 0) {
+                            $idSucursalExistente = (int)str_replace('existing_', '', (string)$indice);
+                            $dataSucursal['updated_at'] = date('Y-m-d H:i:s');
+                            $empresaSucursalModel->update($idSucursalExistente, $dataSucursal);
+                        } else {
+                            // Es una sucursal nueva: la INSERTAMOS
+                            $dataSucursal['created_at'] = date('Y-m-d H:i:s');
                             $empresaSucursalModel->insert($dataSucursal);
-                        } catch (\Throwable $e) {
-                            log_message('error', 'Error al insertar sucursal: ' . $e->getMessage());
-                            continue;
                         }
                     }
                 }
@@ -400,54 +412,98 @@ public function index($id = null)
     }
      
     public function guardarPlan()
-{
-    if (!$this->request->isAJAX()) {
-        return $this->response->setStatusCode(400)->setJSON([
-            'status'  => 'error',
-            'message' => 'Petición no permitida.'
-        ]);
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'status'  => 'error',
+                'message' => 'Petición no permitida.'
+            ]);
+        }
+
+        $idSucursal = $this->request->getPost('id_sucursal');
+        $idEmpresa  = $this->request->getPost('id_empresa');
+
+        // Validar si la sucursal es temporal o no existe en BD
+        if (empty($idSucursal) || strpos($idSucursal, 'temp_') === 0) {
+            if (!empty($idEmpresa)) {
+                $sucursalModel = new \App\Models\empresaSucursalModel();
+                $sucursalPrincipal = $sucursalModel->where('id_empresa', $idEmpresa)
+                    ->where('tipo', 'principal')
+                    ->first();
+
+                if ($sucursalPrincipal) {
+                    $idSucursal = is_array($sucursalPrincipal) ? $sucursalPrincipal['id_sucursal'] : $sucursalPrincipal->id_sucursal;
+                }
+            }
+
+            if (empty($idSucursal) || !is_numeric($idSucursal)) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Primero debe guardar los cambios de la persona/sucursal antes de asignarle un plan.'
+                ]);
+            }
+        }
+
+        // Parámetros recibidos
+        $idPlan           = $this->request->getPost('id_plan');
+        $idTipoPlan       = $this->request->getPost('id_tipo_plan');
+        $fechaInicio      = $this->request->getPost('fecha_de_inicio');
+        $fechaVencimiento = $this->request->getPost('fecha_de_vencimiento');
+        $precio           = $this->request->getPost('precio');
+        $observaciones    = $this->request->getPost('observaciones');
+
+        // Campos de finalización mensual
+        $tipoFin         = $this->request->getPost('tipo_fin') ?: 'SIN_FIN';
+        $numRepeticiones = $this->request->getPost('num_repeticiones');
+        $fechaFin        = $this->request->getPost('fecha_fin');
+
+        $repeticionesFinal = null;
+        $fechaFinFinal     = null;
+
+        if ($tipoFin === 'REPETICIONES') {
+            $repeticionesFinal = !empty($numRepeticiones) ? (int)$numRepeticiones : 12;
+        } elseif ($tipoFin === 'FECHA') {
+            $fechaFinFinal = !empty($fechaFin) ? $fechaFin : null;
+        }
+
+        $dataPago = [
+            'id_sucursal'          => (int)$idSucursal,
+            'id_plan'              => !empty($idPlan) ? (int)$idPlan : null,
+            'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
+            'fecha_de_inicio'      => $fechaInicio,
+            'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',
+            'num_repeticiones'     => $repeticionesFinal,
+            'fecha_fin'            => $fechaFinFinal,
+            'precio'               => !empty($precio) ? (float)$precio : 0.00,
+            'observaciones'        => !empty($observaciones) ? trim($observaciones) : null,
+            'estado'               => 1,
+            'created_at'           => date('Y-m-d H:i:s'),
+        ];
+
+        try {
+            // Instanciar tu modelo
+            $pagosModel = new \App\Models\PagosModel();
+            $idInsertado = $pagosModel->insert($dataPago);
+
+            if ($idInsertado) {
+                return $this->response->setJSON([
+                    'status'  => 'success',
+                    'message' => '¡Plan y pago registrados correctamente!'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'No se pudo registrar el pago.',
+                    'errors'  => $pagosModel->errors()
+                ]);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Error al guardar pago: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Error en la base de datos: ' . $e->getMessage()
+            ]);
+        }
     }
-
-    $sucursalModel = new \App\Models\empresaSucursalModel();
-
-    $idSucursal =$this->request->getPost('id_sucursal');
-    $idEmpresa  =$this->request->getPost('id_empresa');
-
-    $data = [
-        'id_plan'              => $this->request->getPost('id_plan'),
-        'id_tipo_plan'         => $this->request->getPost('id_tipo_plan'),
-        'fecha_de_inicio'      => $this->request->getPost('fecha_de_inicio'),
-        'fecha_de_vencimiento' => !empty($this->request->getPost('fecha_de_vencimiento')) ?$this->request->getPost('fecha_de_vencimiento') : null,
-        'precio'               => $this->request->getPost('precio'),
-        'observaciones'        => $this->request->getPost('observaciones')
-    ];
-
-    // Si tienes el id_sucursal directo:
-    if (!empty($idSucursal)) {
-        $actualizado =$sucursalModel->update($idSucursal,$data);
-    } 
-    // Si manejas por empresa y es su sucursal principal:
-    else if (!empty($idEmpresa)) {$actualizado = $sucursalModel->where('id_empresa',$idEmpresa)
-                                     ->where('tipo', 'principal')
-                                     ->set($data)
-                                     ->update();
-    } else {
-        return $this->response->setJSON([
-            'status'  => 'error',
-            'message' => 'No se identificó la sucursal o empresa a actualizar.'
-        ]);
-    }
-
-    if ($actualizado) {
-        return $this->response->setJSON([
-            'status'  => 'success',
-            'message' => '¡Plan asignado correctamente!'
-        ]);
-    } else {
-        return $this->response->setJSON([
-            'status'  => 'error',
-            'message' => 'No se pudo actualizar el plan en la base de datos.'
-        ]);
-    }
-}
 }

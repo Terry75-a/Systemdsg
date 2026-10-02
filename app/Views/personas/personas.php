@@ -256,10 +256,13 @@
             <input type="date" class="form-control" id="fechaInicio" value="2026-06-19" required>
           </div>
 
-          <div class="col-md-6">
+          <<div class="col-md-6" id="grupoVencimiento">
+
             <label for="fechaVencimiento" class="form-label fw-medium">Fecha de Vencimiento:</label>
             <input type="date" class="form-control bg-light" id="fechaVencimiento" readonly placeholder="Cálculo automático">
           </div>
+
+          
 
         <div class="col-md-6">
             <label for="inputPrecio" class="form-label">Precio Cobrado (S/):</label>
