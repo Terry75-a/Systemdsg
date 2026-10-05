@@ -45,6 +45,7 @@
         .aud-change .material-symbols-outlined { font-size: 15px; color: var(--g-text-disabled); }
         .aud-empty { color: var(--g-text-disabled); font-style: italic; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 <div class="dev-layout">

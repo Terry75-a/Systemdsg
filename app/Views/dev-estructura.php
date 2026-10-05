@@ -158,6 +158,7 @@
             .perm-mobile { display: flex !important; flex-direction: column; gap: 12px; padding: 16px; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 <div class="dev-layout">

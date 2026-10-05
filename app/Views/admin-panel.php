@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-table.css?v=20260922') ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 

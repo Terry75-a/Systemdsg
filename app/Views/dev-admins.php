@@ -239,6 +239,7 @@
         .confirm-modal-btn-delete:hover { background: #c62828; }
         .confirm-modal-btn .material-symbols-outlined { font-size: 18px; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 <div class="dev-layout">

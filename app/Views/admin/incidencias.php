@@ -117,6 +117,7 @@
             .in-big b { font-size: 34px; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 

@@ -140,6 +140,7 @@
         .att-page.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
         .att-page-info { font-size: .78rem; color: var(--g-text-secondary); margin-left: 8px; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>

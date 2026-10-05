@@ -116,6 +116,7 @@
             .cfg-tiles { grid-template-columns: 1fr 1fr; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'configuracion']) ?>

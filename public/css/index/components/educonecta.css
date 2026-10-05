@@ -1,0 +1,543 @@
+/* ══════════════════════════════════════════════════════════════
+   EDUCONECTA · capa de diseño para el módulo de asistencia
+   Basada en EduconectaV2 [data-design="minimal"] + sb-ui (JeffryNS)
+
+   · Monocromo minimal — sólo light
+   · Tipografía Manrope
+   · Sin sombras · bordes 1px · superficies neutras
+   · Se carga DESPUÉS de dev-panel.css / dev-dark.css, así que
+     gana en empates de especificidad. No toca las vistas PHP.
+   ══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+/* ─────────────────────────────────────────────────────────────
+   1 · TOKENS — paleta Educonecta minimal mapeada a las --g-*
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* superficies (Educonecta light) */
+  --g-bg: #f4f4f5;                    /* --sb-surface-dim */
+  --g-surface: #ffffff;               /* --sb-surface */
+  --g-surface-variant: #f6f6f7;       /* --sb-surface-container */
+  --g-surface-hover: #ececee;         /* --sb-surface-container-high */
+  --g-border: #e4e4e7;                /* --sb-outline-variant */
+
+  /* texto */
+  --g-text: #161618;                  /* --sb-on-surface */
+  --g-text-secondary: #52525b;        /* --sb-on-surface-variant */
+  --g-text-disabled: #a1a1aa;         /* --sb-outline */
+
+  /* primario monocromo (antes verde Material) */
+  --g-primary: #161618;
+  --g-primary-hover: #000000;
+  --g-primary-light: #ececee;
+
+  /* semánticos apagados — el color sólo en texto/icono,
+     el fondo es neutro para no romper el monocromo */
+  --g-success: #15803d;
+  --g-success-light: #f4f4f5;
+  --g-error: #b91c1c;
+  --g-error-light: #f4f4f5;
+  --g-warning: #a16207;
+  --g-warning-light: #f4f4f5;
+
+  /* alias usados por partials/vistas con fallbacks azules o verdes */
+  --g-accent: var(--g-primary);       /* biometric_panel: var(--g-accent, #4f8cff) */
+  --g-radius: 16px;
+  --accent: var(--g-primary);         /* JS de sidebars: || '#1b7a42' */
+
+  --g-sidebar: #ffffff;
+  --g-nav-active: #ececee;
+
+  /* tipografía */
+  --g-font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --g-font-display: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* expone los tokens originales de Educonecta por si algo los usa */
+  --sb-background: #ffffff;
+  --sb-on-background: #161618;
+  --sb-surface: #ffffff;
+  --sb-surface-dim: #f4f4f5;
+  --sb-surface-bright: #ffffff;
+  --sb-surface-container-lowest: #ffffff;
+  --sb-surface-container-low: #fbfbfc;
+  --sb-surface-container: #f6f6f7;
+  --sb-surface-container-high: #ececee;
+  --sb-surface-container-highest: #e1e1e4;
+  --sb-on-surface: #161618;
+  --sb-on-surface-variant: #52525b;
+  --sb-outline: #a1a1aa;
+  --sb-outline-variant: #e4e4e7;
+  --sb-primary: #161618;
+  --sb-on-primary: #ffffff;
+  --sb-solid-bg: #161618;
+  --sb-solid-fg: #ffffff;
+  --sb-radius: 0.375rem;
+  --sb-font: 'Manrope', system-ui, sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2 · TIPOGRAFÍA
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main),
+body:has(.dev-main) input,
+body:has(.dev-main) select,
+body:has(.dev-main) textarea,
+body:has(.dev-main) button {
+  font-family: var(--g-font);
+}
+body:has(.dev-main) .dev-topbar h1,
+body:has(.dev-main) .dev-modal-head h3,
+body:has(.dev-main) .dev-modal-head h2 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3 · SUPERFICIES — tarjetas planas, sin hover de color
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-card,
+body:has(.dev-main) .personal-form-card,
+body:has(.dev-main) .personal-stat,
+body:has(.dev-main) .mobile-card {
+  border: 1px solid var(--sb-outline-variant);
+  background: var(--g-surface);
+  border-radius: 16px;
+  box-shadow: none !important;
+}
+body:has(.dev-main) .dev-card:hover,
+body:has(.dev-main) .personal-stat:hover {
+  border-color: var(--sb-outline-variant);
+}
+
+/* stat-cards — Educonecta: r16 · p16 · sin elevación */
+body:has(.dev-main) .dev-stat-card {
+  background: var(--g-surface);
+  border: 1px solid var(--sb-outline-variant);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: none !important;
+  transition: background 150ms;
+}
+body:has(.dev-main) .dev-stat-card:hover { background: var(--sb-surface-container-low); }
+body:has(.dev-main) .dev-stat-icon { border-radius: 12px; background: var(--sb-surface-container); }
+
+/* cabecera de tarjeta */
+body:has(.dev-main) .dev-card-head {
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid var(--sb-outline-variant);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4 · BOTONES — Educonecta exacto (radio 12px, filled negro)
+   transición sb-ui: rebote suave en el press
+   ───────────────────────────────────────────────────────────── */
+.dev-btn {
+  border-radius: 12px;
+  font-weight: 500;
+  transition: background 125ms, color 125ms, opacity 125ms,
+    padding 400ms cubic-bezier(0.38, 0.49, 0, 2),
+    border-radius 200ms cubic-bezier(0.38, 0.49, 0, 1.5),
+    transform 200ms cubic-bezier(0.37, 1.42, 0.37, 1),
+    box-shadow 250ms;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.dev-btn:hover { transform: none; }
+.dev-btn:active { transform: scale(0.97); }
+.dev-btn-sm { border-radius: 12px; }
+.dev-btn-primary {
+  background: var(--sb-primary);
+  color: var(--sb-on-primary);
+  box-shadow: none !important;
+}
+.dev-btn-primary:hover { background: var(--sb-primary); opacity: 0.9; }
+.dev-btn-primary:active { opacity: 1; transform: scale(0.97); }
+.dev-btn-outline {
+  background: transparent;
+  color: var(--g-text);
+  border: 1px solid var(--sb-outline-variant);
+}
+.dev-btn-outline:hover {
+  background: var(--sb-surface-container);
+  border-color: var(--sb-outline);
+  color: var(--g-text);
+}
+.dev-btn-text { color: var(--g-text); border-radius: 12px; }
+.dev-btn-text:hover { background: var(--sb-surface-container); }
+.dev-btn-icon {
+  border: 1px solid var(--sb-outline-variant);
+  background: var(--g-surface);
+  border-radius: 12px;
+}
+.dev-btn-icon:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--g-surface), 0 0 0 4px var(--sb-primary);
+}
+
+/* 4b · resto de botones del módulo — MISMA transición suave sb-ui
+   (sus <style> inline van antes que esta hoja → gana el empate) */
+.detail-btn,
+.cfg-btn,
+.cfg-btn-ghost,
+.cfg-notif-btn,
+.in-btn,
+.mi-btn,
+.hr-int-btn,
+.m-card-btn,
+.m-card-btn-danger,
+.confirm-modal-btn,
+.confirm-modal-btn-delete,
+.confirm-modal-btn-cancel,
+.dev-mobile-dark-btn {
+  transition: background 125ms, color 125ms, opacity 125ms, filter 200ms,
+    padding 400ms cubic-bezier(0.38, 0.49, 0, 2),
+    border-radius 200ms cubic-bezier(0.38, 0.49, 0, 1.5),
+    transform 200ms cubic-bezier(0.37, 1.42, 0.37, 1),
+    box-shadow 250ms;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.detail-btn:active,
+.cfg-btn:active,
+.cfg-btn-ghost:active,
+.cfg-notif-btn:active,
+.in-btn:active,
+.mi-btn:active,
+.hr-int-btn:active,
+.m-card-btn:active,
+.m-card-btn-danger:active,
+.confirm-modal-btn:active,
+.confirm-modal-btn-delete:active,
+.confirm-modal-btn-cancel:active,
+.dev-mobile-dark-btn:active {
+  transform: scale(0.97);
+}
+
+/* 4c · PÍLDORA — todos los botones del módulo a 999px
+   (decisión: mismo look redondo que el login verde) */
+button,
+[class*="btn"],
+[class*="-close"],
+[class*="-chip"],
+input[type="button"],
+input[type="submit"] {
+  border-radius: 999px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5 · TABLA — estilo Educonecta (thead 10px uppercase, filas
+       apiladas con radio, hover neutro — se quita el verde)
+   ───────────────────────────────────────────────────────────── */
+.dev-table {
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  border-radius: 16px;
+  overflow: hidden;
+  font-size: 13px;
+  background: transparent;
+}
+.dev-table th {
+  height: 36px;
+  padding: 2px 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sb-on-surface-variant);
+  opacity: 0.75;
+  background: var(--sb-surface-container);
+  border-bottom: 1px solid var(--sb-outline-variant);
+}
+.dev-table td {
+  height: 48px;
+  padding: 8px 16px;
+  background: var(--sb-surface-container-low);
+  border-bottom: 1px solid var(--sb-outline-variant);
+  line-height: 16px;
+}
+.dev-table tr:last-child td { border-bottom: 1px solid var(--sb-outline-variant); }
+.dev-table tbody tr:last-child td:first-child { border-radius: 0 0 0 16px; }
+.dev-table tbody tr:last-child td:last-child { border-radius: 0 0 16px 0; }
+.dev-table thead tr:first-child th:first-child { border-radius: 16px 0 0 0; }
+.dev-table thead tr:first-child th:last-child { border-radius: 0 16px 0 0; }
+.dev-table tbody tr:hover td { background: var(--sb-surface-container-high); }
+.dev-table tbody tr:active td { background: var(--sb-surface-container-highest); }
+
+/* ─────────────────────────────────────────────────────────────
+   6 · SIDEBAR y NAVEGACIÓN — píldora activa neutra
+   ───────────────────────────────────────────────────────────── */
+.dev-sidebar {
+  background: var(--g-sidebar);
+  border-right: 1px solid var(--sb-outline-variant);
+}
+.dev-nav-link {
+  border-radius: 24px;
+  color: var(--g-text-secondary);
+}
+.dev-nav-link:hover {
+  background: var(--sb-surface-container);
+  color: var(--g-text);
+}
+.dev-nav-link.is-active {
+  background: var(--g-nav-active);
+  color: var(--g-primary);
+  font-weight: 600;
+}
+.dev-sidebar-user:hover { background: var(--sb-surface-container); }
+
+/* ─────────────────────────────────────────────────────────────
+   7 · MODALES — radio Educonecta, sin elevación
+   ───────────────────────────────────────────────────────────── */
+.dev-modal-overlay { background: rgba(0, 0, 0, 0.32); backdrop-filter: none !important; }
+.dev-modal {
+  background: var(--g-surface);
+  border: 1px solid var(--sb-outline-variant);
+  border-radius: 20px;
+  box-shadow: none !important;
+}
+.dev-modal-head h3,
+.dev-modal-head h2 { font-weight: 600; }
+
+/* ─────────────────────────────────────────────────────────────
+   8 · CAMPOS — ya son h44/r12, sólo se neutraliza el focus
+   ───────────────────────────────────────────────────────────── */
+.dev-field input,
+.dev-field select,
+.dev-field textarea {
+  border: 1px solid var(--sb-outline-variant);
+  background: var(--g-surface);
+  border-radius: 12px;
+}
+.dev-field input:hover,
+.dev-field select:hover,
+.dev-field textarea:hover { border-color: var(--sb-outline); }
+.dev-field input:focus,
+.dev-field select:focus,
+.dev-field textarea:focus {
+  outline: none;
+  border-color: var(--sb-primary);
+  box-shadow: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   9 · BADGES, ALERTS y chips — fondo neutro, color sólo en texto
+   ───────────────────────────────────────────────────────────── */
+.dev-badge { border-radius: 12px; font-weight: 600; }
+.dev-badge-green { background: var(--g-success-light); color: var(--g-success); border: 1px solid var(--sb-outline-variant); }
+.dev-badge-blue  { background: var(--sb-surface-container); color: var(--g-text); border: 1px solid var(--sb-outline-variant); }
+.dev-badge-amber { background: var(--g-warning-light); color: var(--g-warning); border: 1px solid var(--sb-outline-variant); }
+.dev-badge-red   { background: var(--g-error-light); color: var(--g-error); border: 1px solid var(--sb-outline-variant); }
+.dev-alert { border: 1px solid var(--sb-outline-variant); border-radius: 12px; }
+body:has(.dev-main) .personal-role { border-radius: 12px; }
+
+/* chips de asistencia (att-chip) y estados */
+.att-chip { border-radius: 12px; }
+
+/* ─────────────────────────────────────────────────────────────
+   10 · ESTADOS DE TABLA — hover verde de Material eliminado en
+        cualquier sitio donde haya quedado un rgba(26,122,66,..)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) tr:hover td,
+.dev-table tbody tr:hover td { background: var(--sb-surface-container-high) !important; }
+
+/* ─────────────────────────────────────────────────────────────
+   11 · ANIMACIONES — entrada suave de tarjetas (Educonecta)
+   ───────────────────────────────────────────────────────────── */
+@keyframes edu-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+body:has(.dev-main) .dev-stat-card,
+body:has(.dev-main) .dev-card {
+  animation: edu-fade-up 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .dev-stats-grid > *:nth-child(2) { animation-delay: 40ms; }
+body:has(.dev-main) .dev-stats-grid > *:nth-child(3) { animation-delay: 80ms; }
+body:has(.dev-main) .dev-stats-grid > *:nth-child(4) { animation-delay: 120ms; }
+body:has(.dev-main) .dev-stats-grid > *:nth-child(n + 5) { animation-delay: 160ms; }
+
+/* respeta la preferencia de menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  body:has(.dev-main) .dev-stat-card,
+  body:has(.dev-main) .dev-card { animation: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+    12 · ACENTO RESTANTE — leftovers Material / marca verde.
+    Vienen de <style> inline en las vistas, de style="..." o de
+    JS, por eso aquí hacen falta !important (esta hoja se carga
+    después de todas, pero el inline y el JS mandan igual).
+    ───────────────────────────────────────────────────────────── */
+
+/* 12.1 · iconos decorativos de tarjetas y accesos rápidos → neutros */
+.personal-stat-icon,
+.dev-stat-icon,
+.si-accent,
+.si-green,
+.si-amber,
+.si-red,
+.stat-icon,
+.profile-stat-icon,
+.field-item-icon,
+.dash-link-icon,
+.flow-num,
+.storage-icon,
+.att-tile-ico,
+.rp-tile-ico,
+.emp-stat-icon,
+.esi-green,
+.esi-amber,
+.esi-blue,
+.cfg-notif-ico {
+  background: var(--sb-surface-container) !important;
+  color: var(--g-text-secondary) !important;
+}
+/* valores destacados del log de auditoría: distinción sin color */
+.ad-val { background: var(--sb-surface-container) !important; }
+.ad-val.nuevo {
+  background: var(--sb-surface-container-highest) !important;
+  color: var(--g-text) !important;
+}
+
+/* 12.2 · avatares, chips de rol y modales de detalle (los pinta JS) */
+.pa-dev,
+.pa-admin,
+.pa-empleado,
+.detail-avatar,
+#detailAvatar,
+#codeDetailAvatar,
+#attDetailAvatar {
+  background: var(--sb-surface-container-highest) !important;
+  color: var(--g-text) !important;
+}
+.personal-role,
+.role-dev,
+.role-admin,
+.role-empleado,
+.role-practicante {
+  background: var(--sb-surface-container-high) !important;
+  color: var(--g-text-secondary) !important;
+}
+.detail-cover,
+#detailCover,
+#codeDetailCover {
+  background: linear-gradient(135deg, var(--sb-surface-container), var(--sb-surface-container-high)) !important;
+}
+.profile-cover {
+  background: linear-gradient(135deg, var(--g-text) 0%, #3f3f46 100%) !important;
+}
+#detailRolBadge { color: var(--g-text) !important; }
+
+/* 12.3 · códigos: hover verde original eliminado */
+.dev-code:hover { background: var(--sb-surface-container-highest) !important; }
+
+/* 12.4 · filas activas de tabla: sin verde Material */
+body:has(.dev-main) tr:active td,
+.dev-table tbody tr:active td { background: var(--sb-surface-container-highest) !important; }
+
+/* 12.5 · badges: fondo neutro, el color queda sólo en el texto */
+.dev-badge { background: var(--sb-surface-container) !important; }
+.badge {
+  background: var(--sb-surface-container) !important;
+  border: 1px solid var(--sb-outline-variant);
+}
+.dev-badge[style*="1a73e8"] { color: var(--g-text-secondary) !important; }
+
+/* 12.6 · focus/hover con el verde antiguo de la marca */
+.att-input:focus,
+.pf-input:focus,
+.rp-input:focus,
+.cfg-field input:focus,
+.cfg-notif-btn:hover,
+.cfg-btn-ghost:hover {
+  box-shadow: none !important;
+}
+.cfg-btn-ghost:hover {
+  background: var(--sb-surface-container) !important;
+  border-color: var(--sb-outline) !important;
+}
+
+/* 12.7 · semánticos apagados — texto y puntos a los tokens */
+.cfg-notif-state.on,
+.cfg-view-state.on { color: var(--g-success) !important; }
+.cfg-notif-state.on i,
+.cfg-view-state.on i { background: var(--g-success) !important; }
+
+.att-estado.present { color: var(--g-success) !important; }
+.att-estado.present i { background: var(--g-success) !important; }
+.att-estado.late { color: var(--g-warning) !important; }
+.att-estado.late i { background: var(--g-warning) !important; }
+.att-estado.no_exit { color: var(--g-text-secondary) !important; }
+.att-estado.no_exit i { background: var(--g-text-disabled) !important; }
+
+.badge.present { color: var(--g-success) !important; }
+.badge.late { color: var(--g-warning) !important; }
+.badge.absent { color: var(--g-error) !important; }
+
+/* el modal de detalle pinta el estado con colores del JS */
+#attDetailStatus[style*="16a34a"] { color: var(--g-success) !important; }
+#attDetailStatus[style*="d97706"] { color: var(--g-warning) !important; }
+#attDetailStatus[style*="2563eb"] { color: var(--g-text-secondary) !important; }
+
+/* 12.8 · colores sueltos fuera de paleta */
+/* botón "copiar código": success sólido → primario negro */
+.detail-btn-edit[style*="g-success"] { background: var(--g-primary) !important; }
+.perm-partial { color: var(--g-warning) !important; }
+.activity-dot[style*="e37400"] { background: var(--g-warning) !important; }
+.dev-alert-warning { color: var(--g-warning) !important; }
+.dash-activity-dot.dot-blue { background: var(--g-text-disabled) !important; }
+
+/* barra apilada de incidencias: la revisión pasa a neutro
+   (leyenda: pendiente=ámbar, revisión=gris, resto=semánticos) */
+.in-bar-gap { background: var(--g-text-disabled) !important; }
+.in-legend span:nth-child(2) { color: var(--g-text-secondary) !important; }
+.in-legend span:nth-child(2) i { background: var(--g-text-disabled) !important; }
+.in-legend .lg-p { color: var(--g-warning) !important; }
+
+/* puntos de estado de la lista de incidencias → tokens apagados,
+   la revisión queda gris para coincidir con barra y leyenda */
+.in-estado.dot-pendiente i { background: var(--g-warning) !important; }
+.in-estado.dot-revision i { background: var(--g-text-disabled) !important; }
+.in-estado.dot-justificada i { background: var(--g-success) !important; }
+
+/* enlaces sin clase (estados vacíos): sin azul nativo del navegador */
+body:has(.dev-main) a:not([class]) { color: var(--g-primary); }
+
+/* ─────────────────────────────────────────────────────────────
+    13 · REPORTE y PANEL DE EMPLEADO — mismos patrones:
+    iconos neutros, barras a tokens, badges con fondo neutro
+    ───────────────────────────────────────────────────────────── */
+.rp-dot.green, .rp-track-fill.green { background: var(--g-success) !important; }
+.rp-dot.amber, .rp-track-fill.amber { background: var(--g-warning) !important; }
+.rp-dot.blue,  .rp-track-fill.blue  { background: var(--g-text-disabled) !important; }
+
+.rp-estado.present { color: var(--g-success) !important; }
+.rp-estado.present i { background: var(--g-success) !important; }
+.rp-estado.late { color: var(--g-warning) !important; }
+.rp-estado.late i { background: var(--g-warning) !important; }
+
+.emp-badge {
+  background: var(--sb-surface-container) !important;
+  border: 1px solid var(--sb-outline-variant);
+}
+.emp-badge-amber { color: var(--g-warning) !important; }
+.emp-badge-red { color: var(--g-error) !important; }
+
+/* ─────────────────────────────────────────────────────────────
+    14 · PANEL BIOMÉTRICO (partials/biometric_panel.php)
+    tintes verde Material → tintes del token success/error;
+    banner de salida anticipada → ámbar apagado (conservado)
+    ───────────────────────────────────────────────────────────── */
+.bio-item-ok {
+  border-color: rgba(21, 128, 61, 0.35) !important;
+  background: rgba(21, 128, 61, 0.06) !important;
+}
+.bio-thumb { border-color: rgba(21, 128, 61, 0.35) !important; }
+.bio-msg-ok { background: rgba(21, 128, 61, 0.1) !important; }
+.bio-msg-err { background: rgba(185, 28, 28, 0.1) !important; }
+div[style*="245,158,11"] {
+  background-color: #fef3c7 !important;
+  border-color: #fcd34d !important;
+}

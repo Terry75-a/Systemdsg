@@ -37,6 +37,7 @@
         .ad-empty { padding: 26px 18px; text-align: center; color: var(--g-text-secondary); font-size: .87rem; }
         @media (max-width: 860px) { .ad-grid { grid-template-columns: 1fr 1fr; } }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => $activePage ?? 'asistencias']) ?>

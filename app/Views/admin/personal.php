@@ -277,6 +277,7 @@
         .detail-btn-close:hover { background: var(--g-border); }
         .detail-btn .material-symbols-outlined { font-size: 18px; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 
