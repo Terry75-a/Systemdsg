@@ -114,7 +114,7 @@ class AdminController extends AdminBaseController
             'name'          => $name,
             'email'         => $email,
             'dni'           => $dni,
-            'password'      => $password,
+            'password'      => password_hash($password, PASSWORD_DEFAULT),
             'role'          => $role,
             'area'          => $area,
             'cargo'         => $cargo,
@@ -192,7 +192,7 @@ class AdminController extends AdminBaseController
         }
         $data = array_merge($data, $this->contractFields(), $this->firmaFields($name));
         if (!empty($password) && strlen($password) >= 6) {
-            $data['password'] = $password;
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
         $this->userModel->update($userId, $data);
 
@@ -219,7 +219,7 @@ class AdminController extends AdminBaseController
         }
 
         $password = $this->generateSecurePassword();
-        $this->userModel->update($userId, ['password' => $password]);
+        $this->userModel->update($userId, ['password' => password_hash($password, PASSWORD_DEFAULT)]);
 
         $s->setFlashdata('emp_reset', [
             'name'         => $member['name'],

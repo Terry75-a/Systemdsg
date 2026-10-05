@@ -71,7 +71,7 @@ class AuthController extends BaseController
             'name'     => $name,
             'email'    => $email,
             'dni'      => '',
-            'password' => $password,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
             'role'     => 'Usuario',
         ]);
 
@@ -121,6 +121,29 @@ class AuthController extends BaseController
     // ════════════════════════════════════════
     // PROCESAR LOGIN (POST)
     // ════════════════════════════════════════
+
+    /**
+     * Verifica contraseña contra hash bcrypt; acepta también filas
+     * guardadas en texto plano por versiones anteriores (se re-hashean
+     * automáticamente en el primer login).
+     */
+    private function verificarPassword(string $input, string $stored): bool
+    {
+        if (password_verify($input, $stored)) {
+            return true;
+        }
+        // Texto plano legacy (no es un hash válido)
+        return !str_starts_with($stored, '$2') && hash_equals($stored, $input);
+    }
+
+    /** Si la fila seguía en texto plano, la convierte a hash bcrypt. */
+    private function rehashearSiLegacy(int $userId, string $plain, string $stored): void
+    {
+        if (!str_starts_with($stored, '$2')) {
+            $this->userModel->update($userId, ['password' => password_hash($plain, PASSWORD_DEFAULT)]);
+        }
+    }
+
     public function login()
     {
         $session   = session();
@@ -149,13 +172,14 @@ class AuthController extends BaseController
 
             $found = $this->userModel->findByDni($dni);
 
-            if (!$found || !password_verify($password, $found['password'])) {
+            if (!$found || !$this->verificarPassword($password, $found['password'])) {
                 $this->loginFallo('dni:' . $dni);
                 $session->setFlashdata('msg', 'DNI o contraseña incorrectos');
                 $session->setFlashdata('tipo', 'danger');
                 return redirect()->to(base_url('login-verde'));
             }
 
+            $this->rehashearSiLegacy((int) $found['id'], $password, $found['password']);
             $this->loginOk('dni:' . $dni);
             $this->userModel->updateLastLogin($found['id']);
             $this->setSessionUser($found);
@@ -236,13 +260,14 @@ class AuthController extends BaseController
 
         $found = $this->userModel->findByEmail($email);
 
-        if (!$found || !password_verify($password, $found['password'])) {
+        if (!$found || !$this->verificarPassword($password, $found['password'])) {
             $this->loginFallo($ident);
             $session->setFlashdata('msg', 'Correo o contraseña incorrectos');
             $session->setFlashdata('tipo', 'danger');
             return redirect()->to(base_url('login-verde'));
         }
 
+        $this->rehashearSiLegacy((int) $found['id'], $password, $found['password']);
         $this->loginOk($ident);
         $this->userModel->updateLastLogin($found['id']);
         $this->setSessionUser($found);

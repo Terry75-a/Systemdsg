@@ -322,6 +322,13 @@
                                 <div class="field">
                                     <label for="new_password">Nueva contrasena</label>
                                     <input type="password" id="new_password" name="new_password" placeholder="Minimo 6 caracteres" required minlength="6">
+                                    <div style="margin-top:8px;">
+                                        <button type="button" class="dev-btn dev-btn-sm" onclick="sugerirPasswordPerfil()"
+                                                style="background:var(--g-primary-light); color:var(--g-primary);">
+                                            <span class="material-symbols-outlined" style="font-size:16px;">casino</span>
+                                            Sugerir contrasena
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="field">
                                     <label for="confirm_password">Confirmar contrasena</label>
@@ -368,5 +375,28 @@
         </div>
     </div>
 </div>
+<script>
+function sugerirPasswordPerfil() {
+    var up = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    var lo = 'abcdefghjkmnpqrstuvwxyz';
+    var di = '23456789';
+    var sp = '@#$%';
+    var all = up + lo + di + sp;
+    function ri(n) {
+        var a = new Uint32Array(1);
+        crypto.getRandomValues(a);
+        return a[0] % n;
+    }
+    var pw = up[ri(up.length)] + up[ri(up.length)] +
+             lo[ri(lo.length)] + lo[ri(lo.length)] +
+             di[ri(di.length)] + di[ri(di.length)] +
+             sp[ri(sp.length)];
+    while (pw.length < 14) pw += all[ri(all.length)];
+    document.getElementById('new_password').value = pw;
+    document.getElementById('confirm_password').value = pw;
+    document.getElementById('new_password').type = 'text';
+    document.getElementById('confirm_password').type = 'text';
+}
+</script>
 </body>
 </html>

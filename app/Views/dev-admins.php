@@ -377,17 +377,25 @@
                     <label>Empresa</label>
                     <input type="text" name="empresa" id="formEmpresa" placeholder="Nombre de la empresa del admin">
                 </div>
-                <div class="field" id="passwordField">
-                    <label id="passwordLabel">Nueva contrasena (opcional)</label>
+                <div class="field" id="passwordField" style="border-top:1px dashed var(--g-border); padding-top:16px; margin-top:2px;">
+                    <label id="passwordLabel">Cambiar contrasena (opcional)</label>
                     <div class="field-pass">
-                        <input type="password" name="password" id="formPassword" placeholder="Solo si deseas cambiarla">
+                        <input type="password" name="password" id="formPassword" placeholder="Nueva contrasena del admin">
                         <button type="button" class="field-pass-toggle" onclick="togglePassword()">
                             <span class="material-symbols-outlined" id="passIcon">visibility</span>
                         </button>
                     </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:9px; flex-wrap:wrap;">
+                        <button type="button" class="dev-btn dev-btn-sm" onclick="sugerirPassword()"
+                                style="background:var(--g-primary-light); color:var(--g-primary);">
+                            <span class="material-symbols-outlined" style="font-size:16px;">casino</span>
+                            Sugerir contrasena
+                        </button>
+                        <span style="font-size:11.5px; color:var(--g-text-secondary);">Se guarda cifrada y te la mostrare al guardar.</span>
+                    </div>
                 </div>
                 <div class="field-note" style="font-size:12px;color:var(--g-text-secondary);background:var(--g-surface-variant);padding:10px 14px;border-radius:10px;" id="createNote">
-                    La contraseña se genera automaticamente de forma segura y se te mostrara una sola vez. El código de admin tambien se genera solo (ADMIN-001, ADMIN-002...).
+                    Si dejas la contrasena vacia se genera una segura automaticamente y se te mostrara una sola vez. Tambien puedes pulsar «Sugerir». El codigo de admin se genera solo (ADMIN-001, ADMIN-002...).
                 </div>
             </div>
         </form>
@@ -490,7 +498,9 @@ function openModal() {
     document.getElementById('formEmpresa').value = '';
     document.getElementById('formPassword').value = '';
     document.getElementById('formPassword').required = false;
-    document.getElementById('passwordField').style.display = 'none';
+    document.getElementById('passwordLabel').textContent = 'Contrasena (opcional — se genera sola si la dejas vacia)';
+    document.getElementById('formPassword').placeholder = 'Se genera una segura si la dejas vacia';
+    document.getElementById('passwordField').style.display = '';
     document.getElementById('createNote').style.display = 'block';
     document.getElementById('modalOverlay').classList.add('is-open');
 }
@@ -508,7 +518,8 @@ function editAdmin(admin) {
     document.getElementById('formEmpresa').value = admin.empresa || '';
     document.getElementById('formPassword').value = '';
     document.getElementById('formPassword').required = false;
-    document.getElementById('passwordLabel').textContent = 'Nueva contrasena (opcional)';
+    document.getElementById('passwordLabel').textContent = 'Cambiar contrasena (opcional)';
+    document.getElementById('formPassword').placeholder = 'Nueva contrasena del admin';
     document.getElementById('passwordField').style.display = '';
     document.getElementById('createNote').style.display = 'none';
     document.getElementById('modalOverlay').classList.add('is-open');
@@ -532,6 +543,28 @@ function togglePassword() {
         input.type = 'password';
         icon.textContent = 'visibility';
     }
+}
+
+function sugerirPassword() {
+    var up = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    var lo = 'abcdefghjkmnpqrstuvwxyz';
+    var di = '23456789';
+    var sp = '@#$%';
+    var all = up + lo + di + sp;
+    function ri(n) {
+        var a = new Uint32Array(1);
+        crypto.getRandomValues(a);
+        return a[0] % n;
+    }
+    var pw = up[ri(up.length)] + up[ri(up.length)] +
+             lo[ri(lo.length)] + lo[ri(lo.length)] +
+             di[ri(di.length)] + di[ri(di.length)] +
+             sp[ri(sp.length)];
+    while (pw.length < 14) pw += all[ri(all.length)];
+    var input = document.getElementById('formPassword');
+    input.value = pw;
+    input.type = 'text';
+    document.getElementById('passIcon').textContent = 'visibility_off';
 }
 
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
@@ -616,11 +649,12 @@ document.getElementById('confirmDeleteModal').addEventListener('click', function
 
 <!-- Credenciales del admin recién creado -->
 <?php $creds = session()->getFlashdata('creds'); ?>
+<?php $isUpdate = $creds && (($creds['mode'] ?? 'create') === 'update'); ?>
 <?php if ($creds): ?>
 <div class="modal-overlay is-open" id="credsModal" style="z-index:3000;">
     <div class="modal">
         <div class="modal-head">
-            <h3><span class="material-symbols-outlined">how_to_reg</span> Admin creado</h3>
+            <h3><span class="material-symbols-outlined"><?= $isUpdate ? 'lock_reset' : 'how_to_reg' ?></span> <?= $isUpdate ? 'Contraseña actualizada' : 'Admin creado' ?></h3>
             <button class="modal-close" onclick="closeCredsModal()">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -660,7 +694,9 @@ document.getElementById('confirmDeleteModal').addEventListener('click', function
                     </div>
                 </div>
             </div>
-            <p class="creds-hint">La contrase&ntilde;a solo se muestra esta vez. Advi&eacute;rtele que la cambie en «Mi perfil» despu&eacute;s de entrar.</p>
+            <p class="creds-hint"><?= $isUpdate
+                ? 'Esta es la contraseña real que quedó guardada para ' . esc($creds['name']) . '. Cópiala ahora: solo se muestra esta vez y no podrá recuperarse después.'
+                : 'La contrase&ntilde;a solo se muestra esta vez. Advi&eacute;rtele que la cambie en «Mi perfil» despu&eacute;s de entrar.' ?></p>
         </div>
         <div class="modal-footer">
             <button class="dev-btn" onclick="copyAllCreds()">

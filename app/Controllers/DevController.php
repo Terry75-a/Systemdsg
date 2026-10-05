@@ -219,7 +219,7 @@ class DevController extends BaseController
             return redirect()->to(base_url('dios/perfil'));
         }
 
-        $this->userModel->update($dev['id'], ['password' => $new]);
+        $this->userModel->update($dev['id'], ['password' => password_hash($new, PASSWORD_DEFAULT)]);
 
         $s->setFlashdata('msg', 'Contraseña actualizada correctamente');
         $s->setFlashdata('tipo', 'success');
@@ -266,13 +266,15 @@ class DevController extends BaseController
         }
 
         $adminCode = $this->userModel->nextAdminCode();
-        $password  = $this->generateSecurePassword();
+        // Contraseña personalizada opcional desde el modal; si no, se genera
+        $postPw    = (string) $this->request->getPost('password');
+        $password  = (strlen($postPw) >= 6) ? $postPw : $this->generateSecurePassword();
 
         $this->userModel->insert([
             'name'       => $name,
             'email'      => $email,
             'dni'        => $dni,
-            'password'   => $password,
+            'password'   => password_hash($password, PASSWORD_DEFAULT),
             'role'       => 'Admin',
             'admin_code' => $adminCode,
             'empresa'    => $empresa ?: "Empresa {$adminCode}",
@@ -368,8 +370,10 @@ class DevController extends BaseController
         if ($empresa !== '') {
             $data['empresa'] = $empresa;
         }
+        $realPassword = null;
         if (!empty($password) && strlen($password) >= 6) {
-            $data['password'] = $password;
+            $data['password']    = password_hash($password, PASSWORD_DEFAULT);
+            $realPassword        = $password;
         }
 
         if (!$this->userModel->update($userId, $data)) {
@@ -380,6 +384,21 @@ class DevController extends BaseController
 
         $s->setFlashdata('msg', "Admin {$name} actualizado");
         $s->setFlashdata('tipo', 'success');
+
+        // Si cambió la contraseña → mostrar la contraseña REAL una sola vez
+        if ($realPassword !== null) {
+            $u = $this->userModel->find($userId) ?? [];
+            $s->setFlashdata('creds', [
+                'mode'    => 'update',
+                'name'    => $u['name'] ?? $name,
+                'role'    => 'Admin',
+                'dni'     => $u['dni'] ?? $dni,
+                'email'   => $u['email'] ?? $email,
+                'password'=> $realPassword,
+                'code'    => $u['admin_code'] ?? 'ADMIN-???',
+                'empresa' => $u['empresa'] ?? ($empresa ?: ''),
+            ]);
+        }
         return redirect()->to(base_url('dios/admins'));
     }
 
@@ -537,7 +556,7 @@ class DevController extends BaseController
             'name'          => $foundCode['name'],
             'email'         => '',
             'dni'           => $foundCode['dni'],
-            'password'      => $password,
+            'password'      => password_hash($password, PASSWORD_DEFAULT),
             'role'          => $role,
             'admin_id'      => $adminId,
             'admin_code'    => $admin ? ($admin['admin_code'] ?? null) : null,
