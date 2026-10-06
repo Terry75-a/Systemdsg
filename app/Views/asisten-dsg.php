@@ -313,7 +313,10 @@
             <h2 class="main-title">En la palma de tu mano</h2>
             <p class="mm-section-sub">Accede a tu control de asistencia desde cualquier dispositivo: teléfono, tablet u ordenador.</p>
         </div>
-        <div class="devices-grid reveal" data-delay="1">
+        <div class="mm-phone-mock reveal" data-delay="1">
+            <img src="<?= base_url('images/asisten-iphone.webp') ?>" alt="Asisten DSG en un iPhone" loading="lazy" width="700" height="1513">
+        </div>
+        <div class="devices-grid reveal" data-delay="2">
             <div class="device-card">
                 <span class="material-symbols-rounded">smartphone</span>
                 <h3>Celular</h3>

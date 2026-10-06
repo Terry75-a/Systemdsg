@@ -793,6 +793,17 @@ body.mm-landing {
 }
 
 /* ─── MULTIPLATAFORMA ─── */
+.mm-phone-mock {
+  width: 100%;
+  max-width: 360px;
+  margin: 40px auto 48px;
+}
+.mm-phone-mock img {
+  width: 100%;
+  height: auto;
+  border-radius: 48px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), 0 0 0 16px var(--md-sys-color-surface-container-highest);
+}
 .devices-grid {
   display: flex;
   gap: 8px;
@@ -1256,6 +1267,8 @@ body.mm-landing {
   .menu-pill-container { width: 100%; }
   .tab-button-pill { padding: 12px 18px !important; font-size: 15px; }
   .devices-grid { flex-direction: column; }
+  .mm-phone-mock { max-width: 300px; margin: 32px auto 40px; }
+  .mm-phone-mock img { border-radius: 40px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), 0 0 0 8px var(--md-sys-color-surface-container-highest); }
   .pricing-card { flex-basis: 100%; padding: 24px; }
   .mm-contact-grid { flex-direction: column; }
   .mm-contact-info, .mm-contact-form { flex: 1 1 auto; padding: 24px; }
