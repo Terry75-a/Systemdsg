@@ -40,7 +40,7 @@
                         </h5>
                         <span class="pdsg-add-sub">Complete la información del cliente en un solo lugar.</span>
                     </div>
-                    <a href="<?= base_url('personas') ?>" class="pdsg-add-close" title="Cancelar" aria-label="Cerrar formulario">
+                    <a href="<?= base_url('personas') ?>" class="pdsg-add-close text-decoration-none" title="Cancelar" aria-label="Cerrar formulario">
                         <i class="fa-solid fa-xmark"></i>
                     </a>
                 </div>
@@ -345,6 +345,7 @@
                                             </td>
                                             <td class="text-end">
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
+                                                    
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                     
                                                 </button>
@@ -357,6 +358,9 @@
                                                     data-nombre-persona="<?= esc($nomSuc); ?>"
                                                     title="Asignar Plan">
                                                     <i class="fa-solid fa-inbox"></i>
+                                                </button>
+                                                <button type="button" class="pdsg-suc-btn pdsg-suc-btn-payment btn-asignar-tipo-pagos" title="tipopago">
+                                                      <i class="fa-solid fa-money-bill"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -501,7 +505,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabel" aria-hidden="true">
+<div class="modal " id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabe" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <form class="modal-content" id="formAsignarPlan" method="POST">
       
@@ -597,10 +601,172 @@
     </form>
   </div>
 </div>
+
+<!-- ════════════ MODAL PAGOS (solo visual) ════════════ -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <form class="modal-content" id="formPago" onsubmit="return false;">
+
+      <div class="pe-ms-head">
+        <span class="pe-ms-icon"><i class="fa-solid fa-money-bill" aria-hidden="true"></i></span>
+        <div class="pe-ms-head-info">
+          <h2 id="modalPagoLabel">Otros Pagos</h2>
+          <p>Registra el concepto, vencimiento y monto del pago.</p>
+        </div>
+        <button type="button" class="pe-ms-close" data-bs-dismiss="modal" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="pe-ms-body-wrap">
+        <div class="pe-ms-body">
+          <div class="row g-3">
+
+            <div class="col-12">
+              <label for="pagoConcepto">Concepto:</label>
+              <input type="text" class="form-control" id="pagoConcepto" name="concepto" placeholder="Ej. Licencia Anual">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoDiasAviso">Cantidad de días de aviso:</label>
+              <input type="number" min="0" class="form-control" id="pagoDiasAviso" name="dias_aviso" placeholder="Ej. 10">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoFechaVenc">Fecha de vencimiento:</label>
+              <input type="date" class="form-control" id="pagoFechaVenc" name="fecha_vencimiento">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoMonto">Monto:</label>
+              <input type="number" step="0.01" min="0" class="form-control" id="pagoMonto" name="monto" placeholder="Ej. 50.00">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoCorreo">Correo de notificación:</label>
+              <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoEstado">Estado:</label>
+              <select class="form-select" id="pagoEstado" name="estado">
+                <option value="1" selected>ACTIVO</option>
+                <option value="0">INACTIVO</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="pe-ms-footer" style="flex-shrink: 0;">
+        <button type="button" class="btn pe-ms-cancel" data-bs-dismiss="modal">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Salir
+        </button>
+        <button type="button" class="btn pe-ms-save" id="btnGuardarPago">
+          <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+
+
 <style>
 .body-wrapper {
     padding-top: 20px !important;
 }
+/* ── Modal Pagos: estilos propios ── */
+#modalPago .modal-content {
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#modalPago .pe-ms-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    border-bottom: 1px solid #e9ecef;
+}
+#modalPago .pe-ms-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #e8f5ee;
+    color: #198754;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+}
+#modalPago .pe-ms-head-info { flex: 1; min-width: 0; }
+#modalPago .pe-ms-head-info h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+}
+#modalPago .pe-ms-head-info p {
+    margin: 2px 0 0;
+    font-size: .82rem;
+    color: #6c757d;
+}
+#modalPago .pe-ms-close {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: #f1f3f5;
+    color: #495057;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+#modalPago .pe-ms-close:hover { background: #e2e6ea; }
+
+#modalPago .pe-ms-body-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+#modalPago .pe-ms-body { padding: 20px 22px; }
+#modalPago label {
+    display: block;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+#modalPago .pe-ms-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid #e9ecef;
+}
+#modalPago .pe-ms-cancel {
+    background: transparent;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    padding: 8px 20px;
+    color: #495057;
+}
+#modalPago .pe-ms-cancel:hover { background: #f8f9fa; }
+#modalPago .pe-ms-save {
+    background: #198754;
+    border: 1px solid #198754;
+    border-radius: 999px;
+    padding: 8px 22px;
+    color: #fff;
+    font-weight: 600;
+}
+#modalPago .pe-ms-save:hover { background: #157347; }
 </style>
 
 <script src="<?= base_url('js/persona-editor.js?v=' . filemtime(FCPATH . 'js/persona-editor.js')) ?>"></script>
@@ -632,6 +798,11 @@ function obtenerModalPlan() {
     }
     return null;
 }
+
+document.getElementById('tablaSucursales').addEventListener('click', function (e) {
+    if (!e.target.closest('.btn-asignar-tipo-pagos')) return;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPago')).show();
+});
 
 // ════════════════════════════════════════════════════
 // BÚSQUEDA POR DNI
@@ -1007,6 +1178,9 @@ document.getElementById('btnGuardarSucursalLista').addEventListener('click', fun
                 title="Asignar Plan">
                 <i class="fa-solid fa-inbox"></i>
             </button>
+         <button type="button" class="pdsg-suc-btn pdsg-suc-btn-payment btn-asignar-tipo-pagos" title="tipopago">
+             <i class="fa-solid fa-money-bill"></i>
+            </button>
         </td>
     `;
 
@@ -1126,6 +1300,7 @@ document.getElementById('tablaSucursales').addEventListener('click', function (e
         modalPlan.show();
     }
 });
+
 
 // ════════════════════════════════════════════════════
 // FUNCIONES DEL BLOQUE MENSUAL Y VENCIMIENTO
@@ -1532,4 +1707,5 @@ document.getElementById('formAsignarPlan').addEventListener('submit', async func
         btnSubmit.innerHTML = textoOriginal;
     }
 });
+
 </script>
