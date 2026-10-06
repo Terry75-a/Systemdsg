@@ -212,6 +212,9 @@ input[type="submit"] {
 /* ─────────────────────────────────────────────────────────────
    3 · SIDEBAR — estilo Vercel/Next.js
    ───────────────────────────────────────────────────────────── */
+.dev-sidebar {
+  border-right: none;
+}
 .dev-sidebar-head {
   padding: 13px 14px;
   border-bottom: 1px solid var(--g-border);
