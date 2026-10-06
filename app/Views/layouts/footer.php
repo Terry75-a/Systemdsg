@@ -54,11 +54,13 @@
             <p>&copy; <?= date('Y') ?> DSG Peru Technology. Todos los derechos reservados. <a href="<?= base_url('asisten-dsg') ?>" class="footer-stealth">Asistencia del personal</a></p>
         </div>
     </div>
+    
 
 <script src="<?= base_url('js/contador.js') ?>"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>AOS.init();</script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 
 <script>
   var swiper = new Swiper(".testimonialSwiper", {
@@ -143,5 +145,42 @@
 
 </footer>
 <?php endif; ?>
+<!-- Contenedor único donde se van apilando todos los Toasts hacia abajo -->
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 999999;"></div>
+
+<script>
+function showToast(mensaje, tipo) {
+    tipo = tipo || 'success';
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    // Crear un nuevo toast independiente para apilar
+    var toastDiv = document.createElement('div');
+    toastDiv.className = 'toast align-items-center text-bg-' + tipo + ' border-0 mb-2 shadow';
+    toastDiv.setAttribute('role', 'alert');
+    toastDiv.setAttribute('aria-live', 'assertive');
+    toastDiv.setAttribute('aria-atomic', 'true');
+
+    toastDiv.innerHTML = 
+        '<div class="d-flex">' +
+            '<div class="toast-body">' + mensaje + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>' +
+        '</div>';
+
+    // Se agrega al final del contenedor (aparece debajo de los existentes)
+    container.appendChild(toastDiv);
+
+    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        var toastInstance = new bootstrap.Toast(toastDiv, { delay: 6000 }); // Dura 6 segundos
+        
+        // Se destruye del DOM al cerrarse para no saturar memoria
+        toastDiv.addEventListener('hidden.bs.toast', function () {
+            toastDiv.remove();
+        });
+
+        toastInstance.show();
+    }
+}
+</script>
 </body>
 </html>

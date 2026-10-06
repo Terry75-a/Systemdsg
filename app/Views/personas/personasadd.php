@@ -560,13 +560,7 @@
     <label class="form-check-label" for="finSinFecha" style="cursor: pointer;">Sin fecha de finalización</label>
   </div>
 
-  <div class="form-check d-flex align-items-center gap-2 mb-2">
-    <input class="form-check-input mt-0" type="radio" name="tipo_fin" id="finRepeticiones" value="REPETICIONES" onchange="actualizarCamposFin()">
-    <label class="form-check-label mb-0" for="finRepeticiones" style="cursor: pointer;">Finalizar después de</label>
-    <input type="number" min="1" class="form-control" style="width: 90px; height: 35px;"
-           id="numRepeticiones" name="num_repeticiones" value="12" disabled>
-    <span>repeticiones (meses)</span>
-  </div>
+  
 
   <div class="form-check d-flex align-items-center gap-2">
     <input class="form-check-input mt-0" type="radio" name="tipo_fin" id="finFecha" value="FECHA" onchange="actualizarCamposFin()">

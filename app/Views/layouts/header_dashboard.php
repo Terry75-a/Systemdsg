@@ -24,44 +24,138 @@
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" > 
 
     <style>
-      body {
-        overflow-x: hidden;
-      }
-      .app-header {
-        background: #fff !important;
-        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.1) !important;
-        height: 70px;
-        display: flex;
-        align-items: center;
-        width: 100% !important;
-        left: 0 !important;
-        
-        top: 0;
-        z-index: 1000 !important;
-      }
-      .body-wrapper {
-        background: #f4f6f9;
-        min-height: 100vh;
-        padding-top: 0 !important;
-        margin-left: 270px;
-        display: flex;
-        flex-direction: column;
-      }
-      #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-fluid {
-        padding-top: 15px !important;
-      }
-      .left-sidebar {
-        height: calc(100vh - 70px) !important;
-        position: fixed !important;
-        top: 70px !important;
-        left: 0;
-        z-index: 10;
-      }
-      .container-fluid {
-        max-width: 100% !important;
-        flex: 1;
-        padding: 15px;
-      }
+      /* --- CONTENEDOR CAMPANA --- */
+.dsg-notification-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center;
+}
+
+/* --- BADGE ROJO ESTILO YOUTUBE --- */
+.dsg-notif-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #cc0000;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 17px;
+    height: 17px;
+    line-height: 17px;
+    border-radius: 50%;
+    text-align: center;
+    border: 2px solid #ffffff;
+    pointer-events: none;
+}
+
+/* --- PANEL FLOTANTE ESTILO YOUTUBE --- */
+.dsg-notif-dropdown {
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+    width: 380px !important;
+    max-width: 90vw;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 99999 !important;
+    overflow: hidden;
+    animation: ytFadeIn .18s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes ytFadeIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dsg-notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f0f0f;
+}
+
+.dsg-notif-list {
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+/* Scrollbar fina */
+.dsg-notif-list::-webkit-scrollbar {
+    width: 6px;
+}
+.dsg-notif-list::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 10px;
+}
+
+/* ITEM ESTILO YOUTUBE */
+.dsg-notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: background 0.15s ease;
+}
+.dsg-notif-item:hover {
+    background-color: #f2f2f2;
+}
+
+/* Punto azul de no leído */
+.dsg-notif-dot {
+    width: 6px;
+    height: 6px;
+    background: #065fd4;
+    border-radius: 50%;
+    margin-top: 14px;
+    flex-shrink: 0;
+}
+
+/* Avatar circular del cliente o alerta */
+.dsg-notif-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0f0f0f;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dsg-notif-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.dsg-notif-title {
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: #0f0f0f;
+    margin-bottom: 3px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.dsg-notif-time {
+    font-size: 11px;
+    color: #606060;
+}
     </style>
 </head>
 <body>

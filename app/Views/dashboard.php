@@ -157,3 +157,21 @@ $saludo = match (true) {
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Primer Toast: Arriba
+    setTimeout(function() {
+        showToast('👋 ¡Bienvenido! Panel de administración sincronizado.', 'success');
+    }, 500);
+
+    // 2. Segundo Toast: Se coloca justo debajo del primero
+    setTimeout(function() {
+        showToast('⚠️ Atención: Tienes 2 planes próximos a vencer este mes.', 'warning');
+    }, 1500);
+
+    // 3. Tercer Toast: Se coloca debajo del segundo
+    setTimeout(function() {
+        showToast('💳 Alerta: Existe 1 pago pendiente de verificación.', 'danger');
+    }, 2500);
+});
+</script>

@@ -310,6 +310,8 @@
     </div>
 </div>
 
+
+
 <script>
 
   
@@ -500,6 +502,10 @@ $.ajaxSetup({
         // Iniciales de la tabla
         cargarContadores();
         cargarClientes();
+
+        showToast('Clientes nuevos', 'success');
+
+ 
 
         // Evento para cambiar entre pestañas Activos / Inactivos
         $('#pestanasEstado .pdsg-tab').on('click', function (e) {

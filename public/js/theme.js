@@ -75,23 +75,21 @@ function initializeTheme() {
  */
 function updateNavbarTextColor() {
   const navbar = document.querySelector('.navbar');
+  if (!navbar) return; // Si no hay navbar en esta vista, no ejecuta nada
+
   const navLinks = document.querySelectorAll('.nav-link');
   const logoText = document.querySelector('.logo-text');
   const themeIcon = document.querySelector('.theme-icon');
   
-  // Check if dark theme is active
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   
-  // Set text colors based on theme
   if (isDark) {
-    // Dark theme - use light text
     navLinks.forEach(link => {
       link.style.color = 'white';
     });
     if (logoText) logoText.style.color = 'white';
     if (themeIcon) themeIcon.style.color = 'white';
   } else {
-    // Light theme - use dark text
     navLinks.forEach(link => {
       link.style.color = 'black';
     });
@@ -99,7 +97,6 @@ function updateNavbarTextColor() {
     if (themeIcon) themeIcon.style.color = 'black';
   }
 }
-
 // Initialize theme when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
   initializeTheme();
@@ -110,8 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Update navbar text color based on scroll position and background
  */
+/**
+ * Update navbar text color based on scroll position and background
+ */
 function updateNavbarOnScroll() {
   const navbar = document.querySelector('.navbar');
+  
+  // Evitar error si la página actual (dashboard/personas) no tiene .navbar
+  if (!navbar) return;
+
   const navLinks = document.querySelectorAll('.nav-link');
   const logoText = document.querySelector('.logo-text');
   const themeIcon = document.querySelector('.theme-icon');
@@ -120,9 +124,6 @@ function updateNavbarOnScroll() {
   const rect = navbar.getBoundingClientRect();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   
-  // For now, we'll just use the theme-based coloring
-  // In a more advanced implementation, we could check the actual background color
-  // at the navbar position and adjust text color accordingly
   if (isDark) {
     navLinks.forEach(link => {
       link.style.color = 'white';

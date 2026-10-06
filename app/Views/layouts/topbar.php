@@ -21,10 +21,26 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
         <header class="dev-topbar">
             <div class="dev-topbar-row">
                 <div class="dev-topbar-actions">
-                     <button type="button" class="dsg-dark-btn dsg-notification-btn"
-                      id="dsgNotificationBtn" title="Notificaciones" aria-label="Ver notificaciones"> 
-                        <span class="material-symbols-outlined">notifications</span> 
-                     </button>
+                   <!-- Notificaciones estilo YouTube -->
+<div class="dsg-notification-wrap">
+    <button type="button" class="dsg-dark-btn dsg-notification-btn" id="dsgNotificationBtn" title="Notificaciones" aria-label="Ver notificaciones"> 
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="dsg-notif-badge" id="dsgNotifBadge" style="display: none;">0</span>
+    </button>
+
+    <div class="dsg-notif-dropdown" id="dsgNotifDropdown" style="display: none;">
+        <div class="dsg-notif-header">
+            <span>Notificaciones</span>
+            <small class="text-muted fw-normal" id="dsgNotifCountText">0 pendientes</small>
+        </div>
+        <div class="dsg-notif-list" id="dsgNotifList">
+            <div class="p-4 text-center text-muted">
+                <span class="material-symbols-outlined d-block mb-1" style="font-size: 32px; color: #888;">notifications_none</span>
+                <small>No tienes notificaciones pendientes</small>
+            </div>
+        </div>
+    </div>
+</div>
                     <button type="button" class="dsg-dark-btn" id="dsgDarkBtn" title="Modo oscuro" aria-label="Alternar modo oscuro">
                         <span class="material-symbols-outlined" id="dsgDarkIcon">dark_mode</span>
                     </button>
@@ -63,3 +79,63 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
         </header>
 
         <div class="dev-content">
+
+        <script>
+            $(document).ready(function() {
+    var $btn =$('#dsgNotificationBtn');
+    var $drop =$('#dsgNotifDropdown');
+    var $badge =$('#dsgNotifBadge');
+    var $list =$('#dsgNotifList');
+    var $countText =$('#dsgNotifCountText');
+
+    // 1. Abrir/cerrar dropdown al hacer click en la campana
+    $btn.on('click', function(e) {
+        e.stopPropagation();
+        $drop.fadeToggle(150);
+    });
+
+    // Cerrar si hace clic fuera
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dsg-notification-wrap').length) {$drop.fadeOut(150);
+        }
+    });
+
+    function cargarNotificaciones() {
+        $.getJSON("<?= base_url('notificaciones/alertas') ?>")
+            .done(function(data) {
+                var total = data.total || 0;
+                var items = data.items || [];
+
+                if (total > 0) {
+                    $badge.text(total).show();
+                    $countText.text(total + ' pendientes');$list.empty();
+
+                    items.forEach(function(item) {
+                        var inicial = (item.cliente || item.titulo || 'N').charAt(0).toUpperCase();
+                        $list.append(`
+                            <a href="${item.url || '#'}" class="dsg-notif-item">
+                                <span class="dsg-notif-dot"></span>
+                                <div class="dsg-notif-avatar">${inicial}</div>
+                                <div class="dsg-notif-content">
+                                    <div class="dsg-notif-title"><strong>${item.titulo}:</strong> ${item.mensaje}</div>
+                                    <div class="dsg-notif-time">${item.tiempo || 'Reciente'}</div>
+                                </div>
+                            </a>
+                        `);
+                    });
+                } else {
+                    $badge.hide();
+                    $countText.text('0 pendientes');$list.html(`
+                        <div class="p-4 text-center text-muted">
+                            <span class="material-symbols-outlined d-block mb-1" style="font-size: 32px; color: #888;">notifications_none</span>
+                            <small>No tienes notificaciones pendientes</small>
+                        </div>
+                    `);
+                }
+            })
+            .fail(function() {
+                $badge.hide();
+            });
+    }
+ });
+        </script>
