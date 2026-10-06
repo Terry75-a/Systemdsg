@@ -869,67 +869,6 @@ body.mm-landing {
 .testimonio-name { font-size: 16px; font-weight: 500; color: var(--md-sys-color-on-surface); }
 .testimonio-role { font-size: 14px; color: var(--md-sys-color-outline); }
 
-/* ─── PRECIOS ─── */
-.pricing-grid {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 32px auto 0;
-  flex-wrap: wrap;
-}
-.pricing-card {
-  position: relative;
-  flex: 1 1 300px;
-  background: var(--md-sys-color-background);
-  border-radius: 24px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant) inset;
-  transition: box-shadow 0.3s cubic-bezier(0, 0, 0.5, 1);
-}
-.pricing-card:hover { box-shadow: 0 0 0 1px var(--md-sys-color-outline) inset; }
-.recommended-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  padding: 6px 12px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 2;
-  letter-spacing: 0.5px;
-}
-.pricing-tag {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--md-sys-color-primary);
-}
-.pricing-price {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-.pricing-amount { font-size: 40px; font-weight: 600; letter-spacing: -0.02em; }
-.pricing-period { font-size: 15px; color: var(--md-sys-color-outline); font-weight: 500; }
-.pricing-desc { font-size: 14.5px; line-height: 1.5; color: var(--md-sys-color-on-surface-variant); }
-.pricing-card .feature-list { flex-grow: 1; margin-top: 4px; }
-.pricing-card .mm-btn { width: 100%; margin-top: 8px; }
-.pricing-note {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--md-sys-color-outline);
-}
-.pricing-note a { color: var(--md-sys-color-primary); font-weight: 500; }
-.pricing-note a:hover { text-decoration: underline; }
-
 /* ─── FAQ ─── */
 .faq-list {
   display: flex;
@@ -1269,7 +1208,6 @@ body.mm-landing {
   .devices-grid { flex-direction: column; }
   .mm-phone-mock { max-width: 300px; margin: 32px auto 40px; }
   .mm-phone-mock img { border-radius: 40px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), 0 0 0 8px var(--md-sys-color-surface-container-highest); }
-  .pricing-card { flex-basis: 100%; padding: 24px; }
   .mm-contact-grid { flex-direction: column; }
   .mm-contact-info, .mm-contact-form { flex: 1 1 auto; padding: 24px; }
   .mm-field-row { flex-direction: column; gap: 16px; }

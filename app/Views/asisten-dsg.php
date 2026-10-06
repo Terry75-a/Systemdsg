@@ -24,7 +24,6 @@
             </a>
             <div class="mm-nav-links">
                 <a href="#caracteristicas" class="mm-nav-btn">Características</a>
-                <a href="#precios" class="mm-nav-btn">Precios</a>
                 <a href="#faq" class="mm-nav-btn">FAQ</a>
             </div>
             <div class="mm-nav-actions">
@@ -37,7 +36,6 @@
         </div>
         <div class="mm-nav-mobile" id="mmMobile" hidden>
             <a href="#caracteristicas"><span>Características</span><span class="material-symbols-rounded">trending_up</span></a>
-            <a href="#precios"><span>Precios</span><span class="material-symbols-rounded">shoppingmode</span></a>
             <a href="#faq"><span>Preguntas frecuentes</span><span class="material-symbols-rounded">help</span></a>
             <a href="<?= base_url('login-verde') ?>"><span>Iniciar sesión</span><span class="material-symbols-rounded">login</span></a>
             <a href="#contacto"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
@@ -375,63 +373,6 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- ═══════════ PRECIOS ═══════════ -->
-    <section class="mm-section" id="precios">
-        <div class="mm-section-head reveal">
-            <span class="title-text">Precios</span>
-            <h2 class="main-title">Precios para todos</h2>
-            <p class="mm-section-sub">Elige el plan que mejor se adapte a tu negocio. Todos incluyen soporte y actualizaciones.</p>
-        </div>
-        <div class="pricing-grid reveal" data-delay="1">
-            <div class="pricing-card">
-                <span class="pricing-tag">Básico</span>
-                <div class="pricing-price"><span class="pricing-amount">S/ 150</span><span class="pricing-period">/mes</span></div>
-                <p class="pricing-desc">Para negocios pequeños con hasta 10 empleados.</p>
-                <ul class="feature-list">
-                    <li><span class="material-symbols-rounded">check</span> Hasta 10 empleados</li>
-                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
-                    <li><span class="material-symbols-rounded">check</span> Control de tardanzas</li>
-                    <li><span class="material-symbols-rounded">check</span> Reporte mensual básico</li>
-                    <li><span class="material-symbols-rounded">check</span> 1 sede</li>
-                </ul>
-                <a href="#contacto" class="mm-btn mm-btn-tonal">Solicitar demo</a>
-            </div>
-            <div class="pricing-card">
-                <span class="recommended-badge">Más popular</span>
-                <span class="pricing-tag">Negocio</span>
-                <div class="pricing-price"><span class="pricing-amount">S/ 290</span><span class="pricing-period">/mes</span></div>
-                <p class="pricing-desc">Para negocios en crecimiento con hasta 30 empleados.</p>
-                <ul class="feature-list">
-                    <li><span class="material-symbols-rounded">check</span> Hasta 30 empleados</li>
-                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
-                    <li><span class="material-symbols-rounded">check</span> Tardanzas y faltas</li>
-                    <li><span class="material-symbols-rounded">check</span> Horarios y turnos fijos</li>
-                    <li><span class="material-symbols-rounded">check</span> Reportes para planilla</li>
-                    <li><span class="material-symbols-rounded">check</span> 2 sedes</li>
-                    <li><span class="material-symbols-rounded">check</span> Alertas en tiempo real</li>
-                    <li><span class="material-symbols-rounded">check</span> Soporte prioritario</li>
-                </ul>
-                <a href="#contacto" class="mm-btn mm-btn-filled">Solicitar demo</a>
-            </div>
-            <div class="pricing-card">
-                <span class="pricing-tag">Corporativo</span>
-                <div class="pricing-price"><span class="pricing-amount">Cotizar</span></div>
-                <p class="pricing-desc">Para empresas con múltiples sedes y personal variable.</p>
-                <ul class="feature-list">
-                    <li><span class="material-symbols-rounded">check</span> Empleados ilimitados</li>
-                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
-                    <li><span class="material-symbols-rounded">check</span> Turnos rotativos avanzados</li>
-                    <li><span class="material-symbols-rounded">check</span> Sedes ilimitadas</li>
-                    <li><span class="material-symbols-rounded">check</span> Exportación a planilla</li>
-                    <li><span class="material-symbols-rounded">check</span> API de integración</li>
-                    <li><span class="material-symbols-rounded">check</span> Soporte dedicado y capacitación</li>
-                </ul>
-                <a href="#contacto" class="mm-btn mm-btn-tonal">Solicitar cotización</a>
-            </div>
-        </div>
-        <p class="pricing-note">¿Necesitas ver el detalle? <a href="<?= base_url('precio-asisten') ?>">Ver planes completos →</a></p>
     </section>
 
     <!-- ═══════════ FAQ ═══════════ -->
