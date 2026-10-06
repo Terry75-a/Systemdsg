@@ -332,6 +332,7 @@ body.mm-landing {
   max-width: 1600px;
   margin: 96px auto 0;
   padding: 0 24px;
+  scroll-margin-top: 110px;
 }
 .mm-section-head {
   display: flex;
@@ -963,6 +964,115 @@ body.mm-landing {
   color: var(--md-sys-color-on-surface-variant);
 }
 
+/* ─── CONTACTO / SOLICITAR DEMO ─── */
+.mm-contact-grid {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+.mm-contact-info {
+  flex: 0 0 340px;
+  gap: 20px;
+  padding: 32px;
+}
+.mm-contact-form {
+  flex: 1;
+  padding: 32px;
+}
+.mm-contact-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--md-sys-color-on-background);
+  font-size: 16px;
+  font-weight: 500;
+}
+.mm-contact-line small {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--md-sys-color-outline);
+  margin-bottom: 2px;
+}
+.mm-contact-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-primary);
+}
+.mm-contact-ic .material-symbols-rounded { font-size: 22px; }
+.mm-contact-note {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--md-sys-color-on-surface-variant);
+  border-top: 1px solid var(--md-sys-color-surface-container-high);
+  padding-top: 16px;
+}
+.mm-contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.mm-field input,
+.mm-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--md-sys-color-on-background);
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.mm-field textarea { resize: vertical; min-height: 110px; }
+.mm-field input::placeholder,
+.mm-field textarea::placeholder { color: var(--md-sys-color-outline); }
+.mm-field input:focus,
+.mm-field textarea:focus {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
+}
+.mm-field-row {
+  display: flex;
+  gap: 16px;
+}
+.mm-field-row .mm-field { flex: 1; }
+.mm-btn-submit {
+  align-self: flex-start;
+  height: 48px;
+  padding: 0 24px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+}
+.mm-form-flash {
+  max-width: 800px;
+  margin: 0 auto 24px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-size: 15px;
+  text-align: center;
+}
+.mm-form-flash.is-success {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+.mm-form-flash.is-error {
+  background: color-mix(in srgb, var(--md-sys-color-error) 16%, transparent);
+  color: var(--md-sys-color-error);
+}
+
 /* ─── FOOTER ─── */
 .mm-footer {
   width: 100%;
@@ -1095,6 +1205,10 @@ body.mm-landing {
   .tab-button-pill { padding: 12px 18px !important; font-size: 15px; }
   .devices-grid { flex-direction: column; }
   .pricing-card { flex-basis: 100%; padding: 24px; }
+  .mm-contact-grid { flex-direction: column; }
+  .mm-contact-info, .mm-contact-form { flex: 1 1 auto; padding: 24px; }
+  .mm-field-row { flex-direction: column; gap: 16px; }
+  .mm-btn-submit { width: 100%; justify-content: center; }
   .mm-footer-main { flex-direction: column; gap: 24px; }
   .mm-footer { margin-top: 64px; }
   .chip-1 { right: 6px; }

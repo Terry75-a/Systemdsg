@@ -80,7 +80,7 @@ $mail->Body = "
 ";
 
             $mail->send();
-            return redirect()->to(base_url('/'))->with('success', '✅ Tu mensaje fue enviado correctamente.');
+            return redirect()->back()->with('success', '✅ Tu mensaje fue enviado correctamente.');
         } catch (Exception $e) {
             log_message('error', 'EmailController::enviar falló: {error}', ['error' => $mail->ErrorInfo ?: $e->getMessage()]);
 

@@ -29,7 +29,7 @@
             </div>
             <div class="mm-nav-actions">
                 <a href="<?= base_url('login-verde') ?>" class="mm-nav-btn">Iniciar sesión</a>
-                <a href="<?= base_url('/#contacto') ?>" class="mm-nav-btn is-outline">Solicitar demo</a>
+                <a href="#contacto" class="mm-nav-btn is-outline">Solicitar demo</a>
                 <button class="mm-nav-toggle" id="mmToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
                     <span class="material-symbols-rounded">menu</span>
                 </button>
@@ -40,7 +40,7 @@
             <a href="#precios"><span>Precios</span><span class="material-symbols-rounded">shoppingmode</span></a>
             <a href="#faq"><span>Preguntas frecuentes</span><span class="material-symbols-rounded">help</span></a>
             <a href="<?= base_url('login-verde') ?>"><span>Iniciar sesión</span><span class="material-symbols-rounded">login</span></a>
-            <a href="<?= base_url('/#contacto') ?>"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
+            <a href="#contacto"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
         </div>
     </nav>
 </header>
@@ -50,11 +50,11 @@
     <!-- ═══════════ HERO ═══════════ -->
     <section class="mm-hero">
         <div class="mm-hero-copy reveal in">
-            <a href="<?= base_url('/#contacto') ?>" class="cta-button"><span class="tag">GRATIS</span> Reserva una demo <span class="arrow">→</span></a>
+            <a href="#contacto" class="cta-button"><span class="tag">GRATIS</span> Reserva una demo <span class="arrow">→</span></a>
             <h1 class="main-title">La asistencia de tu equipo, sin planillas a mano.</h1>
             <p class="mm-hero-desc">Registra ingresos, salidas, tardanzas y faltas en segundos. Reportes listos para tu planilla y control total desde tu celular.</p>
             <div class="mm-hero-ctas">
-                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-filled">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                <a href="#contacto" class="mm-btn mm-btn-filled">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                 <a href="<?= base_url('login-verde') ?>" class="mm-btn mm-btn-tonal">Iniciar sesión</a>
             </div>
             <div class="mm-hero-checks">
@@ -188,7 +188,7 @@
                             <li><span class="material-symbols-rounded">smartphone</span> Desde cualquier celular</li>
                             <li><span class="material-symbols-rounded">download_for_offline</span> Sin apps ni equipos extra</li>
                         </ul>
-                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -211,7 +211,7 @@
                             <li><span class="material-symbols-rounded">notifications_active</span> Alertas en tiempo real</li>
                             <li><span class="material-symbols-rounded">edit_document</span> Justificaciones desde el móvil</li>
                         </ul>
-                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -234,7 +234,7 @@
                             <li><span class="material-symbols-rounded">apartment</span> Por área o sede</li>
                             <li><span class="material-symbols-rounded">calendar_month</span> Calendario por persona</li>
                         </ul>
-                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -255,7 +255,7 @@
                             <li><span class="material-symbols-rounded">file_download</span> Exportación en un clic</li>
                             <li><span class="material-symbols-rounded">payments</span> Descuentos por falta y tardanza</li>
                         </ul>
-                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -278,7 +278,7 @@
                             <li><span class="material-symbols-rounded">badge</span> Permisos por supervisor</li>
                             <li><span class="material-symbols-rounded">visibility</span> Visión general en vivo</li>
                         </ul>
-                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -372,7 +372,7 @@
                     <li><span class="material-symbols-rounded">check</span> Reporte mensual básico</li>
                     <li><span class="material-symbols-rounded">check</span> 1 sede</li>
                 </ul>
-                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal">Solicitar demo</a>
+                <a href="#contacto" class="mm-btn mm-btn-tonal">Solicitar demo</a>
             </div>
             <div class="pricing-card">
                 <span class="recommended-badge">Más popular</span>
@@ -389,7 +389,7 @@
                     <li><span class="material-symbols-rounded">check</span> Alertas en tiempo real</li>
                     <li><span class="material-symbols-rounded">check</span> Soporte prioritario</li>
                 </ul>
-                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-filled">Solicitar demo</a>
+                <a href="#contacto" class="mm-btn mm-btn-filled">Solicitar demo</a>
             </div>
             <div class="pricing-card">
                 <span class="pricing-tag">Corporativo</span>
@@ -404,7 +404,7 @@
                     <li><span class="material-symbols-rounded">check</span> API de integración</li>
                     <li><span class="material-symbols-rounded">check</span> Soporte dedicado y capacitación</li>
                 </ul>
-                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal">Solicitar cotización</a>
+                <a href="#contacto" class="mm-btn mm-btn-tonal">Solicitar cotización</a>
             </div>
         </div>
         <p class="pricing-note">¿Necesitas ver el detalle? <a href="<?= base_url('precio-asisten') ?>">Ver planes completos →</a></p>
@@ -452,6 +452,62 @@
         </div>
     </section>
 
+    <!-- ═══════════ CONTACTO / SOLICITAR DEMO ═══════════ -->
+    <section class="mm-section" id="contacto">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Contacto</span>
+            <h2 class="main-title">Solicita tu demo gratuita</h2>
+            <p class="mm-section-sub">Cuéntanos cuántas personas y sedes manejas y te mostramos Asisten DSG funcionando. Respondemos en menos de 24 horas.</p>
+        </div>
+
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="mm-form-flash is-success reveal"><?= session()->getFlashdata('success') ?></div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="mm-form-flash is-error reveal"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
+
+        <div class="mm-contact-grid reveal" data-delay="1">
+            <div class="mm-contact-info content-box">
+                <span class="title-text">Escríbenos</span>
+                <a class="mm-contact-line" href="mailto:soporte@dsgperu.com">
+                    <span class="mm-contact-ic"><span class="material-symbols-rounded">mail</span></span>
+                    <span><small>Correo</small>soporte@dsgperu.com</span>
+                </a>
+                <a class="mm-contact-line" href="tel:+51923942001">
+                    <span class="mm-contact-ic"><span class="material-symbols-rounded">call</span></span>
+                    <span><small>Llámanos</small>+51 923 942 001</span>
+                </a>
+                <div class="mm-contact-line">
+                    <span class="mm-contact-ic"><span class="material-symbols-rounded">location_on</span></span>
+                    <span><small>Visítanos</small>Pucallpa, Perú</span>
+                </div>
+                <p class="mm-contact-note">También puedes solicitar una cotización para el plan Corporativo: respondemos con una propuesta a la medida de tus sedes.</p>
+            </div>
+
+            <div class="mm-contact-form content-box">
+                <form action="<?= base_url('enviar') ?>" method="POST">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="asunto" value="Solicitar demo · Asisten DSG">
+                    <div class="mm-field">
+                        <input type="text" name="nombre" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="mm-field-row">
+                        <div class="mm-field"><input type="email" name="correo" placeholder="Correo electrónico" required></div>
+                        <div class="mm-field"><input type="text" name="empresa" placeholder="Empresa"></div>
+                    </div>
+                    <div class="mm-field">
+                        <input type="tel" name="telefono" placeholder="Teléfono / WhatsApp">
+                    </div>
+                    <div class="mm-field">
+                        <textarea name="mensaje" rows="4" placeholder="¿Cuántas personas y sedes quieres controlar?"></textarea>
+                    </div>
+                    <button type="submit" class="mm-btn mm-btn-filled mm-btn-submit">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <!-- ═══════════ FOOTER ═══════════ -->
@@ -471,7 +527,7 @@
         </div>
         <div class="mm-footer-col">
             <h4>Acciones</h4>
-            <a href="<?= base_url('/#contacto') ?>"><span class="material-symbols-rounded">forum</span> Contáctanos</a>
+            <a href="#contacto"><span class="material-symbols-rounded">forum</span> Contáctanos</a>
             <a href="<?= base_url('precio-asisten') ?>"><span class="material-symbols-rounded">receipt_long</span> Precios</a>
             <a href="<?= base_url('login-verde') ?>"><span class="material-symbols-rounded">login</span> Iniciar sesión</a>
             <a href="<?= base_url('/') ?>"><span class="material-symbols-rounded">language</span> Sitio principal</a>
@@ -482,7 +538,7 @@
     </div>
 </footer>
 
-<a class="mm-fab" href="<?= base_url('/#contacto') ?>" aria-label="Contáctanos">
+<a class="mm-fab" href="#contacto" aria-label="Contáctanos">
     <span class="material-symbols-rounded">chat_bubble</span>
 </a>
 
