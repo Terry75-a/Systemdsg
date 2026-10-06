@@ -502,8 +502,7 @@ body:has(.dev-main) .dev-stats-grid > .dev-stat-card {
    ───────────────────────────────────────────────────────────── */
 body:has(.dev-main) .stats-row > *,
 body:has(.dev-main) .stats > *,
-body:has(.dev-main) .aud-stats > *,
-body:has(.dev-main) .personal-stats > * {
+body:has(.dev-main) .aud-stats > * {
   background: var(--g-surface);
   border: none;
   border-radius: 0;
@@ -511,6 +510,20 @@ body:has(.dev-main) .personal-stats > * {
   display: flex;
   align-items: center;
   gap: 14px;
+  box-shadow: none !important;
+  transition: background 150ms ease;
+}
+/* personal: MISMO layout que la tarjeta del dashboard (5B) —
+   pila vertical icono16 → label → valor, alineada arriba-izq */
+body:has(.dev-main) .personal-stats > * {
+  background: var(--g-surface);
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
   box-shadow: none !important;
   transition: background 150ms ease;
 }
