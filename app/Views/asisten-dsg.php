@@ -112,6 +112,27 @@
         </div>
     </section>
 
+    <!-- ═══════════ VIDEO DEMO ═══════════ -->
+    <section class="mm-section mm-video-section" id="demo-video">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Demo en vivo</span>
+            <h2 class="main-title">Míralo funcionando</h2>
+            <p class="mm-section-sub">15 segundos para ver cómo tu equipo marca, cómo ves tardanzas en tiempo real y cómo se exporta la planilla.</p>
+        </div>
+        <div id="mm-video-container" class="mm-video-container reveal" data-delay="1">
+            <div class="mm-video-thumb" data-role="thumbnail">
+                <img src="<?= base_url('images/asisten-demo-poster.jpg') ?>" alt="Vista previa de Asisten DSG en acción" loading="lazy">
+                <button type="button" class="mm-video-play" id="mmPlayVideo" aria-label="Reproducir video de demostración">
+                    <span class="material-symbols-rounded ms-filled">play_arrow</span>
+                </button>
+            </div>
+            <video id="mmMainVideo" class="mm-video-el" controls loop muted playsinline preload="none" poster="<?= base_url('images/asisten-demo-poster.jpg') ?>">
+                <source src="<?= base_url('videos/asisten-demo.mp4') ?>" type="video/mp4">
+                Tu navegador no admite video HTML5.
+            </video>
+        </div>
+    </section>
+
     <!-- ═══════════ VALORES ═══════════ -->
     <section class="valores-panel reveal">
         <div class="mm-section-head">
@@ -617,6 +638,24 @@
             rows.insertBefore(row, rows.firstChild);
             while (rows.children.length > 5) rows.removeChild(rows.lastChild);
             if (present < total) { present++; paint(); }
+        });
+    }
+
+    /* — video demo: miniatura con play — */
+    var vidBox = document.getElementById('mm-video-container');
+    var vidBtn = document.getElementById('mmPlayVideo');
+    var vidEl = document.getElementById('mmMainVideo');
+    if (vidBox && vidBtn && vidEl) {
+        vidBtn.addEventListener('click', function () {
+            vidBox.classList.add('is-playing');
+            var p = vidEl.play();
+            if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+            vidEl.focus();
+        });
+        vidEl.addEventListener('ended', function () {
+            vidBox.classList.remove('is-playing');
+            vidEl.pause();
+            vidEl.currentTime = 0;
         });
     }
 
