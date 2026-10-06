@@ -596,18 +596,21 @@ body:has(.dev-main) .personal-stats > *:nth-child(n + 4) { animation-delay: 135m
    p16/20 hover container-low · avatar caja 32px r8 container ·
    nombre 13px · meta 12px · tiempo 10px · stagger 40ms/fila
    ───────────────────────────────────────────────────────────── */
-body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head {
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head {
   padding: 16px 20px;
   border-bottom: none;
 }
-body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2 {
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--g-text-disabled);
 }
-body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2 .material-symbols-outlined {
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2 .material-symbols-outlined,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 .material-symbols-outlined {
   font-size: 16px;
   color: var(--g-text-disabled);
 }
@@ -709,6 +712,76 @@ body:has(.dev-main) .dev-recent-list .dev-empty .material-symbols-outlined {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5E · ACCESOS DIRECTOS — replica Quick Actions del Minimalist:
+   lista gap4 (space-y-1) · filas p12 r12 sin borde, hover
+   container-low · caja de icono 36px r12 container (acentos en
+   sb-primary con !important: los iconos llevan style inline y
+   educonecta los agrupa con !important) · label 14px → primary
+   al hover · desc 11px /50 truncate · chevron /30 → primary/50
+   · entrada deslizante x:-8 con stagger 30ms
+   ───────────────────────────────────────────────────────────── */
+@keyframes np-qa-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+body:has(.dev-main) .dash-link-grid { gap: 4px; }
+body:has(.dev-main) .dash-link {
+  padding: 12px;
+  gap: 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  transition: background 150ms ease;
+  animation: np-qa-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dash-link-grid > *:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(2) { animation-delay: 30ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(3) { animation-delay: 60ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(4) { animation-delay: 90ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(5) { animation-delay: 120ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(n + 6) { animation-delay: 150ms; }
+body:has(.dev-main) .dash-link:hover { background: var(--sb-surface-container-low); }
+body:has(.dev-main) .dash-link-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+body:has(.dev-main) .dash-link-icon .material-symbols-outlined { font-size: 18px; }
+body:has(.dev-main) .dash-link:hover .dash-link-icon {
+  background: color-mix(in srgb, var(--sb-primary) 10%, transparent) !important;
+  color: var(--sb-primary) !important;
+}
+body:has(.dev-main) .dash-link-text {
+  flex: 1;
+  min-width: 0;
+}
+body:has(.dev-main) .dash-link:hover .dash-link-text { color: var(--sb-primary); }
+body:has(.dev-main) .dash-link-text span {
+  font-size: 11px;
+  color: color-mix(in srgb, var(--g-text-secondary) 50%, transparent);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body:has(.dev-main) .dash-link::after {
+  content: "chevron_right";
+  font-family: "Material Symbols Outlined";
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--g-text-secondary) 30%, transparent);
+  transition: color 150ms ease;
+}
+body:has(.dev-main) .dash-link:hover::after {
+  color: color-mix(in srgb, var(--sb-primary) 50%, transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────
