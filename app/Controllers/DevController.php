@@ -3,16 +3,22 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\CodeModel;
+use App\Models\AttendanceModel;
+use App\Models\AttendanceLogModel;
 
 class DevController extends BaseController
 {
     protected UserModel $userModel;
     protected CodeModel $codeModel;
+    protected AttendanceModel $attendanceModel;
+    protected AttendanceLogModel $attendanceLogModel;
 
     public function __construct()
     {
-        $this->userModel = new UserModel();
-        $this->codeModel = new CodeModel();
+        $this->userModel          = new UserModel();
+        $this->codeModel          = new CodeModel();
+        $this->attendanceModel    = new AttendanceModel();
+        $this->attendanceLogModel = new AttendanceLogModel();
     }
 
     // Solo el Dev (dios) entra aquí
@@ -108,6 +114,68 @@ class DevController extends BaseController
     }
 
     // ════════════════════════════════════════
+    // PAGE: Auditoría del módulo de asistencia
+    // ════════════════════════════════════════
+    public function auditoria()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+
+        $logs = $this->attendanceLogModel->orderBy('id', 'DESC')->limit(200)->findAll();
+
+        $attIds  = [];
+        $userIds = [];
+        foreach ($logs as $log) {
+            if (!empty($log['attendance_id'])) {
+                $attIds[] = (int) $log['attendance_id'];
+            }
+            if (!empty($log['user_id'])) {
+                $userIds[] = (int) $log['user_id'];
+            }
+        }
+
+        $atts = $attIds !== [] ? $this->attendanceModel->whereIn('id', array_unique($attIds))->findAll() : [];
+        $attMap = [];
+        foreach ($atts as $att) {
+            $attMap[(int) $att['id']] = $att;
+            if (!empty($att['user_id'])) {
+                $userIds[] = (int) $att['user_id'];
+            }
+        }
+
+        $users   = $userIds !== [] ? $this->userModel->whereIn('id', array_unique($userIds))->findAll() : [];
+        $userMap = array_column($users, null, 'id');
+
+        $filas = [];
+        foreach ($logs as $log) {
+            $att  = $attMap[(int) ($log['attendance_id'] ?? 0)] ?? null;
+            $user = $userMap[(int) ($log['user_id'] ?? 0)] ?? ($att !== null ? ($userMap[(int) ($att['user_id'] ?? 0)] ?? null) : null);
+
+            $filas[] = [
+                'fecha'    => (string) ($att['date'] ?? ''),
+                'marca'    => $att !== null
+                    ? trim(($att['time_in'] ?? '') . ' → ' . ($att['time_out'] ?? ''))
+                    : '',
+                'empleado' => (string) ($att['name'] ?? ($user['name'] ?? '')),
+                'accion'   => (string) ($log['accion'] ?? ''),
+                'campo'    => (string) ($log['campo'] ?? ''),
+                'anterior' => (string) ($log['valor_anterior'] ?? ''),
+                'nuevo'    => (string) ($log['valor_nuevo'] ?? ''),
+                'motivo'   => (string) ($log['motivo'] ?? ''),
+                'autor'    => (string) ($log['autor'] ?? ''),
+                'cuando'   => (string) ($log['created_at'] ?? ''),
+                'attId'    => (int) ($log['attendance_id'] ?? 0),
+                'adminId'  => (int) ($log['admin_id'] ?? 0),
+            ];
+        }
+
+        return view('dev-auditoria', [
+            'filas'     => $filas,
+            'total'     => count($filas),
+            'modalData' => $this->getModalData(),
+        ]);
+    }
+
+    // ════════════════════════════════════════
     // PAGE: Perfil
     // ════════════════════════════════════════
     public function perfil()
@@ -151,7 +219,7 @@ class DevController extends BaseController
             return redirect()->to(base_url('dios/perfil'));
         }
 
-        $this->userModel->update($dev['id'], ['password' => $new]);
+        $this->userModel->update($dev['id'], ['password' => password_hash($new, PASSWORD_DEFAULT)]);
 
         $s->setFlashdata('msg', 'Contraseña actualizada correctamente');
         $s->setFlashdata('tipo', 'success');
@@ -198,13 +266,15 @@ class DevController extends BaseController
         }
 
         $adminCode = $this->userModel->nextAdminCode();
-        $password  = $this->generateSecurePassword();
+        // Contraseña personalizada opcional desde el modal; si no, se genera
+        $postPw    = (string) $this->request->getPost('password');
+        $password  = (strlen($postPw) >= 6) ? $postPw : $this->generateSecurePassword();
 
         $this->userModel->insert([
             'name'       => $name,
             'email'      => $email,
             'dni'        => $dni,
-            'password'   => $password,
+            'password'   => password_hash($password, PASSWORD_DEFAULT),
             'role'       => 'Admin',
             'admin_code' => $adminCode,
             'empresa'    => $empresa ?: "Empresa {$adminCode}",
@@ -300,8 +370,10 @@ class DevController extends BaseController
         if ($empresa !== '') {
             $data['empresa'] = $empresa;
         }
+        $realPassword = null;
         if (!empty($password) && strlen($password) >= 6) {
-            $data['password'] = $password;
+            $data['password']    = password_hash($password, PASSWORD_DEFAULT);
+            $realPassword        = $password;
         }
 
         if (!$this->userModel->update($userId, $data)) {
@@ -312,6 +384,21 @@ class DevController extends BaseController
 
         $s->setFlashdata('msg', "Admin {$name} actualizado");
         $s->setFlashdata('tipo', 'success');
+
+        // Si cambió la contraseña → mostrar la contraseña REAL una sola vez
+        if ($realPassword !== null) {
+            $u = $this->userModel->find($userId) ?? [];
+            $s->setFlashdata('creds', [
+                'mode'    => 'update',
+                'name'    => $u['name'] ?? $name,
+                'role'    => 'Admin',
+                'dni'     => $u['dni'] ?? $dni,
+                'email'   => $u['email'] ?? $email,
+                'password'=> $realPassword,
+                'code'    => $u['admin_code'] ?? 'ADMIN-???',
+                'empresa' => $u['empresa'] ?? ($empresa ?: ''),
+            ]);
+        }
         return redirect()->to(base_url('dios/admins'));
     }
 
@@ -469,7 +556,7 @@ class DevController extends BaseController
             'name'          => $foundCode['name'],
             'email'         => '',
             'dni'           => $foundCode['dni'],
-            'password'      => $password,
+            'password'      => password_hash($password, PASSWORD_DEFAULT),
             'role'          => $role,
             'admin_id'      => $adminId,
             'admin_code'    => $admin ? ($admin['admin_code'] ?? null) : null,

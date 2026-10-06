@@ -134,6 +134,7 @@
             .emp-grid-2 { grid-template-columns: 1fr; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
 </head>
 <body>
 <div class="emp-layout">

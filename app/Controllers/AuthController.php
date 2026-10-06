@@ -71,7 +71,7 @@ class AuthController extends BaseController
             'name'     => $name,
             'email'    => $email,
             'dni'      => '',
-            'password' => $password,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
             'role'     => 'Usuario',
         ]);
 
@@ -121,6 +121,29 @@ class AuthController extends BaseController
     // ════════════════════════════════════════
     // PROCESAR LOGIN (POST)
     // ════════════════════════════════════════
+
+    /**
+     * Verifica contraseña contra hash bcrypt; acepta también filas
+     * guardadas en texto plano por versiones anteriores (se re-hashean
+     * automáticamente en el primer login).
+     */
+    private function verificarPassword(string $input, string $stored): bool
+    {
+        if (password_verify($input, $stored)) {
+            return true;
+        }
+        // Texto plano legacy (no es un hash válido)
+        return !str_starts_with($stored, '$2') && hash_equals($stored, $input);
+    }
+
+    /** Si la fila seguía en texto plano, la convierte a hash bcrypt. */
+    private function rehashearSiLegacy(int $userId, string $plain, string $stored): void
+    {
+        if (!str_starts_with($stored, '$2')) {
+            $this->userModel->update($userId, ['password' => password_hash($plain, PASSWORD_DEFAULT)]);
+        }
+    }
+
     public function login()
     {
         $session   = session();
@@ -141,14 +164,23 @@ class AuthController extends BaseController
                 return redirect()->to(base_url('login-verde'));
             }
 
+            if ($bloqueo = $this->loginBloqueado('dni:' . $dni)) {
+                $session->setFlashdata('msg', $bloqueo);
+                $session->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('login-verde'));
+            }
+
             $found = $this->userModel->findByDni($dni);
 
-            if (!$found || !password_verify($password, $found['password'])) {
+            if (!$found || !$this->verificarPassword($password, $found['password'])) {
+                $this->loginFallo('dni:' . $dni);
                 $session->setFlashdata('msg', 'DNI o contraseña incorrectos');
                 $session->setFlashdata('tipo', 'danger');
                 return redirect()->to(base_url('login-verde'));
             }
 
+            $this->rehashearSiLegacy((int) $found['id'], $password, $found['password']);
+            $this->loginOk('dni:' . $dni);
             $this->userModel->updateLastLogin($found['id']);
             $this->setSessionUser($found);
 
@@ -172,13 +204,21 @@ class AuthController extends BaseController
                 return redirect()->to(base_url('login-verde'));
             }
 
+            if ($bloqueo = $this->loginBloqueado('dni:' . $dni)) {
+                $session->setFlashdata('msg', $bloqueo);
+                $session->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('login-verde'));
+            }
+
             $foundCode = $this->codeModel->findActiveByCode($code);
             if (!$foundCode) {
+                $this->loginFallo('dni:' . $dni);
                 $session->setFlashdata('msg', 'Codigo invalido o ya fue usado');
                 $session->setFlashdata('tipo', 'danger');
                 return redirect()->to(base_url('login-verde'));
             }
             if ($foundCode['dni'] !== $dni) {
+                $this->loginFallo('dni:' . $dni);
                 $session->setFlashdata('msg', 'El codigo no corresponde a este DNI');
                 $session->setFlashdata('tipo', 'danger');
                 return redirect()->to(base_url('login-verde'));
@@ -186,11 +226,13 @@ class AuthController extends BaseController
 
             $user = $this->userModel->findByDni($dni);
             if (!$user) {
+                $this->loginFallo('dni:' . $dni);
                 $session->setFlashdata('msg', 'No se encontro usuario con ese DNI');
                 $session->setFlashdata('tipo', 'danger');
                 return redirect()->to(base_url('login-verde'));
             }
 
+            $this->loginOk('dni:' . $dni);
             $this->codeModel->markUsed($foundCode['id'], $user['id']);
             $this->userModel->updateLastLogin($user['id']);
             $this->setSessionUser($user);
@@ -209,19 +251,92 @@ class AuthController extends BaseController
             return redirect()->to(base_url('login-verde'));
         }
 
+        $ident = 'email:' . mb_strtolower($email);
+        if ($bloqueo = $this->loginBloqueado($ident)) {
+            $session->setFlashdata('msg', $bloqueo);
+            $session->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('login-verde'));
+        }
+
         $found = $this->userModel->findByEmail($email);
 
-        if (!$found || !password_verify($password, $found['password'])) {
+        if (!$found || !$this->verificarPassword($password, $found['password'])) {
+            $this->loginFallo($ident);
             $session->setFlashdata('msg', 'Correo o contraseña incorrectos');
             $session->setFlashdata('tipo', 'danger');
             return redirect()->to(base_url('login-verde'));
         }
 
+        $this->rehashearSiLegacy((int) $found['id'], $password, $found['password']);
+        $this->loginOk($ident);
         $this->userModel->updateLastLogin($found['id']);
         $this->setSessionUser($found);
 
         $role = $found['role'] ?? 'Empleado';
         return redirect()->to(base_url($this->homeFor($role)));
+    }
+
+    // ════════════════════════════════════════
+    // PROTECCIÓN CONTRA FUERZA BRUTA
+    // ════════════════════════════════════════
+    private const LOGIN_INTENTOS       = 5;   // por cuenta
+    private const LOGIN_INTENTOS_IP    = 20;  // por IP
+    private const LOGIN_BLOQUEO_MIN    = 10;  // minutos
+
+    /** Devuelve el mensaje de bloqueo o null si se puede intentar. */
+    private function loginBloqueado(string $ident): ?string
+    {
+        $cache = service('cache');
+        $ip    = $this->claveIp();
+
+        foreach ([[$this->claveIntento($ident), self::LOGIN_INTENTOS], [$ip, self::LOGIN_INTENTOS_IP]] as [$clave, $max]) {
+            $datos = $cache->get($clave);
+            if (! is_array($datos) || (int) ($datos['intentos'] ?? 0) < $max) {
+                continue;
+            }
+
+            $restante = (int) ($datos['expira'] ?? time()) - time();
+            $min      = max(1, (int) ceil($restante / 60));
+
+            return "Demasiados intentos fallidos. Intenta de nuevo en {$min} minuto(s).";
+        }
+
+        return null;
+    }
+
+    private function loginFallo(string $ident): void
+    {
+        $cache = service('cache');
+        $ttl   = self::LOGIN_BLOQUEO_MIN * 60;
+
+        foreach ([$this->claveIntento($ident), $this->claveIp()] as $clave) {
+            $datos = $cache->get($clave);
+            $nuevo = is_array($datos) ? (int) ($datos['intentos'] ?? 0) + 1 : 1;
+            $cache->save($clave, ['intentos' => $nuevo, 'expira' => time() + $ttl], $ttl);
+        }
+    }
+
+    private function loginOk(string $ident): void
+    {
+        $cache = service('cache');
+        $cache->delete($this->claveIntento($ident));
+        // El contador por IP no se borra: sigue protegiendo contra
+        // fuerza bruta con usuarios distintos.
+    }
+
+    private function claveIntento(string $ident): string
+    {
+        return 'authf_' . md5($this->ipCliente() . '|' . $ident);
+    }
+
+    private function claveIp(): string
+    {
+        return 'authip_' . md5($this->ipCliente());
+    }
+
+    private function ipCliente(): string
+    {
+        return (string) $this->request->getIPAddress();
     }
 
     // ════════════════════════════════════════

@@ -31,6 +31,17 @@ Cobertura útil existente sobre flujos admin reales:
 - `ClientesFeatureTest`: listado real, alta con reglas explícitas de empresa/RUC, detalle JSON útil, update y cambio de estado
 - `UbigeoFeatureTest`: endpoints JSON de departamentos/provincias/distritos y manejo de sesión
 
+### Módulo de asistencia (`tests/unit`, `tests/feature`)
+
+- `JornadaTest` (`tests/unit`): días laborables, rangos de días (`Lun - Vie`),
+  horario asignado vs. rol, tolerancia de entrada y cierre del día.
+- `AsistenciaLibrariesTest` (`tests/unit`): normalización de rangos de fecha
+  (`AsistenciaQuery`) y armado del CSV de exportación (`ExportCsv`).
+- `AsistenciaAuthTest` (`tests/feature`): `/admin` y `/mi-panel` redirigen a
+  `/login-verde` sin sesión y los POST protegidos no pasan.
+
+Detalle del módulo y comandos CLI: `docs/asistencia.md`.
+
 ### Integration (`tests/integration`)
 
 - `DocumentoLookupServiceTest`: lookup DNI/RUC con cliente HTTP fake, sin depender del servicio externo real.

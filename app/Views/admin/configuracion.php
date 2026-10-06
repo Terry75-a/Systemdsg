@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuracion - Panel de Administracion</title>
+    <title>Configuración · Panel de Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -116,6 +116,8 @@
             .cfg-tiles { grid-template-columns: 1fr 1fr; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'configuracion']) ?>
@@ -264,6 +266,55 @@
                         <div class="cfg-tile">
                             <b>1.0.0</b>
                             <span>Versión</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-card">
+                    <div class="dev-card-head">
+                        <h2><span class="material-symbols-outlined">event_busy</span> Días festivos</h2>
+                        <span style="font-size:.78rem;color:var(--g-text-secondary);">Esos días no se cierra asistencia ni se marcan faltas</span>
+                    </div>
+                    <div class="cfg-form" style="padding-top:0;">
+                        <form action="<?= site_url('admin/festivos/guardar') ?>" method="POST" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                            <?= csrf_field() ?>
+                            <div class="cfg-field" style="flex:0 0 170px;">
+                                <label for="fest_fecha">Fecha</label>
+                                <input type="date" id="fest_fecha" name="fest_fecha" required>
+                            </div>
+                            <div class="cfg-field" style="flex:1 1 220px;">
+                                <label for="fest_nombre">Nombre del día</label>
+                                <input type="text" id="fest_nombre" name="fest_nombre" maxlength="120" placeholder="Fiestas Patrias" required>
+                            </div>
+                            <button type="submit" class="cfg-btn">
+                                <span class="material-symbols-outlined">add</span> Agregar
+                            </button>
+                        </form>
+
+                        <div style="margin-top:18px;">
+                            <?php $listaFestivos = $festivos ?? []; ?>
+                            <?php if (empty($listaFestivos)): ?>
+                                <p style="font-size:.85rem;color:var(--g-text-secondary);margin:6px 0 0;">Aún no hay festivos registrados.</p>
+                            <?php else: ?>
+                                <div style="display:flex;flex-direction:column;gap:8px;">
+                                    <?php foreach ($listaFestivos as $f): ?>
+                                        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--g-border);border-radius:10px;background:var(--g-surface);">
+                                            <span class="material-symbols-outlined" style="color:var(--g-primary);">event</span>
+                                            <div style="flex:1;">
+                                                <b style="font-size:.875rem;"><?= esc($f['nombre']) ?></b>
+                                                <span style="display:block;font-size:.75rem;color:var(--g-text-secondary);"><?= date('d/m/Y', strtotime($f['fecha'])) ?></span>
+                                            </div>
+                                            <form action="<?= site_url('admin/festivos/eliminar') ?>" method="POST" onsubmit="return confirm('¿Eliminar este festivo?');">
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="fest_id" value="<?= (int) $f['id'] ?>">
+                                                <button type="submit" class="cfg-btn-ghost" style="height:34px;padding:0 12px;color:#dc2626;border-color:rgba(220,38,38,.4);">
+                                                    <span class="material-symbols-outlined" style="font-size:16px;">delete</span> Quitar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

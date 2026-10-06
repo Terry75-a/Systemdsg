@@ -12,8 +12,13 @@ class IncidentModel extends Model
 
     protected $allowedFields = [
         'admin_id', 'att_id', 'user_id', 'name', 'tipo', 'fecha',
-        'detalle', 'estado', 'justificacion',
+        'detalle', 'estado', 'justificacion', 'resuelta_por', 'resuelta_en',
     ];
+
+    public const ESTADOS = ['Pendiente', 'Revisión', 'Justificada', 'Rechazada', 'Desestimada'];
+
+    /** Estados que cierran la incidencia (guardan quién y cuándo). */
+    public const RESUELTOS = ['Justificada', 'Rechazada', 'Desestimada'];
 
     public function findByAttId(int $attId): ?array
     {
@@ -40,10 +45,24 @@ class IncidentModel extends Model
 
     public function countPending(?int $adminId = null): int
     {
-        $builder = $this->where('estado', 'Pendiente');
+        return $this->countByEstado('Pendiente', $adminId);
+    }
+
+    public function countByEstado(string $estado, ?int $adminId = null): int
+    {
+        $builder = $this->where('estado', $estado);
         if ($adminId !== null) {
             $builder->where('admin_id', $adminId);
         }
         return $builder->countAllResults();
+    }
+
+    public function getByEstado(string $estado, ?int $adminId = null): array
+    {
+        $builder = $this->where('estado', $estado);
+        if ($adminId !== null) {
+            $builder->where('admin_id', $adminId);
+        }
+        return $builder->orderBy('fecha', 'DESC')->findAll();
     }
 }

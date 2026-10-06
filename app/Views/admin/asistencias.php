@@ -15,7 +15,10 @@
         .att-wrap { display: flex; flex-direction: column; gap: 22px; }
 
         /* ── Filtros ─────────────────────────── */
-        .att-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; padding: 18px; }
+        .att-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px; padding: 16px 18px; }
+        .att-sep { width: 1px; height: 30px; background: var(--g-border); flex: none; }
+        .att-csv { display: flex; }
+        .att-go-ghost { background: transparent; color: var(--g-text); border: 1px solid var(--g-border); }
         .att-field { display: flex; flex-direction: column; gap: 6px; }
         .att-field > label { font-size: 0.78rem; font-weight: 500; color: var(--g-text-secondary); }
         .att-input {
@@ -30,7 +33,7 @@
             display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
         }
         .att-go:hover { filter: brightness(1.07); }
-        .att-chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 18px 18px; }
+        .att-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .att-chip {
             height: 30px; padding: 0 12px; border: 1px solid var(--g-border);
             border-radius: 999px; background: transparent; color: var(--g-text-secondary); cursor: pointer;
@@ -40,7 +43,7 @@
         .att-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
 
         /* ── Resumen ─────────────────────────── */
-        .att-sum { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .att-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
         .att-tile {
             background: var(--g-surface); border: 1px solid var(--g-border);
             border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px;
@@ -122,10 +125,23 @@
         @media (max-width: 760px) {
             .att-sum { grid-template-columns: repeat(2, 1fr); }
             .att-tile { padding: 14px; }
-            .att-filters { flex-direction: column; align-items: stretch; }
+            .att-bar { flex-direction: column; align-items: stretch; }
+            .att-sep { display: none; }
             .att-go { justify-content: center; }
         }
+        /* ── Paginación ─────────────────────── */
+        .att-pager { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding: 16px 18px 20px; }
+        .att-page {
+            min-width: 34px; height: 34px; padding: 0 9px; display: inline-flex; align-items: center; justify-content: center;
+            border: 1px solid var(--g-border); border-radius: 9px; background: transparent;
+            color: var(--g-text); font-size: .82rem; font-weight: 600; text-decoration: none; font-family: inherit;
+        }
+        .att-page:hover { background: var(--g-surface-variant); }
+        .att-page.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
+        .att-page-info { font-size: .78rem; color: var(--g-text-secondary); margin-left: 8px; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>
@@ -145,17 +161,14 @@
             <?php endif; ?>
 
             <?php
-                $totalRegistros = 0;
-                $totalPresentes = 0;
-                $totalTardanzas = 0;
-                $totalFaltas = 0;
-                foreach ($attendance as $reg) {
-                    $totalRegistros++;
-                    $st = $reg['status'] ?? '';
-                    if ($st === 'present') $totalPresentes++;
-                    elseif ($st === 'late') $totalTardanzas++;
-                    elseif ($st === 'absent') $totalFaltas++;
-                }
+                // Totales de TODO el rango filtrado (no de la página visible)
+                $r = $resumen ?? ['total' => 0, 'presentes' => 0, 'tardanzas' => 0, 'faltas' => 0, 'sin_salida' => 0];
+                $totalRegistros = $r['total'];
+                $totalPresentes = $r['presentes'];
+                $totalTardanzas = $r['tardanzas'];
+                $totalFaltas    = $r['faltas'];
+                $totalSinSalida = $r['sin_salida'];
+                $filtroEstado   = trim((string) ($estado ?? ''));
                 $hoy    = date('Y-m-d');
                 $semana = date('Y-m-d', strtotime('monday this week'));
                 $mesIni = date('Y-m-01');
@@ -165,27 +178,46 @@
             <div class="att-wrap">
                 <div class="dev-card">
                     <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">filter_alt</span> Filtros de fecha</h2>
+                        <h2><span class="material-symbols-outlined">filter_alt</span> Filtros</h2>
+                        <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" class="att-csv">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                            <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                            <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
+                            <button type="submit" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
+                                <span class="material-symbols-outlined">download</span> CSV
+                            </button>
+                        </form>
                     </div>
                     <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form">
-                        <div class="att-filters">
+                        <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
+                        <div class="att-bar">
                             <div class="att-field">
-                                <label for="fecha_inicio">Fecha inicio</label>
+                                <label for="fecha_inicio">Desde</label>
                                 <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
                             </div>
                             <div class="att-field">
-                                <label for="fecha_fin">Fecha fin</label>
+                                <label for="fecha_fin">Hasta</label>
                                 <input type="date" class="att-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
                             </div>
                             <button type="submit" class="att-go">
                                 <span class="material-symbols-outlined">search</span> Filtrar
                             </button>
-                        </div>
-                        <div class="att-chips">
-                            <button type="button" class="att-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
-                            <button type="button" class="att-chip <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Esta semana</button>
-                            <button type="button" class="att-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Este mes</button>
-                            <button type="button" class="att-chip <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
+                            <div class="att-sep"></div>
+                            <div class="att-chips">
+                                <button type="button" class="att-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
+                                <button type="button" class="att-chip <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Semana</button>
+                                <button type="button" class="att-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Mes</button>
+                                <button type="button" class="att-chip <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
+                            </div>
+                            <div class="att-sep"></div>
+                            <div class="att-chips">
+                                <button type="button" class="att-chip <?= $filtroEstado === '' ? 'on' : '' ?>" onclick="estado('')">Todos</button>
+                                <button type="button" class="att-chip <?= $filtroEstado === 'present' ? 'on' : '' ?>" onclick="estado('present')">Presentes</button>
+                                <button type="button" class="att-chip <?= $filtroEstado === 'late' ? 'on' : '' ?>" onclick="estado('late')">Tardanzas</button>
+                                <button type="button" class="att-chip <?= $filtroEstado === 'absent' ? 'on' : '' ?>" onclick="estado('absent')">Faltas</button>
+                                <button type="button" class="att-chip <?= $filtroEstado === 'no_exit' ? 'on' : '' ?>" onclick="estado('no_exit')">Sin salida</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -217,6 +249,13 @@
                         <div>
                             <div class="att-tile-num"><?= $totalFaltas ?></div>
                             <div class="att-tile-lbl">Faltas</div>
+                        </div>
+                    </div>
+                    <div class="att-tile">
+                        <div class="att-tile-ico plain"><span class="material-symbols-outlined">logout</span></div>
+                        <div>
+                            <div class="att-tile-num"><?= $totalSinSalida ?></div>
+                            <div class="att-tile-lbl">Sin salida</div>
                         </div>
                     </div>
                 </div>
@@ -253,11 +292,46 @@
                                     </div>
                                 </div>
                                 <span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span>
+                                <a class="att-edit" style="margin-right:8px;text-decoration:none;" href="<?= site_url('admin/auditoria/' . (int) $r['id']) ?>" title="Auditoría" onclick="event.stopPropagation();">
+                                    <span class="material-symbols-outlined">manage_search</span>
+                                </a>
                                 <button type="button" class="att-edit" onclick="event.stopPropagation(); openEdit(<?= (int) $r['id'] ?>)" title="Editar">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                             </div>
                             <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (($paginas ?? 1) > 1): ?>
+                        <div class="att-pager">
+                            <?php if ($pagina > 1): ?>
+                                <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $pagina - 1]))) ?>">&laquo;</a>
+                            <?php endif; ?>
+                            <?php
+                                $desde = max(1, $pagina - 3);
+                                $hastaPag = min($paginas, $pagina + 3);
+                                if ($desde > 1): ?>
+                                    <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => 1]))) ?>">1</a>
+                                    <?php if ($desde > 2): ?><span class="att-page-info">…</span><?php endif; ?>
+                                <?php endif;
+                                for ($n = $desde; $n <= $hastaPag; $n++): ?>
+                                    <?php if ($n === $pagina): ?>
+                                        <span class="att-page on"><?= $n ?></span>
+                                    <?php else: ?>
+                                        <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $n]))) ?>"><?= $n ?></a>
+                                    <?php endif; ?>
+                                <?php endfor;
+                                if ($hastaPag < $paginas): ?>
+                                    <?php if ($hastaPag < $paginas - 1): ?><span class="att-page-info">…</span><?php endif; ?>
+                                    <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $paginas]))) ?>"><?= $paginas ?></a>
+                                <?php endif; ?>
+                            <?php if ($pagina < $paginas): ?>
+                                <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $pagina + 1]))) ?>">&raquo;</a>
+                            <?php endif; ?>
+                            <span class="att-page-info">
+                                Página <?= $pagina ?> de <?= $paginas ?> · <?= number_format((int) ($totalFilas ?? 0)) ?> registros
+                            </span>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -304,6 +378,9 @@
             </div>
             <div class="detail-actions">
                 <button type="button" class="dev-btn dev-btn-text" onclick="closeDetail()">Cerrar</button>
+                <a class="dev-btn dev-btn-outline" id="attDetailAuditBtn" href="<?= site_url('admin/asistencias') ?>" style="text-decoration:none;">
+                    <span class="material-symbols-outlined">manage_search</span> Auditoría
+                </a>
                 <button type="button" class="dev-btn dev-btn-primary" id="attDetailEditBtn">
                     <span class="material-symbols-outlined">edit</span> Editar
                 </button>
@@ -345,6 +422,10 @@
                         <div class="dev-field">
                             <label for="modal_observacion">Observación</label>
                             <input type="text" name="observacion" id="modal_observacion" placeholder="Nota opcional...">
+                        </div>
+                        <div class="dev-field" style="grid-column:1 / -1;">
+                            <label for="modal_motivo">Motivo del cambio <span style="color:var(--g-text-secondary);font-weight:400;">(queda registrado en la auditoría)</span></label>
+                            <input type="text" name="motivo" id="modal_motivo" maxlength="255" placeholder="Ej. El empleado marcó tarde por motivo personal">
                         </div>
                     </div>
                 </div>
@@ -391,6 +472,7 @@
         st.textContent = m.label;
         st.style.color = m.color;
         document.getElementById('attDetailObs').textContent = r.observacion || 'Sin observación';
+        document.getElementById('attDetailAuditBtn').href = '<?= site_url('admin/auditoria/') ?>' + r.id;
         document.getElementById('attDetailEditBtn').onclick = function () { closeDetail(); openEdit(r.id); };
         document.getElementById('attDetailOverlay').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -408,6 +490,7 @@
         document.getElementById('modal_time_out').value = r.time_out || '';
         document.getElementById('modal_status').value = r.status || 'absent';
         document.getElementById('modal_observacion').value = r.observacion || '';
+        document.getElementById('modal_motivo').value = '';
         document.getElementById('editModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -417,6 +500,11 @@
     }
     document.getElementById('editModal').addEventListener('click', function (e) { if (e.target === this) closeEdit(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeEdit(); closeDetail(); } });
+
+    function estado(valor) {
+        document.getElementById('estado').value = valor;
+        document.getElementById('filtro-form').submit();
+    }
 
     function rango(tipo) {
         var form = document.getElementById('filtro-form');

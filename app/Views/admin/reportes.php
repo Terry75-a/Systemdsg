@@ -40,7 +40,7 @@
         .rp-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
 
         /* ── Resumen ─────────────────────────── */
-        .rp-sum { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .rp-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
         .rp-tile {
             background: var(--g-surface); border: 1px solid var(--g-border);
             border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px;
@@ -51,6 +51,7 @@
         .rp-tile-ico.green  { background: rgba(34,197,94,.14);  color: #16a34a; }
         .rp-tile-ico.amber  { background: rgba(245,158,11,.16); color: #d97706; }
         .rp-tile-ico.gray   { background: rgba(148,163,184,.20); color: #64748b; }
+        .rp-tile-ico.blue   { background: rgba(59,130,246,.16);  color: #2563eb; }
         .rp-tile-num { font-size: 1.5rem; font-weight: 700; line-height: 1.1; color: var(--g-text); }
         .rp-tile-lbl { font-size: 0.78rem; color: var(--g-text-secondary); margin-top: 2px; }
 
@@ -62,11 +63,13 @@
         .rp-dot.green { background: #22c55e; }
         .rp-dot.amber { background: #f59e0b; }
         .rp-dot.gray  { background: #94a3b8; }
+        .rp-dot.blue  { background: #3b82f6; }
         .rp-track { height: 10px; background: var(--g-surface-variant); border-radius: 999px; overflow: hidden; }
         .rp-track-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
         .rp-track-fill.green { background: #22c55e; }
         .rp-track-fill.amber { background: #f59e0b; }
         .rp-track-fill.gray  { background: #94a3b8; }
+        .rp-track-fill.blue  { background: #3b82f6; }
         .rp-bar-count { text-align: right; font-size: 0.85rem; font-weight: 600; color: var(--g-text); }
 
         /* ── Detalle ─────────────────────────── */
@@ -103,6 +106,8 @@
             .rp-go { justify-content: center; }
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'reportes']) ?>
@@ -124,19 +129,18 @@
             <div class="rp-wrap">
 
             <?php
-                $totalRegistros = count($attendance);
-                $totalPresentes = 0;
-                $totalTardanzas = 0;
-                $totalFaltas = 0;
-                foreach ($attendance as $r) {
-                    $st = $r['status'] ?? '';
-                    if ($st === 'present') $totalPresentes++;
-                    elseif ($st === 'late') $totalTardanzas++;
-                    elseif ($st === 'absent') $totalFaltas++;
-                }
-                $pctPresentes = $totalRegistros > 0 ? round(($totalPresentes / $totalRegistros) * 100) : 0;
-                $pctTardanzas = $totalRegistros > 0 ? round(($totalTardanzas / $totalRegistros) * 100) : 0;
-                $pctFaltas = $totalRegistros > 0 ? round(($totalFaltas / $totalRegistros) * 100) : 0;
+                // Totales de TODO el rango filtrado (no de la página visible)
+                $r = $resumen ?? ['total' => 0, 'presentes' => 0, 'tardanzas' => 0, 'faltas' => 0, 'sin_salida' => 0];
+                $totalRegistros = $r['total'];
+                $totalPresentes = $r['presentes'];
+                $totalTardanzas = $r['tardanzas'];
+                $totalFaltas    = $r['faltas'];
+                $totalSinSalida = $r['sin_salida'];
+                $pct = static fn (int $n): int => $totalRegistros > 0 ? (int) round(($n / $totalRegistros) * 100) : 0;
+                $pctPresentes = $pct($totalPresentes);
+                $pctTardanzas = $pct($totalTardanzas);
+                $pctFaltas    = $pct($totalFaltas);
+                $pctSinSalida = $pct($totalSinSalida);
 
                 $hoy     = date('Y-m-d');
                 $semana  = date('Y-m-d', strtotime('monday this week'));
@@ -200,6 +204,13 @@
                         <div class="rp-tile-lbl">Faltas</div>
                     </div>
                 </div>
+                <div class="rp-tile">
+                    <div class="rp-tile-ico blue"><span class="material-symbols-outlined">logout</span></div>
+                    <div>
+                        <div class="rp-tile-num"><?= $totalSinSalida ?></div>
+                        <div class="rp-tile-lbl">Sin salida</div>
+                    </div>
+                </div>
             </div>
 
             <div class="dev-card">
@@ -227,6 +238,13 @@
                             <div class="rp-track-fill gray" style="width: <?= $pctFaltas ?>%;"></div>
                         </div>
                         <span class="rp-bar-count"><?= $totalFaltas ?><small> · <?= $pctFaltas ?>%</small></span>
+                    </div>
+                    <div class="rp-bar-row">
+                        <span class="rp-bar-label"><i class="rp-dot blue"></i> Sin salida</span>
+                        <div class="rp-track">
+                            <div class="rp-track-fill blue" style="width: <?= $pctSinSalida ?>%;"></div>
+                        </div>
+                        <span class="rp-bar-count"><?= $totalSinSalida ?><small> · <?= $pctSinSalida ?>%</small></span>
                     </div>
                 </div>
             </div>

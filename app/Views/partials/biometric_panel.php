@@ -206,6 +206,8 @@
         <input type="hidden" name="bio_metodo" id="bioCheckMetodo" value="">
         <input type="hidden" name="evidencia" id="bioCheckEvi" value="">
         <input type="hidden" name="justificacion" id="bioCheckJustVal" value="">
+        <input type="hidden" name="lat" id="bioLat" value="">
+        <input type="hidden" name="lng" id="bioLng" value="">
     </form>
 </div>
 
@@ -222,6 +224,23 @@
     function csrfToken() {
         var el = document.querySelector('input[name=csrf_test_name]');
         return el ? el.value : '<?= session('csrf_hash') ?>';
+    }
+    // Ubicación al marcar: best effort (si el usuario niega o tarda, se omite)
+    function bioGeo() {
+        return new Promise(function (resolve) {
+            if (!navigator.geolocation) return resolve(null);
+            var listo = false;
+            var reloj = setTimeout(function () { if (!listo) { listo = true; resolve(null); } }, 4000);
+            navigator.geolocation.getCurrentPosition(function (p) {
+                if (listo) return;
+                listo = true; clearTimeout(reloj);
+                resolve({ lat: p.coords.latitude, lng: p.coords.longitude });
+            }, function () {
+                if (listo) return;
+                listo = true; clearTimeout(reloj);
+                resolve(null);
+            }, { enableHighAccuracy: false, timeout: 4000, maximumAge: 60000 });
+        });
     }
     function fetchFreshCsrf() {
         return fetch('<?= site_url('mi-panel/bio-session') ?>', { credentials: 'same-origin' })
@@ -589,7 +608,13 @@
         }
         $('bioCheckEvi').value = B.selfie;
         $('bioCheckMetodo').value = B.method;
-        fetchFreshCsrf().then(function (tok) {
+        bioGeo().then(function (geo) {
+            if (geo) {
+                $('bioLat').value = geo.lat;
+                $('bioLng').value = geo.lng;
+            }
+            return fetchFreshCsrf();
+        }).then(function (tok) {
             var inp = $('bioCheckForm').querySelector('input[name=csrf_test_name]');
             if (inp) inp.value = tok;
             $('bioCheckForm').submit();

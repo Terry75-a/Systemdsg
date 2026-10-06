@@ -1,132 +1,16 @@
 <?php
 namespace App\Controllers;
 
-use App\Models\UserModel;
-use App\Models\CodeModel;
-use App\Models\AttendanceModel;
-use App\Models\ScheduleModel;
-use App\Models\IncidentModel;
-use App\Models\ConfigModel;
+use App\Controllers\Admin\AdminBaseController;
 
-class AdminController extends BaseController
+/**
+ * Panel /admin — personal, horarios y códigos.
+ *
+ * La asistencia, su auditoría, la configuración y las incidencias
+ * viven en App\Controllers\Admin\* (refactor #14).
+ */
+class AdminController extends AdminBaseController
 {
-    protected UserModel $userModel;
-    protected CodeModel $codeModel;
-    protected AttendanceModel $attendanceModel;
-    protected ScheduleModel $scheduleModel;
-    protected IncidentModel $incidentModel;
-    protected ConfigModel $configModel;
-
-    public function __construct()
-    {
-        $this->userModel       = new UserModel();
-        $this->codeModel       = new CodeModel();
-        $this->attendanceModel = new AttendanceModel();
-        $this->scheduleModel   = new ScheduleModel();
-        $this->incidentModel   = new IncidentModel();
-        $this->configModel     = new ConfigModel();
-    }
-
-    // Solo un Admin entra aquí (cada uno ve únicamente lo suyo)
-    private function guard()
-    {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
-        }
-        $role = session()->get('user_role') ?? '';
-        if ($role === 'Dev') {
-            return redirect()->to(base_url('dios'));
-        }
-        if ($role !== 'Admin') {
-            return redirect()->to(base_url('mi-panel'));
-        }
-        return null;
-    }
-
-    private function adminId(): int
-    {
-        return (int) session()->get('user_id');
-    }
-
-    private function admin(): array
-    {
-        return $this->userModel->find($this->adminId()) ?? [];
-    }
-
-    private function adminCode(): string
-    {
-        $a = $this->admin();
-        return (string) ($a['admin_code'] ?? 'ADMIN-???');
-    }
-
-    private function adminEmpresa(): string
-    {
-        $a = $this->admin();
-        return (string) ($a['empresa'] ?? '');
-    }
-
-    private function getPersonal(): array
-    {
-        $adminId = $this->adminId();
-        $rows = $this->userModel->getPersonalByAdmin($adminId);
-        return array_map(fn($u) => [
-            'id'            => $u['id'],
-            'name'          => $u['name'] ?? '',
-            'dni'           => $u['dni'] ?? '',
-            'email'         => $u['email'] ?? '',
-            'area'          => $u['area'] ?? '',
-            'cargo'         => $u['cargo'] ?? '',
-            'institucion'   => $u['institucion'] ?? '',
-            'semestre'      => $u['semestre'] ?? '',
-            'huella_registrada' => (int) ($u['huella_registrada'] ?? 0),
-            'rostro_registrado' => (int) ($u['rostro_registrado'] ?? 0),
-            'rostro_path'       => $u['rostro_path'] ?? '',
-            'contract_type'     => $u['contract_type'] ?? 'Indefinido',
-            'contract_duration' => $u['contract_duration'] ?? null,
-            'contract_start'    => $u['contract_start'] ?? null,
-            'contract_end'      => $u['contract_end'] ?? null,
-            'firma_tipo'        => $u['firma_tipo'] ?? '',
-            'firma_datos'       => $u['firma_datos'] ?? '',
-            'role'          => $u['role'] ?? '',
-            'estado'        => $u['estado'] ?? 'Activo',
-            'personal_code' => $u['personal_code'] ?? '',
-            'schedule_id'   => (int) ($u['schedule_id'] ?? 0),
-            'created'       => $u['created'] ?? '',
-        ], $rows);
-    }
-
-    private function viewData(array $extra = []): array
-    {
-        $adminId      = $this->adminId();
-        $personal     = $this->getPersonal();
-        $empleados    = array_values(array_filter($personal, fn($e) => $e['role'] === 'Empleado'));
-        $practicantes = array_values(array_filter($personal, fn($e) => $e['role'] === 'Practicante'));
-        $attendance   = $this->attendanceModel->getAll($adminId);
-        $stats        = $this->userModel->getTeamStats($adminId, $empleados, $practicantes);
-
-        return array_merge([
-            'empleados'       => $personal,
-            'personal'        => $personal,
-            'empleadosOnly'   => $empleados,
-            'practicantes'    => $practicantes,
-            'attendance'      => $attendance,
-            'schedules'       => $this->scheduleModel->getAll($adminId),
-            'incidents'       => $this->incidentModel->getAll($adminId),
-            'codes'           => $this->codeModel->getAll($adminId),
-            'totalEmpleados'  => $stats['totalPersonal'],
-            'empleadosCount'  => $stats['empleadosCount'],
-            'practicantesCount' => $stats['practicantesCount'],
-            'hoyPresentes'    => $this->attendanceModel->countTodayByStatus('present', $adminId),
-            'hoyTardanzas'    => $this->attendanceModel->countTodayByStatus('late', $adminId),
-            'hoyFaltas'       => $stats['activosCount'] - $this->attendanceModel->countTodayTotal($adminId),
-            'adminCode'       => $this->adminCode(),
-            'adminEmpresa'    => $this->adminEmpresa(),
-        ], $extra);
-    }
-
-    // ════════════════════════════════════════
-    // PAGES (cada admin ve solo lo suyo)
-    // ════════════════════════════════════════
     public function dashboard()
     {
         if ($redirect = $this->guard()) return $redirect;
@@ -137,39 +21,6 @@ class AdminController extends BaseController
     {
         if ($redirect = $this->guard()) return $redirect;
         return view('admin/personal', $this->viewData(['activePage' => 'personal']));
-    }
-
-    public function asistencias()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $adminId = $this->adminId();
-        $get     = $this->request->getGet();
-        $fechaInicio = null;
-        $fechaFin    = null;
-
-        if (!empty($get['todo'])) {
-            $attendance = $this->attendanceModel->getAll($adminId);
-        } else {
-            $fi = trim((string) ($get['fecha_inicio'] ?? ''));
-            $ff = trim((string) ($get['fecha_fin'] ?? ''));
-            if ($fi === '' || $ff === '') {
-                $fi = $ff = date('Y-m-d');
-            } elseif ($fi > $ff) {
-                [$fi, $ff] = [$ff, $fi];
-            }
-            $fechaInicio = $fi;
-            $fechaFin    = $ff;
-            $attendance  = ($fi === $ff)
-                ? $this->attendanceModel->getByDate($fi, $adminId)
-                : $this->attendanceModel->getByRange($fi, $ff, $adminId);
-        }
-
-        return view('admin/asistencias', $this->viewData([
-            'activePage'   => 'asistencias',
-            'attendance'   => $attendance,
-            'fecha_inicio' => $fechaInicio,
-            'fecha_fin'    => $fechaFin,
-        ]));
     }
 
     public function horarios()
@@ -198,55 +49,6 @@ class AdminController extends BaseController
         ]));
     }
 
-    public function incidencias()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        return view('admin/incidencias', $this->viewData(['activePage' => 'incidencias']));
-    }
-
-    public function reportes()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $adminId = $this->adminId();
-        $get     = $this->request->getGet();
-
-        $fechaInicio = null;
-        $fechaFin    = null;
-
-        if (!empty($get['todo'])) {
-            $attendance = $this->attendanceModel->getAll($adminId);
-        } else {
-            $fi = trim((string) ($get['fecha_inicio'] ?? ''));
-            $ff = trim((string) ($get['fecha_fin'] ?? ''));
-            if ($fi === '' || $ff === '') {
-                $fi = $ff = date('Y-m-d');
-            } elseif ($fi > $ff) {
-                [$fi, $ff] = [$ff, $fi];
-            }
-            $fechaInicio = $fi;
-            $fechaFin    = $ff;
-            $attendance  = ($fi === $ff)
-                ? $this->attendanceModel->getByDate($fi, $adminId)
-                : $this->attendanceModel->getByRange($fi, $ff, $adminId);
-        }
-
-        return view('admin/reportes', $this->viewData([
-            'activePage'   => 'reportes',
-            'attendance'   => $attendance,
-            'fecha_inicio' => $fechaInicio,
-            'fecha_fin'    => $fechaFin,
-        ]));
-    }
-
-    public function configuracion()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        return view('admin/configuracion', $this->viewData([
-            'activePage' => 'configuracion',
-            'config'     => $this->configModel->getConfig($this->adminId()),
-        ]));
-    }
-
     // ════════════════════════════════════════
     // PERSONAL — crear (código EMPL-XXX / PRCT-XXX por admin)
     // ════════════════════════════════════════
@@ -256,27 +58,28 @@ class AdminController extends BaseController
         $s = session();
         $adminId = $this->adminId();
 
-        $name     = trim($this->request->getPost('emp_name'));
-        $dni      = trim($this->request->getPost('emp_dni'));
+        if ($redirect = $this->validar([
+            'emp_name'           => 'required|trim|min_length[3]|max_length[100]',
+            'emp_dni'            => 'required|regex_match[/^[0-9]{8}$/]',
+            'emp_role'           => 'permit_empty|in_list[Empleado,Practicante]',
+            'emp_semestre'       => 'permit_empty|max_length[50]',
+            'emp_institucion'    => 'permit_empty|max_length[150]',
+            'emp_contract_start' => 'permit_empty|valid_date',
+            'emp_contract_end'   => 'permit_empty|valid_date',
+        ], 'admin/personal')) {
+            return $redirect;
+        }
+
+        $name     = trim((string) $this->request->getPost('emp_name'));
+        $dni      = trim((string) $this->request->getPost('emp_dni'));
         $role     = $this->request->getPost('emp_role') ?: 'Empleado';
-        $area     = trim($this->request->getPost('emp_area') ?? '');
-        $cargo    = trim($this->request->getPost('emp_cargo') ?? '');
+        $area     = trim((string) ($this->request->getPost('emp_area') ?? ''));
+        $cargo    = trim((string) ($this->request->getPost('emp_cargo') ?? ''));
         $estado   = $this->request->getPost('emp_estado') ?: 'Activo';
-        $institucion = trim($this->request->getPost('emp_institucion') ?? '');
-        $semestre    = trim($this->request->getPost('emp_semestre') ?? '');
+        $institucion = trim((string) ($this->request->getPost('emp_institucion') ?? ''));
+        $semestre    = trim((string) ($this->request->getPost('emp_semestre') ?? ''));
 
         if (!in_array($role, ['Empleado', 'Practicante'])) $role = 'Empleado';
-
-        if (empty($name) || empty($dni)) {
-            $s->setFlashdata('msg', 'Nombre y DNI son obligatorios');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/personal'));
-        }
-        if (strlen($dni) !== 8 || !ctype_digit($dni)) {
-            $s->setFlashdata('msg', 'El DNI debe tener 8 digitos');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/personal'));
-        }
 
         if ($this->userModel->findByDni($dni)) {
             $s->setFlashdata('msg', 'Este DNI ya esta registrado');
@@ -311,7 +114,7 @@ class AdminController extends BaseController
             'name'          => $name,
             'email'         => $email,
             'dni'           => $dni,
-            'password'      => $password,
+            'password'      => password_hash($password, PASSWORD_DEFAULT),
             'role'          => $role,
             'area'          => $area,
             'cargo'         => $cargo,
@@ -337,80 +140,6 @@ class AdminController extends BaseController
         return redirect()->to(base_url('admin/personal'));
     }
 
-    // Datos de contrato (tipo, duracion y fechas) desde el POST
-    private function contractFields(): array
-    {
-        $type = trim($this->request->getPost('emp_contract_type') ?? '') ?: 'Indefinido';
-        if (!in_array($type, ['Indefinido', 'Meses', 'Años'], true)) {
-            $type = 'Indefinido';
-        }
-        $dur   = (int) ($this->request->getPost('emp_contract_duration') ?? 0);
-        $start = trim($this->request->getPost('emp_contract_start') ?? '');
-        $end   = trim($this->request->getPost('emp_contract_end') ?? '');
-
-        if ($type === 'Indefinido') {
-            $dur = 0;
-            $end = '';
-        } elseif ($dur < 1) {
-            $dur = 1;
-        }
-
-        if ($type !== 'Indefinido' && $start !== '' && $end === '') {
-            $unit = $type === 'Meses' ? 'month' : 'year';
-            $end  = date('Y-m-d', strtotime("+{$dur} {$unit}", strtotime($start)));
-        }
-
-        return [
-            'contract_type'     => $type,
-            'contract_duration' => $dur > 0 ? $dur : null,
-            'contract_start'    => $start !== '' ? $start : null,
-            'contract_end'      => $end !== '' ? $end : null,
-        ];
-    }
-
-    // Firma opcional: por nombre/generada o digital (canvas)
-    private function firmaFields(string $name): array
-    {
-        $tipo = trim($this->request->getPost('emp_firma_tipo') ?? '');
-        if (!in_array($tipo, ['', 'nombre', 'firma'], true)) {
-            $tipo = '';
-        }
-        $datos = '';
-        if ($tipo === 'nombre') {
-            $datos = $name;
-        } elseif ($tipo === 'firma') {
-            $datos = trim($this->request->getPost('emp_firma_datos') ?? '');
-            if (!str_starts_with($datos, 'data:image/png;base64,') || strlen($datos) > 200000) {
-                $datos = '';
-                $tipo  = '';
-            }
-        }
-        return ['firma_tipo' => $tipo, 'firma_datos' => $datos];
-    }
-
-    private function generateSecurePassword(): string
-    {
-        $upper   = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-        $lower   = 'abcdefghjkmnpqrstuvwxyz';
-        $digits  = '23456789';
-        $special = '@#$%';
-
-        $pw  = $upper[random_int(0, strlen($upper) - 1)];
-        $pw .= $upper[random_int(0, strlen($upper) - 1)];
-        $pw .= $lower[random_int(0, strlen($lower) - 1)];
-        $pw .= $lower[random_int(0, strlen($lower) - 1)];
-        $pw .= $digits[random_int(0, strlen($digits) - 1)];
-        $pw .= $digits[random_int(0, strlen($digits) - 1)];
-        $pw .= $special[random_int(0, strlen($special) - 1)];
-
-        $all = $upper . $lower . $digits . $special;
-        for ($i = strlen($pw); $i < 12; $i++) {
-            $pw .= $all[random_int(0, strlen($all) - 1)];
-        }
-
-        return str_shuffle($pw);
-    }
-
     // ════════════════════════════════════════
     // PERSONAL — actualizar (solo de mi equipo)
     // ════════════════════════════════════════
@@ -420,25 +149,27 @@ class AdminController extends BaseController
         $s = session();
         $adminId = $this->adminId();
 
+        if ($redirect = $this->validar([
+            'user_id'    => 'required|integer|greater_than[0]',
+            'emp_name'   => 'required|trim|min_length[3]|max_length[100]',
+            'emp_dni'    => 'required|regex_match[/^[0-9]{8}$/]',
+            'emp_email'  => 'permit_empty|max_length[150]',
+            'emp_estado' => 'permit_empty|in_list[Activo,Inactivo,Despedido,Retirado]',
+            'emp_password' => 'permit_empty|min_length[6]|max_length[72]',
+            'emp_contract_start' => 'permit_empty|valid_date',
+            'emp_contract_end'   => 'permit_empty|valid_date',
+        ], 'admin/personal')) {
+            return $redirect;
+        }
+
         $userId   = (int) $this->request->getPost('user_id');
-        $name     = trim($this->request->getPost('emp_name'));
-        $dni      = trim($this->request->getPost('emp_dni'));
-        $email    = trim($this->request->getPost('emp_email') ?? '');
-        $area     = trim($this->request->getPost('emp_area') ?? '');
-        $cargo    = trim($this->request->getPost('emp_cargo') ?? '');
+        $name     = trim((string) $this->request->getPost('emp_name'));
+        $dni      = trim((string) $this->request->getPost('emp_dni'));
+        $email    = trim((string) ($this->request->getPost('emp_email') ?? ''));
+        $area     = trim((string) ($this->request->getPost('emp_area') ?? ''));
+        $cargo    = trim((string) ($this->request->getPost('emp_cargo') ?? ''));
         $password = $this->request->getPost('emp_password');
         $estado   = $this->request->getPost('emp_estado') ?? 'Activo';
-
-        if (empty($name) || empty($dni)) {
-            $s->setFlashdata('msg', 'Nombre y DNI son obligatorios');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/personal'));
-        }
-        if (strlen($dni) !== 8 || !ctype_digit($dni)) {
-            $s->setFlashdata('msg', 'El DNI debe tener 8 digitos');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/personal'));
-        }
 
         $member = $this->userModel->find($userId);
         if (!$member || (int) ($member['admin_id'] ?? -1) !== $adminId) {
@@ -461,7 +192,7 @@ class AdminController extends BaseController
         }
         $data = array_merge($data, $this->contractFields(), $this->firmaFields($name));
         if (!empty($password) && strlen($password) >= 6) {
-            $data['password'] = $password;
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
         $this->userModel->update($userId, $data);
 
@@ -488,7 +219,7 @@ class AdminController extends BaseController
         }
 
         $password = $this->generateSecurePassword();
-        $this->userModel->update($userId, ['password' => $password]);
+        $this->userModel->update($userId, ['password' => password_hash($password, PASSWORD_DEFAULT)]);
 
         $s->setFlashdata('emp_reset', [
             'name'         => $member['name'],
@@ -598,13 +329,16 @@ class AdminController extends BaseController
     {
         if ($redirect = $this->guard()) return $redirect;
         $s = session();
-        $name = trim($this->request->getPost('name'));
-        $dni  = trim($this->request->getPost('dni'));
-        if (empty($name) || empty($dni)) {
-            $s->setFlashdata('msg', 'Nombre y DNI son obligatorios');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/personal'));
+
+        if ($redirect = $this->validar([
+            'name' => 'required|trim|min_length[3]|max_length[100]',
+            'dni'  => 'required|regex_match[/^[0-9]{8}$/]',
+        ], 'admin/personal')) {
+            return $redirect;
         }
+
+        $name = trim((string) $this->request->getPost('name'));
+        $dni  = trim((string) $this->request->getPost('dni'));
         $code = strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
         $this->codeModel->insert([
             'code'     => $code,
@@ -649,18 +383,25 @@ class AdminController extends BaseController
         if ($redirect = $this->guard()) return $redirect;
         $s = session();
         $adminId = $this->adminId();
-        $nombre     = trim($this->request->getPost('sch_nombre'));
+
+        if ($redirect = $this->validar([
+            'sch_nombre'        => 'required|trim|min_length[3]|max_length[100]',
+            'sch_tipo'          => 'permit_empty|in_list[Empleado,Practicante]',
+            'sch_dias'          => 'permit_empty|max_length[100]',
+            'sch_hora_entrada'  => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
+            'sch_hora_salida'   => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
+            'sch_tolerancia'    => 'permit_empty|integer|between[0,120]',
+        ], 'admin/horarios')) {
+            return $redirect;
+        }
+
+        $nombre     = trim((string) $this->request->getPost('sch_nombre'));
         $tipo       = $this->request->getPost('sch_tipo') ?? 'Empleado';
-        $dias       = trim($this->request->getPost('sch_dias') ?: 'Lun - Vie');
+        $dias       = trim((string) ($this->request->getPost('sch_dias') ?: 'Lun - Vie'));
         $entrada    = $this->request->getPost('sch_hora_entrada') ?: '08:00';
         $salida     = $this->request->getPost('sch_hora_salida') ?: '17:00';
         $tolerancia = (int) ($this->request->getPost('sch_tolerancia') ?: 10);
         if (!in_array($tipo, ['Practicante', 'Empleado'], true)) $tipo = 'Empleado';
-        if (empty($nombre)) {
-            $s->setFlashdata('msg', 'El nombre es obligatorio');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/horarios'));
-        }
         $this->scheduleModel->insert([
             'admin_id'      => $adminId,
             'nombre'        => $nombre,
@@ -787,163 +528,4 @@ class AdminController extends BaseController
         return redirect()->to(base_url('admin/horarios'));
     }
 
-    // ════════════════════════════════════════
-    // ASISTENCIA (solo las de mi admin)
-    // ════════════════════════════════════════
-    public function updateAttendance()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $s = session();
-        $adminId = $this->adminId();
-        $attId   = (int) $this->request->getPost('att_id');
-
-        $att = $this->attendanceModel->find($attId);
-        if (!$att || (int) ($att['admin_id'] ?? -1) !== $adminId) {
-            $s->setFlashdata('msg', 'Este registro no pertenece a tu admin');
-            $s->setFlashdata('tipo', 'danger');
-            return redirect()->to(base_url('admin/asistencias'));
-        }
-
-        $timeIn  = $this->request->getPost('time_in');
-        $timeOut = $this->request->getPost('time_out');
-        $status  = $this->request->getPost('status');
-        $obs     = trim($this->request->getPost('observacion') ?? '');
-
-        $data = [
-            'status'      => $status,
-            'observacion' => $obs,
-        ];
-        if ($timeIn)  $data['time_in']  = $timeIn;
-        if ($timeOut) $data['time_out'] = $timeOut;
-        $this->attendanceModel->update($attId, $data);
-
-        if (in_array($status, ['late', 'absent', 'no_exit'])) {
-            if (!$this->incidentModel->findByAttId($attId)) {
-                $tipoMap = ['late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin marcación'];
-                $this->incidentModel->insert([
-                    'admin_id'      => $adminId,
-                    'att_id'        => $attId,
-                    'user_id'       => $att['user_id'] ?? 0,
-                    'name'          => $att['name'] ?? '',
-                    'tipo'          => $tipoMap[$status] ?? 'Otro',
-                    'detalle'       => $obs,
-                    'estado'        => 'Pendiente',
-                    'justificacion' => '',
-                ]);
-            }
-        }
-
-        $s->setFlashdata('msg', 'Asistencia actualizada');
-        $s->setFlashdata('tipo', 'success');
-        return redirect()->to(base_url('admin/asistencias'));
-    }
-
-    // ════════════════════════════════════════
-    // INCIDENCIAS (solo las de mi admin)
-    // ════════════════════════════════════════
-    public function createIncident()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $s = session();
-        $adminId = $this->adminId();
-        $userId  = (int) $this->request->getPost('inc_user');
-        $tipo    = $this->request->getPost('inc_tipo') ?? 'Otro';
-        $fecha   = trim((string) ($this->request->getPost('inc_fecha') ?? ''));
-        $detalle = trim($this->request->getPost('inc_detalle') ?? '');
-
-        $u = $this->userModel->find($userId);
-        if (!$u || (int) ($u['admin_id'] ?? -1) !== $adminId) {
-            $s->setFlashdata('msg', 'Elige una persona de tu personal');
-            $s->setFlashdata('tipo', 'danger');
-            return redirect()->to(base_url('admin/incidencias'));
-        }
-        $tipos = ['Tardanza', 'Falta', 'Salida anticipada', 'Otro'];
-        if (!in_array($tipo, $tipos, true)) $tipo = 'Otro';
-        if ($detalle === '') {
-            $s->setFlashdata('msg', 'Describe el detalle de la incidencia');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/incidencias'));
-        }
-
-        $this->incidentModel->insert([
-            'admin_id'      => $adminId,
-            'att_id'        => null,
-            'user_id'       => $userId,
-            'name'          => $u['name'] ?? '',
-            'tipo'          => $tipo,
-            'fecha'         => $fecha !== '' ? date('Y-m-d H:i:s', strtotime($fecha)) : date('Y-m-d H:i:s'),
-            'detalle'       => $detalle,
-            'estado'        => 'Pendiente',
-            'justificacion' => '',
-        ]);
-
-        $s->setFlashdata('msg', 'Incidencia registrada y asignada a ' . ($u['name'] ?? 'la persona'));
-        $s->setFlashdata('tipo', 'success');
-        return redirect()->to(base_url('admin/incidencias'));
-    }
-
-    public function updateIncident()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $s = session();
-        $adminId = $this->adminId();
-        $incId  = (int) $this->request->getPost('inc_id');
-
-        $inc = $this->incidentModel->find($incId);
-        if (!$inc || (int) ($inc['admin_id'] ?? -1) !== $adminId) {
-            $s->setFlashdata('msg', 'Este no pertenece a tu admin');
-            $s->setFlashdata('tipo', 'danger');
-            return redirect()->to(base_url('admin/incidencias'));
-        }
-
-        $estado = $this->request->getPost('inc_estado');
-        $just   = trim($this->request->getPost('inc_justificacion') ?? '');
-        $this->incidentModel->update($incId, [
-            'estado'        => $estado,
-            'justificacion' => $just,
-        ]);
-        $s->setFlashdata('msg', 'Incidencia actualizada');
-        $s->setFlashdata('tipo', 'success');
-        return redirect()->to(base_url('admin/incidencias'));
-    }
-
-    // ════════════════════════════════════════
-    // CONFIGURACION (por admin)
-    // ════════════════════════════════════════
-    public function saveConfig()
-    {
-        if ($redirect = $this->guard()) return $redirect;
-        $s = session();
-        $adminId = $this->adminId();
-        $post = $this->request->getPost();
-
-        $data = [];
-        $map = [
-            'cfg_empresa'         => ['empresa',            fn ($v) => trim($v) ?: 'DSG PERU TECHNOLOGY SAC'],
-            'cfg_ruc'             => ['ruc',                fn ($v) => trim($v)],
-            'cfg_direccion'       => ['direccion',          fn ($v) => trim($v)],
-            'cfg_email'           => ['email',              fn ($v) => trim($v)],
-            'cfg_telefono'        => ['telefono',           fn ($v) => trim($v)],
-            'cfg_horario_default' => ['horario_default',    fn ($v) => trim($v) ?: '08:00-17:00'],
-            'cfg_tolerancia'      => ['tolerancia_default', fn ($v) => (int) $v],
-            'cfg_notif_email'     => ['notif_email',        fn ($v) => (bool) $v],
-            'cfg_notif_email_dest' => ['notif_email_dest',  fn ($v) => trim($v)],
-        ];
-        foreach ($map as $field => [$column, $process]) {
-            if (array_key_exists($field, $post)) {
-                $data[$column] = $process($post[$field]);
-            }
-        }
-
-        if (empty($data)) {
-            $s->setFlashdata('msg', 'No hay cambios para guardar');
-            $s->setFlashdata('tipo', 'warning');
-            return redirect()->to(base_url('admin/configuracion'));
-        }
-
-        $this->configModel->saveConfig($data, $adminId);
-        $s->setFlashdata('msg', 'Configuración guardada');
-        $s->setFlashdata('tipo', 'success');
-        return redirect()->to(base_url('admin/configuracion'));
-    }
 }

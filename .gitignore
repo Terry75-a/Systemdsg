@@ -72,6 +72,12 @@ writable/debugbar/*
 
 php_errors.log
 
+# Log del servidor de desarrollo (php spark serve)
+server.log
+
+# Lockfile vacío (no hay package.json)
+package-lock.json
+
 #-------------------------
 # User Guide Temp Files
 #-------------------------

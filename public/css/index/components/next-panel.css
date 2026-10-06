@@ -1,0 +1,1339 @@
+/* ══════════════════════════════════════════════════════════════
+   NEXT-PANEL · capa de rediseño estilo Next.js / Vercel
+   Paneles Dev (/dios) y Admin (/admin)
+
+   · Se carga DESPUÉS de educonecta.css → gana en empates de
+     especificidad y anula su píldora 999px con la misma técnica
+   · Radio global 8px · base tipográfica 13px
+   · Sidebar tipo Vercel: secciones, items de 32px, activo neutro
+   · Topbar sticky con blur · modales con spring
+   · Dark mode monocromo (sustituye el verde Material heredado)
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --np-border-strong: #d4d4d8;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1 · ESCALA TIPOGRÁFICA — compacta (base 14 → 13)
+   Prefijo body:has(.dev-main) para vencer a los <style> inline
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) {
+  font-size: 13px;
+  line-height: 1.45;
+}
+body:has(.dev-main) .dev-topbar h1 {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+body:has(.dev-main) .dev-topbar p {
+  font-size: 12.5px;
+}
+body:has(.dev-main) .dev-stat-label,
+body:has(.dev-main) .stat-label {
+  font-size: 11.5px;
+}
+body:has(.dev-main) .dev-stat-value,
+body:has(.dev-main) .stat-value {
+  font-size: 22px;
+}
+body:has(.dev-main) .dev-card-head h2 {
+  font-size: 13.5px;
+}
+body:has(.dev-main) .dev-alert {
+  font-size: 12.5px;
+}
+body:has(.dev-main) .dev-empty {
+  font-size: 13px;
+}
+body:has(.dev-main) .dev-badge {
+  font-size: 11px;
+}
+body:has(.dev-main) .dev-status {
+  font-size: 12px;
+}
+body:has(.dev-main) .dev-field label,
+body:has(.dev-main) .field label {
+  font-size: 11px;
+}
+body:has(.dev-main) .dev-field input,
+body:has(.dev-main) .dev-field select,
+body:has(.dev-main) .dev-field textarea,
+body:has(.dev-main) .field input,
+body:has(.dev-main) .field select,
+body:has(.dev-main) .field textarea,
+body:has(.dev-main) .search-box input {
+  font-size: 13px;
+}
+body:has(.dev-main) .dev-recent-name {
+  font-size: 13px;
+}
+body:has(.dev-main) .dev-recent-meta,
+body:has(.dev-main) .dev-recent-time {
+  font-size: 11.5px;
+}
+body:has(.dev-main) .dev-modal-item-title {
+  font-size: 13px;
+}
+body:has(.dev-main) .dev-modal-item-meta {
+  font-size: 11.5px;
+}
+body:has(.dev-main) .dev-profile-name {
+  font-size: 16px;
+}
+body:has(.dev-main) .dev-profile-role {
+  font-size: 12px;
+}
+body:has(.dev-main) .dev-profile-label {
+  font-size: 12px;
+}
+body:has(.dev-main) .dev-profile-value {
+  font-size: 13px;
+}
+body:has(.dev-main) .dev-modal-head h3,
+body:has(.dev-main) .dev-modal-head h2,
+body:has(.dev-main) .modal-head h3 {
+  font-size: 16.5px;
+  letter-spacing: -0.015em;
+}
+body:has(.dev-main) .dtable td {
+  font-size: 12.5px;
+}
+body:has(.dev-main) .dtable th {
+  font-size: 10.5px;
+}
+body:has(.dev-main) .dtable-summary {
+  font-size: 11px;
+}
+body:has(.dev-main) .dtable-page {
+  font-size: 12px;
+}
+body:has(.dev-main) .dtable-page-nav {
+  font-size: 11.5px;
+}
+body:has(.dev-main) .dev-table {
+  font-size: 12.5px;
+}
+body:has(.dev-main) .dev-table th {
+  font-size: 10.5px;
+}
+body:has(.dev-main) .personal-table th {
+  font-size: 10.5px;
+}
+body:has(.dev-main) .personal-table td {
+  font-size: 12.5px;
+}
+body:has(.dev-main) .dtable-empty span {
+  font-size: 13px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2 · RADIO 8px — anula la píldora 999px de educonecta.css
+   Mismo selector + !important y hoja posterior → gana el empate
+   ───────────────────────────────────────────────────────────── */
+button,
+[class*="btn"],
+[class*="-close"],
+[class*="-chip"],
+input[type="button"],
+input[type="submit"] {
+  border-radius: 8px !important;
+}
+
+/* radios que la píldora no alcanzaba (enlaces, badges, paginación) */
+.dev-nav-link {
+  border-radius: 8px;
+}
+.dev-sidebar-user {
+  border-radius: 8px;
+}
+.dev-mobile-modal-link {
+  border-radius: 8px;
+}
+.dev-nav-badge {
+  border-radius: 6px;
+  font-size: 10.5px;
+  padding: 1px 7px;
+  font-weight: 600;
+}
+.dev-badge {
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.dev-code {
+  border-radius: 6px;
+  font-size: 11.5px;
+  padding: 4px 10px;
+}
+.dtable-page,
+.dtable-page-nav {
+  border-radius: 6px;
+}
+.personal-role {
+  border-radius: 6px !important;
+}
+.dev-alert {
+  border-radius: 8px;
+}
+.dev-card,
+.dev-stat-card,
+.dev-table-wrap,
+.dtable-wrap,
+.dev-table-card,
+.personal-form-card,
+.personal-stat,
+.mobile-card,
+.stat-box {
+  border-radius: 12px;
+}
+.dev-card-head {
+  border-radius: 12px 12px 0 0;
+}
+.dev-card-foot {
+  border-radius: 0 0 12px 12px;
+}
+.dev-field input,
+.dev-field select,
+.dev-field textarea,
+.field input,
+.field select,
+.field textarea,
+.search-box input {
+  border-radius: 8px;
+}
+.dev-mobile-nav {
+  border-radius: 14px;
+}
+.dev-mobile-nav a {
+  border-radius: 10px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3 · SIDEBAR — estilo Vercel/Next.js
+   ───────────────────────────────────────────────────────────── */
+.dev-sidebar {
+  border-right: none;
+}
+.dev-sidebar-head {
+  padding: 13px 14px;
+}
+.dev-logo-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+}
+.dev-logo-mark img {
+  width: 15px;
+  height: 15px;
+}
+.dev-logo-text strong {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.dev-logo-text small {
+  font-size: 10.5px;
+}
+.dev-nav {
+  padding: 6px 8px;
+}
+.dev-nav-section {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--g-text-disabled);
+  padding: 14px 8px 5px;
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.dev-nav-link {
+  height: 32px;
+  padding: 0 8px;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--g-text-secondary);
+  margin-bottom: 1px;
+  align-items: center;
+  transition: background 150ms ease, color 150ms ease;
+}
+.dev-nav-link .material-symbols-outlined {
+  font-size: 17px;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dev-nav-link:hover {
+  background: var(--g-surface-variant);
+  color: var(--g-text);
+}
+.dev-nav-link:hover .material-symbols-outlined {
+  transform: translateX(2px);
+}
+.dev-nav-link.is-active {
+  background: var(--g-surface-hover);
+  color: var(--g-text);
+  font-weight: 600;
+}
+.dev-nav-link.is-active .material-symbols-outlined {
+  transform: none;
+}
+.dev-sidebar-footer {
+  padding: 8px;
+}
+.dev-sidebar-user {
+  padding: 6px 8px;
+  gap: 9px;
+  transition: background 150ms ease;
+}
+.dev-sidebar-avatar {
+  width: 26px;
+  height: 26px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.dev-sidebar-user-name {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.dev-sidebar-user-role {
+  font-size: 10.5px;
+}
+.dark-toggle-wrap {
+  margin: 6px 4px 2px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--g-border);
+}
+.dark-toggle {
+  font-size: 12.5px;
+  gap: 8px;
+}
+.dark-toggle .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4 · TOPBAR — sticky con blur (solo desktop)
+   ───────────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  body:has(.dev-main) .dev-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    padding: 20px 32px 14px;
+    background: rgba(244, 244, 245, 0.82);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5 · COMPONENTES
+   ───────────────────────────────────────────────────────────── */
+.dev-stat-card {
+  padding: 16px;
+}
+.dev-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+.dev-stat-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+.dev-btn {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.dev-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+.dev-btn-sm {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+.dev-btn-icon {
+  width: 36px;
+  height: 36px;
+}
+.dev-field input,
+.dev-field select,
+.field input,
+.field select {
+  height: 38px;
+}
+.search-box input {
+  height: 38px;
+}
+.dtable th {
+  padding: 11px 16px;
+}
+.dtable td {
+  padding: 12px 16px;
+}
+.dtable-page,
+.dtable-page-nav {
+  min-height: 28px;
+  height: 28px;
+}
+
+/* hover de tarjetas — borde más fuerte, sin sombras (filosofía plana) */
+body:has(.dev-main) .dev-stat-card,
+body:has(.dev-main) .dev-card,
+body:has(.dev-main) .personal-stat,
+body:has(.dev-main) .mobile-card {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease;
+}
+body:has(.dev-main) .dev-stat-card:hover,
+body:has(.dev-main) .dev-card:hover,
+body:has(.dev-main) .personal-stat:hover,
+body:has(.dev-main) .mobile-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--np-border-strong);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5B · MÉTRICAS UNIDAS — replica el grid del dashboard
+   MinimalistDashboardView de EduconectaV2: celdas pegadas con
+   hairline de 1px, contenedor r16, icono neutro arriba-izq,
+   label 10px uppercase, valor 20px bold · sólo con .dev-main
+   (dashboard empleado/practicante queda intacto)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-stats-grid,
+body:has(.dev-main) .stats-row,
+body:has(.dev-main) .stats,
+body:has(.dev-main) .aud-stats,
+body:has(.dev-main) .personal-stats {
+  display: grid;
+  gap: 1px;
+  background: var(--g-border);
+  border-radius: 16px;
+  overflow: hidden;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-card {
+  background: var(--g-surface);
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  box-shadow: none !important;
+  transition: background 150ms ease;
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-card:hover {
+  transform: none;
+}
+body:has(.dev-main) .dev-stats-grid a.dev-stat-card:hover {
+  background: var(--sb-surface-container-low);
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  background: transparent !important; /* educonecta.css agrupa .dev-stat-icon con !important */
+  color: var(--g-text-disabled) !important;
+  margin-bottom: 12px;
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-icon .material-symbols-outlined {
+  font-size: 16px;
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-card:hover .dev-stat-icon {
+  color: var(--g-text) !important;
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--g-text-disabled);
+  margin-bottom: 2px;
+}
+body:has(.dev-main) .dev-stats-grid .dev-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--g-text);
+}
+
+/* la entrada del stagger pasa a opacidad pura (sin translate):
+   con overflow:hidden un translate dejaría ver la banda del
+   contenedor — igual que el stagger de opacidad de origen */
+@keyframes np-card-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+body:has(.dev-main) .dev-stats-grid > .dev-stat-card {
+  animation-name: np-card-in;
+}
+
+/* filas siempre completas: columna única en desktop; ≤1024 en
+   2 columnas y la última celda impar ocupa la fila entera
+   (evita cajas vacías del color del hairline) */
+@media (max-width: 1024px) {
+  body:has(.dev-main) .dev-stats-grid,
+  body:has(.dev-main) .stats-row,
+  body:has(.dev-main) .stats,
+  body:has(.dev-main) .aud-stats,
+  body:has(.dev-main) .personal-stats {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body:has(.dev-main) .dev-stats-grid > *:last-child:nth-child(odd),
+  body:has(.dev-main) .stats-row > *:last-child:nth-child(odd),
+  body:has(.dev-main) .stats > *:last-child:nth-child(odd),
+  body:has(.dev-main) .aud-stats > *:last-child:nth-child(odd),
+  body:has(.dev-main) .personal-stats > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5C · STATS DE LISTADO — mismas métricas unidas en las vistas
+   de Administradores, Empleados, Códigos y Auditoría: celdas
+   horizontales con icono neutro16px + label10px uppercase +
+   valor20px bold (iconos con !important: educonecta.css los
+   agrupa con !important y éstos llevan style inline)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .stats-row > *,
+body:has(.dev-main) .stats > *,
+body:has(.dev-main) .aud-stats > * {
+  background: var(--g-surface);
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: none !important;
+  transition: background 150ms ease;
+}
+/* personal: MISMO layout que la tarjeta del dashboard (5B) —
+   pila vertical icono16 → label → valor, alineada arriba-izq */
+body:has(.dev-main) .personal-stats > * {
+  background: var(--g-surface);
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: none !important;
+  transition: background 150ms ease;
+}
+body:has(.dev-main) .stats-row .stat-icon,
+body:has(.dev-main) .stats .stat-icon,
+body:has(.dev-main) .aud-stats .stat-icon,
+body:has(.dev-main) .personal-stats .personal-stat-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  flex-shrink: 0;
+  background: transparent !important;
+  color: var(--g-text-disabled) !important;
+}
+body:has(.dev-main) .stats-row .stat-icon .material-symbols-outlined,
+body:has(.dev-main) .stats .stat-icon .material-symbols-outlined,
+body:has(.dev-main) .aud-stats .stat-icon .material-symbols-outlined,
+body:has(.dev-main) .personal-stats .personal-stat-icon .material-symbols-outlined {
+  font-size: 16px;
+}
+body:has(.dev-main) .stats-row .stat-label,
+body:has(.dev-main) .stats .stat-label,
+body:has(.dev-main) .aud-stats .aud-stat > div:last-child > span,
+body:has(.dev-main) .personal-stats .personal-stat-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--g-text-disabled);
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+body:has(.dev-main) .stats-row .stat-value,
+body:has(.dev-main) .stats .stat-value,
+body:has(.dev-main) .aud-stats .aud-stat b,
+body:has(.dev-main) .personal-stats .personal-stat-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-family: var(--g-font-display);
+  color: var(--g-text);
+}
+/* auditoría y personal: valor debajo de la label (b / value → order 2) */
+body:has(.dev-main) .aud-stats .aud-stat > div:last-child,
+body:has(.dev-main) .personal-stat > div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+body:has(.dev-main) .aud-stats .aud-stat b,
+body:has(.dev-main) .personal-stats .personal-stat-value { order: 2; }
+body:has(.dev-main) .aud-stats .aud-stat > div:last-child > span,
+body:has(.dev-main) .personal-stats .personal-stat-label { order: 1; }
+
+/* entrada por opacidad con stagger (igual que el dashboard);
+   .stats-row ya tiene sus delays en la sección 7 */
+body:has(.dev-main) .stats-row > *,
+body:has(.dev-main) .stats > *,
+body:has(.dev-main) .aud-stats > *,
+body:has(.dev-main) .personal-stats > * {
+  animation: np-card-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .stats > *:nth-child(1),
+body:has(.dev-main) .aud-stats > *:nth-child(1),
+body:has(.dev-main) .personal-stats > *:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .stats > *:nth-child(2),
+body:has(.dev-main) .aud-stats > *:nth-child(2),
+body:has(.dev-main) .personal-stats > *:nth-child(2) { animation-delay: 45ms; }
+body:has(.dev-main) .stats > *:nth-child(3),
+body:has(.dev-main) .aud-stats > *:nth-child(3),
+body:has(.dev-main) .personal-stats > *:nth-child(3) { animation-delay: 90ms; }
+body:has(.dev-main) .stats > *:nth-child(n + 4),
+body:has(.dev-main) .aud-stats > *:nth-child(n + 4),
+body:has(.dev-main) .personal-stats > *:nth-child(n + 4) { animation-delay: 135ms; }
+
+/* ─────────────────────────────────────────────────────────────
+   5D · LISTAS RECIENTES — «Ultimos admins» / «Ultimos codigos»
+   replica de la tarjeta Actividad reciente (MinimalistDashboard)
+   · título 11px uppercase tracking-widest · «Ver todos» como
+   link con chevron · lista hairline gap1 r16 · filas surface
+   p16/20 hover container-low · avatar caja 32px r8 container ·
+   nombre 13px · meta 12px · tiempo 10px · stagger 40ms/fila
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head {
+  padding: 16px 20px;
+  border-bottom: none;
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g-text-disabled);
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2 .material-symbols-outlined,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--g-text-disabled);
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 8px 6px 10px;
+  border-radius: 8px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--g-text-secondary);
+  gap: 2px;
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn:hover {
+  background: var(--sb-surface-container-low);
+  border-color: transparent;
+  color: var(--g-text);
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn::after {
+  content: "chevron_right";
+  font-family: "Material Symbols Outlined";
+  font-size: 15px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  transition: transform 150ms ease;
+}
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn:hover::after {
+  transform: translateX(2px);
+}
+body:has(.dev-main) .dev-recent-list {
+  display: grid;
+  gap: 1px;
+  background: var(--g-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+body:has(.dev-main) .dev-recent-item {
+  background: var(--g-surface);
+  padding: 16px 20px;
+  align-items: flex-start;
+  gap: 12px;
+  transition: background 150ms ease;
+  animation: np-card-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dev-recent-item:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .dev-recent-item:nth-child(2) { animation-delay: 40ms; }
+body:has(.dev-main) .dev-recent-item:nth-child(3) { animation-delay: 80ms; }
+body:has(.dev-main) .dev-recent-item:nth-child(4) { animation-delay: 120ms; }
+body:has(.dev-main) .dev-recent-item:nth-child(5) { animation-delay: 160ms; }
+body:has(.dev-main) .dev-recent-item:hover {
+  background: var(--sb-surface-container-low);
+}
+body:has(.dev-main) .dev-recent-item .dev-recent-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--sb-surface-container);
+  color: var(--g-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+body:has(.dev-main) .dev-recent-name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--g-text);
+}
+body:has(.dev-main) .dev-recent-meta {
+  font-size: 12px;
+  color: var(--g-text-disabled);
+  margin-top: 2px;
+}
+body:has(.dev-main) .dev-recent-time {
+  font-size: 10px;
+  color: var(--g-text-disabled);
+  white-space: nowrap;
+}
+/* estado vacío — td-empty: caja circular48 + texto 13px */
+body:has(.dev-main) .dev-recent-list .dev-empty {
+  background: var(--g-surface);
+  padding: 32px 16px;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--g-text-secondary);
+}
+body:has(.dev-main) .dev-recent-list .dev-empty .material-symbols-outlined {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--sb-surface-container);
+  color: var(--g-text-secondary);
+  font-size: 20px;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5E · ACCESOS DIRECTOS — replica Quick Actions del Minimalist:
+   lista gap4 (space-y-1) · filas p12 r12 sin borde, hover
+   container-low · caja de icono 36px r12 container (acentos en
+   sb-primary con !important: los iconos llevan style inline y
+   educonecta los agrupa con !important) · label 14px → primary
+   al hover · desc 11px /50 truncate · chevron /30 → primary/50
+   · entrada deslizante x:-8 con stagger 30ms
+   ───────────────────────────────────────────────────────────── */
+@keyframes np-qa-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+body:has(.dev-main) .dash-link-grid { gap: 4px; }
+body:has(.dev-main) .dash-link {
+  padding: 12px;
+  gap: 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  transition: background 150ms ease;
+  animation: np-qa-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dash-link-grid > *:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(2) { animation-delay: 30ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(3) { animation-delay: 60ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(4) { animation-delay: 90ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(5) { animation-delay: 120ms; }
+body:has(.dev-main) .dash-link-grid > *:nth-child(n + 6) { animation-delay: 150ms; }
+body:has(.dev-main) .dash-link:hover { background: var(--sb-surface-container-low); }
+body:has(.dev-main) .dash-link-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+body:has(.dev-main) .dash-link-icon .material-symbols-outlined { font-size: 18px; }
+body:has(.dev-main) .dash-link:hover .dash-link-icon {
+  background: color-mix(in srgb, var(--sb-primary) 10%, transparent) !important;
+  color: var(--sb-primary) !important;
+}
+body:has(.dev-main) .dash-link-text {
+  flex: 1;
+  min-width: 0;
+}
+body:has(.dev-main) .dash-link:hover .dash-link-text { color: var(--sb-primary); }
+body:has(.dev-main) .dash-link-text span {
+  font-size: 11px;
+  color: color-mix(in srgb, var(--g-text-secondary) 50%, transparent);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body:has(.dev-main) .dash-link::after {
+  content: "chevron_right";
+  font-family: "Material Symbols Outlined";
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--g-text-secondary) 30%, transparent);
+  transition: color 150ms ease;
+}
+body:has(.dev-main) .dash-link:hover::after {
+  color: color-mix(in srgb, var(--sb-primary) 50%, transparent);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6 · MODALES — backdrop blur + entrada con spring
+   ───────────────────────────────────────────────────────────── */
+.dev-modal-overlay {
+  background: rgba(0, 0, 0, 0.4) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(4px) !important;
+}
+.dev-modal {
+  border-radius: 12px;
+  transform: scale(0.97) translateY(6px);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dev-modal-overlay:is(.is-open, .active) .dev-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* modales propios de las vistas (.modal-overlay / .modal) */
+body:has(.dev-main) .modal-overlay {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+body:has(.dev-main) .modal {
+  border-radius: 12px;
+  transform: scale(0.97) translateY(6px);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+body:has(.dev-main) .modal-overlay.is-open .modal,
+body:has(.dev-main) .modal-overlay.active .modal {
+  transform: scale(1) translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7 · ANIMACIONES DE ENTRADA
+   ───────────────────────────────────────────────────────────── */
+@keyframes np-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes np-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes np-nav-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes np-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes np-alert-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* topbar entra desde arriba */
+body:has(.dev-main) .dev-topbar {
+  animation: np-fade-down 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* cards / stats — backwards para liberar transform en hover */
+body:has(.dev-main) .dev-stat-card,
+body:has(.dev-main) .dev-card {
+  animation: np-fade-up 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(1),
+body:has(.dev-main) .stats-row > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(2),
+body:has(.dev-main) .stats-row > *:nth-child(2) {
+  animation-delay: 45ms;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(3),
+body:has(.dev-main) .stats-row > *:nth-child(3) {
+  animation-delay: 90ms;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(4),
+body:has(.dev-main) .stats-row > *:nth-child(4) {
+  animation-delay: 135ms;
+}
+body:has(.dev-main) .dev-stats-grid > *:nth-child(n + 5),
+body:has(.dev-main) .stats-row > *:nth-child(n + 5) {
+  animation-delay: 180ms;
+}
+
+/* filas de tabla — re-animan al paginar/filtrar (DevTable re-renderiza) */
+body:has(.dev-main) .dtable tbody tr {
+  animation: np-row-in 280ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dtable tbody tr:nth-child(1) { animation-delay: 0ms; }
+body:has(.dev-main) .dtable tbody tr:nth-child(2) { animation-delay: 25ms; }
+body:has(.dev-main) .dtable tbody tr:nth-child(3) { animation-delay: 50ms; }
+body:has(.dev-main) .dtable tbody tr:nth-child(4) { animation-delay: 75ms; }
+body:has(.dev-main) .dtable tbody tr:nth-child(5) { animation-delay: 100ms; }
+body:has(.dev-main) .dtable tbody tr:nth-child(n + 6) { animation-delay: 125ms; }
+
+/* alertas de flash */
+body:has(.dev-main) .dev-alert {
+  animation: np-alert-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* items del sidebar — micro-stagger */
+.dev-nav > *:nth-child(1)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 0ms backwards; }
+.dev-nav > *:nth-child(2)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 25ms backwards; }
+.dev-nav > *:nth-child(3)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 50ms backwards; }
+.dev-nav > *:nth-child(4)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 75ms backwards; }
+.dev-nav > *:nth-child(5)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 100ms backwards; }
+.dev-nav > *:nth-child(6)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 125ms backwards; }
+.dev-nav > *:nth-child(7)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 150ms backwards; }
+.dev-nav > *:nth-child(8)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 175ms backwards; }
+.dev-nav > *:nth-child(9)  { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards; }
+.dev-nav > *:nth-child(10) { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 225ms backwards; }
+.dev-nav > *:nth-child(11) { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 250ms backwards; }
+.dev-nav > *:nth-child(n + 12) { animation: np-nav-in 340ms cubic-bezier(0.16, 1, 0.3, 1) 275ms backwards; }
+
+/* ─────────────────────────────────────────────────────────────
+   8 · DARK MODE — monocromo (quita el verde Material heredado)
+   Mismo selector que dev-dark.css y hoja posterior → gana
+   ───────────────────────────────────────────────────────────── */
+html.dark:has(.dev-main) {
+  --g-bg: #0a0a0a;
+  --g-surface: #111111;
+  --g-surface-variant: #1a1a1a;
+  --g-surface-hover: #262626;
+  --g-border: #262626;
+  --g-text: #ededed;
+  --g-text-secondary: #a1a1aa;
+  --g-text-disabled: #52525b;
+  --g-primary: #fafafa;
+  --g-primary-hover: #e5e5e5;
+  --g-primary-light: #1f1f1f;
+  --g-success: #4ade80;
+  --g-success-light: #141414;
+  --g-error: #f87171;
+  --g-error-light: #141414;
+  --g-warning: #fbbf24;
+  --g-warning-light: #141414;
+  --g-sidebar: #0a0a0a;
+  --g-nav-active: #262626;
+  --np-border-strong: #3f3f46;
+
+  /* tokens sb-* de educonecta.css: esa capa es sólo light y usa
+     !important con valores estáticos claros → aquí se invierten */
+  --sb-background: #0a0a0a;
+  --sb-surface: #111111;
+  --sb-surface-dim: #0a0a0a;
+  --sb-surface-bright: #111111;
+  --sb-surface-container-lowest: #0d0d0d;
+  --sb-surface-container-low: #141414;
+  --sb-surface-container: #1a1a1a;
+  --sb-surface-container-high: #262626;
+  --sb-surface-container-highest: #333333;
+  --sb-on-surface: #ededed;
+  --sb-on-surface-variant: #a1a1aa;
+  --sb-outline: #52525b;
+  --sb-outline-variant: #262626;
+  --sb-primary: #ededed;
+  --sb-on-primary: #0a0a0a;
+
+  /* los lee el JS del morph-FAB de los sidebars (gsap) */
+  --surface: #171717;
+  --accent: #171717;
+}
+html.dark body {
+  background: #0a0a0a;
+  color: #ededed;
+}
+html.dark .dev-sidebar,
+html.dark .dev-sidebar-head,
+html.dark .dev-sidebar-footer {
+  background: #0a0a0a;
+  border-color: #262626;
+}
+html.dark .dev-nav-link {
+  color: #a1a1aa;
+}
+html.dark .dev-nav-link:hover {
+  background: #1a1a1a;
+  color: #ededed;
+}
+html.dark .dev-nav-link.is-active {
+  background: #262626;
+  color: #fafafa;
+}
+html.dark .dev-nav-badge {
+  background: #fafafa !important;
+  color: #0a0a0a !important;
+}
+html.dark .dev-sidebar-user:hover {
+  background: #1a1a1a;
+}
+html.dark .dark-toggle-wrap {
+  background: transparent;
+  border-color: #262626;
+}
+html.dark .dark-toggle-track {
+  background: #3f3f46;
+}
+html.dark .dark-toggle-thumb {
+  background: #fafafa;
+}
+html.dark .dev-topbar {
+  background: rgba(10, 10, 10, 0.82);
+}
+html.dark .dev-card,
+html.dark .dev-stat-card,
+html.dark .dev-table-wrap,
+html.dark .dtable-wrap,
+html.dark .dev-table-card,
+html.dark .personal-form-card,
+html.dark .personal-stat,
+html.dark .mobile-card {
+  background: #111111;
+  border-color: #262626;
+}
+html.dark .dev-card-head {
+  background: #111111;
+  border-bottom-color: #262626;
+}
+html.dark .dtable tbody tr:hover td,
+html.dark .dev-table tbody tr:hover td,
+html.dark .personal-table tbody tr:hover td {
+  background: #1a1a1a !important;
+}
+html.dark .dtable tbody tr:active td,
+html.dark .dev-table tbody tr:active td {
+  background: #262626 !important;
+}
+html.dark .dev-table th,
+html.dark .dtable th,
+html.dark .personal-table th {
+  background: #111111;
+  border-bottom-color: #262626;
+  color: #a1a1aa;
+}
+html.dark .dev-table td,
+html.dark .dtable td,
+html.dark .personal-table td {
+  background: #111111;
+  border-bottom-color: #262626;
+  color: #ededed;
+}
+html.dark .dtable-footer {
+  background: #111111;
+}
+html.dark .dev-field input,
+html.dark .dev-field select,
+html.dark .dev-field textarea,
+html.dark .field input,
+html.dark .field select,
+html.dark .field textarea,
+html.dark .search-box input {
+  background: #111111;
+  border-color: #262626;
+  color: #ededed;
+}
+html.dark .dev-btn-outline,
+html.dark .dev-btn-icon {
+  background: #111111;
+  border-color: #262626;
+  color: #ededed;
+}
+html.dark .dev-btn-primary {
+  background: #fafafa;
+  color: #0a0a0a;
+}
+html.dark .dev-modal {
+  background: #111111;
+  border-color: #262626;
+}
+html.dark .dev-modal-overlay,
+html.dark .modal-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+html.dark .dev-stat-icon,
+html.dark .stat-icon {
+  background: #1a1a1a;
+}
+html.dark .dev-mobile-nav {
+  background: #111111;
+  border-color: #262626;
+}
+html.dark .dev-mobile-nav a {
+  color: #a1a1aa;
+}
+html.dark .dev-mobile-nav a:hover {
+  background: #1a1a1a;
+  color: #ededed;
+}
+html.dark .dev-mobile-nav a.is-active {
+  background: #262626;
+  color: #fafafa;
+}
+
+/* residuos verdes de dev-dark.css con valor explícito (los tokens no
+   los alcanzan) → neutros; lo semántico conserva su color en texto */
+html.dark .dev-sidebar-avatar {
+  background: #262626;
+  color: #ededed;
+}
+html.dark .dev-field input:focus,
+html.dark .dev-field select:focus,
+html.dark .dev-field textarea:focus {
+  border-color: #52525b;
+}
+html.dark .dev-btn-primary:hover {
+  background: #e5e5e5;
+}
+html.dark .dev-btn-outline:hover {
+  background: #1a1a1a;
+  border-color: #3f3f46;
+  color: #ededed;
+}
+html.dark .dev-btn-text {
+  color: #ededed;
+}
+html.dark .dev-btn-text:hover {
+  background: #1a1a1a;
+}
+html.dark .dev-alert-success {
+  background: #141414;
+  color: #4ade80;
+}
+html.dark .dev-alert-warning {
+  background: #141414;
+  color: #fbbf24;
+}
+html.dark .dev-alert-danger {
+  background: #141414;
+  color: #f87171;
+}
+html.dark .dev-badge-green {
+  color: #4ade80;
+}
+html.dark .dev-badge-blue {
+  color: #ededed;
+}
+html.dark .dev-badge-amber {
+  color: #fbbf24;
+}
+html.dark .dev-badge-red {
+  color: #f87171;
+}
+html.dark .dev-code {
+  background: #1f1f1f;
+  color: #ededed;
+}
+html.dark .dev-code:hover {
+  background: #262626;
+}
+html.dark .dev-status.is-active {
+  color: var(--g-success);
+}
+html.dark .dev-recent-avatar {
+  background: #1f1f1f;
+  color: #ededed;
+}
+html.dark .personal-form-card,
+html.dark .personal-stat,
+html.dark .mobile-card {
+  border-radius: 12px;
+}
+html.dark .mobile-card:hover {
+  border-color: #3f3f46;
+}
+html.dark .dev-mobile-modal {
+  background: #171717;
+  border: 1px solid #262626;
+}
+html.dark .dev-mobile-modal-link.is-active {
+  background: #262626;
+  color: #fafafa;
+}
+html.dark .dev-mobile-dark-btn {
+  background: #111111;
+  color: #ededed;
+  border-color: #262626;
+}
+html.dark .dev-mobile-dark-btn:hover {
+  background: #1a1a1a;
+}
+html.dark .profile-cover {
+  background: linear-gradient(135deg, #171717 0%, #3f3f46 100%) !important;
+}
+html.dark .profile-avatar {
+  background: #262626 !important;
+  color: #ededed !important;
+}
+html.dark .dev-btn:focus-visible,
+html.dark .dev-btn-icon:focus-visible,
+html.dark .dev-nav-link:focus-visible,
+html.dark .dev-mobile-nav a:focus-visible {
+  outline-color: #52525b;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8B · TABLAS — replica sb-table de EduconectaV2 (doc §Tablas):
+   filas separadas por hairline (border-spacing 0 1px), header
+   container h36, filas container-low h48, hover container-high,
+   wrap r16 · cubre .dtable (vistas dev) + .dev-table (horarios)
+   + .personal-table (personal) + .ad-log (auditoría admin, con
+   radio vía el div contenedor). Va tras la sección 8 para
+   ganar los !important de dark por orden.
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dtable-wrap,
+body:has(.dev-main) .dev-table-wrap,
+body:has(.dev-main) .personal-table-wrap {
+  border-radius: 16px;
+}
+body:has(.dev-main) div:has(> table.ad-log) {
+  border-radius: 16px;
+}
+body:has(.dev-main) .dtable,
+body:has(.dev-main) .dev-table,
+body:has(.dev-main) .personal-table,
+body:has(.dev-main) .ad-log {
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  font-size: 13px;
+}
+body:has(.dev-main) .dtable th,
+body:has(.dev-main) .dev-table th,
+body:has(.dev-main) .personal-table th,
+body:has(.dev-main) .ad-log th {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  background: var(--sb-surface-container);
+  border-bottom: 1px solid var(--sb-outline-variant);
+}
+body:has(.dev-main) .dtable td,
+body:has(.dev-main) .dev-table td,
+body:has(.dev-main) .personal-table td,
+body:has(.dev-main) .ad-log td {
+  height: 48px;
+  padding: 0 12px;
+  font-size: 13px;
+  vertical-align: middle;
+  border-bottom: none;
+  background: transparent !important;
+}
+body:has(.dev-main) .dtable tbody tr,
+body:has(.dev-main) .dev-table tbody tr,
+body:has(.dev-main) .personal-table tbody tr,
+body:has(.dev-main) .ad-log tbody tr {
+  background: var(--sb-surface-container-low);
+  transition: background 200ms ease;
+  animation: np-card-in 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+body:has(.dev-main) .dtable tbody tr:hover,
+body:has(.dev-main) .dev-table tbody tr:hover,
+body:has(.dev-main) .personal-table tbody tr:hover,
+body:has(.dev-main) .ad-log tbody tr:hover {
+  background: var(--sb-surface-container-high);
+}
+/* el hover td con !important de la sección 8 taparía la fila:
+   se anula con más especificidad (gana igual con !important) */
+html.dark body:has(.dev-main) .dtable tbody tr:hover td,
+html.dark body:has(.dev-main) .dev-table tbody tr:hover td,
+html.dark body:has(.dev-main) .personal-table tbody tr:hover td,
+html.dark body:has(.dev-main) .ad-log tbody tr:hover td {
+  background: transparent !important;
+}
+/* paginación: en dark --g-primary es casi blanco → texto blanco ilegible */
+html.dark body:has(.dev-main) .dtable-page.is-active {
+  background: #fafafa;
+  color: #0a0a0a;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   9 · RESPONSIVE
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  body:has(.dev-main) .dev-topbar {
+    animation: np-fade-down 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  body:has(.dev-main) .dev-topbar h1 {
+    font-size: 18px;
+  }
+  .dev-sidebar {
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dev-mobile-nav {
+    padding: 6px;
+    gap: 3px;
+  }
+  .dev-mobile-nav a {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   10 · PREFERS-REDUCED-MOTION — cero retardo, cero animación
+   (dev-panel acorta duración pero deja los delays; aquí se anulan)
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  body:has(.dev-main) *,
+  body:has(.dev-main) *::before,
+  body:has(.dev-main) *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
