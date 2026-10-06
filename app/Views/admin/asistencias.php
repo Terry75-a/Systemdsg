@@ -14,48 +14,59 @@
     <style>
         .att-wrap { display: flex; flex-direction: column; gap: 22px; }
 
-        /* ── Filtros ─────────────────────────── */
-        .att-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px; padding: 16px 18px; }
-        .att-sep { width: 1px; height: 30px; background: var(--g-border); flex: none; }
-        .att-csv { display: flex; }
-        .att-go-ghost { background: transparent; color: var(--g-text); border: 1px solid var(--g-border); }
-        .att-field { display: flex; flex-direction: column; gap: 6px; }
+        /* ── Filtros en tarjetas ──────────────── */
+        .att-filters {
+            display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) minmax(0, 1.25fr);
+            gap: 14px;
+        }
+        .att-fcard { display: flex; flex-direction: column; min-width: 0; }
+        .att-fcard .dev-card-head { flex: none; }
+        .att-fcard .dev-card-head h2 { font-size: 0.95rem; letter-spacing: -0.01em; }
+        .att-fbody {
+            padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; flex: 1;
+        }
+        .att-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .att-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
         .att-field > label { font-size: 0.78rem; font-weight: 500; color: var(--g-text-secondary); }
         .att-input {
-            height: 40px; padding: 0 12px; border: 1px solid var(--g-border);
-            border-radius: 10px; background: var(--g-surface); color: var(--g-text);
+            height: 40px; padding: 0 12px; border: 1px solid var(--g-border); width: 100%;
+            border-radius: 12px; background: var(--g-surface); color: var(--g-text);
             font-size: 0.875rem; font-family: inherit; outline: none;
         }
         .att-input:focus { border-color: var(--g-primary); box-shadow: 0 0 0 3px rgba(27,122,66,.12); }
         .att-go {
-            height: 40px; padding: 0 18px; border: 0; border-radius: 10px; cursor: pointer;
-            background: var(--g-primary); color: #fff; font-weight: 600; font-size: 0.875rem;
-            display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+            height: 40px; padding: 0 18px; border: 0; border-radius: 12px; cursor: pointer;
+            background: var(--g-primary); color: var(--g-bg, #fff); font-weight: 600; font-size: 0.875rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            font-family: inherit; width: 100%;
         }
         .att-go:hover { filter: brightness(1.07); }
-        .att-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .att-go-ghost {
+            background: transparent; color: var(--g-text); border: 1px solid var(--g-border);
+            height: 36px; border-radius: 12px; width: auto; padding: 0 16px;
+        }
+        .att-go-ghost:hover { background: var(--g-surface-variant); filter: none; }
+        .att-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .att-quick .att-chip { height: 36px; justify-content: center; }
+        .att-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; align-content: flex-start; }
         .att-chip {
-            height: 30px; padding: 0 12px; border: 1px solid var(--g-border);
-            border-radius: 999px; background: transparent; color: var(--g-text-secondary); cursor: pointer;
-            font-size: 0.78rem; font-weight: 500; font-family: inherit;
+            height: 34px; padding: 0 14px; border: 1px solid var(--g-border);
+            border-radius: 999px; background: var(--g-surface); color: var(--g-text-secondary); cursor: pointer;
+            font-size: 0.8rem; font-weight: 500; font-family: inherit;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: background 150ms, color 150ms, border-color 150ms;
         }
         .att-chip:hover { background: var(--g-surface-variant); color: var(--g-text); }
-        .att-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
+        .att-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: var(--g-bg, #fff); }
+        .att-chip b { font-size: 0.72rem; font-weight: 700; opacity: .85; }
 
-        /* ── Resumen ─────────────────────────── */
-        .att-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-        .att-tile {
-            background: var(--g-surface); border: 1px solid var(--g-border);
-            border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+        /* ── KPIs: métricas unidas (card del dashboard) ── */
+        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on {
+            background: var(--sb-surface-container-low);
+            box-shadow: inset 0 0 0 1px var(--g-primary) !important;
         }
-        .att-tile-ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: none; }
-        .att-tile-ico .material-symbols-outlined { font-size: 20px; }
-        .att-tile-ico.plain { background: rgba(27,122,66,.10); color: var(--g-primary); }
-        .att-tile-ico.green { background: rgba(34,197,94,.14); color: #16a34a; }
-        .att-tile-ico.amber { background: rgba(245,158,11,.16); color: #d97706; }
-        .att-tile-ico.gray  { background: rgba(148,163,184,.20); color: #64748b; }
-        .att-tile-num { font-size: 1.5rem; font-weight: 700; line-height: 1.1; color: var(--g-text); }
-        .att-tile-lbl { font-size: 0.78rem; color: var(--g-text-secondary); margin-top: 2px; }
+        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on .dev-stat-value { color: var(--g-primary); }
+        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on .dev-stat-label { color: var(--g-text-secondary); }
 
         /* ── Registros ───────────────────────── */
         .att-list { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px 18px; }
@@ -122,11 +133,14 @@
         }
         .detail-actions { display: flex; gap: 10px; padding: 16px 24px 22px; }
 
+        @media (max-width: 1024px) {
+            .att-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .att-fcard--estado { grid-column: 1 / -1; }
+        }
         @media (max-width: 760px) {
-            .att-sum { grid-template-columns: repeat(2, 1fr); }
-            .att-tile { padding: 14px; }
-            .att-bar { flex-direction: column; align-items: stretch; }
-            .att-sep { display: none; }
+            .att-filters { grid-template-columns: 1fr; }
+            .att-fcard--estado { grid-column: auto; }
+            .att-fields { grid-template-columns: 1fr; }
             .att-go { justify-content: center; }
         }
         /* ── Paginación ─────────────────────── */
@@ -137,7 +151,7 @@
             color: var(--g-text); font-size: .82rem; font-weight: 600; text-decoration: none; font-family: inherit;
         }
         .att-page:hover { background: var(--g-surface-variant); }
-        .att-page.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
+        .att-page.on { background: var(--g-primary); border-color: var(--g-primary); color: var(--g-bg, #fff); }
         .att-page-info { font-size: .78rem; color: var(--g-text-secondary); margin-left: 8px; }
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
@@ -176,88 +190,112 @@
             ?>
 
             <div class="att-wrap">
-                <div class="dev-card">
-                    <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">filter_alt</span> Filtros</h2>
-                        <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" class="att-csv">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
-                            <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
-                            <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
-                            <button type="submit" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
-                                <span class="material-symbols-outlined">download</span> CSV
-                            </button>
-                        </form>
-                    </div>
-                    <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form">
-                        <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
-                        <div class="att-bar">
-                            <div class="att-field">
-                                <label for="fecha_inicio">Desde</label>
-                                <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
-                            </div>
-                            <div class="att-field">
-                                <label for="fecha_fin">Hasta</label>
-                                <input type="date" class="att-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                <?php
+                    // Links de los KPI: conservan el rango actual y cambian sólo el estado
+                    $qsBase = array_merge($pag_qs ?? [], ['page' => 1]);
+                    $kpiLink = static function (string $est) use ($qsBase): string {
+                        $qs = $est === '' ? array_diff_key($qsBase, ['estado' => 1]) : array_merge($qsBase, ['estado' => $est]);
+                        return '?' . http_build_query($qs);
+                    };
+                ?>
+
+                <!-- Filtros en tarjetas -->
+                <div class="att-filters">
+                    <div class="dev-card att-fcard">
+                        <div class="dev-card-head">
+                            <h2><span class="material-symbols-outlined">date_range</span> Rango de fechas</h2>
+                            <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" class="att-csv">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                                <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                                <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
+                                <button type="submit" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
+                                    <span class="material-symbols-outlined">download</span> CSV
+                                </button>
+                            </form>
+                        </div>
+                        <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-fbody">
+                            <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
+                            <div class="att-fields">
+                                <div class="att-field">
+                                    <label for="fecha_inicio">Desde</label>
+                                    <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                                </div>
+                                <div class="att-field">
+                                    <label for="fecha_fin">Hasta</label>
+                                    <input type="date" class="att-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                                </div>
                             </div>
                             <button type="submit" class="att-go">
                                 <span class="material-symbols-outlined">search</span> Filtrar
                             </button>
-                            <div class="att-sep"></div>
-                            <div class="att-chips">
+                        </form>
+                    </div>
+
+                    <div class="dev-card att-fcard">
+                        <div class="dev-card-head">
+                            <h2><span class="material-symbols-outlined">history</span> Periodo</h2>
+                        </div>
+                        <div class="att-fbody">
+                            <div class="att-quick">
                                 <button type="button" class="att-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
                                 <button type="button" class="att-chip <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Semana</button>
                                 <button type="button" class="att-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Mes</button>
                                 <button type="button" class="att-chip <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
                             </div>
-                            <div class="att-sep"></div>
+                        </div>
+                    </div>
+
+                    <div class="dev-card att-fcard att-fcard--estado">
+                        <div class="dev-card-head">
+                            <h2><span class="material-symbols-outlined">filter_alt</span> Estado</h2>
+                        </div>
+                        <div class="att-fbody">
                             <div class="att-chips">
-                                <button type="button" class="att-chip <?= $filtroEstado === '' ? 'on' : '' ?>" onclick="estado('')">Todos</button>
-                                <button type="button" class="att-chip <?= $filtroEstado === 'present' ? 'on' : '' ?>" onclick="estado('present')">Presentes</button>
-                                <button type="button" class="att-chip <?= $filtroEstado === 'late' ? 'on' : '' ?>" onclick="estado('late')">Tardanzas</button>
-                                <button type="button" class="att-chip <?= $filtroEstado === 'absent' ? 'on' : '' ?>" onclick="estado('absent')">Faltas</button>
-                                <button type="button" class="att-chip <?= $filtroEstado === 'no_exit' ? 'on' : '' ?>" onclick="estado('no_exit')">Sin salida</button>
+                                <?php
+                                    // Los conteos sólo tienen sentido sin filtro de estado (con filtro, el resto queda en 0)
+                                    $conteos = $filtroEstado === '' ? [
+                                        ''         => $totalRegistros,
+                                        'present'  => $totalPresentes,
+                                        'late'     => $totalTardanzas,
+                                        'absent'   => $totalFaltas,
+                                        'no_exit'  => $totalSinSalida,
+                                    ] : [];
+                                    $estados = [
+                                        ''         => 'Todos',
+                                        'present'  => 'Presentes',
+                                        'late'     => 'Tardanzas',
+                                        'absent'   => 'Faltas',
+                                        'no_exit'  => 'Sin salida',
+                                    ];
+                                    foreach ($estados as $val => $txt): ?>
+                                        <button type="button" class="att-chip <?= $filtroEstado === $val ? 'on' : '' ?>" onclick="estado('<?= $val ?>')">
+                                            <?= $txt ?><?= isset($conteos[$val]) ? ' <b>' . $conteos[$val] . '</b>' : '' ?>
+                                        </button>
+                                    <?php endforeach; ?>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
-                <div class="att-sum">
-                    <div class="att-tile">
-                        <div class="att-tile-ico plain"><span class="material-symbols-outlined">summarize</span></div>
-                        <div>
-                            <div class="att-tile-num"><?= $totalRegistros ?></div>
-                            <div class="att-tile-lbl">Total registros</div>
-                        </div>
-                    </div>
-                    <div class="att-tile">
-                        <div class="att-tile-ico green"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div>
-                            <div class="att-tile-num"><?= $totalPresentes ?></div>
-                            <div class="att-tile-lbl">Presentes</div>
-                        </div>
-                    </div>
-                    <div class="att-tile">
-                        <div class="att-tile-ico amber"><span class="material-symbols-outlined">schedule</span></div>
-                        <div>
-                            <div class="att-tile-num"><?= $totalTardanzas ?></div>
-                            <div class="att-tile-lbl">Tardanzas</div>
-                        </div>
-                    </div>
-                    <div class="att-tile">
-                        <div class="att-tile-ico gray"><span class="material-symbols-outlined">cancel</span></div>
-                        <div>
-                            <div class="att-tile-num"><?= $totalFaltas ?></div>
-                            <div class="att-tile-lbl">Faltas</div>
-                        </div>
-                    </div>
-                    <div class="att-tile">
-                        <div class="att-tile-ico plain"><span class="material-symbols-outlined">logout</span></div>
-                        <div>
-                            <div class="att-tile-num"><?= $totalSinSalida ?></div>
-                            <div class="att-tile-lbl">Sin salida</div>
-                        </div>
-                    </div>
+                <!-- KPIs · métricas unidas (card del dashboard) -->
+                <div class="dev-stats-grid">
+                    <?php
+                        $kpis = [
+                            [''        , 'summarize'   , 'Total registros', $totalRegistros, 'si-accent'],
+                            ['present' , 'check_circle', 'Presentes'      , $totalPresentes, 'si-green'],
+                            ['late'    , 'schedule'    , 'Tardanzas'      , $totalTardanzas, 'si-amber'],
+                            ['absent'  , 'cancel'      , 'Faltas'         , $totalFaltas   , 'si-red'],
+                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-accent'],
+                        ];
+                        foreach ($kpis as [$est, $ico, $lbl, $num, $cls]): ?>
+                            <a class="dev-stat-card att-stat <?= $filtroEstado === $est ? 'on' : '' ?>"
+                               href="<?= $kpiLink($est) ?>" title="Filtrar por <?= $lbl ?>">
+                                <div class="dev-stat-icon <?= $cls ?>"><span class="material-symbols-outlined filled"><?= $ico ?></span></div>
+                                <div class="dev-stat-label"><?= $lbl ?></div>
+                                <div class="dev-stat-value"><?= $num ?></div>
+                            </a>
+                        <?php endforeach; ?>
                 </div>
 
                 <div class="dev-card">
