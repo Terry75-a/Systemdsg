@@ -8,292 +8,522 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/asistencia.css') ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/asisten-landing.css') ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
 </head>
-<body class="asisten-body">
+<body class="mm-landing">
 
-<!-- ═══════════ NAV PROPIO ═══════════ -->
-<header class="asisten-nav-shell" id="asistenShell">
-    <nav class="asisten-nav" aria-label="Navegación de Asisten DSG">
-        <a href="<?= base_url('asisten-dsg') ?>" class="asisten-logo" aria-label="Asisten DSG - Inicio">
-            <span class="asisten-logo-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo"></span>
-            <span class="asisten-logo-text">Asisten DSG<small>CONTROL DE PERSONAL</small></span>
-        </a>
-        <div class="asisten-nav-actions">
-            <a href="<?= base_url('login-verde') ?>" class="asisten-link-login">Iniciar sesión</a>
-            <a href="<?= base_url('/#contacto') ?>" class="btn-green btn-green-sm">Solicitar demo</a>
-            <button class="asisten-toggle" id="asistenToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="asistenMobile">
-                <span></span>
-                <span></span>
-            </button>
+<!-- ═══════════ NAV FLOTANTE ═══════════ -->
+<header>
+    <nav class="mm-nav" id="mmNav" aria-label="Navegación de Asisten DSG">
+        <div class="mm-nav-inner">
+            <a href="<?= base_url('asisten-dsg') ?>" class="mm-nav-logo">
+                <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
+                <span>Asisten DSG</span>
+            </a>
+            <div class="mm-nav-links">
+                <a href="#caracteristicas" class="mm-nav-btn">Características</a>
+                <a href="#precios" class="mm-nav-btn">Precios</a>
+                <a href="#faq" class="mm-nav-btn">FAQ</a>
+            </div>
+            <div class="mm-nav-actions">
+                <a href="<?= base_url('login-verde') ?>" class="mm-nav-btn">Iniciar sesión</a>
+                <a href="<?= base_url('/#contacto') ?>" class="mm-nav-btn is-outline">Solicitar demo</a>
+                <button class="mm-nav-toggle" id="mmToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                    <span class="material-symbols-rounded">menu</span>
+                </button>
+            </div>
+        </div>
+        <div class="mm-nav-mobile" id="mmMobile" hidden>
+            <a href="#caracteristicas"><span>Características</span><span class="material-symbols-rounded">trending_up</span></a>
+            <a href="#precios"><span>Precios</span><span class="material-symbols-rounded">shoppingmode</span></a>
+            <a href="#faq"><span>Preguntas frecuentes</span><span class="material-symbols-rounded">help</span></a>
+            <a href="<?= base_url('login-verde') ?>"><span>Iniciar sesión</span><span class="material-symbols-rounded">login</span></a>
+            <a href="<?= base_url('/#contacto') ?>"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
         </div>
     </nav>
-    <div class="asisten-mobile" id="asistenMobile" hidden>
-        <a href="<?= base_url('login-verde') ?>" class="is-login"><span><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</span><span>→</span></a>
-        <a href="<?= base_url('/#contacto') ?>" class="is-cta"><span>Solicitar demo</span><span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span></a>
-    </div>
 </header>
 
-<div class="asistencia-page">
+<main>
 
     <!-- ═══════════ HERO ═══════════ -->
-    <section class="asistencia-hero">
-        <div class="container">
-            <div class="asistencia-hero-grid">
-                <div class="reveal in">
-                    <div class="asistencia-eyebrow"><span class="pulse"></span> Asisten DSG · Control de personal</div>
-                    <h1 class="asistencia-title">La asistencia de tu equipo, <span class="serif-accent">sin planillas a mano.</span></h1>
-                    <p class="asistencia-desc">Registra ingresos, salidas, tardanzas y faltas en segundos. Reportes listos para tu planilla y control total desde tu celular.</p>
-                    <div class="asistencia-ctas">
-                        <a href="<?= base_url('/#contacto') ?>" class="btn-green">Solicitar demo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                        <a href="<?= base_url('precio-asisten') ?>" class="btn-white-green">Ver precios</a>
-                    </div>
-                    <div class="hero-proof">
-                        <div class="avatar-cluster" aria-hidden="true">
-                            <span class="av-1">JA</span><span class="av-2">AM</span><span class="av-3">SM</span><span class="av-4">+</span>
-                        </div>
-                        <p><strong>Más de 500 empresas</strong> ya ordenan su personal con DSG</p>
-                    </div>
-                </div>
+    <section class="mm-hero">
+        <div class="mm-hero-copy reveal in">
+            <a href="<?= base_url('/#contacto') ?>" class="cta-button"><span class="tag">GRATIS</span> Reserva una demo <span class="arrow">→</span></a>
+            <h1 class="main-title">La asistencia de tu equipo, sin planillas a mano.</h1>
+            <p class="mm-hero-desc">Registra ingresos, salidas, tardanzas y faltas en segundos. Reportes listos para tu planilla y control total desde tu celular.</p>
+            <div class="mm-hero-ctas">
+                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-filled">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                <a href="<?= base_url('login-verde') ?>" class="mm-btn mm-btn-tonal">Iniciar sesión</a>
+            </div>
+            <div class="mm-hero-checks">
+                <span><span class="material-symbols-rounded">check</span> Sin instalación</span>
+                <span><span class="material-symbols-rounded">check</span> Cancela cuando quieras</span>
+                <span><span class="material-symbols-rounded">check</span> Soporte en Perú</span>
+            </div>
+        </div>
 
-                <div class="hero-visual reveal in" data-delay="1">
-                    <div class="mock" aria-label="Demostración del panel de asistencias">
-                        <div class="mock-bar">
-                            <i></i><i></i><i></i>
-                            <span class="mock-live"><span class="dot"></span> En vivo</span>
-                            <span class="mock-clock" id="mockClock">--:--:--</span>
+        <div class="mm-preview reveal in" data-delay="1">
+            <div class="mm-preview-frame">
+                <div class="mock" aria-label="Demostración del panel de asistencias">
+                    <div class="mock-bar">
+                        <i></i><i></i><i></i>
+                        <span class="mock-live"><span class="dot"></span> En vivo</span>
+                        <span class="mock-clock" id="mockClock">--:--:--</span>
+                    </div>
+                    <div class="mock-body">
+                        <div class="mock-title-row">
+                            <h3>Hoy · Turno mañana</h3>
+                            <span>Sede Pucallpa</span>
                         </div>
-                        <div class="mock-body">
-                            <div class="mock-title-row">
-                                <h3>Hoy · Turno mañana</h3>
-                                <span>Sede Pucallpa</span>
+                        <div class="mock-rows" id="mockRows">
+                            <div class="mock-row">
+                                <span class="mock-avatar ma-1">RC</span>
+                                <div class="mock-who"><strong>Rosa Campos</strong><small>Caja · Ingreso</small></div>
+                                <span class="mock-time">08:00</span>
+                                <span class="mock-status st-ok">A tiempo</span>
                             </div>
-                            <div class="mock-rows" id="mockRows">
-                                <div class="mock-row">
-                                    <span class="mock-avatar ma-1">RC</span>
-                                    <div class="mock-who"><strong>Rosa Campos</strong><small>Caja · Ingreso</small></div>
-                                    <span class="mock-time">08:00</span>
-                                    <span class="mock-status st-ok">A tiempo</span>
-                                </div>
-                                <div class="mock-row">
-                                    <span class="mock-avatar ma-2">LM</span>
-                                    <div class="mock-who"><strong>Luis Mora</strong><small>Almacén · Ingreso</small></div>
-                                    <span class="mock-time">08:04</span>
-                                    <span class="mock-status st-ok">A tiempo</span>
-                                </div>
-                                <div class="mock-row">
-                                    <span class="mock-avatar ma-3">DP</span>
-                                    <div class="mock-who"><strong>Dina Paredes</strong><small>Ventas · Ingreso</small></div>
-                                    <span class="mock-time">08:17</span>
-                                    <span class="mock-status st-late">Tarde</span>
-                                </div>
+                            <div class="mock-row">
+                                <span class="mock-avatar ma-2">LM</span>
+                                <div class="mock-who"><strong>Luis Mora</strong><small>Almacén · Ingreso</small></div>
+                                <span class="mock-time">08:04</span>
+                                <span class="mock-status st-ok">A tiempo</span>
                             </div>
-                        </div>
-                        <div class="mock-foot">
-                            <div class="mock-meter"><span id="mockMeter"></span></div>
-                            <div class="mock-foot-row">
-                                <p><strong id="mockCount">38</strong>/42 presentes hoy</p>
-                                <button type="button" class="mock-mark" id="mockMark">Marcar asistencia</button>
+                            <div class="mock-row">
+                                <span class="mock-avatar ma-3">DP</span>
+                                <div class="mock-who"><strong>Dina Paredes</strong><small>Ventas · Ingreso</small></div>
+                                <span class="mock-time">08:17</span>
+                                <span class="mock-status st-late">Tarde</span>
                             </div>
                         </div>
                     </div>
-                    <span class="chip chip-1"><i class="fa-solid fa-bolt"></i> Marcación en 5 seg</span>
-                    <span class="chip chip-2"><i class="fa-solid fa-check"></i> +12 puntuales hoy</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ═══════════ MARQUEE ═══════════ -->
-    <div class="marquee" aria-hidden="true">
-        <div class="marquee-track">
-            <span>Código QR · Turnos rotativos · Tardanzas · Reporte de planilla · Multi-sede · Alertas en vivo ·&nbsp;</span>
-            <span>Código QR · Turnos rotativos · Tardanzas · Reporte de planilla · Multi-sede · Alertas en vivo ·&nbsp;</span>
-        </div>
-    </div>
-
-    <!-- ═══════════ BENTO FEATURES ═══════════ -->
-    <section class="asistencia-features">
-        <div class="container">
-            <div class="asistencia-section-head reveal">
-                <span class="asistencia-tag">Funciones</span>
-                <h2 class="asistencia-h2">Todo tu personal, <span class="serif-accent">en una sola vista.</span></h2>
-                <p class="asistencia-sub">Marcar, supervisar y justificar la asistencia de todo tu equipo sin hojas sueltas ni chats perdidos.</p>
-            </div>
-            <div class="bento">
-                <div class="bento-card span-4 reveal">
-                    <div class="asistencia-icon"><i class="fa-solid fa-qrcode"></i></div>
-                    <h3>Marcación con QR</h3>
-                    <p>Tu personal marca ingreso y salida escaneando un código. Sin filas, sin equipos costosos, sin excusas.</p>
-                    <div class="qr-box" aria-hidden="true">
-                        <svg width="104" height="104" viewBox="0 0 25 25" fill="#10231A">
-                            <rect x="1" y="1" width="7" height="7" fill="none" stroke="#10231A" stroke-width="1.6"/><rect x="3" y="3" width="3" height="3"/>
-                            <rect x="17" y="1" width="7" height="7" fill="none" stroke="#10231A" stroke-width="1.6"/><rect x="19" y="3" width="3" height="3"/>
-                            <rect x="1" y="17" width="7" height="7" fill="none" stroke="#10231A" stroke-width="1.6"/><rect x="3" y="19" width="3" height="3"/>
-                            <rect x="10" y="2" width="2" height="2"/><rect x="13" y="4" width="2" height="2"/><rect x="10" y="7" width="2" height="2"/>
-                            <rect x="2" y="10" width="2" height="2"/><rect x="5" y="12" width="2" height="2"/><rect x="8" y="10" width="2" height="2"/>
-                            <rect x="11" y="11" width="3" height="3"/><rect x="15" y="10" width="2" height="2"/><rect x="18" y="12" width="2" height="2"/>
-                            <rect x="21" y="10" width="2" height="2"/><rect x="10" y="15" width="2" height="2"/><rect x="14" y="14" width="2" height="2"/>
-                            <rect x="17" y="16" width="2" height="2"/><rect x="21" y="15" width="2" height="2"/><rect x="12" y="18" width="2" height="2"/>
-                            <rect x="15" y="20" width="2" height="2"/><rect x="19" y="19" width="2" height="2"/><rect x="22" y="21" width="2" height="2"/>
-                            <rect x="10" y="22" width="2" height="2"/><rect x="5" y="15" width="2" height="2"/><rect x="7" y="21" width="2" height="2"/>
-                        </svg>
+                    <div class="mock-foot">
+                        <div class="mock-meter"><span id="mockMeter"></span></div>
+                        <div class="mock-foot-row">
+                            <p><strong id="mockCount">38</strong>/42 presentes hoy</p>
+                            <button type="button" class="mock-mark" id="mockMark">Marcar asistencia</button>
+                        </div>
                     </div>
                 </div>
-                <div class="bento-card span-2 reveal" data-delay="1">
-                    <div class="asistencia-icon"><i class="fa-solid fa-clock"></i></div>
-                    <h3>Tardanzas y faltas</h3>
-                    <p>Llegadas tarde y ausencias detectadas al instante.</p>
-                    <div class="mini-rows" aria-hidden="true">
-                        <div><span>08:17 · Dina P.</span><span class="mock-status st-late">Tarde</span></div>
-                        <div><span>Sin marca · J. Ríos</span><span class="mock-status st-late">Falta</span></div>
+                <span class="chip chip-1"><span class="material-symbols-rounded">bolt</span> Marcación en 5 seg</span>
+                <span class="chip chip-2"><span class="material-symbols-rounded">check_circle</span> +12 puntuales hoy</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ VALORES ═══════════ -->
+    <section class="valores-panel reveal">
+        <div class="mm-section-head">
+            <h2 class="main-title">Lo que nos define</h2>
+        </div>
+        <div class="valores-grid">
+            <div class="grid-card">
+                <div class="title-with-icon">
+                    <span class="material-symbols-rounded">rocket_launch</span>
+                    <h3 class="title-medium">Simple</h3>
+                </div>
+                <p>Una interfaz clara para marcar, supervisar y exportar la asistencia de tu equipo, sin capacitaciones eternas.</p>
+            </div>
+            <div class="grid-card">
+                <div class="title-with-icon">
+                    <span class="material-symbols-rounded">security</span>
+                    <h3 class="title-medium">Seguro</h3>
+                </div>
+                <p>Los datos de tu personal viajan cifrados y solo los ve el equipo que tú autorizas.</p>
+            </div>
+            <div class="grid-card">
+                <div class="title-with-icon">
+                    <span class="material-symbols-rounded">task_alt</span>
+                    <h3 class="title-medium">Preciso</h3>
+                </div>
+                <p>Tardanzas, horas extras y descuentos calculados solos para pagar siempre exacto.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ CARACTERÍSTICAS (TABS) ═══════════ -->
+    <section class="mm-section" id="caracteristicas">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Características</span>
+            <h2 class="main-title">Todo lo que necesitas</h2>
+            <p class="mm-section-sub">Marcar, supervisar y justificar la asistencia de todo tu equipo sin hojas sueltas ni chats perdidos.</p>
+        </div>
+
+        <div class="tab-wrapper reveal" data-delay="1">
+            <div class="menu-pill-container" role="tablist">
+                <button class="tab-button-pill active" data-tab="0" type="button"><span class="material-symbols-rounded">qr_code_2</span>Marcación QR</button>
+                <button class="tab-button-pill" data-tab="1" type="button"><span class="material-symbols-rounded">schedule</span>Tardanzas</button>
+                <button class="tab-button-pill" data-tab="2" type="button"><span class="material-symbols-rounded">event</span>Horarios</button>
+                <button class="tab-button-pill" data-tab="3" type="button"><span class="material-symbols-rounded">description</span>Reportes</button>
+                <button class="tab-button-pill" data-tab="4" type="button"><span class="material-symbols-rounded">storefront</span>Multi-sede</button>
+            </div>
+
+            <!-- tab 0 · QR -->
+            <div class="tab-content active" data-panel="0">
+                <div class="feature-content-container">
+                    <div class="feature-content-left">
+                        <div class="tab-visual">
+                            <div class="qr-box">
+                                <svg width="120" height="120" viewBox="0 0 25 25" fill="currentColor">
+                                    <rect x="1" y="1" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="3" height="3"/>
+                                    <rect x="17" y="1" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="19" y="3" width="3" height="3"/>
+                                    <rect x="1" y="17" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="19" width="3" height="3"/>
+                                    <rect x="10" y="2" width="2" height="2"/><rect x="13" y="4" width="2" height="2"/><rect x="10" y="7" width="2" height="2"/>
+                                    <rect x="2" y="10" width="2" height="2"/><rect x="5" y="12" width="2" height="2"/><rect x="8" y="10" width="2" height="2"/>
+                                    <rect x="11" y="11" width="3" height="3"/><rect x="15" y="10" width="2" height="2"/><rect x="18" y="12" width="2" height="2"/>
+                                    <rect x="21" y="10" width="2" height="2"/><rect x="10" y="15" width="2" height="2"/><rect x="14" y="14" width="2" height="2"/>
+                                    <rect x="17" y="16" width="2" height="2"/><rect x="21" y="15" width="2" height="2"/><rect x="12" y="18" width="2" height="2"/>
+                                    <rect x="15" y="20" width="2" height="2"/><rect x="19" y="19" width="2" height="2"/><rect x="22" y="21" width="2" height="2"/>
+                                    <rect x="10" y="22" width="2" height="2"/><rect x="5" y="15" width="2" height="2"/><rect x="7" y="21" width="2" height="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-content-right">
+                        <h3>Marcación con QR</h3>
+                        <p>Tu personal marca ingreso y salida escaneando un código. Sin filas, sin equipos costosos, sin excusas.</p>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-rounded">qr_code_2</span> Ingreso y salida con un escaneo</li>
+                            <li><span class="material-symbols-rounded">smartphone</span> Desde cualquier celular</li>
+                            <li><span class="material-symbols-rounded">download_for_offline</span> Sin apps ni equipos extra</li>
+                        </ul>
+                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
-                <div class="bento-card span-2 reveal">
-                    <div class="asistencia-icon"><i class="fa-solid fa-calendar-days"></i></div>
-                    <h3>Horarios y turnos</h3>
-                    <p>Fijos o rotativos, por área o sede.</p>
-                    <div class="mini-shifts" aria-hidden="true">
-                        <div>Mañana <span class="shift-bar"><span style="width:82%"></span></span> <small>8–2</small></div>
-                        <div>Tarde <span class="shift-bar"><span style="width:55%"></span></span> <small>2–8</small></div>
+            </div>
+
+            <!-- tab 1 · Tardanzas -->
+            <div class="tab-content" data-panel="1">
+                <div class="feature-content-container">
+                    <div class="feature-content-left">
+                        <div class="tab-visual mini-rows">
+                            <div><span>08:17 · Dina P.</span><span class="mock-status st-late">Tarde</span></div>
+                            <div><span>Sin marca · J. Ríos</span><span class="mock-status st-late">Falta</span></div>
+                            <div><span>08:00 · Rosa C.</span><span class="mock-status st-ok">A tiempo</span></div>
+                        </div>
+                    </div>
+                    <div class="feature-content-right">
+                        <h3>Tardanzas y faltas</h3>
+                        <p>Llegadas tarde y ausencias detectadas al instante, sin esperar a fin de mes para enterarte.</p>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-rounded">schedule</span> Detección automática de retrasos</li>
+                            <li><span class="material-symbols-rounded">notifications_active</span> Alertas en tiempo real</li>
+                            <li><span class="material-symbols-rounded">edit_document</span> Justificaciones desde el móvil</li>
+                        </ul>
+                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
-                <div class="bento-card span-4 reveal" data-delay="1">
-                    <div class="asistencia-icon"><i class="fa-solid fa-file-lines"></i></div>
-                    <h3>Reportes listos para planilla</h3>
-                    <p>Horas, extras y descuentos exportados en un clic. Tu contador te lo va a agradecer.</p>
-                    <div class="mini-bars" aria-hidden="true">
-                        <i></i><i class="hot"></i><i></i><i class="hot"></i><i></i><i class="hot"></i><i></i>
+            </div>
+
+            <!-- tab 2 · Horarios -->
+            <div class="tab-content" data-panel="2">
+                <div class="feature-content-container">
+                    <div class="feature-content-left">
+                        <div class="tab-visual mini-shifts">
+                            <div>Mañana <span class="shift-bar"><span style="width:82%"></span></span> <small>8–2</small></div>
+                            <div>Tarde <span class="shift-bar"><span style="width:55%"></span></span> <small>2–8</small></div>
+                            <div>Noche <span class="shift-bar"><span style="width:35%"></span></span> <small>8–2</small></div>
+                        </div>
+                    </div>
+                    <div class="feature-content-right">
+                        <h3>Horarios y turnos</h3>
+                        <p>Define turnos fijos o rotativos por área o sede, y consulta el calendario de cada trabajador.</p>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-rounded">event_repeat</span> Turnos fijos o rotativos</li>
+                            <li><span class="material-symbols-rounded">apartment</span> Por área o sede</li>
+                            <li><span class="material-symbols-rounded">calendar_month</span> Calendario por persona</li>
+                        </ul>
+                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
-                <div class="bento-card span-3 reveal">
-                    <div class="asistencia-icon"><i class="fa-solid fa-bell"></i></div>
-                    <h3>Alertas en tiempo real</h3>
-                    <p>Avisos cuando alguien falta o llega tarde, sin esperar a fin de mes.</p>
+            </div>
+
+            <!-- tab 3 · Reportes -->
+            <div class="tab-content" data-panel="3">
+                <div class="feature-content-container">
+                    <div class="feature-content-left">
+                        <div class="tab-visual mini-bars">
+                            <i></i><i class="hot"></i><i></i><i class="hot"></i><i></i><i class="hot"></i><i></i><i class="hot"></i>
+                        </div>
+                    </div>
+                    <div class="feature-content-right">
+                        <h3>Reportes para planilla</h3>
+                        <p>Horas, extras y descuentos exportados en un clic. Tu contador te lo va a agradecer.</p>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-rounded">calculate</span> Horas y extras calculadas solas</li>
+                            <li><span class="material-symbols-rounded">file_download</span> Exportación en un clic</li>
+                            <li><span class="material-symbols-rounded">payments</span> Descuentos por falta y tardanza</li>
+                        </ul>
+                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                    </div>
                 </div>
-                <div class="bento-card span-3 reveal" data-delay="1">
-                    <div class="asistencia-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
-                    <h3>Multi-sede y móvil</h3>
-                    <p>Varias sucursales bajo control desde tu celular, con permisos por supervisor.</p>
+            </div>
+
+            <!-- tab 4 · Multi-sede -->
+            <div class="tab-content" data-panel="4">
+                <div class="feature-content-container">
+                    <div class="feature-content-left">
+                        <div class="tab-visual mini-sedes">
+                            <div><span class="material-symbols-rounded">storefront</span> Sede Pucallpa <span class="ms-live">En vivo</span></div>
+                            <div><span class="material-symbols-rounded">storefront</span> Sede Lima <span class="ms-live">En vivo</span></div>
+                            <div><span class="material-symbols-rounded">warehouse</span> Almacén central <span class="ms-live">En vivo</span></div>
+                        </div>
+                    </div>
+                    <div class="feature-content-right">
+                        <h3>Multi-sede y móvil</h3>
+                        <p>Varias sucursales bajo control desde tu celular, con permisos por supervisor.</p>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-rounded">storefront</span> Varias sucursales a la vez</li>
+                            <li><span class="material-symbols-rounded">badge</span> Permisos por supervisor</li>
+                            <li><span class="material-symbols-rounded">visibility</span> Visión general en vivo</li>
+                        </ul>
+                        <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ═══════════ PASOS ═══════════ -->
-    <section class="asistencia-steps">
-        <div class="container">
-            <div class="asistencia-section-head reveal">
-                <span class="asistencia-tag">Cómo funciona</span>
-                <h2 class="asistencia-h2">Empieza en 3 pasos</h2>
+    <!-- ═══════════ MULTIPLATAFORMA ═══════════ -->
+    <section class="mm-section">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Multiplataforma</span>
+            <h2 class="main-title">En la palma de tu mano</h2>
+            <p class="mm-section-sub">Accede a tu control de asistencia desde cualquier dispositivo: teléfono, tablet u ordenador.</p>
+        </div>
+        <div class="devices-grid reveal" data-delay="1">
+            <div class="device-card">
+                <span class="material-symbols-rounded">smartphone</span>
+                <h3>Celular</h3>
+                <p>Tu personal marca desde donde sea y tú revisas todo en movimiento.</p>
             </div>
-            <div class="asistencia-steps-grid">
-                <div class="asistencia-step reveal">
-                    <span class="asistencia-ghost">01</span>
-                    <h3>Registra tu personal</h3>
-                    <p>Carga trabajadores, horarios y sedes con ayuda de nuestro equipo, en minutos.</p>
+            <div class="device-card">
+                <span class="material-symbols-rounded">tablet_mac</span>
+                <h3>Tablet</h3>
+                <p>Ideal para recepción: supervisa ingresos y salidas en el lugar.</p>
+            </div>
+            <div class="device-card">
+                <span class="material-symbols-rounded">computer</span>
+                <h3>Computadora</h3>
+                <p>Genera reportes completos y gestiona sedes, turnos y personal.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ TESTIMONIOS ═══════════ -->
+    <section class="mm-section">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Testimonios</span>
+            <h2 class="main-title">Lo que dicen de Asisten DSG</h2>
+        </div>
+        <div class="testimonios-grid reveal" data-delay="1">
+            <div class="testimonio-card">
+                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
+                <p class="testimonio-text">Pasamos del cuaderno a tener todo el personal controlado desde el celular. La planilla sale sola.</p>
+                <div class="testimonio-author">
+                    <span class="testimonio-name">Juan Alberto</span>
+                    <span class="testimonio-role">Vifarma, Perú</span>
                 </div>
-                <div class="asistencia-step reveal" data-delay="1">
-                    <span class="asistencia-ghost">02</span>
-                    <h3>Marca todos los días</h3>
-                    <p>Cada trabajador registra ingreso y salida con QR desde cualquier dispositivo.</p>
+            </div>
+            <div class="testimonio-card">
+                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
+                <p class="testimonio-text">Marcamos con QR en dos sedes y las tardanzas ya no se discuten: todo queda registrado con hora y minuto.</p>
+                <div class="testimonio-author">
+                    <span class="testimonio-name">María Torres</span>
+                    <span class="testimonio-role">Farmacia San Martín</span>
                 </div>
-                <div class="asistencia-step reveal" data-delay="2">
-                    <span class="asistencia-ghost">03</span>
-                    <h3>Revisa y paga exacto</h3>
-                    <p>Reportes automáticos para una planilla sin errores ni reclamos.</p>
+            </div>
+            <div class="testimonio-card">
+                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
+                <p class="testimonio-text">El reporte de planilla sale listo cada mes: horas, extras y descuentos sin pelearme con el Excel.</p>
+                <div class="testimonio-author">
+                    <span class="testimonio-name">Carlos Ruiz</span>
+                    <span class="testimonio-role">Grupo La Plaza</span>
+                </div>
+            </div>
+            <div class="testimonio-card">
+                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
+                <p class="testimonio-text">Empezamos con diez empleados y hoy controlamos tres sedes desde el celular, con permisos por supervisor.</p>
+                <div class="testimonio-author">
+                    <span class="testimonio-name">Lucía Fernández</span>
+                    <span class="testimonio-role">Comercial Cusco</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ═══════════ FRASE ═══════════ -->
-    <section class="asistencia-quote">
-        <div class="container">
-            <blockquote class="reveal">
-                <p>"Pasamos del cuaderno a tener todo el personal controlado desde el celular. La planilla sale sola."</p>
-                <footer><strong>Juan Alberto</strong> · Vifarma, Perú</footer>
-            </blockquote>
+    <!-- ═══════════ PRECIOS ═══════════ -->
+    <section class="mm-section" id="precios">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Precios</span>
+            <h2 class="main-title">Precios para todos</h2>
+            <p class="mm-section-sub">Elige el plan que mejor se adapte a tu negocio. Todos incluyen soporte y actualizaciones.</p>
         </div>
-    </section>
-
-    <!-- ═══════════ CTA ═══════════ -->
-    <section class="asistencia-cta">
-        <div class="container">
-            <div class="asistencia-cta-inner reveal">
-                <span class="asistencia-cta-kicker">Demo gratuita · 30 minutos</span>
-                <h2 class="asistencia-cta-title">Olvídate del cuaderno de asistencia</h2>
-                <p class="asistencia-cta-desc">Pide una demostración sin compromiso y ve cómo Asisten DSG ordena tu personal desde el primer día.</p>
-                <div class="asistencia-cta-btns">
-                    <a href="<?= base_url('/#contacto') ?>" class="btn-cta-white">Solicitar demo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                    <a href="<?= base_url('/') ?>" class="btn-cta-ghost">Volver al sitio principal</a>
-                </div>
+        <div class="pricing-grid reveal" data-delay="1">
+            <div class="pricing-card">
+                <span class="pricing-tag">Básico</span>
+                <div class="pricing-price"><span class="pricing-amount">S/ 150</span><span class="pricing-period">/mes</span></div>
+                <p class="pricing-desc">Para negocios pequeños con hasta 10 empleados.</p>
+                <ul class="feature-list">
+                    <li><span class="material-symbols-rounded">check</span> Hasta 10 empleados</li>
+                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
+                    <li><span class="material-symbols-rounded">check</span> Control de tardanzas</li>
+                    <li><span class="material-symbols-rounded">check</span> Reporte mensual básico</li>
+                    <li><span class="material-symbols-rounded">check</span> 1 sede</li>
+                </ul>
+                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal">Solicitar demo</a>
+            </div>
+            <div class="pricing-card">
+                <span class="recommended-badge">Más popular</span>
+                <span class="pricing-tag">Negocio</span>
+                <div class="pricing-price"><span class="pricing-amount">S/ 290</span><span class="pricing-period">/mes</span></div>
+                <p class="pricing-desc">Para negocios en crecimiento con hasta 30 empleados.</p>
+                <ul class="feature-list">
+                    <li><span class="material-symbols-rounded">check</span> Hasta 30 empleados</li>
+                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
+                    <li><span class="material-symbols-rounded">check</span> Tardanzas y faltas</li>
+                    <li><span class="material-symbols-rounded">check</span> Horarios y turnos fijos</li>
+                    <li><span class="material-symbols-rounded">check</span> Reportes para planilla</li>
+                    <li><span class="material-symbols-rounded">check</span> 2 sedes</li>
+                    <li><span class="material-symbols-rounded">check</span> Alertas en tiempo real</li>
+                    <li><span class="material-symbols-rounded">check</span> Soporte prioritario</li>
+                </ul>
+                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-filled">Solicitar demo</a>
+            </div>
+            <div class="pricing-card">
+                <span class="pricing-tag">Corporativo</span>
+                <div class="pricing-price"><span class="pricing-amount">Cotizar</span></div>
+                <p class="pricing-desc">Para empresas con múltiples sedes y personal variable.</p>
+                <ul class="feature-list">
+                    <li><span class="material-symbols-rounded">check</span> Empleados ilimitados</li>
+                    <li><span class="material-symbols-rounded">check</span> Marcación con código QR</li>
+                    <li><span class="material-symbols-rounded">check</span> Turnos rotativos avanzados</li>
+                    <li><span class="material-symbols-rounded">check</span> Sedes ilimitadas</li>
+                    <li><span class="material-symbols-rounded">check</span> Exportación a planilla</li>
+                    <li><span class="material-symbols-rounded">check</span> API de integración</li>
+                    <li><span class="material-symbols-rounded">check</span> Soporte dedicado y capacitación</li>
+                </ul>
+                <a href="<?= base_url('/#contacto') ?>" class="mm-btn mm-btn-tonal">Solicitar cotización</a>
             </div>
         </div>
+        <p class="pricing-note">¿Necesitas ver el detalle? <a href="<?= base_url('precio-asisten') ?>">Ver planes completos →</a></p>
     </section>
 
-</div><!-- /.asistencia-page -->
+    <!-- ═══════════ FAQ ═══════════ -->
+    <section class="mm-section" id="faq">
+        <div class="mm-section-head reveal">
+            <span class="title-text">Preguntas frecuentes</span>
+            <h2 class="main-title">Resolvemos tus dudas</h2>
+        </div>
+        <div class="faq-list reveal" data-delay="1">
+            <details class="faq-item">
+                <summary>¿Cómo marca mi personal?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Cada trabajador escanea un código QR desde su celular para registrar ingreso y salida. No necesita instalar apps ni comprar equipos.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Sirve para varias sedes?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Sí. El plan Negocio incluye 2 sedes y el plan Corporativo sedes ilimitadas, cada una con sus propios horarios y supervisores.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Puedo exportar a mi planilla?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Sí. Los reportes incluyen horas trabajadas, extras, tardanzas y descuentos, exportables en un clic para tu proceso de planilla.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Puedo cambiar de plan después?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Sí, puedes subir o bajar de plan en cualquier momento. El cambio se refleja en tu siguiente ciclo de facturación.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Hay contrato o permanencia mínima?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">No, no hay contratos ni permanencia. Puedes cancelar cuando quieras sin penalidades.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Puedo probar gratis antes de contratar?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Sí, ofrecemos una demo gratuita de 15 días sin necesidad de tarjeta de crédito. Prueba todas las funciones antes de decidir.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Qué incluye el soporte?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Todos los planes incluyen soporte por chat y correo. Los planes Negocio y Corporativo incluyen soporte prioritario con respuesta en menos de 2 horas.</div>
+            </details>
+            <details class="faq-item">
+                <summary>¿Mis datos están seguros?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Los datos de tu personal viajan cifrados y solo los ven tú y los supervisores que tú autorices.</div>
+            </details>
+        </div>
+    </section>
 
-<!-- ═══════════ FOOTER PROPIO ═══════════ -->
-<footer class="asisten-footer">
-    <div class="container">
-        <div class="asisten-footer-top">
-            <a href="<?= base_url('asisten-dsg') ?>" class="asisten-logo">
-                <span class="asisten-logo-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo"></span>
-                <span class="asisten-logo-text">Asisten DSG</span>
+</main>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="mm-footer">
+    <div class="mm-footer-main">
+        <div class="mm-footer-brand">
+            <a href="<?= base_url('asisten-dsg') ?>" class="mm-nav-logo">
+                <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
+                <span>Asisten DSG</span>
             </a>
-            <nav class="asisten-footer-nav" aria-label="Enlaces de Asisten DSG">
-                <a href="<?= base_url('/') ?>">Sitio principal</a>
-                <a href="<?= base_url('servicios') ?>">Servicios</a>
-                <a href="<?= base_url('/#contacto') ?>">Contacto</a>
-            </nav>
+            <p>Control de asistencia del personal con QR: marcación, tardanzas y reportes de planilla en un solo lugar.</p>
+            <p class="mm-cookie"><span class="material-symbols-rounded">cookie</span> Usamos cookies técnicas para el funcionamiento de la web y cookies de preferencias si aceptas “Recordarme”.</p>
+        </div>
+        <div class="mm-footer-col">
+            <h4>Contacto</h4>
+            <a href="mailto:soporte@dsgperu.com"><span class="material-symbols-rounded">mail</span> soporte@dsgperu.com</a>
+        </div>
+        <div class="mm-footer-col">
+            <h4>Acciones</h4>
+            <a href="<?= base_url('/#contacto') ?>"><span class="material-symbols-rounded">forum</span> Contáctanos</a>
+            <a href="<?= base_url('precio-asisten') ?>"><span class="material-symbols-rounded">receipt_long</span> Precios</a>
+            <a href="<?= base_url('login-verde') ?>"><span class="material-symbols-rounded">login</span> Iniciar sesión</a>
+            <a href="<?= base_url('/') ?>"><span class="material-symbols-rounded">language</span> Sitio principal</a>
         </div>
     </div>
-    <p class="asisten-word" aria-hidden="true">ASISTEN</p>
-    <div class="asisten-footer-bottom">
-        <div class="container">
-            <p>&copy; <?= date('Y') ?> DSG Perú Technology · Asisten DSG. Todos los derechos reservados.</p>
-        </div>
+    <div class="mm-footer-bottom">
+        <p>&copy; <?= date('Y') ?> DSG Perú Technology · Asisten DSG. Todos los derechos reservados.</p>
     </div>
 </footer>
 
+<a class="mm-fab" href="<?= base_url('/#contacto') ?>" aria-label="Contáctanos">
+    <span class="material-symbols-rounded">chat_bubble</span>
+</a>
+
 <script>
 (function () {
-    /* — menú móvil + sombra al scroll — */
-    var shell = document.getElementById('asistenShell');
-    var toggle = document.getElementById('asistenToggle');
-    var panel = document.getElementById('asistenMobile');
+    /* — nav: compacto al hacer scroll — */
+    var nav = document.getElementById('mmNav');
     function onScroll() {
-        if (shell) shell.classList.toggle('scrolled', (window.scrollY || 0) > 8);
+        if (!nav) return;
+        if ((window.scrollY || 0) > 40) nav.setAttribute('nav-compacted', '');
+        else nav.removeAttribute('nav-compacted');
     }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    /* — menú móvil — */
+    var toggle = document.getElementById('mmToggle');
+    var panel = document.getElementById('mmMobile');
     function setOpen(open) {
         if (!toggle || !panel) return;
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-        if (open) {
-            panel.hidden = false;
-            requestAnimationFrame(function () { panel.classList.add('open'); });
-        } else {
-            panel.classList.remove('open');
-            window.setTimeout(function () {
-                if (!panel.classList.contains('open')) panel.hidden = true;
-            }, 180);
-        }
+        toggle.querySelector('.material-symbols-rounded').textContent = open ? 'close' : 'menu';
+        panel.hidden = !open;
     }
-    function isOpen() { return panel && !panel.hidden && panel.classList.contains('open'); }
     if (toggle && panel) {
-        toggle.addEventListener('click', function (e) { e.stopPropagation(); setOpen(!isOpen()); });
+        toggle.addEventListener('click', function () { setOpen(panel.hidden); });
         panel.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && isOpen()) { setOpen(false); toggle.focus(); }
-        });
-        window.addEventListener('resize', function () { if (window.innerWidth > 760 && isOpen()) setOpen(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+        window.addEventListener('resize', function () { if (window.innerWidth > 680) setOpen(false); });
     }
+
+    /* — tabs de características — */
+    var tabBtns = document.querySelectorAll('.tab-button-pill');
+    var tabPanels = document.querySelectorAll('.tab-content');
+    tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id = btn.getAttribute('data-tab');
+            tabBtns.forEach(function (b) { b.classList.toggle('active', b === btn); });
+            tabPanels.forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-panel') === id); });
+        });
+    });
 
     /* — reloj en vivo del mockup — */
     var clock = document.getElementById('mockClock');
