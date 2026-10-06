@@ -220,7 +220,7 @@ body.mm-landing {
 
 /* ─── NAV FLOTANTE (nav-style-5 de MelonMind) ─── */
 .mm-nav {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
