@@ -7,6 +7,7 @@
         </a>
     </div>
     <nav class="dev-nav">
+        <div class="dev-nav-section">General</div>
         <a href="<?= base_url('dios') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'dashboard' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">dashboard</span>
             <span>Dashboard</span>
@@ -15,13 +16,14 @@
             <span class="material-symbols-outlined">admin_panel_settings</span>
             <span>Administradores</span>
         </a>
-        <a href="<?= base_url('dios/codigos') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'codigos' ? 'is-active' : '' ?>">
-            <span class="material-symbols-outlined">vpn_key</span>
-            <span>Códigos</span>
-        </a>
         <a href="<?= base_url('dios/empleados') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'empleados' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">badge</span>
             <span>Empleados</span>
+        </a>
+        <div class="dev-nav-section">Sistema</div>
+        <a href="<?= base_url('dios/codigos') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'codigos' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">vpn_key</span>
+            <span>Códigos</span>
         </a>
         <a href="<?= base_url('dios/estructura') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'estructura' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">account_tree</span>
@@ -31,6 +33,7 @@
             <span class="material-symbols-outlined">history</span>
             <span>Auditoría</span>
         </a>
+        <div class="dev-nav-section">Cuenta</div>
         <a href="<?= base_url('dios/perfil') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'perfil' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">person</span>
             <span>Mi perfil</span>

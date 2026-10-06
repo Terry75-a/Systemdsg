@@ -7,6 +7,7 @@
         </a>
     </div>
     <nav class="dev-nav">
+        <div class="dev-nav-section">General</div>
         <a href="<?= base_url('admin') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'dashboard' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">dashboard</span>
             <span>Dashboard</span>
@@ -19,6 +20,7 @@
             <span class="material-symbols-outlined">fact_check</span>
             <span>Asistencias</span>
         </a>
+        <div class="dev-nav-section">Sistema</div>
         <a href="<?= base_url('admin/horarios') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'horarios' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">schedule</span>
             <span>Horarios</span>
@@ -38,6 +40,7 @@
             <span class="material-symbols-outlined">settings</span>
             <span>Configuración</span>
         </a>
+        <div class="dev-nav-section">Cuenta</div>
         <a href="<?= base_url('') ?>" class="dev-nav-link">
             <span class="material-symbols-outlined">language</span>
             <span>Sitio web</span>

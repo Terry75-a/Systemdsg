@@ -141,6 +141,7 @@
         .att-page-info { font-size: .78rem; color: var(--g-text-secondary); margin-left: 8px; }
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>

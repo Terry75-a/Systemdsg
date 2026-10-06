@@ -38,6 +38,7 @@
         @media (max-width: 860px) { .ad-grid { grid-template-columns: 1fr 1fr; } }
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => $activePage ?? 'asistencias']) ?>
