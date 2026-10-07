@@ -4,6 +4,7 @@ uptime = document.getElementById("uptime-guaranteed");
 
 function animateValue(element, start, end, duration , decimals = 0) {
 
+    if (!element) return;
     let range = end - start;
     let step = 100;
     let increment = range/ step;

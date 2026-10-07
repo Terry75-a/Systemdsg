@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/daybase-home.css?v=' . filemtime(FCPATH . 'css/index/components/daybase-home.css')) ?>">
+<?php if (in_array($seg, ['servicios', 'dsg', 'precio'], true)): ?>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/daybase-pages.css?v=' . filemtime(FCPATH . 'css/index/components/daybase-pages.css')) ?>">
+<?php endif; ?>
+
 </head>
 
 <body class="db-page">
@@ -81,7 +85,9 @@
     </div>
 </footer>
 
+<?php if ($seg === ''): ?>
 <script src="<?= base_url('js/contador.js') ?>"></script>
+<?php endif; ?>
 <script>
     (function () {
         var burger = document.getElementById('dbBurger');

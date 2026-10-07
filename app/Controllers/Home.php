@@ -15,26 +15,26 @@ class Home extends BaseController
     
     public function dsg(): string
     {
-        return view('/layouts/header')
-            .view('/layouts/nav')
-            .view('dsg')
-            .view('/layouts/footer');
+        return view('layouts/home-daybase', [
+            'titulo' => 'DSG Perú · Quiénes somos',
+            'slot'   => view('dsg'),
+        ]);
     }
-    
+
     public function precio(): string
     {
-        return view('/layouts/header')
-          .view('/layouts/nav')
-          .view('precio')
-          .view('/layouts/footer');
+        return view('layouts/home-daybase', [
+            'titulo' => 'DSG Perú · Precios',
+            'slot'   => view('precio'),
+        ]);
     }
-    
+
     public function servicios(): string
     {
-        return view('/layouts/header')
-          .view('/layouts/nav')
-          .view('servicios')
-          .view('/layouts/footer');
+        return view('layouts/home-daybase', [
+            'titulo' => 'DSG Perú · Servicios',
+            'slot'   => view('servicios'),
+        ]);
     }
 
     // Página independiente: no usa los layouts del sitio principal
