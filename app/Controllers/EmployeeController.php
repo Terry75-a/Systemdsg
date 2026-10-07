@@ -1,11 +1,13 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\WebAuthnService;
 use App\Models\UserModel;
 use App\Models\AttendanceModel;
 use App\Models\ScheduleModel;
 use App\Models\IncidentModel;
 use App\Models\FestivoModel;
+use App\Models\WebAuthnCredentialModel;
 
 class EmployeeController extends BaseController
 {
@@ -14,6 +16,8 @@ class EmployeeController extends BaseController
     protected ScheduleModel $scheduleModel;
     protected IncidentModel $incidentModel;
     protected FestivoModel $festivoModel;
+    protected WebAuthnCredentialModel $credentialModel;
+    protected WebAuthnService $webauthn;
 
     public function __construct()
     {
@@ -22,6 +26,8 @@ class EmployeeController extends BaseController
         $this->scheduleModel   = new ScheduleModel();
         $this->incidentModel   = new IncidentModel();
         $this->festivoModel    = new FestivoModel();
+        $this->credentialModel = new WebAuthnCredentialModel();
+        $this->webauthn        = new WebAuthnService();
     }
 
     private function checkEmployee(): ?\CodeIgniter\HTTP\RedirectResponse
@@ -398,12 +404,15 @@ class EmployeeController extends BaseController
             return $this->response->setJSON(['ok' => false, 'msj' => 'Sesion invalida']);
         }
 
-        $challenge = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $challenge = $this->currentChallenge($this->request->getGet('fresh') !== null);
 
         return $this->response->setJSON([
             'ok'               => true,
             'csrfHash'         => csrf_hash(),
             'challenge'        => $challenge,
+            'userHandle'       => $this->webauthn->userHandleB64($userId),
+            'rpId'             => $this->webauthn->host(),
+            'origin'           => $this->webauthn->origin(),
             'userName'         => $user['name'] ?? 'Usuario',
             'userEmail'        => $user['email'] ?? '',
             'credId'           => $user['huella_cred_id'] ?? '',
@@ -413,26 +422,132 @@ class EmployeeController extends BaseController
         ]);
     }
 
+    /**
+     * Challenge vigente de la sesion WebAuthn. Solo se regenera si el flujo lo
+     * pide (`?fresh=1`), si no existe o si expiro: asi el refresco de CSRF que
+     * hace el cliente no invalida la ceremonia que esta en curso.
+     */
+    private function currentChallenge(bool $force): string
+    {
+        $challenge = (string) session()->get('wa_challenge');
+        $ts        = (int) session()->get('wa_challenge_ts');
+
+        if ($force || $challenge === '' || (time() - $ts) > 300) {
+            $challenge = WebAuthnService::b64e(random_bytes(32));
+            session()->set(['wa_challenge' => $challenge, 'wa_challenge_ts' => time()]);
+        }
+
+        return $challenge;
+    }
+
+    /** Lee y consume el challenge (uso unico) antes de validar la respuesta. */
+    private function takeChallenge(): ?string
+    {
+        $challenge = (string) session()->get('wa_challenge');
+        session()->remove(['wa_challenge', 'wa_challenge_ts']);
+
+        return $challenge === '' ? null : $challenge;
+    }
+
     public function guardarHuella()
     {
         if ($redirect = $this->checkEmployee()) return $redirect;
 
         $userId = (int) session()->get('user_id');
-        $credId = trim($this->request->getPost('credential_id') ?? '');
         $mode   = (string) $this->request->getPost('mode');
 
-        if ($credId === '') {
-            return $this->response->setJSON(['ok' => false, 'msj' => 'No se recibio la huella']);
-        }
-        if (strlen($credId) > 300) $credId = substr($credId, 0, 300);
+        if ($mode === 'sim') {
+            $credId = trim((string) $this->request->getPost('credential_id'));
+            if ($credId === '') {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'No se recibio la huella']);
+            }
+            if (strlen($credId) > 300) $credId = substr($credId, 0, 300);
 
-        $flag = $mode === 'sim' ? 2 : 1; // 2 = simulada de prueba, 1 = real (WebAuthn)
-        $this->userModel->update($userId, [
-            'huella_registrada' => $flag,
-            'huella_fecha'      => date('Y-m-d H:i:s'),
-            'huella_cred_id'    => $credId,
-        ]);
-        return $this->response->setJSON(['ok' => true, 'msj' => $mode === 'sim' ? 'Huella registrada (simulacion de prueba)' : 'Huella registrada correctamente']);
+            $this->credentialModel->clearUser($userId);
+            $this->userModel->update($userId, [
+                'huella_registrada' => 2, // 2 = simulada de prueba, 1 = real (WebAuthn)
+                'huella_fecha'      => date('Y-m-d H:i:s'),
+                'huella_cred_id'    => $credId,
+            ]);
+
+            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella registrada (simulacion de prueba)']);
+        }
+
+        $user = $this->userModel->find($userId);
+        if (!$user) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Sesion invalida']);
+        }
+
+        $challenge = $this->takeChallenge();
+        if ($challenge === null) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'El registro expiro. Vuelve a intentarlo.']);
+        }
+
+        try {
+            $options = $this->webauthn->creationOptions(
+                $challenge,
+                $userId,
+                (string) ($user['name'] ?? ''),
+                (string) ($user['email'] ?? '')
+            );
+            $record = $this->webauthn->verifyAttestation($challenge, $options, $this->request->getPost());
+            $row    = $this->webauthn->toRow($record, $userId);
+
+            if ($this->credentialModel->findByCredentialId($row['credential_id']) !== null) {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'Esa huella ya esta registrada en otra cuenta.']);
+            }
+
+            $this->credentialModel->clearUser($userId);
+            $this->credentialModel->insert($row);
+
+            $this->userModel->update($userId, [
+                'huella_registrada' => 1,
+                'huella_fecha'      => date('Y-m-d H:i:s'),
+                'huella_cred_id'    => $row['credential_id'],
+            ]);
+
+            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella registrada correctamente']);
+        } catch (\Throwable $e) {
+            log_message('error', 'WebAuthn (registro) fallido: ' . $e->getMessage());
+
+            return $this->response->setJSON([
+                'ok'  => false,
+                'msj' => 'No se pudo validar la huella. ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    /** Comprueba en el servidor la firma de la assertion (huella real). */
+    public function verifyHuella()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $userId = (int) session()->get('user_id');
+        $row    = $this->credentialModel->findByUser($userId);
+        if ($row === null) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'No tienes una huella registrada.']);
+        }
+
+        $challenge = $this->takeChallenge();
+        if ($challenge === null) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'La verificacion expiro. Pulsa de nuevo.']);
+        }
+
+        try {
+            $record  = $this->webauthn->fromRow($row);
+            $updated = $this->webauthn->verifyAssertion($record, $challenge, $this->request->getPost());
+
+            $this->credentialModel->update($row['id'], [
+                'counter'      => $updated->counter,
+                'last_used_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella verificada']);
+        } catch (\Throwable $e) {
+            log_message('error', 'WebAuthn (verificacion) fallida: ' . $e->getMessage());
+
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Huella no reconocida. Reintenta o verifica con el rostro.']);
+        }
     }
 
     public function guardarRostro()

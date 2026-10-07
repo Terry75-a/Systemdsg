@@ -113,6 +113,7 @@ $routes->group('mi-panel', ['filter' => 'asistencia'], static function ($routes)
     $routes->post('justificar-incidencia', 'EmployeeController::justificarIncidencia');
     $routes->get('bio-session', 'EmployeeController::bioSession');
     $routes->post('guardar-huella', 'EmployeeController::guardarHuella');
+    $routes->post('verify-huella', 'EmployeeController::verifyHuella');
     $routes->post('guardar-rostro', 'EmployeeController::guardarRostro');
 });
 

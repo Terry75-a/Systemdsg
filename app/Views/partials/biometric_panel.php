@@ -307,7 +307,7 @@
     // ── Registro de huella (WebAuthn) ──────────────────────────
     window.bioEnrollHuella = function (again) {
         msg('bioRostroMsg', '', true);
-        fetch('<?= site_url('mi-panel/bio-session') ?>', { credentials: 'same-origin' })
+        fetch('<?= site_url('mi-panel/bio-session') ?>?fresh=1', { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (d) {
                 if (!d.ok) { alert(d.msj || 'Error'); return; }
@@ -326,18 +326,26 @@
                         publicKey: {
                             challenge: b64ToU8(d.challenge),
                             rp: { id: location.hostname, name: 'DSG Peru' },
-                            user: { id: new Uint8Array(16), name: d.userEmail || d.userName, displayName: d.userName },
+                            user: { id: b64ToU8(d.userHandle), name: d.userEmail || d.userName, displayName: d.userName },
                             pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
                             authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required' },
                             timeout: 60000
                         }
                     }).then(function (cred) {
+                        var resp = cred.response;
                         var body = new FormData();
                         body.set('credential_id', u8ToB64(cred.rawId));
+                        body.set('type', cred.type || 'public-key');
+                        body.set('clientDataJSON', u8ToB64(new Uint8Array(resp.clientDataJSON)));
+                        body.set('attestationObject', u8ToB64(new Uint8Array(resp.attestationObject)));
+                        body.set('transports', JSON.stringify(typeof resp.getTransports === 'function' ? resp.getTransports() : []));
                         body.set('mode', 'realkey');
                         fetchPost('<?= site_url('mi-panel/guardar-huella') ?>', body).then(function (res) {
+                            msg('bioRostroMsg', res.msj || 'Huella registrada', !!res.ok);
                             alert(res.msj || 'Huella registrada');
                             if (res.ok) location.reload();
+                        }).catch(function () {
+                            msg('bioRostroMsg', 'Error de red al registrar la huella.', false);
                         });
                     }).catch(function () {
                         msg('bioRostroMsg', 'No se pudo registrar la huella. Prueba la opcion "Probar sin lector".', false);
@@ -499,7 +507,7 @@
         if (!window.PublicKeyCredential || credId === '' || credId.indexOf('sim-') === 0) {
             return bioHuellaDone();
         }
-        fetch('<?= site_url('mi-panel/bio-session') ?>', { credentials: 'same-origin' })
+        fetch('<?= site_url('mi-panel/bio-session') ?>?fresh=1', { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (d) {
                 if (!d.ok) { $('bioCheckHuellaBtn').disabled = false; msg('bioCheckMsg', 'Sesion invalida.', false); return; }
@@ -510,7 +518,27 @@
                         userVerification: 'required',
                         timeout: 60000
                     }
-                }).then(function () { bioHuellaDone(); }, function () {
+                }).then(function (cred) {
+                    var resp = cred.response;
+                    var body = new FormData();
+                    body.set('credential_id', u8ToB64(cred.rawId));
+                    body.set('clientDataJSON', u8ToB64(new Uint8Array(resp.clientDataJSON)));
+                    body.set('authenticatorData', u8ToB64(new Uint8Array(resp.authenticatorData)));
+                    body.set('signature', u8ToB64(new Uint8Array(resp.signature)));
+                    body.set('userHandle', (function (uh) {
+                        if (!uh) return '';
+                        if (typeof uh === 'string') return uh;
+                        return u8ToB64(uh instanceof Uint8Array ? uh : new Uint8Array(uh));
+                    })(resp.userHandle));
+                    fetchPost('<?= site_url('mi-panel/verify-huella') ?>', body).then(function (res) {
+                        if (res.ok) return bioHuellaDone();
+                        $('bioCheckHuellaBtn').disabled = false;
+                        msg('bioCheckMsg', res.msj || 'Huella no reconocida. Reintenta o usa "verificar con rostro".', false);
+                    }).catch(function () {
+                        $('bioCheckHuellaBtn').disabled = false;
+                        msg('bioCheckMsg', 'No se pudo verificar la huella. Usa "verificar con rostro".', false);
+                    });
+                }, function () {
                     $('bioCheckHuellaBtn').disabled = false;
                     msg('bioCheckMsg', 'Huella no reconocida. Reintenta o usa "verificar con rostro".', false);
                 });
