@@ -345,22 +345,23 @@
                                             </td>
                                             <td class="text-end">
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
+                                                   <i class="fa-solid fa-pen-to-square"></i> <span>Editar</span>
                                                     
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                    
-                                                </button>
-                                                <button type="button" class="pdsg-suc-btn pdsg-suc-btn-del btn-eliminar-sucursal" title="Eliminar">
-                                                    <i class="fa-solid fa-trash"></i>
                                                     
                                                 </button>
+                                                <button class="pdsg-action pdsg-action-danger btn-eliminar-sucursal" title="Eliminar"><i class="fa-solid fa-trash"></i><span>Eliminar</span></button>
+                                                <!--<button  class="pdsg-suc-btn pdsg-suc-btn-del btn-eliminar-sucursal" title="Eliminar">
+                                                    <i class="fa-solid fa-trash"></i><span>Eliminar</span>
+                                                    
+                                                </button> !-->
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-more btn-asignar-plan"
                                                     data-id-persona="<?= esc($idSuc); ?>"
                                                     data-nombre-persona="<?= esc($nomSuc); ?>"
                                                     title="Asignar Plan">
-                                                    <i class="fa-solid fa-inbox"></i>
+                                                    <i class="fa-solid fa-inbox"></i> <span>Plan</span>
                                                 </button>
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-payment btn-asignar-tipo-pagos" title="tipopago">
-                                                      <i class="fa-solid fa-money-bill"></i>
+                                                      <i class="fa-solid fa-money-bill"></i> <span>Pagos</span>
                                                 </button>
                                             </td>
                                         </tr>

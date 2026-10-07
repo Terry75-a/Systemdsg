@@ -320,6 +320,125 @@ html.dark .dev-main .pdsg-persona-page .pdsg-btn-save:hover { background: #29a14
   align-items: center;
   gap: 7px;
   transition: background-color 150ms cubic-bezier(.4, 0, .2, 1);
+  
+}
+/* Botones de acción en la tabla de sucursales */
+.pdsg-persona-page .pdsg-suc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--pe-line);
+  background: var(--pe-soft);
+  color: var(--pe-text);
+  font-size: 13px;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  vertical-align: middle;
+}
+
+.pdsg-persona-page .pdsg-suc-btn:hover {
+  background: var(--pe-line);
+}
+
+/* ── Botón Editar con texto al costado (tipo píldora) ── */
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-edit {
+  width: auto;                      /* Permite que crezca horizontalmente */
+  min-width: unset;
+  height: 32px;                     /* Mantiene la misma altura que los botones redondos */
+  padding: 0 12px;                  /* Relleno lateral para el texto */
+  border-radius: 999px;             /* Forma de píldora redondeada */
+  gap: 6px;                         /* Espacio entre el lápiz y la palabra "Editar" */
+  white-space: nowrap;              /* Evita que el texto salte de línea */
+  color: #b78103;                   /* Color dorado/ámbar suave */
+  background: #fef7e0;              /* Fondo tenue a juego */
+  border-color: #fce8b2;
+}
+
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-edit:hover {
+  background: #fef0cd;
+  color: #8c6200;
+}
+
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-edit span {
+  font-size: 12.5px;
+  font-weight: 500;
+  display: inline-block;
+  line-height: 1;
+}
+/* ── Regla compartida si llevan texto (tipo píldora) ── */
+.pdsg-persona-page .pdsg-suc-btn:has(span:not(.visually-hidden)) {
+  width: auto;
+  min-width: unset;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.pdsg-persona-page .pdsg-suc-btn span {
+  font-size: 12.5px;
+  font-weight: 500;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* ── Botón Asignar Plan (Azul) ── */
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-more {
+  color: #1a73e8;
+  background: #e8f0fe;
+  border-color: #d2e3fc;
+}
+
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-more:hover {
+  background: #d2e3fc;
+  color: #1557b0;
+}
+
+/* ── Botón Tipo de Pago (Verde) ── */
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-payment {
+  color: #188038;
+  background: #e6f4ea;
+  border-color: #ceead6;
+}
+
+.pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-payment:hover {
+  background: #ceead6;
+  color: #137333;
+}
+
+/* ── Modo Oscuro ── */
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-more {
+  background: #042449;
+  color: #8ab4f8;
+  border-color: #174ea6;
+}
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-more:hover {
+  background: #083b7a;
+}
+
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-payment {
+  background: #0d381e;
+  color: #81c995;
+  border-color: #137333;
+}
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-payment:hover {
+  background: #14522c;
+}
+
+/* Modo oscuro */
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-edit {
+  background: #332b00;
+  color: #fdd663;
+  border-color: #594700;
+}
+
+html.dark .pdsg-persona-page .pdsg-suc-btn.pdsg-suc-btn-edit:hover {
+  background: #4d3d00;
 }
 .dev-main .pdsg-persona-page .pdsg-add-btn:hover { background: var(--pe-accent); color: #fff; }
 
