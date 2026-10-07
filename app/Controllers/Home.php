@@ -7,10 +7,10 @@ class Home extends BaseController
 {
     public function index(): string
     {
-        return view('/layouts/header')
-            .view('/layouts/nav')
-            .view('index')
-            .view('/layouts/footer');
+        // Home con diseño propio (estilo Daybase): no usa header/nav/footer del sitio
+        return view('layouts/home-daybase', [
+            'slot' => view('index'),
+        ]);
     }
     
     public function dsg(): string
