@@ -7,15 +7,15 @@ class Home extends BaseController
 {
     public function index(): string
     {
-        // Home con diseño propio (estilo Daybase): no usa header/nav/footer del sitio
-        return view('layouts/home-daybase', [
+        // Home con diseño propio (estilo recent.design): no usa header/nav/footer del sitio
+        return view('layouts/site', [
             'slot' => view('index'),
         ]);
     }
     
     public function dsg(): string
     {
-        return view('layouts/home-daybase', [
+        return view('layouts/site', [
             'titulo' => 'DSG Perú · Quiénes somos',
             'slot'   => view('dsg'),
         ]);
@@ -23,7 +23,7 @@ class Home extends BaseController
 
     public function precio(): string
     {
-        return view('layouts/home-daybase', [
+        return view('layouts/site', [
             'titulo' => 'DSG Perú · Precios',
             'slot'   => view('precio'),
         ]);
@@ -31,7 +31,7 @@ class Home extends BaseController
 
     public function servicios(): string
     {
-        return view('layouts/home-daybase', [
+        return view('layouts/site', [
             'titulo' => 'DSG Perú · Servicios',
             'slot'   => view('servicios'),
         ]);
