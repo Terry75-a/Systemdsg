@@ -311,8 +311,8 @@
             <h2 class="main-title">En la palma de tu mano</h2>
             <p class="mm-section-sub">Accede a tu control de asistencia desde cualquier dispositivo: teléfono, tablet u ordenador.</p>
         </div>
-        <div class="mm-phone-mock reveal" data-delay="1">
-            <img src="<?= base_url('images/asisten-iphone.webp') ?>" alt="Asisten DSG en un iPhone" loading="lazy" width="700" height="1513">
+        <div class="mm-multi-mock reveal" data-delay="1">
+            <img src="<?= base_url('images/asisten-multiplataforma.webp') ?>" alt="Asisten DSG en MacBook Pro e iPhone" loading="lazy" width="1839" height="938">
         </div>
         <div class="devices-grid reveal" data-delay="2">
             <div class="device-card">
@@ -493,7 +493,6 @@
         <div class="mm-footer-col">
             <h4>Acciones</h4>
             <a href="#contacto"><span class="material-symbols-rounded">forum</span> Contáctanos</a>
-            <a href="<?= base_url('precio-asisten') ?>"><span class="material-symbols-rounded">receipt_long</span> Precios</a>
             <a href="<?= base_url('login-verde') ?>"><span class="material-symbols-rounded">login</span> Iniciar sesión</a>
             <a href="<?= base_url('/') ?>"><span class="material-symbols-rounded">language</span> Sitio principal</a>
         </div>
