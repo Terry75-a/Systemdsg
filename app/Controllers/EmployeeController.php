@@ -119,7 +119,41 @@ class EmployeeController extends BaseController
         }
         ksort($festivosProx);
 
+        // ── Horas: semana actual (lun-dom) y mes en curso ──
+        $weekStart = date('Y-m-d', strtotime('monday this week'));
+        $weekEnd   = date('Y-m-d', strtotime('sunday this week'));
+        $registrosSemana = $this->attendanceModel
+            ->where('user_id', $userId)
+            ->where('date >=', $weekStart)
+            ->where('date <=', $weekEnd)
+            ->findAll();
+
+        $diasSemana      = $this->diasDeHorario((string) ($miHorario['dias'] ?? ''));
+        $horasDia        = $this->horasDiarias($miHorario);
+        $horasSemana     = $this->horasDe($registrosSemana);
+        $horasMes        = $this->horasDe($misRegistros);
+        $horasSemanaEsp  = round($horasDia * $diasSemana, 1);
+        $horasMesEsp     = round($horasDia * $this->diasProgramadosEn(date('Y-m-01'), $hoy, $diasSemana), 1);
+
+        // ── Progreso de la práctica (alta → fin del semestre) ──
+        $inicioPrac = !empty($user['created']) ? substr((string) $user['created'], 0, 10) : $hoy;
+        $finPrac    = (string) ($user['contract_end'] ?? '');
+        if ($finPrac === '' || $finPrac < $inicioPrac) {
+            $finPrac = date('Y-m-d', strtotime($inicioPrac . ' +5 months'));
+        }
+        $totalDias   = max(1, (int) round((strtotime($finPrac) - strtotime($inicioPrac)) / 86400));
+        $pasadosDias = (int) round((strtotime($hoy) - strtotime($inicioPrac)) / 86400);
+        $pctPractica = (int) round(min(100, max(0, $pasadosDias / $totalDias * 100)));
+
         return [
+            'horasSemana'     => $horasSemana,
+            'horasSemanaEsp'  => $horasSemanaEsp,
+            'horasMes'        => $horasMes,
+            'horasMesEsp'     => $horasMesEsp,
+            'diasHorarioSem'  => $diasSemana,
+            'inicioPractica'  => $inicioPrac,
+            'finPractica'     => $finPrac,
+            'pctPractica'     => $pctPractica,
             'miInfo'          => $user,
             'miHorario'       => $miHorario,
             'hoyRegistro'     => $hoyRegistro,
@@ -137,6 +171,58 @@ class EmployeeController extends BaseController
             'bioRostroPath'   => (string) ($user['rostro_path'] ?? ''),
             'bioHuellaCredId' => (string) ($user['huella_cred_id'] ?? ''),
         ];
+    }
+
+    /** Horas reales trabajadas a partir de time_in → time_out */
+    private function horasDe(array $registros): float
+    {
+        $h = 0.0;
+        foreach ($registros as $r) {
+            if (empty($r['date']) || empty($r['time_in']) || empty($r['time_out'])) continue;
+            $s = (strtotime($r['date'] . ' ' . $r['time_out']) - strtotime($r['date'] . ' ' . $r['time_in'])) / 3600;
+            if ($s > 0 && $s <= 24) $h += $s;
+        }
+        return round($h, 1);
+    }
+
+    /** Horas que dura la jornada diaria del horario (0 si no hay horario) */
+    private function horasDiarias(?array $horario): float
+    {
+        if (empty($horario['hora_entrada']) || empty($horario['hora_salida'])) return 0.0;
+        $s = (strtotime($horario['hora_salida']) - strtotime($horario['hora_entrada'])) / 3600;
+        return $s > 0 ? round($s, 1) : 0.0;
+    }
+
+    /** Días que abarca el campo `dias` del horario (ej. "Lun - Vie" → 5). 0 = sin datos. */
+    private function diasDeHorario(?string $dias): int
+    {
+        $d = mb_strtolower(trim((string) $dias));
+        if ($d === '') return 0;
+        $d = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ü'], ['a', 'e', 'i', 'o', 'u', 'u'], $d);
+
+        $orden = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+        $pos   = [];
+        foreach ($orden as $i => $k) {
+            if (mb_strpos($d, $k) !== false) $pos[] = $i;
+        }
+        if (!$pos) return 0;
+
+        // "Lun - Vie" / "Lunes a Viernes" → rango inclusivo
+        if (count($pos) === 2 && preg_match('/\s(-|a|al|hasta)\s/', $d)) {
+            return abs($pos[1] - $pos[0]) + 1;
+        }
+        return count($pos);
+    }
+
+    /** Días programados (Lun..dom según el horario) entre dos fechas */
+    private function diasProgramadosEn(string $desde, string $hasta, int $diasSemana): int
+    {
+        if ($diasSemana <= 0) return 0;
+        $n = 0;
+        for ($d = $desde; $d <= $hasta && $n < 400; $d = date('Y-m-d', strtotime($d . ' +1 day'))) {
+            if ((int) date('N', strtotime($d)) <= $diasSemana) $n++;
+        }
+        return $n;
     }
 
     public function dashboard()
