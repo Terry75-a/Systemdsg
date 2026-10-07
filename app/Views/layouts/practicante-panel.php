@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/practicante.css?v=20260924') ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
 </head>
 <body>
 <div class="dev-layout">

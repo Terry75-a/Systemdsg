@@ -144,12 +144,11 @@ class EmployeeController extends BaseController
         $data['greetingSub'] = $role === 'Practicante'
             ? 'Marca tu asistencia y revisa tu estado del día.'
             : 'Bienvenido a tu panel, marcas y notificaciones.';
-        $data['slot'] = view('empleado/practicante-dashboard', $data);
+        $data['slot'] = view($role === 'Practicante'
+            ? 'empleado/practicante-dashboard'
+            : 'empleado/mi-panel-dashboard', $data);
 
-        if ($role === 'Practicante') {
-            return view('layouts/practicante-panel', $data);
-        }
-        return view('empleado/dashboard', $data);
+        return view('layouts/practicante-panel', $data);
     }
 
     // ════════════════════════════════════════
