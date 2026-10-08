@@ -1,20 +1,20 @@
-﻿<!-- ═══════════ LOGIN: formulario limpio ═══════════ -->
-<div class="main-wrapper">
-    <div class="left-side">
-        <div class="login-box">
+﻿<!-- ═══════════ LOGIN · estilo awesomic ═══════════ -->
+<div class="lg-page">
+    <div class="lg-card">
 
-            <a href="<?= base_url('/') ?>" class="back-link" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:18px;">
+        <div class="lg-form-col">
+            <a href="<?= base_url('/') ?>" class="lg-back">
                 <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al sitio principal
             </a>
 
-            <p class="login-eyebrow">Bienvenido de nuevo</p>
-            <h2 class="title-modern">Inicia sesión</h2>
-            <p class="login-sub">Accede al panel de control de tu negocio.</p>
+            <span class="lg-tag">Panel de clientes</span>
+            <h1 class="lg-h1">Bienvenido de <span class="grad">nuevo</span></h1>
+            <p class="lg-sub">Accede al panel de control de tu negocio.</p>
 
             <?php
             $flashMsg = session()->getFlashdata('msg') ?? session()->getFlashdata('error');
             $flashTipo = session()->getFlashdata('tipo') ?? 'danger';
-            $flashClass = ($flashTipo === 'warning') ? 'alerta-warning' : 'alerta-error';
+            $flashClass = ($flashTipo === 'warning') ? 'lg-alert-warning' : 'lg-alert-error';
             $flashIcon = ($flashTipo === 'warning') ? 'fa-triangle-exclamation' : 'fa-circle-exclamation';
             ?>
             <?php if (!empty($flashMsg)): ?>
@@ -24,55 +24,51 @@
                 </div>
             <?php endif; ?>
 
-            <form class="formularioxd" method="post" action="<?= site_url('login/auth') ?>" autocomplete="on">
+            <form class="lg-form" method="post" action="<?= site_url('login/auth') ?>" autocomplete="on">
                 <?= csrf_field() ?>
 
-                <div class="form-group-modern">
+                <div class="lg-field">
                     <label for="username">Usuario</label>
-                    <div class="input-with-icon">
+                    <div class="lg-input">
                         <input type="text" id="username" name="username" placeholder="example@email.com"
                                autocomplete="username" required>
-                        <span class="input-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span>
+                        <span class="lg-trailing"><i class="fa-regular fa-user" aria-hidden="true"></i></span>
                     </div>
                 </div>
 
-                <div class="form-group-modern">
+                <div class="lg-field">
                     <label for="password">Contraseña</label>
-                    <div class="input-with-icon">
+                    <div class="lg-input">
                         <input type="password" id="password" name="password" placeholder="••••••••"
                                autocomplete="current-password" required>
-                        <button type="button" id="togglePassword" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                        <button type="button" id="togglePassword" class="lg-trailing lg-eye" aria-label="Mostrar contraseña" title="Mostrar contraseña">
                             <i class="fa-solid fa-eye" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary-modern">
+                <button type="submit" class="lg-submit">
                     Entrar <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </button>
-
-                <div class="footer-links">
-                    <span class="login-help">¿Problemas para entrar? Contacta a tu administrador.</span>
-                </div>
             </form>
 
+            <p class="lg-help">¿Problemas para entrar? Contacta a tu administrador.</p>
         </div>
-    </div>
 
-    <!-- ═══════════ LOGIN: panel de marca ═══════════ -->
-    <div class="right-side">
-        <div class="right-inner">
-            <span class="right-eyebrow">DSG Perú Technology</span>
-            <h3 class="right-title">Todo tu negocio, bajo control.</h3>
-            <p class="right-desc">Ventas, inventario y reportes en un solo panel. Diseñado para restaurantes, boticas y minimarkets.</p>
-            <ul class="right-points">
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Punto de venta rápido y facturación electrónica</li>
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Inventario en tiempo real con alertas de stock</li>
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reportes claros para decidir mejor</li>
-            </ul>
-            <p class="right-quote">"Nos da control total del negocio y ahora tengo más tiempo para lo importante."</p>
-            <p class="right-author">Juan Alberto — Vifarma, Perú</p>
+        <div class="lg-side">
+            <img class="lg-side-art" src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Panel de control DSG" loading="lazy">
+            <div class="lg-side-card">
+                <div class="lg-side-stars" aria-hidden="true">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p>"Nos da control total del negocio y ahora tengo más tiempo para lo importante."</p>
+                <div class="lg-side-who">
+                    <img src="<?= base_url('images/vifarma.png') ?>" alt="Vifarma">
+                    <div><b>Juan Alberto</b><span>Vifarma · Pucallpa</span></div>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 

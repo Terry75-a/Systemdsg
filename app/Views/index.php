@@ -74,7 +74,7 @@
             </div>
 
             <div class="rg-rail" id="rgSvcRail">
-                <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#boticas">
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#boticas">
                     <span class="art"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
                     <div class="body">
                         <h3>Boticas y farmacias</h3>
@@ -84,7 +84,7 @@
                     </div>
                 </a>
 
-                <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#restaurantes">
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#restaurantes">
                     <span class="art"><img src="<?= base_url('images/rg-svc-restaurante.svg') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
                     <div class="body">
                         <h3>Restaurantes</h3>
@@ -104,7 +104,7 @@
                     </div>
                 </a>
 
-                <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#web">
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#web">
                     <span class="art"><img src="<?= base_url('images/rg-svc-web.svg') ?>" alt="Páginas web a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Páginas web a medida</h3>
@@ -124,7 +124,7 @@
                     </div>
                 </a>
 
-                <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#medida">
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#medida">
                     <span class="art"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Software a medida</h3>
