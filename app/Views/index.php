@@ -75,7 +75,7 @@
 
             <div class="rg-rail" id="rgSvcRail">
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#boticas">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-farmacia.avif') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
                     <div class="body">
                         <h3>Boticas y farmacias</h3>
                         <span class="rg-tags">
@@ -85,7 +85,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#restaurantes">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-restaurante.svg') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-restaurante.webp') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
                     <div class="body">
                         <h3>Restaurantes</h3>
                         <span class="rg-tags">
@@ -95,7 +95,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#minimarkets">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt="Sistema para minimarkets" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-minimarket.avif') ?>" alt="Sistema para minimarkets" loading="lazy"></span>
                     <div class="body">
                         <h3>Minimarkets</h3>
                         <span class="rg-tags">
@@ -105,7 +105,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#web">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-web.svg') ?>" alt="Páginas web a medida" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-web.webp') ?>" alt="Páginas web a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Páginas web a medida</h3>
                         <span class="rg-tags">
@@ -115,7 +115,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#hoteles">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-hoteles.svg') ?>" alt="Sistema para hoteles y cafés" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-hoteles.avif') ?>" alt="Sistema para hoteles y cafés" loading="lazy"></span>
                     <div class="body">
                         <h3>Hoteles y cafés</h3>
                         <span class="rg-tags">
@@ -125,7 +125,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#medida">
-                    <span class="art"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/aw-card-medida.avif') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Software a medida</h3>
                         <span class="rg-tags">
