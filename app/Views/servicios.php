@@ -48,7 +48,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">01</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt="Boticas y farmacias" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-botica.jpg') ?>" alt="Boticas y farmacias" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>0</strong><span>vencidos con alertas automáticas</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -76,7 +76,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">02</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-restaurante.svg') ?>" alt="Restaurantes" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-restaurante.jpg') ?>" alt="Restaurantes" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>2x</strong><span>más rápida la atención en mesa</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -104,7 +104,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">03</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt="Minimarkets" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-minimarket.jpg') ?>" alt="Minimarkets" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Seg</strong><span>cobro por producto con barcode</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -133,7 +133,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">04</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-web.svg') ?>" alt="Páginas web" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-web.jpg') ?>" alt="Páginas web" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Google</strong><span>para que te encuentren</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -160,7 +160,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">05</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-hoteles.svg') ?>" alt="Hoteles" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-hoteles.jpg') ?>" alt="Hoteles" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>100%</strong><span>ocupación siempre visible</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -188,7 +188,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">06</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-cafes.svg') ?>" alt="Cafés" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-cafes.jpg') ?>" alt="Cafés" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>QR</strong><span>carta digital sin imprimir</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -216,7 +216,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">07</span>
-                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/svc-photo-medida.jpg') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Tú</strong><span>defines los módulos</span></div>
                 </aside>
                 <div class="rg-sys-main">

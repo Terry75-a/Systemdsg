@@ -106,7 +106,7 @@
 
             <div class="rg-grid-2">
                 <article class="rg-card">
-                    <div class="rg-ico"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></div>
+                    <div class="rg-ico"><img src="<?= base_url('images/svc-photo-medida.jpg') ?>" alt="Software a medida" loading="lazy"></div>
                     <h3>Software a medida</h3>
                     <p class="rg-card-desc">Sistemas y páginas web hechos a la medida de tu negocio: exactamente lo que necesitas, sin funciones de más.</p>
                 </article>

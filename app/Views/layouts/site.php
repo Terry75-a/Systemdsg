@@ -167,6 +167,7 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
             <span class="right">
                 <a href="<?= base_url('asisten-dsg') ?>">Términos y políticas</a>
                 <a href="<?= base_url('dsg') ?>">Empresa</a>
+                <span class="credits">Fotos: Wikimedia Commons</span>
             </span>
         </div>
     </div>

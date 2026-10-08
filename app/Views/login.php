@@ -56,7 +56,7 @@
         </div>
 
         <div class="lg-side">
-            <img class="lg-side-art" src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Panel de control DSG" loading="lazy">
+            <img class="lg-side-art" src="<?= base_url('images/svc-photo-medida.jpg') ?>" alt="Panel de control DSG" loading="lazy">
             <div class="lg-side-card">
                 <div class="lg-side-stars" aria-hidden="true">
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>

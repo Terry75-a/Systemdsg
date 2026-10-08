@@ -75,7 +75,7 @@
 
             <div class="rg-rail" id="rgSvcRail">
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#boticas">
-                    <span class="art"><img src="<?= base_url('images/aw-card-farmacia.avif') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-botica.jpg') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
                     <div class="body">
                         <h3>Boticas y farmacias</h3>
                         <span class="rg-tags">
@@ -85,7 +85,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#restaurantes">
-                    <span class="art"><img src="<?= base_url('images/aw-card-restaurante.webp') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-restaurante.jpg') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
                     <div class="body">
                         <h3>Restaurantes</h3>
                         <span class="rg-tags">
@@ -95,7 +95,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#minimarkets">
-                    <span class="art"><img src="<?= base_url('images/aw-card-minimarket.avif') ?>" alt="Sistema para minimarkets" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-minimarket.jpg') ?>" alt="Sistema para minimarkets" loading="lazy"></span>
                     <div class="body">
                         <h3>Minimarkets</h3>
                         <span class="rg-tags">
@@ -105,7 +105,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#web">
-                    <span class="art"><img src="<?= base_url('images/aw-card-web.webp') ?>" alt="Páginas web a medida" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-web.jpg') ?>" alt="Páginas web a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Páginas web a medida</h3>
                         <span class="rg-tags">
@@ -115,7 +115,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#hoteles">
-                    <span class="art"><img src="<?= base_url('images/aw-card-hoteles.avif') ?>" alt="Sistema para hoteles y cafés" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-hoteles.jpg') ?>" alt="Sistema para hoteles y cafés" loading="lazy"></span>
                     <div class="body">
                         <h3>Hoteles y cafés</h3>
                         <span class="rg-tags">
@@ -125,7 +125,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#medida">
-                    <span class="art"><img src="<?= base_url('images/aw-card-medida.avif') ?>" alt="Software a medida" loading="lazy"></span>
+                    <span class="art"><img src="<?= base_url('images/svc-photo-medida.jpg') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Software a medida</h3>
                         <span class="rg-tags">
@@ -182,7 +182,7 @@
                 <div class="rg-plan-rows">
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt=""> Esencial</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/svc-photo-botica.jpg') ?>" alt=""> Esencial</span>
                             <span class="rg-plan-price">S/ 900 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -193,7 +193,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt=""> Negocio</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/svc-photo-minimarket.jpg') ?>" alt=""> Negocio</span>
                             <span class="rg-plan-price">S/ 990 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -204,7 +204,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt=""> Corporativo</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/svc-photo-medida.jpg') ?>" alt=""> Corporativo</span>
                             <span class="rg-plan-price">A medida</span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -357,6 +357,98 @@
                         </div>
                     </div>
                     <p>“Optimizó nuestros procesos con un soporte excelente. Lo recomiendo totalmente por su innovación y cercanía.”</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════ CONTROL DE CALIDAD (réplica 0.82%) ══════════ -->
+    <section class="rg-sec rg-vet-sec" id="calidad">
+        <div class="rg-wrap">
+            <div class="rg-head is-center">
+                <span class="rg-tag">Control de calidad</span>
+                <h2 class="rg-h2">Solo lo mejor llega a <span class="grad">tu negocio</span></h2>
+                <p class="rg-sub">Cada sistema pasa nuestro control de calidad antes de operar en tu local.</p>
+            </div>
+
+            <div class="rg-vet-grid">
+                <article class="rg-vet-card is-dark">
+                    <div>
+                        <span class="rg-vet-tag">Paso 1</span>
+                        <h3>Diagnóstico en tu local</h3>
+                        <div class="rg-vet-num">24 <small>h</small></div>
+                        <p class="rg-vet-desc">Levantamiento completo y propuesta clara en menos de 24 horas.</p>
+                    </div>
+                    <div class="rg-vet-faces" aria-hidden="true">
+                        <img src="<?= base_url('images/vifarma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/farma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/huellitas.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/botica.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/restaurant.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/market.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/pollos.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/minimark.png') ?>" alt="" loading="lazy">
+                    </div>
+                </article>
+
+                <article class="rg-vet-card">
+                    <div>
+                        <span class="rg-vet-tag">Paso 2</span>
+                        <h3>Configuración a tu giro</h3>
+                        <div class="rg-vet-num">6 <small>giros</small></div>
+                        <p class="rg-vet-desc">Boticas, restaurantes, minimarkets, hoteles, cafés y web a tu medida.</p>
+                    </div>
+                    <div class="rg-vet-faces" aria-hidden="true">
+                        <img src="<?= base_url('images/farma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/vifarma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/restaurant.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/botica.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/pollos.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/market.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/huellitas.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/minimark.png') ?>" alt="" loading="lazy">
+                    </div>
+                </article>
+
+                <article class="rg-vet-card">
+                    <div>
+                        <span class="rg-vet-tag">Paso 3</span>
+                        <h3>Pruebas contigo en caja</h3>
+                        <div class="rg-vet-num">100<small>%</small></div>
+                        <p class="rg-vet-desc">Tu equipo capacitado y cada función probada antes de salir en vivo.</p>
+                    </div>
+                    <div class="rg-vet-faces" aria-hidden="true">
+                        <img src="<?= base_url('images/huellitas.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/market.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/vifarma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/pollos.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/farma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/minimark.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/botica.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/restaurant.png') ?>" alt="" loading="lazy">
+                    </div>
+                </article>
+
+                <article class="rg-vet-card">
+                    <div>
+                        <span class="rg-vet-tag">Paso 4</span>
+                        <h3>Puesta en marcha</h3>
+                        <div class="rg-vet-num">24<small>/7</small></div>
+                        <p class="rg-vet-desc">Acompañamiento continuo, también en plena hora punta.</p>
+                        <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark rg-vet-cta">
+                            Agendar demo <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="rg-vet-faces" aria-hidden="true">
+                        <img src="<?= base_url('images/minimark.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/botica.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/pollos.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/huellitas.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/market.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/restaurant.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/vifarma.png') ?>" alt="" loading="lazy">
+                        <img src="<?= base_url('images/farma.png') ?>" alt="" loading="lazy">
+                    </div>
                 </article>
             </div>
         </div>
