@@ -51,6 +51,7 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <script>try{var __t=localStorage.getItem('rg-theme');if(!__t&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches){__t='dark'}if(__t==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(__e){}</script>
     <link rel="stylesheet" href="<?= base_url('css/index/components/awesomic.css?v=' . filemtime(FCPATH . 'css/index/components/awesomic.css')) ?>">
 </head>
 
@@ -89,6 +90,9 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
         <a href="<?= base_url('login') ?>" class="rg-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
         <a href="<?= $contactUrl ?>" class="rg-btn rg-btn-white"><i class="fa-regular fa-calendar"></i> Agendar demo</a>
         <a href="tel:+51923942001" class="rg-btn rg-btn-dark rg-btn-pill"><i class="fa-solid fa-phone"></i> Hablar ahora</a>
+        <button class="rg-theme-toggle" id="rgThemeToggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">
+            <i class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
         <button class="rg-burger" id="rgBurger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="rgDrawer">
             <span></span><span></span><span></span>
         </button>
@@ -391,6 +395,30 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
         document.addEventListener('click', function (e) {
             if (e.target && e.target.closest && e.target.closest('a, button, [role="button"], .rg-pill, .rg-nav-link, .rg-brand, label, summary')) tick();
         }, { capture: true, passive: true });
+    })();
+
+    /* ── Modo oscuro (negro puro, con persistencia) ── */
+    (function () {
+        var root = document.documentElement;
+        var btn = document.getElementById('rgThemeToggle');
+        function paint() {
+            var dark = root.getAttribute('data-theme') === 'dark';
+            if (!btn) return;
+            var icon = btn.querySelector('i');
+            if (icon) icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            btn.setAttribute('aria-label', dark ? 'Activar modo claro' : 'Activar modo oscuro');
+            btn.setAttribute('title', dark ? 'Modo claro' : 'Modo oscuro');
+        }
+        if (btn) {
+            btn.addEventListener('click', function () {
+                var dark = root.getAttribute('data-theme') !== 'dark';
+                if (dark) root.setAttribute('data-theme', 'dark');
+                else root.removeAttribute('data-theme');
+                try { localStorage.setItem('rg-theme', dark ? 'dark' : 'light'); } catch (e) {}
+                paint();
+            });
+        }
+        paint();
     })();
 
 </script>

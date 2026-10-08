@@ -820,3 +820,91 @@ html { scroll-behavior: smooth; }
     .rg-sys-main .rg-feat { grid-template-columns: 1fr; }
     .rg-wordmark { font-size: 18.5vw; letter-spacing: -0.055em; }
 }
+
+/* ══════════════════════════════════════════════
+   Toggle modo oscuro
+   ══════════════════════════════════════════════ */
+.rg-theme-toggle {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--light); border: 1px solid var(--line); color: var(--ink-2);
+    font-size: 15px; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.rg-theme-toggle:hover { background: var(--gray); color: var(--ink); transform: translateY(-1px); }
+
+/* ══════════════════════════════════════════════
+   Modo oscuro · negro puro
+   ══════════════════════════════════════════════ */
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #000000;
+    --ink: #fafafa;
+    --ink-2: #e7e7ea;
+    --text: #d6d6db;
+    --muted: #a1a1aa;
+    --muted-2: #b9b9bf;
+    --gray: #0a0a0c;
+    --gray-2: #26262c;
+    --light: #101013;
+    --line: #222228;
+    --line-strong: #33333a;
+}
+html[data-theme="dark"] .rg-nav { background: rgba(0, 0, 0, 0.88); }
+html[data-theme="dark"] .rg-pills { background: rgba(0, 0, 0, 0.9); }
+html[data-theme="dark"] .rg-brand-mark { background: #09090b; }
+html[data-theme="dark"] .rg-dropdown { background: #0e0e10; }
+html[data-theme="dark"] .rg-lead-form { background: #0e0e10; }
+html[data-theme="dark"] .rg-arrow { background: #0e0e10; }
+html[data-theme="dark"] .rg-btn-ghost,
+html[data-theme="dark"] .rg-btn-white,
+html[data-theme="dark"] .rg-btn-line { background: #141417; }
+
+/* tarjetas y paneles blancos → oscuros */
+html[data-theme="dark"] .rg-svc-card,
+html[data-theme="dark"] .rg-card,
+html[data-theme="dark"] .rg-plan,
+html[data-theme="dark"] .rg-plan-row,
+html[data-theme="dark"] .rg-quote-card,
+html[data-theme="dark"] .rg-quiz,
+html[data-theme="dark"] .rg-info-item,
+html[data-theme="dark"] .rg-form,
+html[data-theme="dark"] .rg-tl-card,
+html[data-theme="dark"] .rg-sys-stat,
+html[data-theme="dark"] .rg-inc,
+html[data-theme="dark"] .rg-foot-contact,
+html[data-theme="dark"] .rg-testi-card,
+html[data-theme="dark"] .rg-vet-card:not(.is-dark) { background: #0e0e10; }
+html[data-theme="dark"] .rg-content > section:nth-of-type(even) .rg-card,
+html[data-theme="dark"] .rg-content > section:nth-of-type(even) .rg-faq-item { background: #0e0e10; border-color: var(--line); }
+html[data-theme="dark"] .rg-seg button.on,
+html[data-theme="dark"] .rg-step-n { background: #1b1b1f; }
+html[data-theme="dark"] .rg-vet-card:not(.is-dark) .rg-vet-faces img { border-color: #0e0e10; }
+
+/* formularios */
+html[data-theme="dark"] .rg-form input,
+html[data-theme="dark"] .rg-form textarea { background: #0e0e10; }
+html[data-theme="dark"] .rg-form input:focus,
+html[data-theme="dark"] .rg-form textarea:focus { border-color: var(--acc); box-shadow: 0 0 0 3px rgba(92, 227, 157, 0.14); }
+
+/* mapa en oscuro */
+html[data-theme="dark"] .rg-map iframe { filter: invert(0.9) hue-rotate(180deg) grayscale(0.25) contrast(0.92); }
+
+/* bloques que eran negros con tokens → mantener oscuros */
+html[data-theme="dark"] .rg-card-ink { background: #101013 !important; }
+html[data-theme="dark"] .rg-plan-feat { background: #101013 !important; }
+html[data-theme="dark"] .rg-plan-feat .rg-btn-dark { color: #09090b; }
+html[data-theme="dark"] .rg-cta-box,
+html[data-theme="dark"] .rg-cta-panel.is-dark { background: #0e0e10; }
+
+/* tarjeta menta: texto oscuro siempre */
+html[data-theme="dark"] .rg-card-acc h3,
+html[data-theme="dark"] .rg-card-acc .rg-card-desc { color: #06271a; }
+
+/* timeline + sociales + wordmark */
+html[data-theme="dark"] .rg-tl-dot { box-shadow: 0 0 0 4px #0e0e10, 0 0 0 5.5px rgba(255, 255, 255, 0.16); }
+html[data-theme="dark"] .rg-foot-social a:hover { background: #fafafa; color: #09090b; }
+html[data-theme="dark"] .rg-wordmark {
+    background: linear-gradient(178deg, #fafafa 8%, #1f6f4a 58%, #5ce39d 100%);
+    -webkit-background-clip: text; background-clip: text;
+}
