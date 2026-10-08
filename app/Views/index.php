@@ -366,18 +366,18 @@
     <section class="rg-sec rg-vet-sec" id="calidad">
         <div class="rg-wrap">
             <div class="rg-head is-center">
-                <span class="rg-tag">Control de calidad</span>
-                <h2 class="rg-h2">Solo lo mejor llega a <span class="grad">tu negocio</span></h2>
-                <p class="rg-sub">Cada sistema pasa nuestro control de calidad antes de operar en tu local.</p>
+                <span class="rg-tag">DSG en cifras</span>
+                <h2 class="rg-h2">Números que hablan <span class="grad">por nosotros</span></h2>
+                <p class="rg-sub">El respaldo real detrás de cada sistema DSG.</p>
             </div>
 
             <div class="rg-vet-grid">
                 <article class="rg-vet-card is-dark">
                     <div>
                         <span class="rg-vet-tag">Paso 1</span>
-                        <h3>Diagnóstico en tu local</h3>
-                        <div class="rg-vet-num">24 <small>h</small></div>
-                        <p class="rg-vet-desc">Levantamiento completo y propuesta clara en menos de 24 horas.</p>
+                        <h3>Negocios que operan con DSG</h3>
+                        <div class="rg-vet-num">500+</div>
+                        <p class="rg-vet-desc">Boticas, restaurantes, minimarkets y más en todo el Perú.</p>
                     </div>
                     <div class="rg-vet-faces" aria-hidden="true">
                         <img src="<?= base_url('images/vifarma.png') ?>" alt="" loading="lazy">
@@ -394,9 +394,9 @@
                 <article class="rg-vet-card">
                     <div>
                         <span class="rg-vet-tag">Paso 2</span>
-                        <h3>Configuración a tu giro</h3>
-                        <div class="rg-vet-num">6 <small>giros</small></div>
-                        <p class="rg-vet-desc">Boticas, restaurantes, minimarkets, hoteles, cafés y web a tu medida.</p>
+                        <h3>Tiempo en línea garantizado</h3>
+                        <div class="rg-vet-num">99.9<small>%</small></div>
+                        <p class="rg-vet-desc">Tu sistema disponible incluso en plena hora punta.</p>
                     </div>
                     <div class="rg-vet-faces" aria-hidden="true">
                         <img src="<?= base_url('images/farma.png') ?>" alt="" loading="lazy">
@@ -413,9 +413,9 @@
                 <article class="rg-vet-card">
                     <div>
                         <span class="rg-vet-tag">Paso 3</span>
-                        <h3>Pruebas contigo en caja</h3>
-                        <div class="rg-vet-num">100<small>%</small></div>
-                        <p class="rg-vet-desc">Tu equipo capacitado y cada función probada antes de salir en vivo.</p>
+                        <h3>Calificación promedio en Google</h3>
+                        <div class="rg-vet-num">4.9</div>
+                        <p class="rg-vet-desc">La nota que nos dejan dueños que ordenaron su negocio.</p>
                     </div>
                     <div class="rg-vet-faces" aria-hidden="true">
                         <img src="<?= base_url('images/huellitas.png') ?>" alt="" loading="lazy">
@@ -432,9 +432,9 @@
                 <article class="rg-vet-card">
                     <div>
                         <span class="rg-vet-tag">Paso 4</span>
-                        <h3>Puesta en marcha</h3>
+                        <h3>Soporte que nunca duerme</h3>
                         <div class="rg-vet-num">24<small>/7</small></div>
-                        <p class="rg-vet-desc">Acompañamiento continuo, también en plena hora punta.</p>
+                        <p class="rg-vet-desc">Ayuda real a toda hora, todos los días.</p>
                         <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark rg-vet-cta">
                             Agendar demo <i class="fa-solid fa-arrow-right"></i>
                         </a>
