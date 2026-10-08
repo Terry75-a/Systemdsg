@@ -19,8 +19,18 @@ $pages = [
     'precio'    => 'Precios',
 ];
 
+$sistemas = [
+    ['#boticas', 'Boticas y farmacias', 'fa-capsules'],
+    ['#restaurantes', 'Restaurantes', 'fa-utensils'],
+    ['#minimarkets', 'Minimarkets', 'fa-shop'],
+    ['#web', 'Páginas web', 'fa-window-maximize'],
+    ['#hoteles', 'Hoteles', 'fa-bed'],
+    ['#cafes', 'Cafés y pastelerías', 'fa-mug-saucer'],
+    ['#medida', 'Software a medida', 'fa-pen-ruler'],
+];
+
 $sections = [
-    ''          => [['#servicios', 'Servicios'], ['#proceso', 'Proceso'], ['#por-que', 'Por qué elegirnos'], ['#testimonios', 'Testimonios'], ['#contacto', 'Contacto']],
+    ''          => [['#servicios', 'Servicios'], ['#planes', 'Planes'], ['#por-que', 'Por qué elegirnos'], ['#proceso', 'Cómo trabajamos'], ['#testimonios', 'Testimonios'], ['#contacto', 'Contacto']],
     'servicios' => [['#boticas', 'Boticas y farmacias'], ['#restaurantes', 'Restaurantes'], ['#minimarkets', 'Minimarkets'], ['#web', 'Páginas web'], ['#hoteles', 'Hoteles'], ['#cafes', 'Cafés'], ['#medida', 'A medida']],
     'dsg'       => [['#trayectoria', 'Trayectoria'], ['#proposito', 'Propósito'], ['#valores', 'Valores']],
     'precio'    => [['#planes', 'Planes'], ['#faq', 'Preguntas']],
@@ -46,22 +56,39 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
 
 <body class="rg-page">
 
-<!-- ══ Navbar sticky (awesomic) ══ -->
+<!-- ══ Navbar sticky (estilo awesomic: marca · menú centrado · acciones) ══ -->
 <header class="rg-nav">
     <a href="<?= base_url('/') ?>" class="rg-brand" aria-label="DSG Perú · Inicio">
         <span class="rg-brand-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Perú"></span>
         <span>DSG Perú<small>TECHNOLOGY</small></span>
     </a>
 
-    <nav class="rg-nav-menu" aria-label="Navegación del sitio">
-        <?php foreach ($pages as $key => $label): ?>
-            <a href="<?= base_url($key) ?>" class="rg-nav-link <?= $seg === $key ? 'is-active' : '' ?>"><?= $label ?></a>
-        <?php endforeach; ?>
+    <nav class="rg-nav-links" aria-label="Navegación del sitio">
+        <span class="rg-nav-item">
+            <a href="<?= base_url('') ?>" class="rg-nav-link <?= $seg === '' ? 'is-active' : '' ?>">Inicio</a>
+        </span>
+        <span class="rg-nav-item">
+            <a href="<?= base_url('servicios') ?>" class="rg-nav-link <?= $seg === 'servicios' ? 'is-active' : '' ?>">
+                Servicios <i class="fa-solid fa-chevron-down"></i>
+            </a>
+            <span class="rg-dropdown">
+                <?php foreach ($sistemas as [$href, $label, $icon]): ?>
+                    <a href="<?= base_url('servicios') ?><?= $href ?>"><i class="fa-solid <?= $icon ?>"></i> <?= $label ?></a>
+                <?php endforeach; ?>
+            </span>
+        </span>
+        <span class="rg-nav-item">
+            <a href="<?= base_url('dsg') ?>" class="rg-nav-link <?= $seg === 'dsg' ? 'is-active' : '' ?>">Empresa</a>
+        </span>
+        <span class="rg-nav-item">
+            <a href="<?= base_url('precio') ?>" class="rg-nav-link <?= $seg === 'precio' ? 'is-active' : '' ?>">Precios</a>
+        </span>
     </nav>
 
     <div class="rg-nav-actions">
-        <a href="<?= base_url('login') ?>" class="rg-btn rg-btn-ghost">Iniciar sesión</a>
-        <a href="<?= $contactUrl ?>" class="rg-btn rg-btn-dark">Solicitar demo</a>
+        <a href="<?= base_url('login') ?>" class="rg-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
+        <a href="<?= $contactUrl ?>" class="rg-btn rg-btn-white"><i class="fa-regular fa-calendar"></i> Agendar demo</a>
+        <a href="tel:+51923942001" class="rg-btn rg-btn-dark rg-btn-pill"><i class="fa-solid fa-phone"></i> Hablar ahora</a>
         <button class="rg-burger" id="rgBurger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="rgDrawer">
             <span></span><span></span><span></span>
         </button>
@@ -80,53 +107,60 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
 
 <?= $slot ?>
 
-<!-- ══ Footer ══ -->
+<!-- ══ Footer (tarjeta "Get in touch" + columnas + wordmark) ══ -->
 <footer class="rg-foot">
     <div class="rg-wrap">
-        <div class="rg-foot-grid">
-            <div class="rg-foot-brand">
-                <a href="<?= base_url('/') ?>" class="rg-brand">
-                    <span class="rg-brand-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Perú"></span>
-                    <span>DSG Perú<small>TECHNOLOGY</small></span>
-                </a>
-                <p>Software para boticas, farmacias, restaurantes, minimarkets y páginas web a medida en el Perú.</p>
-                <div class="rg-foot-social">
-                    <a href="https://www.facebook.com/dsgperu" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/dsgperu/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <div class="rg-foot-top">
+            <div class="rg-foot-contact">
+                <h4>Get in touch</h4>
+                <div class="line"><i class="fa-solid fa-location-dot"></i> Pucallpa, Ucayali, Perú · atendemos todo el país</div>
+                <div class="stack">
+                    <a href="tel:+51923942001"><i class="fa-solid fa-phone"></i> +51 923 942 001</a>
+                    <a href="mailto:soporte@dsgperu.com"><i class="fa-solid fa-envelope"></i> soporte@dsgperu.com</a>
+                </div>
+                <div class="row">
+                    <div class="rg-foot-social">
+                        <a href="https://www.facebook.com/dsgperu" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/dsgperu/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://wa.me/51923942001" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <h5>Productos</h5>
-                <nav class="rg-foot-col" aria-label="Productos">
+            <div class="rg-foot-cols">
+                <div class="rg-foot-col">
+                    <h5>Empresa</h5>
+                    <a href="<?= base_url('dsg') ?>">Sobre DSG</a>
+                    <a href="<?= base_url('dsg') ?>#trayectoria">Trayectoria</a>
+                    <a href="<?= base_url('precio') ?>">Precios</a>
+                    <a href="<?= $contactUrl ?>">Contacto</a>
+                    <a href="<?= base_url('login') ?>">Iniciar sesión</a>
+                </div>
+                <div class="rg-foot-col">
+                    <h5>Recursos</h5>
+                    <a href="<?= base_url('asisten-dsg') ?>">Asistencia del personal</a>
+                    <a href="<?= base_url('servicios') ?>#faq">Preguntas frecuentes</a>
+                    <a href="<?= base_url('precio') ?>#faq">Preguntas sobre precios</a>
+                    <a href="<?= $contactUrl ?>">Solicitar demo</a>
+                </div>
+                <div class="rg-foot-col">
+                    <h5>Servicios</h5>
                     <a href="<?= base_url('servicios') ?>#boticas">Boticas y farmacias</a>
                     <a href="<?= base_url('servicios') ?>#restaurantes">Restaurantes</a>
                     <a href="<?= base_url('servicios') ?>#minimarkets">Minimarkets</a>
                     <a href="<?= base_url('servicios') ?>#web">Páginas web</a>
-                </nav>
-            </div>
-
-            <div>
-                <h5>Empresa</h5>
-                <nav class="rg-foot-col" aria-label="Empresa">
-                    <a href="<?= base_url('dsg') ?>">Sobre DSG</a>
-                    <a href="<?= base_url('precio') ?>">Precios</a>
-                    <a href="<?= $contactUrl ?>">Contacto</a>
-                    <a href="<?= base_url('login') ?>">Iniciar sesión</a>
-                    <a href="<?= base_url('asisten-dsg') ?>">Asistencia del personal</a>
-                </nav>
-            </div>
-
-            <div>
-                <h5>Get in touch</h5>
-                <div class="rg-foot-col">
-                    <a href="mailto:soporte@dsgperu.com">soporte@dsgperu.com</a>
-                    <a href="tel:+51923942001">+51 923 942 001</a>
-                    <span>Pucallpa, Perú</span>
+                    <a href="<?= base_url('servicios') ?>#medida">Software a medida</a>
                 </div>
             </div>
         </div>
+
+        <p class="rg-foot-note">
+            <i class="fa-solid fa-sparkles"></i>
+            Software para boticas, farmacias, restaurantes, minimarkets y páginas web a medida en el Perú.
+        </p>
+
+        <div class="rg-wordmark" aria-hidden="true">DSGPERU<sup>✳</sup></div>
 
         <div class="rg-foot-bottom">
             <span>&copy; <?= date('Y') ?> DSG Peru Technology. Todos los derechos reservados.</span>
@@ -232,6 +266,23 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
         rip.addEventListener('animationend', function () { rip.remove(); });
     });
 
+    /* ── Formularios pill del hero/CTA: llevan al formulario de contacto ── */
+    document.querySelectorAll('form.rg-lead-form').forEach(function (f) {
+        f.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var mail = f.querySelector('input[type="email"]');
+            var target = document.getElementById('contacto');
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(function () {
+                var dest = document.querySelector('#contacto .rg-form input[name="correo"]');
+                if (dest) {
+                    if (mail && mail.value) dest.value = mail.value;
+                    dest.focus({ preventScroll: true });
+                }
+            }, 600);
+        });
+    });
+
     /* ── Scrollspy: píldora activa según la sección visible ── */
     (function () {
         var pills = [].slice.call(document.querySelectorAll('.rg-pills .rg-pill'))
@@ -253,6 +304,41 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
         window.addEventListener('hashchange', function () { setTimeout(update, 120); });
         update();
     })();
+
+    /* ── Palabra rotativa del hero (estilo awesomic) ── */
+    (function () {
+        var el = document.querySelector('.grad[data-rotate]');
+        if (!el) return;
+        var words;
+        try { words = JSON.parse(el.getAttribute('data-rotate')); } catch (e) { return; }
+        if (!words || words.length < 2) return;
+        var i = 0;
+        setInterval(function () {
+            i = (i + 1) % words.length;
+            el.classList.add('is-out');
+            setTimeout(function () { el.textContent = words[i]; el.classList.remove('is-out'); }, 340);
+        }, 3400);
+    })();
+
+    /* ── Flechas del carrusel de tarjetas ── */
+    document.querySelectorAll('[data-rail-target]').forEach(function (btn) {
+        var rail = document.getElementById(btn.getAttribute('data-rail-target'));
+        if (!rail) return;
+        btn.addEventListener('click', function () {
+            var card = rail.querySelector('.rg-svc-card');
+            var step = card ? card.getBoundingClientRect().width + 16 : 340;
+            rail.scrollBy({ left: btn.hasAttribute('data-rail-prev') ? -step : step, behavior: 'smooth' });
+        });
+    });
+
+    /* ── Segmentados (cuestionario de planes) ── */
+    document.querySelectorAll('.rg-seg').forEach(function (seg) {
+        seg.addEventListener('click', function (e) {
+            var b = e.target.closest('button');
+            if (!b) return;
+            seg.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+        });
+    });
 
     /* ── Sonido de clic (Web Audio, sin archivos) ── */
     (function () {

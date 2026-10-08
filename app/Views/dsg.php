@@ -2,20 +2,33 @@
 
     <!-- ═══════════ HERO ═══════════ -->
     <section class="rg-hero rg-wrap">
-        <span class="rg-tag">Desde 2010 · Pucallpa, Perú</span>
+        <div class="rg-hero-grid">
+            <div class="rg-hero-main">
+                <div class="rg-badges">
+                    <span class="rg-badge-chip"><i class="fa-solid fa-location-dot"></i> Pucallpa, Perú</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-calendar"></i> Desde 2010</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-headset"></i> Soporte 24/7</span>
+                </div>
 
-        <h1 class="rg-h1 wide">Transformamos la manera de <span class="grad">hacer negocios</span> en el Perú</h1>
+                <h1 class="rg-h1 wide">Transformamos la manera de <span class="grad">hacer negocios</span> en el Perú</h1>
+            </div>
 
-        <p class="rg-sub">
-            Somos una empresa peruana especializada en software para boticas y farmacias, y también en sistemas
-            a medida y páginas web para pymes. Nuestra misión es llevarle tecnología útil a cada rincón del país.
-        </p>
+            <div class="rg-hero-side">
+                <p class="rg-hero-lead">
+                    Somos una empresa peruana especializada en software para boticas y farmacias, y también en
+                    sistemas a medida y páginas web para pymes. Nuestra misión es llevarle tecnología útil a cada
+                    rincón del país.
+                </p>
 
-        <div class="rg-actions">
-            <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark">
-                Trabajemos juntos <i class="fa-solid fa-arrow-right"></i>
-            </a>
-            <a href="<?= base_url('servicios') ?>" class="rg-btn rg-btn-ghost">Ver soluciones</a>
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
+                        Trabajemos juntos <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <p class="rg-micro">Más de 500 empresas confían en nosotros</p>
+            </div>
         </div>
 
         <div class="rg-stats-4">
@@ -152,16 +165,16 @@
     <!-- ═══════════ CTA ═══════════ -->
     <section class="rg-sec">
         <div class="rg-wrap">
-            <div class="rg-cta-box">
+            <div class="rg-cta-panel">
                 <span class="rg-tag">Desde 2010</span>
                 <h2 class="rg-h2">¿Quieres ser parte de <span class="grad">nuestra historia?</span></h2>
                 <p class="rg-sub">Únete a las más de 500 empresas que ya transformaron su negocio con DSG Perú Technology.</p>
-                <div class="rg-actions center">
-                    <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-acc">
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
                         Contáctanos <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a href="<?= base_url('servicios') ?>" class="rg-btn rg-btn-ghost">Ver soluciones</a>
-                </div>
+                    </button>
+                </form>
             </div>
         </div>
     </section>

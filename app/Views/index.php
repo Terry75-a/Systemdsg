@@ -1,205 +1,313 @@
 <main class="rg-content">
 
-    <!-- ══════════ HERO ══════════ -->
+    <!-- ══════════ HERO (2 columnas + form) ══════════ -->
     <section class="rg-hero rg-wrap">
-        <span class="rg-tag">Sistemas para boticas y farmacias · Perú</span>
+        <div class="rg-hero-grid">
+            <div class="rg-hero-main">
+                <div class="rg-badges">
+                    <span class="rg-badge-chip"><i class="fa-solid fa-capsules"></i> Boticas y farmacias</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-utensils"></i> Restaurantes</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-shop"></i> Minimarkets</span>
+                </div>
 
-        <h1 class="rg-h1">
-            El sistema que tu <span class="grad">botica o farmacia</span> necesita
-        </h1>
+                <h1 class="rg-h1">
+                    El sistema que tu
+                    <span class="grad" data-rotate='["botica","farmacia","tienda","página web"]'>botica</span>
+                    necesita
+                </h1>
+            </div>
 
-        <p class="rg-sub">
-            En DSG Perú desarrollamos punto de venta, kardex, caja y facturación para boticas y farmacias,
-            además de restaurantes, minimarkets y páginas web personalizadas. Controla lotes, vencimientos y
-            ventas en un solo lugar.
-        </p>
+            <div class="rg-hero-side">
+                <p class="rg-hero-lead">
+                    Punto de venta, kardex, caja y facturación electrónica para boticas y farmacias,
+                    restaurantes, minimarkets y páginas web a medida. Implementación en menos de 24 horas.
+                </p>
 
-        <div class="rg-actions">
-            <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark">
-                Solicitar demo <i class="fa-solid fa-arrow-right"></i>
-            </a>
-            <a href="<?= base_url('servicios') ?>" class="rg-btn rg-btn-ghost">
-                Ver servicios <i class="fa-solid fa-arrow-right"></i>
-            </a>
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
+                        Solicitar demo <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <p class="rg-micro">Demo sin costo · Soporte 24/7 · Sin contrato de permanencia</p>
+            </div>
         </div>
 
-        <p class="rg-micro">Demo sin costo · Implementación en menos de 24 horas</p>
-
-        <div class="rg-stats">
+        <div class="rg-hero-stats">
+            <div class="rg-stat">
+                <b><span id="stas-number">0</span>+</b>
+                <span>Empresas atendidas</span>
+            </div>
+            <div class="rg-stat">
+                <b id="experience-years">0</b>
+                <span>Años de experiencia</span>
+            </div>
             <div class="rg-stat is-acc">
-                <span class="t-label">Empresas atendidas</span>
-                <div class="t-num"><span id="stas-number">0</span>+</div>
-                <div class="t-desc">Negocios que ya operan con DSG</div>
+                <b><span id="uptime-guaranteed">0</span>%</b>
+                <span>Uptime garantizado</span>
             </div>
-            <div class="rg-stat">
-                <span class="t-label">Años de experiencia</span>
-                <div class="t-num" id="experience-years">0</div>
-                <div class="t-desc">Implementando software en el Perú</div>
+            <div class="rg-logos">
+                <span>VIFARMA</span>
+                <span>CARPANETO</span>
+                <span>HUELLITAS</span>
             </div>
-            <div class="rg-stat">
-                <span class="t-label">Uptime garantizado</span>
-                <div class="t-num"><span id="uptime-guaranteed">0</span>%</div>
-                <div class="t-desc">Tu operación nunca se detiene</div>
-            </div>
-        </div>
-
-        <div class="rg-chips">
-            <span class="rg-chip"><i class="fa-solid fa-capsules"></i> Boticas y farmacias</span>
-            <span class="rg-chip"><i class="fa-solid fa-utensils"></i> Restaurantes</span>
-            <span class="rg-chip"><i class="fa-solid fa-shop"></i> Minimarkets</span>
-            <span class="rg-chip"><i class="fa-solid fa-window-maximize"></i> Páginas personalizadas</span>
         </div>
     </section>
 
-    <!-- ══════════ SERVICIOS ══════════ -->
+    <!-- ══════════ SERVICIOS (carrusel de tarjetas) ══════════ -->
     <section class="rg-sec" id="servicios">
         <div class="rg-wrap">
-            <div class="rg-head">
-                <span class="rg-tag">Servicios</span>
-                <h2 class="rg-h2">Lo que instalamos en <span class="grad">tu negocio</span></h2>
-                <p class="rg-sub">
-                    Nuestro fuerte son las boticas y farmacias, pero también llevamos restaurantes, minimarkets
-                    y páginas web hechas a la medida de tu marca.
-                </p>
+            <div class="rg-rail-head">
+                <div class="rg-head" style="margin-bottom:0;">
+                    <span class="rg-tag">Servicios</span>
+                    <h2 class="rg-h2">Sistemas que se adaptan a <span class="grad">cada giro</span></h2>
+                    <p class="rg-sub">
+                        Empezamos por boticas y farmacias —nuestro giro más fuerte— y llevamos el mismo nivel
+                        de detalle a restaurantes, minimarkets, hoteles y páginas web hechas a medida.
+                    </p>
+                </div>
+                <div class="rg-rail-nav">
+                    <button class="rg-arrow" type="button" data-rail-target="rgSvcRail" data-rail-prev aria-label="Tarjetas anteriores"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="rg-arrow" type="button" data-rail-target="rgSvcRail" data-rail-next aria-label="Tarjetas siguientes"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
             </div>
 
-            <div class="rg-grid-2">
-                <article class="rg-card rg-card-acc">
-                    <div class="rg-ico"><i class="fa-solid fa-capsules"></i></div>
-                    <h3>Para boticas y farmacias</h3>
-                    <p class="rg-card-desc">
-                        Cero vencidos y cero quiebres de stock: cobra en segundos, controla lotes y emite boletas
-                        electrónicas sin salir del mostrador.
-                    </p>
-                    <ul class="rg-feat">
-                        <li><i class="fa-solid fa-check"></i> Punto de venta con recetario</li>
-                        <li><i class="fa-solid fa-check"></i> Control de lotes y vencimientos</li>
-                        <li><i class="fa-solid fa-check"></i> Kardex y alertas de stock mínimo</li>
-                        <li><i class="fa-solid fa-check"></i> Boletas y facturación SUNAT</li>
-                    </ul>
-                </article>
+            <div class="rg-rail" id="rgSvcRail">
+                <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#boticas">
+                    <span class="art"><i class="fa-solid fa-capsules"></i></span>
+                    <div class="body">
+                        <h3>Boticas y farmacias</h3>
+                        <span class="rg-tags">
+                            <span>Lotes y vencidos</span><span>Kardex</span><span>SUNAT y DIGEMID</span>
+                        </span>
+                    </div>
+                </a>
 
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>Para restaurantes</h3>
-                    <p class="rg-card-desc">
-                        Atiende más mesas con menos errores: pedidos directos a cocina, cuentas claras y
-                        facturación en segundos.
-                    </p>
-                    <ul class="rg-feat">
-                        <li><i class="fa-solid fa-check"></i> Gestión de mesas y pedidos</li>
-                        <li><i class="fa-solid fa-check"></i> Control de cocina (KDS)</li>
-                        <li><i class="fa-solid fa-check"></i> Facturación electrónica</li>
-                        <li><i class="fa-solid fa-check"></i> Integración con delivery</li>
-                    </ul>
-                </article>
+                <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#restaurantes">
+                    <span class="art"><i class="fa-solid fa-utensils"></i></span>
+                    <div class="body">
+                        <h3>Restaurantes</h3>
+                        <span class="rg-tags">
+                            <span>Mesas y pedidos</span><span>Comandas a cocina</span><span>Delivery</span>
+                        </span>
+                    </div>
+                </a>
 
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-shop"></i></div>
-                    <h3>Para minimarkets</h3>
-                    <p class="rg-card-desc">
-                        Colas más cortas e inventario exacto: punto de venta táctil y control de proveedores en
-                        tiempo real.
-                    </p>
-                    <ul class="rg-feat">
-                        <li><i class="fa-solid fa-check"></i> Punto de venta táctil</li>
-                        <li><i class="fa-solid fa-check"></i> Lector de código de barras</li>
-                        <li><i class="fa-solid fa-check"></i> Control de inventario</li>
-                        <li><i class="fa-solid fa-check"></i> Gestión de proveedores</li>
-                    </ul>
-                </article>
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#minimarkets">
+                    <span class="art"><i class="fa-solid fa-shop"></i></span>
+                    <div class="body">
+                        <h3>Minimarkets</h3>
+                        <span class="rg-tags">
+                            <span>POS táctil</span><span>Código de barras</span><span>Inventario</span>
+                        </span>
+                    </div>
+                </a>
 
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-window-maximize"></i></div>
-                    <h3>Páginas web personalizadas</h3>
-                    <p class="rg-card-desc">
-                        Tu negocio con cara propia en internet: diseño hecho a mano, listo para vender y para que
-                        te encuentren en Google.
-                    </p>
-                    <ul class="rg-feat">
-                        <li><i class="fa-solid fa-check"></i> Diseño propio de tu marca</li>
-                        <li><i class="fa-solid fa-check"></i> Catálogo, formularios y WhatsApp</li>
-                        <li><i class="fa-solid fa-check"></i> Dominio, hosting y correos</li>
-                        <li><i class="fa-solid fa-check"></i> SEO local para aparecer en Google</li>
-                    </ul>
-                </article>
+                <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#web">
+                    <span class="art"><i class="fa-solid fa-window-maximize"></i></span>
+                    <div class="body">
+                        <h3>Páginas web a medida</h3>
+                        <span class="rg-tags">
+                            <span>Diseño propio</span><span>SEO local</span><span>WhatsApp</span>
+                        </span>
+                    </div>
+                </a>
+
+                <a class="rg-svc-card" href="<?= base_url('servicios') ?>#hoteles">
+                    <span class="art"><i class="fa-solid fa-bed"></i></span>
+                    <div class="body">
+                        <h3>Hoteles y cafés</h3>
+                        <span class="rg-tags">
+                            <span>Reservas</span><span>Carta QR</span><span>Reportes</span>
+                        </span>
+                    </div>
+                </a>
+
+                <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#medida">
+                    <span class="art"><i class="fa-solid fa-pen-ruler"></i></span>
+                    <div class="body">
+                        <h3>Software a medida</h3>
+                        <span class="rg-tags">
+                            <span>Procesos propios</span><span>Integraciones</span><span>Migración</span>
+                        </span>
+                    </div>
+                </a>
             </div>
 
-            <div class="rg-actions" style="justify-content:center; margin-top:30px;">
+            <div class="rg-actions" style="justify-content:center; margin-top:34px;">
                 <a href="<?= base_url('servicios') ?>" class="rg-btn rg-btn-ghost">
-                    Explorar todos los servicios <i class="fa-solid fa-arrow-right"></i>
+                    Ver todos los sistemas <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- ══════════ PROCESO ══════════ -->
+    <!-- ══════════ PLANES (cuestionario + filas de plan) ══════════ -->
+    <section class="rg-sec" id="planes">
+        <div class="rg-wrap">
+            <div class="rg-split">
+                <div>
+                    <div class="rg-head">
+                        <span class="rg-tag">Planes</span>
+                        <h2 class="rg-h2">El plan que se ajusta a <span class="grad">cómo creces</span></h2>
+                        <p class="rg-sub">
+                            Sube o baja de plan cuando quieras, sin penalidades. Las páginas web se cotizan aparte.
+                        </p>
+                    </div>
+
+                    <div class="rg-quiz">
+                        <div class="rg-quiz-block">
+                            <span>¿Qué tipo de negocio tienes?</span>
+                            <div class="rg-seg">
+                                <button class="on" type="button"><span class="radio"></span> Botica</button>
+                                <button type="button"><span class="radio"></span> Restaurante</button>
+                                <button type="button"><span class="radio"></span> Minimarket</button>
+                            </div>
+                        </div>
+                        <div class="rg-quiz-block">
+                            <span>¿Cuántas sedes operan hoy?</span>
+                            <div class="rg-seg">
+                                <button class="on" type="button"><span class="radio"></span> 1 sede</button>
+                                <button type="button"><span class="radio"></span> 2 sedes</button>
+                                <button type="button"><span class="radio"></span> 3 o más</button>
+                            </div>
+                        </div>
+                        <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-dark">
+                            Ver plan recomendado <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="rg-plan-rows">
+                    <article class="rg-plan-row">
+                        <div class="rg-plan-row-top">
+                            <span class="rg-plan-name">💊 Esencial</span>
+                            <span class="rg-plan-price">S/ 900 <small>/mes</small></span>
+                        </div>
+                        <div class="rg-plan-row-body">
+                            <p>Punto de venta, facturación electrónica y control de inventario para una botica o tienda que quiere ordenarse.</p>
+                            <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-soft">Más detalles <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </article>
+
+                    <article class="rg-plan-row">
+                        <div class="rg-plan-row-top">
+                            <span class="rg-plan-name">🏪 Negocio</span>
+                            <span class="rg-plan-price">S/ 990 <small>/mes</small></span>
+                        </div>
+                        <div class="rg-plan-row-body">
+                            <p>Módulo de tu sector, 2 sedes, usuarios ilimitados y soporte prioritario 24/7 para negocios que venden a diario.</p>
+                            <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-soft">Más detalles <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </article>
+
+                    <article class="rg-plan-row">
+                        <div class="rg-plan-row-top">
+                            <span class="rg-plan-name">🏢 Corporativo</span>
+                            <span class="rg-plan-price">A medida</span>
+                        </div>
+                        <div class="rg-plan-row-body">
+                            <p>Sedes ilimitadas, módulos desarrollados a medida, integraciones y gerente de cuenta asignado.</p>
+                            <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-soft">Más detalles <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════ POR QUÉ ELEGIRNOS (cuellos de botella) ══════════ -->
+    <section class="rg-sec" id="por-que">
+        <div class="rg-wrap">
+            <div class="rg-split">
+                <div>
+                    <div class="rg-head">
+                        <span class="rg-tag">Por qué elegirnos</span>
+                        <h2 class="rg-h2">Resolvemos los cuellos de botella que <span class="grad">te frenan</span></h2>
+                        <p class="rg-sub">
+                            Los mismos problemas aparecen en cada negocio: productos vencidos, caja descuadrada y
+                            reportes que llegan tarde. Los atacamos desde el primer día.
+                        </p>
+                    </div>
+
+                    <div class="rg-quote-card">
+                        <div class="who">
+                            <img src="<?= base_url('images/vifarma.png') ?>" alt="Juan Alberto">
+                            <div>
+                                <h4>Juan Alberto</h4>
+                                <p><b>Dueño de Vifarma</b> · Pucallpa</p>
+                            </div>
+                        </div>
+                        <p>“Un sistema fácil e increíble. Nos da control total del negocio, simplifica todo y ahora tengo más tiempo para lo importante.”</p>
+                    </div>
+                </div>
+
+                <div class="rg-dark-list">
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Cero vencidos: alertas por lote <b>semanas antes</b></div>
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Boletas y facturas <b>SUNAT y DIGEMID</b> al día</div>
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Kardex y stock <b>exacto</b> en cada venta</div>
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Caja cuadrada: <b>cero faltantes</b> al cierre</div>
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Soporte <b>24/7</b>, también en plena hora punta</div>
+                    <div class="rg-dark-row"><span class="circ"><i class="fa-solid fa-arrow-right"></i></span> Sistema funcionando en <b>menos de 24 horas</b></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════ CÓMO TRABAJAMOS ══════════ -->
     <section class="rg-sec" id="proceso">
         <div class="rg-wrap">
             <div class="rg-head">
                 <span class="rg-tag">Cómo trabajamos</span>
                 <h2 class="rg-h2">De la llamada a tu sistema <span class="grad">en 3 pasos</span></h2>
+                <p class="rg-sub">Sin reuniones eternas ni proyectos de meses: te escuchamos, lo instalamos y te acompañamos.</p>
             </div>
 
-            <div class="rg-grid-3">
-                <article class="rg-card">
-                    <span class="rg-num">01</span>
-                    <h3>Conversamos</h3>
-                    <p class="rg-card-desc">Escuchamos cómo opera tu botica o negocio: cómo compras, cómo vendes y dónde se te pierde dinero en el día a día.</p>
-                </article>
-                <article class="rg-card rg-card-acc">
-                    <span class="rg-num">02</span>
-                    <h3>Implementamos</h3>
-                    <p class="rg-card-desc">Instalamos, cargamos tus productos y capacitamos a tu equipo en menos de 24 horas. El primer día ya cobras con el sistema.</p>
-                </article>
-                <article class="rg-card">
-                    <span class="rg-num">03</span>
-                    <h3>Acompañamos</h3>
-                    <p class="rg-card-desc">Soporte 24/7 y actualizaciones constantes: si algo falla en pleno horario de ventas, respondemos igual.</p>
-                </article>
-            </div>
-        </div>
-    </section>
+            <div class="rg-split">
+                <div class="rg-steps">
+                    <article class="rg-step">
+                        <div class="rg-step-top">
+                            <span class="rg-step-n">01</span>
+                            <h3>Conversamos</h3>
+                            <span class="chev"><i class="fa-solid fa-chevron-down"></i></span>
+                        </div>
+                        <p>Escuchamos cómo opera tu negocio: cómo compras, cómo vendes y dónde se te pierde dinero en el día a día.</p>
+                    </article>
 
-    <!-- ══════════ POR QUÉ ELEGIRNOS ══════════ -->
-    <section class="rg-sec" id="por-que">
-        <div class="rg-wrap">
-            <div class="rg-head">
-                <span class="rg-tag">Por qué elegirnos</span>
-                <h2 class="rg-h2">Hecho para operar <span class="grad">sin fricción</span></h2>
-            </div>
+                    <article class="rg-step">
+                        <div class="rg-step-top">
+                            <span class="rg-step-n">02</span>
+                            <h3>Implementamos</h3>
+                            <span class="chev"><i class="fa-solid fa-chevron-down"></i></span>
+                        </div>
+                        <p>Instalamos, cargamos tus productos y capacitamos a tu equipo en menos de 24 horas. El primer día ya cobras con el sistema.</p>
+                    </article>
 
-            <div class="rg-grid-3">
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-calendar-check"></i></div>
-                    <h3>Cero vencidos</h3>
-                    <p class="rg-card-desc">Alertas automáticas por lote y fecha de caducidad, semanas antes de que el producto venza.</p>
-                </article>
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-file-invoice"></i></div>
-                    <h3>SUNAT y DIGEMID al día</h3>
-                    <p class="rg-card-desc">Boletas, facturas electrónicas y registros de control sanitario siempre conformes.</p>
-                </article>
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3>Tus datos seguros</h3>
-                    <p class="rg-card-desc">Información de tu negocio y de tus clientes respaldada automáticamente, con copias diarias.</p>
-                </article>
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-bolt"></i></div>
-                    <h3>Implementación en 24h</h3>
-                    <p class="rg-card-desc">Tu sistema funcionando al día siguiente, con capacitación completa para tu equipo.</p>
-                </article>
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-headset"></i></div>
-                    <h3>Soporte 24/7</h3>
-                    <p class="rg-card-desc">Un equipo técnico real, disponible a toda hora para resolver cualquier inconveniente.</p>
-                </article>
-                <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-mobile-screen-button"></i></div>
-                    <h3>Acceso móvil</h3>
-                    <p class="rg-card-desc">Supervisa ventas, kardex y utilidades desde tu celular, estés donde estés.</p>
-                </article>
+                    <article class="rg-step">
+                        <div class="rg-step-top">
+                            <span class="rg-step-n">03</span>
+                            <h3>Acompañamos</h3>
+                            <span class="chev"><i class="fa-solid fa-chevron-down"></i></span>
+                        </div>
+                        <p>Soporte 24/7 y actualizaciones constantes: si algo falla en pleno horario de ventas, respondemos igual.</p>
+                        <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark">
+                            Empezar hoy <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+                </div>
+
+                <div class="rg-step-visual">
+                    <div class="glass">
+                        <b>Ventas de hoy · S/ 4 820</b>
+                        <span>Tu operación visible en tiempo real, desde el celular o la caja.</span>
+                        <div class="bars" aria-hidden="true">
+                            <i style="height:34%"></i><i style="height:58%"></i><i style="height:46%"></i>
+                            <i style="height:82%"></i><i style="height:64%"></i><i style="height:96%"></i>
+                            <i style="height:72%"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -207,83 +315,68 @@
     <!-- ══════════ TESTIMONIOS ══════════ -->
     <section class="rg-sec" id="testimonios">
         <div class="rg-wrap">
-            <div class="rg-head">
-                <span class="rg-tag">Testimonios</span>
+            <div class="rg-head is-center">
+                <div class="rg-ratings">
+                    <span class="rg-tag"><i class="fa-solid fa-star" style="color:#f59e0b"></i> 4.9 en Google</span>
+                    <span class="rg-tag"><i class="fa-solid fa-shield-halved"></i> +500 empresas</span>
+                    <span class="rg-tag"><i class="fa-solid fa-headset"></i> Soporte 24/7</span>
+                </div>
                 <h2 class="rg-h2">Boticas y negocios que ya <span class="grad">operan con DSG</span></h2>
+                <p class="rg-sub">Historias reales de dueños que ordenaron su negocio con nuestro software.</p>
             </div>
 
-            <div class="rg-grid-3">
-                <article class="rg-card rg-card-acc">
-                    <div class="rg-card-top">
-                        <div class="rg-quote-ico"><i class="fa-solid fa-quote-left"></i></div>
-                        <span class="rg-flag"><img src="https://flagcdn.com/w40/pe.png" alt="Perú"> Perú</span>
-                    </div>
-                    <p class="rg-quote">
-                        “Un sistema fácil e increíble. Nos da control total del negocio, simplifica todo y ahora tengo más tiempo para lo importante.”
-                    </p>
-                    <div class="rg-person">
+            <div class="rg-testi-grid">
+                <article class="rg-testi-card">
+                    <div class="who">
                         <img src="<?= base_url('images/vifarma.png') ?>" alt="Juan Alberto">
                         <div>
                             <h4>Juan Alberto</h4>
-                            <p>Dueño de Vifarma</p>
+                            <p><b>Dueño de Vifarma</b></p>
                         </div>
                     </div>
+                    <p>“Un sistema fácil e increíble. Nos da control total del negocio, simplifica todo y ahora tengo más tiempo para lo importante.”</p>
                 </article>
 
-                <article class="rg-card">
-                    <div class="rg-card-top">
-                        <div class="rg-quote-ico"><i class="fa-solid fa-quote-left"></i></div>
-                        <span class="rg-flag"><img src="https://flagcdn.com/w40/co.png" alt="Colombia"> Colombia</span>
-                    </div>
-                    <p class="rg-quote">
-                        “Controlo compras, ventas y stock desde cualquier lugar. La operación diaria es mucho más simple y no pierdo tiempo contando productos.”
-                    </p>
-                    <div class="rg-person">
+                <article class="rg-testi-card">
+                    <div class="who">
                         <img src="<?= base_url('images/farma.png') ?>" alt="Alessandro Macchi">
                         <div>
                             <h4>Alessandro Macchi</h4>
-                            <p>Pizzería Carpaneto</p>
+                            <p><b>Pizzería Carpaneto</b></p>
                         </div>
                     </div>
+                    <p>“Controlo compras, ventas y stock desde cualquier lugar. La operación diaria es mucho más simple y no pierdo tiempo contando productos.”</p>
                 </article>
 
-                <article class="rg-card">
-                    <div class="rg-card-top">
-                        <div class="rg-quote-ico"><i class="fa-solid fa-quote-left"></i></div>
-                        <span class="rg-flag"><img src="https://flagcdn.com/w40/gt.png" alt="Guatemala"> Guatemala</span>
-                    </div>
-                    <p class="rg-quote">
-                        “Optimizó nuestros procesos con un soporte excelente. Lo recomiendo totalmente por su innovación y cercanía.”
-                    </p>
-                    <div class="rg-person">
+                <article class="rg-testi-card">
+                    <div class="who">
                         <img src="<?= base_url('images/huellitas.png') ?>" alt="Sara Marín">
                         <div>
                             <h4>Sara Marín</h4>
-                            <p>Fundadora de Huellitas</p>
+                            <p><b>Fundadora de Huellitas</b></p>
                         </div>
                     </div>
+                    <p>“Optimizó nuestros procesos con un soporte excelente. Lo recomiendo totalmente por su innovación y cercanía.”</p>
                 </article>
             </div>
         </div>
     </section>
 
-    <!-- ══════════ CTA FINAL ══════════ -->
+    <!-- ══════════ CTA (panel con form) ══════════ -->
     <section class="rg-sec">
         <div class="rg-wrap">
-            <div class="rg-cta-box">
+            <div class="rg-cta-panel">
                 <span class="rg-tag">Demo gratuita</span>
-                <h2 class="rg-h2" style="margin-top:8px;">
-                    ¿Listo para ordenar tu <span class="grad">botica y vender más?</span>
-                </h2>
+                <h2 class="rg-h2">Estás a un paso de <span class="grad">ordenar tu negocio</span></h2>
                 <p class="rg-sub">
-                    Agenda una demostración sin compromiso y descubre en 30 minutos cuánto tiempo y dinero puedes ahorrar con tu propio sistema.
+                    Déjanos tu correo y agendamos una demo de 30 minutos para mostrarte el sistema exacto para tu giro.
                 </p>
-                <div class="rg-actions center">
-                    <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-acc">
-                        Solicitar demo <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-ghost">Ver precios</a>
-                </div>
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
+                        Agendar demo <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </section>

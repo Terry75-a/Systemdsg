@@ -2,37 +2,42 @@
 
     <!-- ═══════════ HERO ═══════════ -->
     <section class="rg-hero rg-wrap">
-        <span class="rg-tag">Nuestras soluciones</span>
+        <div class="rg-hero-grid">
+            <div class="rg-hero-main">
+                <div class="rg-badges">
+                    <span class="rg-badge-chip"><i class="fa-solid fa-capsules"></i> Boticas y farmacias</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-utensils"></i> Restaurantes</span>
+                    <span class="rg-badge-chip"><i class="fa-solid fa-window-maximize"></i> Páginas web</span>
+                </div>
 
-        <h1 class="rg-h1">Sistemas <span class="grad">especializados</span> para tu giro</h1>
+                <h1 class="rg-h1">Sistemas <span class="grad">especializados</span> para tu giro</h1>
+            </div>
 
-        <p class="rg-sub">
-            Empezamos por boticas y farmacias, nuestro giro más fuerte, y llevamos el mismo nivel de detalle a
-            restaurantes, minimarkets, hoteles y a las páginas web hechas a medida.
-        </p>
+            <div class="rg-hero-side">
+                <p class="rg-hero-lead">
+                    Empezamos por boticas y farmacias, nuestro giro más fuerte, y llevamos el mismo nivel de
+                    detalle a restaurantes, minimarkets, hoteles y a las páginas web hechas a medida.
+                </p>
 
-        <div class="rg-actions">
-            <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-dark">
-                Solicitar demo <i class="fa-solid fa-arrow-right"></i>
-            </a>
-            <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-ghost">Ver precios</a>
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
+                        Solicitar demo <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <p class="rg-micro">7 soluciones listas · Implementación en menos de 24 horas</p>
+            </div>
         </div>
 
-        <div class="rg-stats">
-            <div class="rg-stat is-acc">
-                <span class="t-label">Catálogo</span>
-                <div class="t-num">7</div>
-                <div class="t-desc">Soluciones y páginas web</div>
-            </div>
-            <div class="rg-stat">
-                <span class="t-label">Clientes</span>
-                <div class="t-num">500+</div>
-                <div class="t-desc">Empresas atendidas</div>
-            </div>
-            <div class="rg-stat">
-                <span class="t-label">Puesta en marcha</span>
-                <div class="t-num">24h</div>
-                <div class="t-desc">Implementación</div>
+        <div class="rg-hero-stats">
+            <div class="rg-stat"><b>7</b><span>Soluciones y páginas web</span></div>
+            <div class="rg-stat is-acc"><b>500+</b><span>Empresas atendidas</span></div>
+            <div class="rg-stat"><b>24h</b><span>Puesta en marcha</span></div>
+            <div class="rg-logos">
+                <span>VIFARMA</span>
+                <span>CARPANETO</span>
+                <span>HUELLITAS</span>
             </div>
         </div>
     </section>
@@ -252,34 +257,44 @@
         </div>
     </section>
 
-    <!-- ═══════════ FAQ ═══════════ -->
+    <!-- ═══════════ FAQ (2 columnas) ═══════════ -->
     <section class="rg-sec" id="faq">
         <div class="rg-wrap">
-            <div class="rg-head">
-                <span class="rg-tag">Dudas frecuentes</span>
-                <h2 class="rg-h2">Preguntas <span class="grad">frecuentes</span></h2>
-            </div>
-            <div class="rg-faq">
-                <details class="rg-faq-item">
-                    <summary>¿Cuánto demora tener mi sistema funcionando?</summary>
-                    <p>Los sistemas por sector se implementan en menos de 24 horas, incluyendo configuración y capacitación básica. Un software a medida toma entre 2 y 6 semanas según los módulos.</p>
-                </details>
-                <details class="rg-faq-item">
-                    <summary>¿Necesito comprar computadoras especiales?</summary>
-                    <p>No. Nuestros sistemas funcionan en PCs, laptops, tablets y celulares comunes, con Windows o Android. Si necesitas equipos (impresoras, lectores, cajones), te asesoramos en la compra.</p>
-                </details>
-                <details class="rg-faq-item">
-                    <summary>¿Capacitan a mi personal?</summary>
-                    <p>Sí, toda implementación incluye capacitación para tu equipo y manuales de uso. Si entra personal nuevo, coordinamos refuerzos sin costo adicional el primer mes.</p>
-                </details>
-                <details class="rg-faq-item">
-                    <summary>¿Funciona si tengo varias sedes?</summary>
-                    <p>Sí. Los sistemas son multi-sede: cada local opera con su caja y stock, y tú ves todo consolidado desde tu celular o computadora.</p>
-                </details>
-                <details class="rg-faq-item">
-                    <summary>¿Qué pasa si ya tengo otro sistema?</summary>
-                    <p>Migramos tu información (productos, clientes, stock) sin que pares de vender. Coordinamos el cambio en horarios de bajo movimiento para no afectar tu operación.</p>
-                </details>
+            <div class="rg-faq-split">
+                <aside class="rg-faq-aside">
+                    <h2 class="rg-h2">Preguntas</h2>
+                    <p>Dudas frecuentes sobre implementación, equipos y multi-sede. ¿Falta la tuya? Escríbenos.</p>
+                    <div class="rg-faq-aside-btns">
+                        <a href="<?= base_url('/#contacto') ?>" aria-label="Escríbenos"><i class="fa-regular fa-envelope"></i></a>
+                        <a href="tel:+51923942001" aria-label="Llámanos"><i class="fa-solid fa-phone"></i></a>
+                        <a href="https://wa.me/51923942001" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="<?= base_url('precio') ?>#faq" aria-label="Precios"><i class="fa-solid fa-tag"></i></a>
+                        <a href="#boticas" aria-label="Volver al inicio"><i class="fa-solid fa-arrow-up"></i></a>
+                    </div>
+                </aside>
+
+                <div class="rg-faq">
+                    <details class="rg-faq-item">
+                        <summary>¿Cuánto demora tener mi sistema funcionando? <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></summary>
+                        <p>Los sistemas por sector se implementan en menos de 24 horas, incluyendo configuración y capacitación básica. Un software a medida toma entre 2 y 6 semanas según los módulos.</p>
+                    </details>
+                    <details class="rg-faq-item">
+                        <summary>¿Necesito comprar computadoras especiales? <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></summary>
+                        <p>No. Nuestros sistemas funcionan en PCs, laptops, tablets y celulares comunes, con Windows o Android. Si necesitas equipos (impresoras, lectores, cajones), te asesoramos en la compra.</p>
+                    </details>
+                    <details class="rg-faq-item">
+                        <summary>¿Capacitan a mi personal? <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></summary>
+                        <p>Sí, toda implementación incluye capacitación para tu equipo y manuales de uso. Si entra personal nuevo, coordinamos refuerzos sin costo adicional el primer mes.</p>
+                    </details>
+                    <details class="rg-faq-item">
+                        <summary>¿Funciona si tengo varias sedes? <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></summary>
+                        <p>Sí. Los sistemas son multi-sede: cada local opera con su caja y stock, y tú ves todo consolidado desde tu celular o computadora.</p>
+                    </details>
+                    <details class="rg-faq-item">
+                        <summary>¿Qué pasa si ya tengo otro sistema? <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></summary>
+                        <p>Migramos tu información (productos, clientes, stock) sin que pares de vender. Coordinamos el cambio en horarios de bajo movimiento para no afectar tu operación.</p>
+                    </details>
+                </div>
             </div>
         </div>
     </section>
@@ -287,16 +302,16 @@
     <!-- ═══════════ CTA ═══════════ -->
     <section class="rg-sec">
         <div class="rg-wrap">
-            <div class="rg-cta-box">
+            <div class="rg-cta-panel">
                 <span class="rg-tag">Demo gratuita</span>
                 <h2 class="rg-h2">¿Cuál sistema necesita <span class="grad">tu negocio?</span></h2>
                 <p class="rg-sub">Escríbenos hoy y te mostramos en 30 minutos el sistema exacto para tu sector.</p>
-                <div class="rg-actions center">
-                    <a href="<?= base_url('/#contacto') ?>" class="rg-btn rg-btn-acc">
+                <form class="rg-lead-form">
+                    <input type="email" name="correo" placeholder="Tu correo de trabajo" required>
+                    <button class="rg-btn rg-btn-dark" type="submit">
                         Solicitar demo <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a href="<?= base_url('precio') ?>" class="rg-btn rg-btn-ghost">Ver precios</a>
-                </div>
+                    </button>
+                </form>
             </div>
         </div>
     </section>

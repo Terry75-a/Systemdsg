@@ -27,7 +27,7 @@ function animateValue(element, start, end, duration , decimals = 0) {
 
 window.onload = function() {
     animateValue(document.getElementById("stas-number"), 0, 500, 2000);
-    animateValue(document.getElementById("experience-years"), 0, 5, 2000);
+    animateValue(document.getElementById("experience-years"), 0, 15, 2000);
     animateValue(document.getElementById("uptime-guaranteed"), 0, 99.9, 2000, 1);
 }
 
