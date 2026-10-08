@@ -37,6 +37,14 @@ class Home extends BaseController
         ]);
     }
 
+    public function terminos(): string
+    {
+        return view('layouts/site', [
+            'titulo' => 'DSG Perú · Términos y políticas',
+            'slot'   => view('terminos'),
+        ]);
+    }
+
     // Página independiente: no usa los layouts del sitio principal
     public function asistencia(): string
     {

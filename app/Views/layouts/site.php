@@ -6,6 +6,7 @@ $meta = [
     'servicios' => ['title' => 'Servicios', 'tag' => 'Boticas, restaurantes, minimarkets y web.'],
     'dsg'       => ['title' => 'DSG',       'tag' => 'Transformamos la manera de hacer negocios en el Perú.'],
     'precio'    => ['title' => 'Precios',   'tag' => 'Un plan para cada tamaño de negocio.'],
+    'terminos'  => ['title' => 'Términos',  'tag' => 'Términos del servicio y política de datos.'],
 ];
 if (!isset($meta[$seg])) {
     $seg = '';
@@ -17,6 +18,7 @@ $pages = [
     'servicios' => 'Servicios',
     'dsg'       => 'DSG',
     'precio'    => 'Precios',
+    'terminos'  => 'Términos',
 ];
 
 $sistemas = [
@@ -34,6 +36,7 @@ $sections = [
     'servicios' => [['#boticas', 'Boticas y farmacias'], ['#restaurantes', 'Restaurantes'], ['#minimarkets', 'Minimarkets'], ['#web', 'Páginas web'], ['#hoteles', 'Hoteles'], ['#cafes', 'Cafés'], ['#medida', 'A medida']],
     'dsg'       => [['#trayectoria', 'Trayectoria'], ['#proposito', 'Propósito'], ['#valores', 'Valores']],
     'precio'    => [['#planes', 'Planes'], ['#faq', 'Preguntas']],
+    'terminos'  => [['#objeto', 'Objeto'], ['#planes-t', 'Planes'], ['#datos', 'Tus datos'], ['#contacto-legal', 'Contacto']],
 ];
 $sections = $sections[$seg];
 $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
@@ -175,7 +178,7 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
         <div class="rg-foot-bottom">
             <span>&copy; <?= date('Y') ?> DSG Peru Technology. Todos los derechos reservados.</span>
             <span class="right">
-                <a href="<?= base_url('asisten-dsg') ?>">Términos y políticas</a>
+                <a href="<?= base_url('terminos') ?>">Términos y políticas</a>
                 <a href="<?= base_url('dsg') ?>">Empresa</a>
                 <span class="credits">Fotos: Wikimedia Commons</span>
             </span>

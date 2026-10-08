@@ -25,11 +25,12 @@ $routes->get('precio', 'Home::precio');
 $routes->get('servicios', 'Home::servicios');
 $routes->get('asisten-dsg', 'Home::asistencia');
 $routes->get('precio-asisten', 'Home::precioAsisten');
+$routes->get('terminos', 'Home::terminos');
 
 // Sitemap dinámico (usa el baseURL configurado)
 $routes->get('sitemap.xml', function () {
     $base = rtrim(base_url(), '/');
-    $urls = ['' => '1.0', 'servicios' => '0.8', 'dsg' => '0.8', 'precio' => '0.8'];
+    $urls = ['' => '1.0', 'servicios' => '0.8', 'dsg' => '0.8', 'precio' => '0.8', 'terminos' => '0.5'];
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
         . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
     foreach ($urls as $path => $priority) {
