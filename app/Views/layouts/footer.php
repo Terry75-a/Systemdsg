@@ -10,7 +10,7 @@
     </div>
 
     <footer class="footer bg-white text-center py-3 border-top" style="margin-top: auto;">
-        <p class="mb-0 text-muted">&copy; <?= date('Y') ?> DSG PERU TECHNOLOGY. Todos los derechos reservados.</p>
+        <p class="mb-0 text-muted">&copy; <?= date('Y') ?> DSG PERU TECHNOLOGY. Todos los derechos reservados. · <a href="<?= base_url('asisten-dsg') ?>" class="text-muted">Asistencia del personal</a></p>
     </footer>
 
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -46,7 +46,6 @@
             <div class="footer-social">
                 <a href="https://www.facebook.com/dsgperu" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="https://www.instagram.com/dsgperu/" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
             </div>
         </div>
 

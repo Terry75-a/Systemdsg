@@ -70,6 +70,8 @@
         </div>
 
     </div>
+
+    <footer class="lg-foot">&copy; <?= date('Y') ?> DSG Peru Technology · <a href="<?= base_url('asisten-dsg') ?>">Asistencia del personal</a></footer>
 </div>
 
 <script src="<?= base_url('js/eyepassword.js?v=' . filemtime(FCPATH . 'js/eyepassword.js')) ?>"></script>

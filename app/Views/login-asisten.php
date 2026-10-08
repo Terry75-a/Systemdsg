@@ -238,5 +238,7 @@
 })();
 </script>
 
+<footer style="text-align:center;padding:18px 16px 26px;font-size:12.5px;color:#8a8a8a;">&copy; <?= date('Y') ?> DSG Peru Technology · <a href="<?= base_url('asisten-dsg') ?>" style="color:inherit;">Asistencia del personal</a></footer>
+
 </body>
 </html>

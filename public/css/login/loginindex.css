@@ -132,6 +132,9 @@ button.lg-trailing:focus-visible { outline: 2px solid var(--lg-cta); outline-off
 .lg-submit:focus-visible { outline: 2px solid var(--lg-cta); outline-offset: 3px; }
 
 .lg-help { margin: 22px 0 0; text-align: center; font-size: 13px; color: var(--lg-muted); }
+.lg-foot { margin-top: 22px; text-align: center; font-size: 13px; color: var(--lg-muted); }
+.lg-foot a { color: var(--lg-cta); font-weight: 600; text-decoration: none; }
+.lg-foot a:hover { text-decoration: underline; }
 
 /* ─── Panel lateral ─── */
 .lg-side {
