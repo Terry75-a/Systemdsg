@@ -23,7 +23,23 @@ class EmailController extends BaseController
 
     public function enviar()
     {
-        require ROOTPATH . 'vendor/autoload.php'; 
+        require ROOTPATH . 'vendor/autoload.php';
+
+        // Antispam: máximo 5 mensajes cada 10 minutos por IP
+        $throttler = service('throttler');
+        if ($throttler->check('contacto-' . $this->request->getIPAddress(), 5, 10 * MINUTE) === false) {
+            return redirect()->back()->with('error', 'Demasiados mensajes seguidos. Espera unos minutos e inténtalo de nuevo.');
+        }
+
+        // Validación mínima antes de intentar enviar
+        $rules = [
+            'nombre'  => 'required|min_length[2]|max_length[120]',
+            'correo'  => 'required|valid_email|max_length[160]',
+            'mensaje' => 'permit_empty|max_length[2000]',
+        ];
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Revisa tu nombre y escribe un correo válido.');
+        }
 
         $mail = new PHPMailer(true);
         $config = $this->getMailConfig();

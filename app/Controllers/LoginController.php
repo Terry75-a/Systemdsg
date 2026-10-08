@@ -46,6 +46,15 @@ class LoginController extends BaseController
             return redirect()->to(base_url('login'));
         }
 
+        // 1b. Límite de intentos (fuerza bruta): 5 por minuto por IP
+        $throttler = service('throttler');
+        $throttleKey = 'login-' . $this->request->getIPAddress();
+        if ($throttler->check($throttleKey, 5, MINUTE) === false) {
+            $session->setFlashdata('msg', 'Demasiados intentos. Espera ' . $throttler->getTokenTime() . ' segundos e inténtalo de nuevo.');
+            $session->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('login'));
+        }
+
         // 2. Buscar usuario con JOIN completo (nombre, rol, persona, imagen)
         $user = $this->usuarioModel->buscarParaLoginCompleto($username);
 
@@ -64,8 +73,8 @@ class LoginController extends BaseController
         } elseif (hash_equals((string) $user->password, (string) $password)) {
             $passwordValida = true;
 
-            // Compatibilidad mínima para usuarios legacy en texto plano.
-            $this->usuarioModel->update($user->id_usuario, ['password' => $password]);
+            // Migra usuarios legacy en texto plano a hash seguro (nunca guardar plano).
+            $this->usuarioModel->update($user->id_usuario, ['password' => password_hash($password, PASSWORD_DEFAULT)]);
         }
 
         if (! $passwordValida) {

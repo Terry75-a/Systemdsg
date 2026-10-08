@@ -523,6 +523,12 @@
                     <h3>Solicita tu demo gratuita</h3>
                     <p class="f-sub">Completa el formulario y te contactaremos hoy mismo.</p>
 
+                    <?php if ($ok = session()->getFlashdata('success')): ?>
+                        <div class="rg-flash-ok" role="status"><?= esc($ok) ?></div>
+                    <?php elseif ($err = session()->getFlashdata('error')): ?>
+                        <div class="rg-flash-err" role="alert"><?= esc($err) ?></div>
+                    <?php endif; ?>
+
                     <form action="<?= base_url('enviar') ?>" method="POST">
                         <?= csrf_field() ?>
                         <div class="rg-field">

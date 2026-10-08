@@ -570,6 +570,13 @@ html { scroll-behavior: smooth; }
 .rg-form h3 { margin: 0 0 5px; font-size: 21px; font-weight: 700; letter-spacing: -0.02em; }
 .rg-form .f-sub { margin: 0 0 20px; color: var(--muted); font-size: 14.5px; }
 .rg-form .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rg-flash-ok, .rg-flash-err {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13.5px; font-weight: 500; line-height: 1.5;
+    border-radius: 14px; padding: 13px 16px; margin: 0 0 18px;
+}
+.rg-flash-ok { background: #e9fbf1; color: #0b7a4f; }
+.rg-flash-err { background: #fdecec; color: #c5221f; }
 .rg-field { margin-bottom: 12px; }
 .rg-form input, .rg-form textarea {
     width: 100%; padding: 14px 16px;

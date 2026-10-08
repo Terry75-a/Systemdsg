@@ -44,6 +44,13 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sistemas de punto de venta, kardex y facturación para boticas y farmacias, restaurantes, minimarkets y páginas web personalizadas. Software a medida en Perú.">
+    <link rel="canonical" href="<?= current_url() ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="DSG Peru Technology">
+    <meta property="og:title" content="<?= esc($titulo ?? (($meta['title'] ?? 'DSG Peru Technology') . ' · DSG Peru Technology')) ?>">
+    <meta property="og:description" content="Sistemas de punto de venta, kardex y facturación para boticas y farmacias, restaurantes, minimarkets y páginas web personalizadas. Software a medida en Perú.">
+    <meta property="og:image" content="<?= base_url('images/logo_circular.png') ?>">
+    <meta name="twitter:card" content="summary_large_image">
     <title><?= esc($titulo ?? ($meta['title'] . ' · DSG Peru Technology')) ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,7 +133,6 @@ $contactUrl = $seg === '' ? '#contacto' : base_url('/#contacto');
                     <div class="rg-foot-social">
                         <a href="https://www.facebook.com/dsgperu" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                         <a href="https://www.instagram.com/dsgperu/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                         <a href="https://wa.me/51923942001" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
