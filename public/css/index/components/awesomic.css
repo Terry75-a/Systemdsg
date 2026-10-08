@@ -145,11 +145,11 @@ html { scroll-behavior: smooth; }
     transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 .rg-pill:hover { background: var(--gray); color: var(--ink); }
-.rg-pill.is-active { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+.rg-pill.is-active { background: var(--cta); border-color: var(--cta); color: #fff; font-weight: 600; }
 .rg-pill i { font-size: 11.5px; opacity: 0.85; }
 .rg-pills-end { margin-left: auto; padding-left: 14px; flex-shrink: 0; }
-.rg-pills-end .rg-pill { background: #fff; border-color: var(--line-strong); color: var(--ink); font-weight: 600; }
-.rg-pills-end .rg-pill:hover { background: var(--gray); }
+.rg-pills-end .rg-pill { background: var(--cta); border-color: var(--cta); color: #fff; font-weight: 600; }
+.rg-pills-end .rg-pill:hover { background: var(--cta-h); border-color: var(--cta-h); color: #fff; }
 
 /* ══ Menú móvil ══ */
 .rg-drawer {
