@@ -82,7 +82,7 @@
                 <div class="rg-plan-rows">
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">💊 Esencial</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt=""> Esencial</span>
                             <span class="rg-plan-price">S/ 900 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -103,7 +103,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">🏪 Negocio</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt=""> Negocio</span>
                             <span class="rg-plan-price">S/ 990 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -124,7 +124,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">🏢 Corporativo</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt=""> Corporativo</span>
                             <span class="rg-plan-price">A medida</span>
                         </div>
                         <div class="rg-plan-row-body">

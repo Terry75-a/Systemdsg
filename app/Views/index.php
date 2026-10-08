@@ -75,7 +75,7 @@
 
             <div class="rg-rail" id="rgSvcRail">
                 <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#boticas">
-                    <span class="art"><i class="fa-solid fa-capsules"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt="Sistema para boticas y farmacias" loading="lazy"></span>
                     <div class="body">
                         <h3>Boticas y farmacias</h3>
                         <span class="rg-tags">
@@ -85,7 +85,7 @@
                 </a>
 
                 <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#restaurantes">
-                    <span class="art"><i class="fa-solid fa-utensils"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-restaurante.svg') ?>" alt="Sistema para restaurantes" loading="lazy"></span>
                     <div class="body">
                         <h3>Restaurantes</h3>
                         <span class="rg-tags">
@@ -95,7 +95,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#minimarkets">
-                    <span class="art"><i class="fa-solid fa-shop"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt="Sistema para minimarkets" loading="lazy"></span>
                     <div class="body">
                         <h3>Minimarkets</h3>
                         <span class="rg-tags">
@@ -105,7 +105,7 @@
                 </a>
 
                 <a class="rg-svc-card is-dark" href="<?= base_url('servicios') ?>#web">
-                    <span class="art"><i class="fa-solid fa-window-maximize"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-web.svg') ?>" alt="Páginas web a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Páginas web a medida</h3>
                         <span class="rg-tags">
@@ -115,7 +115,7 @@
                 </a>
 
                 <a class="rg-svc-card" href="<?= base_url('servicios') ?>#hoteles">
-                    <span class="art"><i class="fa-solid fa-bed"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-hoteles.svg') ?>" alt="Sistema para hoteles y cafés" loading="lazy"></span>
                     <div class="body">
                         <h3>Hoteles y cafés</h3>
                         <span class="rg-tags">
@@ -125,7 +125,7 @@
                 </a>
 
                 <a class="rg-svc-card is-acc" href="<?= base_url('servicios') ?>#medida">
-                    <span class="art"><i class="fa-solid fa-pen-ruler"></i></span>
+                    <span class="art"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="body">
                         <h3>Software a medida</h3>
                         <span class="rg-tags">
@@ -182,7 +182,7 @@
                 <div class="rg-plan-rows">
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">💊 Esencial</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt=""> Esencial</span>
                             <span class="rg-plan-price">S/ 900 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -193,7 +193,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">🏪 Negocio</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt=""> Negocio</span>
                             <span class="rg-plan-price">S/ 990 <small>/mes</small></span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -204,7 +204,7 @@
 
                     <article class="rg-plan-row">
                         <div class="rg-plan-row-top">
-                            <span class="rg-plan-name">🏢 Corporativo</span>
+                            <span class="rg-plan-name"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt=""> Corporativo</span>
                             <span class="rg-plan-price">A medida</span>
                         </div>
                         <div class="rg-plan-row-body">
@@ -396,21 +396,21 @@
                 <div class="rg-info-col">
                     <div class="rg-info">
                         <div class="rg-info-item">
-                            <div class="ico"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="ico"><img src="<?= base_url('images/rg-info-mail.svg') ?>" alt="Escríbenos" loading="lazy"></div>
                             <div>
                                 <span>Escríbenos</span>
                                 <p>soporte@dsgperu.com</p>
                             </div>
                         </div>
                         <div class="rg-info-item">
-                            <div class="ico"><i class="fa-solid fa-phone"></i></div>
+                            <div class="ico"><img src="<?= base_url('images/rg-info-phone.svg') ?>" alt="Llámanos" loading="lazy"></div>
                             <div>
                                 <span>Llámanos</span>
                                 <p>+51 923 942 001</p>
                             </div>
                         </div>
                         <div class="rg-info-item">
-                            <div class="ico"><i class="fa-solid fa-location-dot"></i></div>
+                            <div class="ico"><img src="<?= base_url('images/rg-info-pin.svg') ?>" alt="Visítanos" loading="lazy"></div>
                             <div>
                                 <span>Visítanos</span>
                                 <p>Pucallpa, Perú</p>

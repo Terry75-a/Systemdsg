@@ -48,7 +48,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">01</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-capsules"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-botica.svg') ?>" alt="Boticas y farmacias" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>0</strong><span>vencidos con alertas automáticas</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -76,7 +76,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">02</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-utensils"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-restaurante.svg') ?>" alt="Restaurantes" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>2x</strong><span>más rápida la atención en mesa</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -104,7 +104,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">03</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-shop"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-minimarket.svg') ?>" alt="Minimarkets" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Seg</strong><span>cobro por producto con barcode</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -133,7 +133,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">04</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-window-maximize"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-web.svg') ?>" alt="Páginas web" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Google</strong><span>para que te encuentren</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -160,7 +160,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">05</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-bed"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-hoteles.svg') ?>" alt="Hoteles" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>100%</strong><span>ocupación siempre visible</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -188,7 +188,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">06</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-mug-saucer"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-cafes.svg') ?>" alt="Cafés" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>QR</strong><span>carta digital sin imprimir</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -216,7 +216,7 @@
             <div class="rg-sys-grid">
                 <aside class="rg-sys-side">
                     <span class="rg-sys-num">07</span>
-                    <span class="rg-sys-ico"><i class="fa-solid fa-pen-ruler"></i></span>
+                    <span class="rg-sys-ico"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></span>
                     <div class="rg-sys-stat"><strong>Tú</strong><span>defines los módulos</span></div>
                 </aside>
                 <div class="rg-sys-main">
@@ -247,12 +247,12 @@
                 <h2 class="rg-h2">Todo sistema <span class="grad">incluye</span></h2>
             </div>
             <div class="rg-inc-grid">
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-bolt"></i></div><div><strong>Implementación en 24h</strong><span>Instalado y funcionando al día siguiente.</span></div></div>
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-graduation-cap"></i></div><div><strong>Capacitación incluida</strong><span>Tu equipo aprende a usarlo con nosotros.</span></div></div>
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-headset"></i></div><div><strong>Soporte 24/7</strong><span>Ayuda real a toda hora, todos los días.</span></div></div>
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-arrows-rotate"></i></div><div><strong>Actualizaciones</strong><span>Mejoras continuas sin costo adicional.</span></div></div>
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-mobile-screen-button"></i></div><div><strong>Acceso móvil</strong><span>Supervisa tu negocio desde tu celular.</span></div></div>
-                <div class="rg-inc"><div class="rg-ico"><i class="fa-solid fa-file-invoice"></i></div><div><strong>Facturación SUNAT</strong><span>Boletas y facturas electrónicas integradas.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-inc-rapido.svg') ?>" alt="Implementación en 24 horas" loading="lazy"></div><div><strong>Implementación en 24h</strong><span>Instalado y funcionando al día siguiente.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-val-cap.svg') ?>" alt="Capacitación incluida" loading="lazy"></div><div><strong>Capacitación incluida</strong><span>Tu equipo aprende a usarlo con nosotros.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-val-soporte.svg') ?>" alt="Soporte 24/7" loading="lazy"></div><div><strong>Soporte 24/7</strong><span>Ayuda real a toda hora, todos los días.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-inc-update.svg') ?>" alt="Actualizaciones continuas" loading="lazy"></div><div><strong>Actualizaciones</strong><span>Mejoras continuas sin costo adicional.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-inc-movil.svg') ?>" alt="Acceso desde el celular" loading="lazy"></div><div><strong>Acceso móvil</strong><span>Supervisa tu negocio desde tu celular.</span></div></div>
+                <div class="rg-inc"><div class="rg-ico"><img src="<?= base_url('images/rg-inc-sunat.svg') ?>" alt="Facturación electrónica SUNAT" loading="lazy"></div><div><strong>Facturación SUNAT</strong><span>Boletas y facturas electrónicas integradas.</span></div></div>
             </div>
         </div>
     </section>

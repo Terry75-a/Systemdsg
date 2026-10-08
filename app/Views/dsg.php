@@ -106,22 +106,22 @@
 
             <div class="rg-grid-2">
                 <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="rg-ico"><img src="<?= base_url('images/rg-svc-medida.svg') ?>" alt="Software a medida" loading="lazy"></div>
                     <h3>Software a medida</h3>
                     <p class="rg-card-desc">Sistemas y páginas web hechos a la medida de tu negocio: exactamente lo que necesitas, sin funciones de más.</p>
                 </article>
                 <article class="rg-card rg-card-acc">
-                    <div class="rg-ico"><i class="fa-solid fa-desktop"></i></div>
+                    <div class="rg-ico"><img src="<?= base_url('images/rg-val-soporte.svg') ?>" alt="Soporte técnico 24/7" loading="lazy"></div>
                     <h3>Soporte técnico 24/7</h3>
                     <p class="rg-card-desc">Equipo especializado disponible a toda hora para que tu operación nunca se detenga.</p>
                 </article>
                 <article class="rg-card rg-card-acc">
-                    <div class="rg-ico"><i class="fa-solid fa-users-gear"></i></div>
+                    <div class="rg-ico"><img src="<?= base_url('images/rg-val-cap.svg') ?>" alt="Capacitación continua" loading="lazy"></div>
                     <h3>Capacitación continua</h3>
                     <p class="rg-card-desc">Formamos a tu equipo para que aproveche al máximo cada función de tu sistema.</p>
                 </article>
                 <article class="rg-card">
-                    <div class="rg-ico"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="rg-ico"><img src="<?= base_url('images/rg-val-seg.svg') ?>" alt="Seguridad garantizada" loading="lazy"></div>
                     <h3>Seguridad garantizada</h3>
                     <p class="rg-card-desc">Encriptación de nivel bancario y copias automáticas para proteger tu información.</p>
                 </article>
