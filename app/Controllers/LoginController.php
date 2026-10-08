@@ -24,8 +24,7 @@ class LoginController extends BaseController
             return redirect()->to(base_url('dashboard'));
         }
 
-        return view('layouts/header_dashboard')
-               .view('login');
+        return view('login');
                
         
         }
