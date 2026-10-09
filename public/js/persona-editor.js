@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     (framed ? scroll : window).addEventListener('scroll', updateNavigation, { passive: true });
     updateNavigation();
+    // Al cargar dentro del modal el contenedor aún está oculto (rects en 0),
+    // así que la pasada inicial marca mal la sección. Re-evaluar cuando el
+    // contenedor gane su tamaño real al hacerse visible.
+    if (typeof ResizeObserver !== 'undefined' && scroll) {
+        new ResizeObserver(updateNavigation).observe(scroll);
+    }
+    window.addEventListener('load', updateNavigation);
     // Bootstrap vive en la página padre; Escape dentro del iframe no burbujea hacia ella.
     if (framed && window.parent !== window) {
         document.addEventListener('keydown', function (event) {

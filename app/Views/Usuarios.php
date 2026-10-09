@@ -107,6 +107,7 @@ $menusPayload = array_map(static fn($menu) => [
             </form>
         </div>
     </div>
+</div>
 
 <!-- Modal: Editar Usuario -->
 <div class="modal fade" id="usEditModal" tabindex="-1" aria-labelledby="usEditModalTitle" aria-describedby="usEditModalDescription" aria-hidden="true">
@@ -255,9 +256,15 @@ $(document).ready(function () {
                 className: 'us-user-cell',
                 render: function (data, type, row) {
                     if (type !== 'display') return row.username;
+                    const ini = (row.username || '?').trim().substring(0, 2).toUpperCase();
                     return `
-                        <div class="us-user-name">${escapeHtml(row.username)}</div>
-                        <div class="us-user-id">ID #${row.id_usuario}</div>
+                        <div class="us-user-wrap">
+                            <span class="pdsg-avatar">${ini}</span>
+                            <div>
+                                <div class="us-user-name">${escapeHtml(row.username)}</div>
+                                <div class="us-user-id">ID #${row.id_usuario}</div>
+                            </div>
+                        </div>
                     `;
                 }
             },

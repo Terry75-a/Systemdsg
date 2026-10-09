@@ -692,9 +692,9 @@
     flex: 0 0 42px;
     width: 42px;
     height: 42px;
-    border-radius: 50%;
-    background: #e8f5ee;
-    color: #198754;
+    border-radius: 16px;
+    background: color-mix(in srgb, #161618 10%, transparent);
+    color: #161618;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -754,14 +754,20 @@
 }
 #modalPago .pe-ms-cancel:hover { background: #f8f9fa; }
 #modalPago .pe-ms-save {
-    background: #198754;
-    border: 1px solid #198754;
+    background: #161618;
+    border: 1px solid #161618;
     border-radius: 999px;
     padding: 8px 22px;
     color: #fff;
     font-weight: 600;
 }
-#modalPago .pe-ms-save:hover { background: #157347; }
+#modalPago .pe-ms-save:hover { background: #000; border-color: #000; }
+/* dark: botón invertido (fondo claro, texto oscuro) */
+html.dark #modalPago .pe-ms-save { background: #ededed; border-color: #ededed; color: #111; }
+html.dark #modalPago .pe-ms-save:hover { background: #d4d4d8; border-color: #d4d4d8; }
+html.dark #modalPago .pe-ms-icon { background: color-mix(in srgb, #ededed 12%, transparent); color: #ededed; }
+html.dark #modalPago .pe-ms-close { background: #2c2c2c; color: #a1a1aa; }
+html.dark #modalPago .pe-ms-close:hover { background: #3c3c40; }
 </style>
 
 <script src="<?= base_url('js/persona-editor.js?v=' . filemtime(FCPATH . 'js/persona-editor.js')) ?>"></script>

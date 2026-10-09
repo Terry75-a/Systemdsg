@@ -20,24 +20,37 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
     <div class="dsg-page">
         <header class="dev-topbar">
             <div class="dev-topbar-row">
+                <div class="dash-greeting">
+                    <h1 class="dash-greeting-title"><?= esc($saludo) ?>, <strong><?= esc($nombre) ?></strong></h1>
+                    <p class="dash-greeting-sub">Panel de Administración DSG Perú</p>
+                    <div class="dash-date">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <?= date('d/m/Y') ?>
+                    </div>
+                </div>
                 <div class="dev-topbar-actions">
-                   <!-- Notificaciones estilo YouTube -->
+                    <!-- Notificaciones estilo asisten -->
 <div class="dsg-notification-wrap">
-    <button type="button" class="dsg-dark-btn dsg-notification-btn" id="dsgNotificationBtn" title="Notificaciones" aria-label="Ver notificaciones"> 
+    <button type="button" class="dsg-dark-btn dsg-notification-btn" id="dsgNotificationBtn" title="Notificaciones" aria-label="Ver notificaciones">
         <span class="material-symbols-outlined">notifications</span>
         <span class="dsg-notif-badge" id="dsgNotifBadge" style="display: none;">0</span>
     </button>
 
     <div class="dsg-notif-dropdown" id="dsgNotifDropdown" style="display: none;">
         <div class="dsg-notif-header">
-            <span>Notificaciones</span>
-            <small class="text-muted fw-normal" id="dsgNotifCountText">0 pendientes</small>
+            <span><span class="material-symbols-outlined" style="font-size:19px;">notifications</span> Notificaciones</span>
+            <small class="dsg-notif-count" id="dsgNotifCountText">0 pendientes</small>
         </div>
         <div class="dsg-notif-list" id="dsgNotifList">
-            <div class="p-4 text-center text-muted">
-                <span class="material-symbols-outlined d-block mb-1" style="font-size: 32px; color: #888;">notifications_none</span>
+            <div class="dsg-notif-empty">
+                <span class="material-symbols-outlined">notifications_none</span>
                 <small>No tienes notificaciones pendientes</small>
             </div>
+        </div>
+        <div class="dsg-notif-foot">
+            <a href="<?= base_url('notificaciones') ?>">
+                <span class="material-symbols-outlined" style="font-size:17px;">rule_settings</span> Ver todas las alertas
+            </a>
         </div>
     </div>
 </div>
@@ -100,6 +113,11 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
         }
     });
 
+    var emptyHtml = '<div class="dsg-notif-empty">' +
+        '<span class="material-symbols-outlined">notifications_none</span>' +
+        '<small>No tienes notificaciones pendientes</small>' +
+    '</div>';
+
     function cargarNotificaciones() {
         $.getJSON("<?= base_url('notificaciones/alertas') ?>")
             .done(function(data) {
@@ -107,34 +125,37 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
                 var items = data.items || [];
 
                 if (total > 0) {
-                    $badge.text(total).show();
-                    $countText.text(total + ' pendientes');$list.empty();
+                    $badge.text(total > 99 ? '99+' : total).show();
+                    $btn.addClass('has-unread');
+                    $countText.text(total + ' pendientes');
+                    $list.empty();
 
                     items.forEach(function(item) {
                         var inicial = (item.cliente || item.titulo || 'N').charAt(0).toUpperCase();
-                        $list.append(`
-                            <a href="${item.url || '#'}" class="dsg-notif-item">
-                                <span class="dsg-notif-dot"></span>
-                                <div class="dsg-notif-avatar">${inicial}</div>
-                                <div class="dsg-notif-content">
-                                    <div class="dsg-notif-title"><strong>${item.titulo}:</strong> ${item.mensaje}</div>
-                                    <div class="dsg-notif-time">${item.tiempo || 'Reciente'}</div>
-                                </div>
-                            </a>
-                        `);
+                        $list.append(
+                            '<a href="' + (item.url || '#') + '" class="dsg-notif-item">' +
+                                '<span class="dsg-notif-dot"></span>' +
+                                '<span class="dsg-notif-avatar">' + inicial + '</span>' +
+                                '<span class="dsg-notif-content">' +
+                                    '<span class="dsg-notif-title"><strong>' + item.titulo + ':</strong> ' + item.mensaje + '</span>' +
+                                    '<span class="dsg-notif-time">' +
+                                        '<span class="material-symbols-outlined" style="font-size:13px;">schedule</span>' +
+                                        (item.tiempo || 'Reciente') +
+                                    '</span>' +
+                                '</span>' +
+                            '</a>'
+                        );
                     });
                 } else {
                     $badge.hide();
-                    $countText.text('0 pendientes');$list.html(`
-                        <div class="p-4 text-center text-muted">
-                            <span class="material-symbols-outlined d-block mb-1" style="font-size: 32px; color: #888;">notifications_none</span>
-                            <small>No tienes notificaciones pendientes</small>
-                        </div>
-                    `);
+                    $btn.removeClass('has-unread');
+                    $countText.text('0 pendientes');
+                    $list.html(emptyHtml);
                 }
             })
             .fail(function() {
                 $badge.hide();
+                $btn.removeClass('has-unread');
             });
     }
  });

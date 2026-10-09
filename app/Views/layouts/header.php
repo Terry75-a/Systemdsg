@@ -34,6 +34,13 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/dashboard/panel-dsg.css?v=' . filemtime(FCPATH . 'css/dashboard/panel-dsg.css')) ?>">
+    <!-- Tema Asisten DSG: archivado en panel-asisten.css (sin enlazar) -->
+
+    <!-- Look del panel Dev (/dios): Educonecta + Next-Panel -->
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
+    <!-- Widgets propios (campana + toasts): al final -->
+    <link rel="stylesheet" href="<?= base_url('css/dashboard/panel-widgets.css?v=' . filemtime(FCPATH . 'css/dashboard/panel-widgets.css')) ?>">
 
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" >

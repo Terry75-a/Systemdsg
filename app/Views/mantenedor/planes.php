@@ -101,7 +101,7 @@
                     var label = $('<span>').text(data || '').html();
                     return '<span class="tp-name"><span class="tp-type-icon"><i class="fa-regular fa-credit-card" aria-hidden="true"></i></span><span>' + label + '</span></span>';
                 }},
-                { data: 'precio', render: function (data, type) {
+                { data: 'precio', className: 'tp-price', render: function (data, type) {
                     if (type !== 'display') return data;
                     var n = parseFloat(data) || 0;
                     return 'S/ ' + n.toFixed(2);

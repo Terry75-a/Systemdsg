@@ -1,0 +1,1192 @@
+/* ============================================================
+   PANEL WIDGETS — campana de notificaciones + toasts
+   Estilos de los widgets propios del panel admin que el panel
+   Dev (/dios) no tiene. Se carga DESPUÉS de educonecta/next-panel
+   para que su aspecto no dependa del tema activo.
+   (El tema Asisten DSG queda archivado en panel-asisten.css,
+   sin enlazar, por si se quiere volver a aplicar.)
+   ============================================================ */
+
+/* ── tokens locales usados por estos widgets ── */
+:root {
+  --d-glow: rgba(22, 22, 24, 0.12);
+}
+html.dark:has(.dev-main) {
+  --d-glow: rgba(255, 255, 255, 0.14);
+}
+
+/* ═══════════════ 1. BASE DEL PANEL (igual que el panel Dev /dios) ═══════════════ */
+
+/* dsg.css (landing) mete Inter en .dsg-page; el panel usa la tipografía del panel */
+#main-wrapper:has(.dev-main) .dsg-page {
+  font-family: var(--g-font);
+  background-color: var(--g-bg);
+}
+
+/* el saludo va dentro del topbar: fila como en /dios */
+.dev-topbar-row { justify-content: space-between; }
+.dev-topbar { border-bottom: 0; }
+
+/* todo encabezado de tarjeta en versalitas, como en /dios */
+body:has(.dev-main) .dev-card-head h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g-text-disabled);
+}
+body:has(.dev-main) .dev-card-head h2 .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--g-text-disabled);
+}
+
+/* accesos rápidos: estructura base que /dios define en su <style> inline */
+body:has(.dev-main) .dash-link { display: flex; align-items: center; }
+body:has(.dev-main) .dash-link-text { font-size: 14px; font-weight: 500; line-height: 1.3; }
+body:has(.dev-main) .dash-link-text span { display: block; }
+
+/* ═══════════════ 2. TABLAS ═══════════════ */
+
+/* Mismo sb-table que .dtable de /dios (next-panel §8B):
+   wrap r16 · filas separadas por hairline (border-spacing 0 1px)
+   · header h36 sobre surface-container · filas h48 sobre
+   surface-container-low · hover container-high.
+   Los tokens --sb-* ya son grises en ambos temas, así que la tabla
+   sale monocroma en light y en dark sin reglas extra. */
+body:has(.dev-main) .pdsg-table-card { border-radius: 16px; }
+body:has(.dev-main) .pdsg-table {
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  font-size: 13px;
+}
+body:has(.dev-main) .pdsg-table thead th {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  color: var(--g-text-secondary);
+  background: var(--sb-surface-container);
+  border-bottom: 1px solid var(--sb-outline-variant);
+}
+body:has(.dev-main) .pdsg-table tbody td {
+  height: 48px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: var(--g-text);
+  vertical-align: middle;
+  border-bottom: none;
+  background: transparent !important;
+}
+body:has(.dev-main) .pdsg-table tbody tr {
+  background: var(--sb-surface-container-low);
+  transition: background 200ms ease;
+}
+body:has(.dev-main) .pdsg-table tbody tr:hover {
+  background: var(--sb-surface-container-high);
+}
+body:has(.dev-main) .pdsg-table tbody td:first-child { font-weight: 500; }
+body:has(.dev-main) .pdsg-table .pdsg-th-center,
+body:has(.dev-main) .pdsg-table .pdsg-td-center { text-align: center; }
+body:has(.dev-main) .pdsg-table .pdsg-th-end,
+body:has(.dev-main) .pdsg-table .pdsg-td-end { text-align: right; }
+
+/* paginación: mismas medidas que .dtable-page de /dios (r8 · h28 · 12px) */
+body:has(.dev-main) .pdsg-summary { font-size: 11px; }
+body:has(.dev-main) .pdsg-page,
+body:has(.dev-main) .pdsg-page-nav {
+  height: 28px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+body:has(.dev-main) .pdsg-page-nav { padding: 0 12px; font-size: 11.5px; }
+body:has(.dev-main) .pdsg-page:hover:not(.is-active),
+body:has(.dev-main) .pdsg-page-nav:hover:not(:disabled) {
+  background: var(--g-surface-variant);
+  color: var(--g-text);
+}
+body:has(.dev-main) .pdsg-page.is-active {
+  background: var(--g-primary);
+  color: var(--g-surface);
+}
+body:has(.dev-main) .dataTables_wrapper .dataTables_info { font-size: 11px; }
+
+/* paginación de DataTables (.page-link): misma geometría que .dtable-page */
+body:has(.dev-main) .dataTables_wrapper .page-link,
+body:has(.dev-main) .dataTables_wrapper .pagination .page-link {
+  min-width: 32px;
+  height: 28px;
+  padding: 0 8px;
+  margin: 0 1px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+body:has(.dev-main) .dataTables_wrapper .page-item.active .page-link,
+body:has(.dev-main) .dataTables_wrapper .pagination .page-item.active .page-link {
+  background: var(--g-primary);
+  color: var(--g-surface);
+}
+
+/* ─── Celdas tipo Google (/dios): avatar 36 + pills monoespaciadas ───
+   /dios pinta cada celda como: avatar circular de iniciales, o un
+   <code> con fondo --g-surface-variant, radio 8px, 12px monoespaciado.
+   Las celdas de ID / DNI / código del companion pasan a ese mismo patrón. */
+body:has(.dev-main) .pdsg-avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 500;
+}
+/* celda de usuario: avatar + nombre apilado, igual que la primera
+   columna de /dios (avatar circular de iniciales + nombre en 500) */
+body:has(.dev-main) .us-user-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* DNI e ID de sucursal: pill monoespaciada gris, idéntica a la de /dios
+   (.us-code y .tp-code NO entran aquí: son el <td> del número de fila, y
+   forzarles inline-flex rompe la celda; ese número se queda como texto) */
+body:has(.dev-main) .us-person-dni,
+body:has(.dev-main) .pdsg-modal-content .pdsg-suc-num {
+  display: inline-flex;
+  align-items: center;
+  background: var(--g-surface-variant);
+  color: var(--g-text-secondary);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1;
+  margin-top: 0;
+  white-space: nowrap;
+}
+/* el ID del usuario vive bajo el nombre: se queda como sub-línea, pero
+   con la misma voz monoespaciada tabular de /dios */
+body:has(.dev-main) .us-user-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .01em;
+}
+/* pill de estado: misma geometría que el chip "Nunca" de /dios */
+body:has(.dev-main) .us-badge { padding: 4px 10px; border-radius: 16px; }
+
+/* ═══════════════ 3. BOTONES ═══════════════ */
+
+/* acciones de fila → icono circular como .dev-btn-icon de /dios
+   (el texto se oculta; cada botón conserva su title= para el tooltip) */
+body:has(.dev-main) .pdsg-actions { gap: 4px; }
+body:has(.dev-main) .pdsg-action {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  background: transparent;
+  color: var(--g-text-secondary);
+}
+body:has(.dev-main) .pdsg-action span { display: none; }
+body:has(.dev-main) .pdsg-action i { width: auto; height: auto; font-size: 15px; }
+body:has(.dev-main) .pdsg-action:hover { background: var(--g-surface-variant); color: var(--g-text); }
+body:has(.dev-main) .pdsg-action-view,
+body:has(.dev-main) .pdsg-action-edit,
+body:has(.dev-main) .pdsg-action-info,
+body:has(.dev-main) .pdsg-action-on { background: transparent; color: var(--g-text-secondary); }
+body:has(.dev-main) .pdsg-action-danger { background: transparent; color: var(--g-text-disabled); }
+body:has(.dev-main) .pdsg-action-danger:hover { background: var(--g-error-light); color: var(--g-error); }
+body:has(.dev-main) .pdsg-action-on:hover { background: var(--g-success-light); color: var(--g-success); }
+
+/* botón "Añadir" → píldora negra como "Crear admin" */
+body:has(.dev-main) .pdsg-add-btn,
+body:has(.dev-main) .pdsg-add-btn:hover,
+body:has(.dev-main) .pdsg-add-btn:focus {
+  background: var(--g-primary);
+  border-color: var(--g-primary);
+  color: #fff;
+}
+
+/* tipo-plan.css mete verde en el hover del botón y en el foco del buscador */
+body:has(.dev-main) .tp-page .tp-add:hover { background: var(--g-primary-hover); color: #fff; }
+body:has(.dev-main) .tp-page .tp-search:focus-within {
+  box-shadow: 0 0 0 2px var(--g-border);
+}
+
+/* base .btn (Bootstrap) → geometría .dev-btn de /dios */
+body:has(.dev-main) .btn {
+  font-family: var(--g-font);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  height: 40px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: none;
+}
+body:has(.dev-main) .btn-sm { height: 32px; padding: 0 16px; font-size: 13px; border-radius: 16px; }
+body:has(.dev-main) .btn-primary,
+body:has(.dev-main) .btn-success { background: var(--g-primary); color: #fff; border: none; }
+body:has(.dev-main) .btn-primary:hover,
+body:has(.dev-main) .btn-primary:focus,
+body:has(.dev-main) .btn-success:hover { background: var(--g-primary-hover); color: #fff; }
+body:has(.dev-main) .btn-light,
+body:has(.dev-main) .btn-secondary,
+body:has(.dev-main) .btn-outline-secondary { background: var(--g-surface-variant); color: var(--g-text-secondary); border: none; }
+body:has(.dev-main) .btn-light:hover,
+body:has(.dev-main) .btn-secondary:hover,
+body:has(.dev-main) .btn-outline-secondary:hover { background: var(--g-border); color: var(--g-text); }
+body:has(.dev-main) .btn-outline-primary { background: transparent; color: var(--g-primary); border: 1px solid var(--g-border); }
+body:has(.dev-main) .btn-outline-primary:hover { background: var(--g-primary-light); color: var(--g-primary); }
+body:has(.dev-main) .btn-danger,
+body:has(.dev-main) .btn-outline-danger { background: var(--g-error-light); color: var(--g-error); border: none; }
+body:has(.dev-main) .btn-danger:hover,
+body:has(.dev-main) .btn-outline-danger:hover { background: var(--g-error); color: #fff; }
+
+/* ═══════════════ 4. MODALES ═══════════════ */
+/* ─── Fondo (velo) de TODOS los modales: fade suave + blur sutil ───
+   Bootstrap trae un fade de 150ms lineal y panel-dsg lo aplastaba con
+   opacity:1, así que el velo aparecía de golpe y sin profundidad. Aquí
+   NO se toca opacity (el base queda en 0 y .show en 1, así el fade
+   corre de verdad); solo se afina la curva al estilo Material y se
+   añade un blur discreto para dar sensación de capa. El alfa del color
+   es el del scrim de /dios. */
+body:has(.dev-main) .modal-backdrop,
+body:has(.dev-main) .modal-backdrop.fade {
+  background-color: rgba(15, 23, 42, .5) !important;
+  transition: opacity 280ms cubic-bezier(.22, 1, .36, 1) !important;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+/* dark: velo más profundo, mismo blur y curva */
+html.dark body:has(.dev-main) .modal-backdrop,
+html.dark body:has(.dev-main) .modal-backdrop.fade {
+  background-color: rgba(0, 0, 0, .6) !important;
+}
+
+/* ─── Entrada del modal: escala 0.96→1 de /dios en vez del deslizamiento
+   vertical de Bootstrap. Va solo en .modal-dialog (si se aplicara también
+   a .modal-content los transforms se compondrían y se escalía dos veces).
+   Misma curva que el velo para que entren juntos. ─── */
+body:has(.dev-main) .modal.fade .modal-dialog {
+  transform: scale(.96);
+  transition: transform 240ms cubic-bezier(.22, 1, .36, 1);
+}
+body:has(.dev-main) .modal.show .modal-dialog,
+body:has(.dev-main) .modal.fade.show .modal-dialog {
+  transform: scale(1);
+}
+
+body:has(.dev-main) .modal-content {
+  background: var(--g-surface);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, .18);
+  overflow: hidden;
+}
+body:has(.dev-main) .modal-header {
+  padding: 20px 22px 14px;
+  border-bottom: none;
+  background: transparent;
+}
+body:has(.dev-main) .modal-header.bg-light { background: transparent !important; }
+body:has(.dev-main) .modal .modal-title {
+  font-family: var(--g-font);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--g-text);
+}
+body:has(.dev-main) .modal-body { padding: 4px 22px 18px; font-size: 14px; color: var(--g-text); }
+body:has(.dev-main) .modal-footer {
+  padding: 14px 22px 20px;
+  border-top: 1px solid var(--g-border);
+  background: transparent;
+  justify-content: flex-end;
+  gap: 8px;
+}
+body:has(.dev-main) .btn-close {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  opacity: .6;
+  filter: none;
+}
+body:has(.dev-main) .btn-close:hover { background: var(--g-surface-variant); opacity: 1; }
+
+/* modal de detalle: mismo radio y misma sombra que el resto */
+body:has(.dev-main) #modalVerPersona.modal .modal-content {
+  border-radius: 16px !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, .18) !important;
+}
+/* acentos verdes codificados a mano → monocromo de /dios */
+body:has(.dev-main) .pdsg-modal-group-title i { color: var(--g-text-disabled); }
+body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-nombre { color: var(--g-primary); }
+body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-num { background: var(--g-surface-variant); color: var(--g-text-secondary); }
+
+/* avatar del encabezado del modal: panel-dsg lo dejaba verde con hex
+   fijos (#e6f4ea/#1b7a42). /dios pinta el avatar con los tokens de
+   superficie, así que aquí pasa a gris como el resto de la tabla. */
+body:has(.dev-main) .pdsg-modal-avatar {
+  background: var(--g-primary-light);
+  color: var(--g-primary);
+  font-weight: 500;
+}
+
+/* ─── Geometría Google del modal (/dios): 440px, 88vh, escala 0.96→1 ───
+   Bootstrap trae max-width 500px y sin límite de altura; /dios fija
+   440px de ancho y 88vh de alto, con el cuerpo scrolleable. */
+body:has(.dev-main) .modal-dialog {
+  max-width: 440px;
+  width: 90%;
+  margin: 0.5rem auto;
+}
+/* los formularios grandes (Usuarios, Permisos) necesitan más ancho que
+   los 440px de un modal simple: se les respeta su tamaño de Bootstrap
+   en vez de estrangularlos al del resto */
+body:has(.dev-main) .modal-dialog.modal-lg { max-width: 800px; }
+body:has(.dev-main) .modal-dialog.modal-xl { max-width: 1140px; }
+body:has(.dev-main) .modal-content {
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+body:has(.dev-main) .modal-body,
+body:has(.dev-main) .tp-modal-body,
+body:has(.dev-main) .pdsg-modal-body { overflow-y: auto; }
+/* el form es el único hijo del modal-content: se estira para que
+   .tp-modal-body haga scroll y el footer quede anclado abajo.
+   (Bootstrap resuelve esto sobre .modal-body, que aquí no existe:
+   el cuerpo lleva la clase propia .tp-modal-body.) */
+body:has(.dev-main) .modal-content > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+body:has(.dev-main) .modal-content > form > .tp-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* variante sin <form> (p. ej. dayModal del Calendario): el cuerpo es hijo
+   directo del modal-content y también debe scrollear con el footer anclado */
+body:has(.dev-main) .modal-content > .tp-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ─── #modalPlan (Asignar Plan de Personas): clases Bootstrap crudas ───
+   Usa alert-dark + text-white (salía azulado) y btn-light rounded-0
+   (botón gris). Se passan a la escala de grises del panel. */
+body:has(.dev-main) #modalPlan .alert-dark {
+  background: var(--g-surface-variant, #f1f3f4) !important;
+  color: var(--g-text, #202124) !important;
+  border: 1px solid var(--g-border, #e8eaed);
+}
+body:has(.dev-main) #modalPlan .alert-dark strong { color: var(--g-primary, #161618); }
+body:has(.dev-main) #modalPlan .modal-footer .btn-light {
+  background: var(--g-primary, #161618);
+  color: var(--g-surface, #fff);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+body:has(.dev-main) #modalPlan .modal-footer .btn-light:hover,
+body:has(.dev-main) #modalPlan .modal-footer .btn-light:focus {
+  background: var(--g-primary-hover, #000);
+  color: var(--g-surface, #fff);
+}
+
+/* ─── Campos de formulario Google: 44px de alto, radio 12px ─── */
+body:has(.dev-main) .modal-body input:not([type="checkbox"]):not([type="radio"]),
+body:has(.dev-main) .modal-body select,
+body:has(.dev-main) .modal-body textarea,
+body:has(.dev-main) .tp-modal-body input:not([type="checkbox"]):not([type="radio"]),
+body:has(.dev-main) .tp-modal-body select,
+body:has(.dev-main) .tp-modal-body textarea {
+  min-height: 44px;
+  border: 1px solid var(--g-border);
+  border-radius: 12px;
+  background: var(--g-surface);
+  color: var(--g-text);
+  font-size: 14px;
+  padding: 0 14px;
+  transition: border-color 200ms cubic-bezier(.4, 0, .2, 1);
+}
+body:has(.dev-main) .modal-body textarea,
+body:has(.dev-main) .tp-modal-body textarea { padding: 10px 14px; line-height: 1.5; }
+body:has(.dev-main) .modal-body input:focus,
+body:has(.dev-main) .modal-body select:focus,
+body:has(.dev-main) .modal-body textarea:focus,
+body:has(.dev-main) .tp-modal-body input:focus,
+body:has(.dev-main) .tp-modal-body select:focus,
+body:has(.dev-main) .tp-modal-body textarea:focus {
+  outline: none;
+  border-color: var(--g-primary);
+}
+body:has(.dev-main) .modal-body input::placeholder,
+body:has(.dev-main) .tp-modal-body input::placeholder { color: var(--g-text-disabled); }
+
+/* ─── Switches y checks de permisos: escala de grises tipo Google ───
+   Bootstrap deja el track del switch transparente (hereda --bs-body-bg)
+   y el pulgar es un SVG gris rgba(0,0,0,.25): en el modal se veía un
+   círculo gris flotando sin pista. La matriz de usPermModal marcaba en
+   azul #0d6efd, fuera de la paleta. Aquí ambos pasan a monocromo. */
+body:has(.dev-main) .tp-modal-body .form-switch { display: flex; align-items: center; gap: 10px; }
+body:has(.dev-main) .tp-modal-body .form-switch .form-check-input { float: none; margin: 0; }
+body:has(.dev-main) .tp-modal-body .form-switch .form-check-label { margin-left: 0; }
+
+body:has(.dev-main) .tp-modal-body .form-switch .form-check-input {
+  --sw-thumb: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3E");
+  --sw-on: var(--g-primary, #161618);
+  width: 36px;
+  height: 20px;
+  margin-top: 0;
+  background-color: #dadce0;
+  background-image: var(--sw-thumb);
+  background-repeat: no-repeat;
+  background-position: left 2px center;
+  background-size: 16px 16px;
+  border: 0;
+  border-radius: 20px;
+  transition: background-position .18s ease, background-color .18s ease;
+}
+body:has(.dev-main) .tp-modal-body .form-switch .form-check-input:checked {
+  background-color: var(--sw-on);
+  background-position: right 2px center;
+}
+body:has(.dev-main) .tp-modal-body .form-switch .form-check-input:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(22, 22, 24, .16);
+}
+/* matriz de permisos (usPermModal): checkboxes cuadrados monócromos */
+body:has(.dev-main) #usPermModal .form-check-input[type="checkbox"] {
+  --bs-form-check-bg: var(--g-surface, #fff);
+  border-color: #dadce0;
+}
+body:has(.dev-main) #usPermModal .form-check-input[type="checkbox"]:checked {
+  background-color: var(--g-primary, #161618);
+  border-color: var(--g-primary, #161618);
+}
+
+/* ═══════════════ 5. LIENZO (BODY) ═══════════════ */
+
+/* el shell del panel era blanco: /dios pinta toda la columna en gris */
+:root { --pdsg-bg: var(--g-bg); }
+body:has(.dev-main) .dev-topbar { background: var(--g-bg); }
+body:has(.dev-main) footer.footer {
+  background: var(--g-bg) !important;
+  border-top: 1px solid var(--g-border) !important;
+}
+body:has(.dev-main) footer.footer p,
+body:has(.dev-main) footer.footer a,
+body:has(.dev-main) footer.footer .text-muted { color: var(--g-text-secondary) !important; }
+
+/* ═══════════════ 6. ALERTAS EN LÍNEA ═══════════════ */
+.dev-alert { border-radius: 14px; font-weight: 500; }
+
+/* ═══════════════ 7. CAMPANA DE NOTIFICACIONES ═══════════════ */
+.dsg-notification-wrap { position: relative; display: inline-flex; align-items: center; }
+
+.dsg-notification-btn {
+  position: relative;
+  border-radius: 50%;
+  overflow: visible;
+}
+.dsg-notification-btn.has-unread { border-color: var(--g-primary); box-shadow: 0 0 0 3px var(--d-glow); }
+
+.dsg-notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #E5484D;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--g-font);
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  text-align: center;
+  border: 2px solid var(--g-surface);
+  pointer-events: none;
+}
+
+.dsg-notif-dropdown {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+  right: 0 !important;
+  width: 372px !important;
+  max-width: 92vw;
+  background: var(--g-surface) !important;
+  border: 1px solid var(--g-border) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .35) !important;
+  z-index: 99999 !important;
+  overflow: hidden;
+  animation: widgetNotifIn .2s cubic-bezier(.22, 1, .36, 1);
+}
+@keyframes widgetNotifIn {
+  from { opacity: 0; transform: translateY(-8px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.dsg-notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--g-border);
+  background: var(--g-surface-variant);
+}
+.dsg-notif-header > span {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--pdsg-text, var(--g-text));
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.dsg-notif-header .dsg-notif-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--g-primary-hover);
+  background: var(--g-primary-light);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.dsg-notif-list {
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.dsg-notif-list::-webkit-scrollbar { width: 6px; }
+.dsg-notif-list::-webkit-scrollbar-track { background: transparent; }
+.dsg-notif-list::-webkit-scrollbar-thumb { background: var(--g-border); border-radius: 10px; }
+
+.dsg-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  transition: background .15s ease;
+}
+.dsg-notif-item + .dsg-notif-item { margin-top: 2px; }
+.dsg-notif-item:hover { background: var(--g-surface-variant); }
+
+.dsg-notif-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--g-primary);
+  margin-top: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--d-glow);
+}
+
+.dsg-notif-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--g-primary-light);
+  color: var(--g-primary-hover);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--g-font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dsg-notif-content { flex: 1; min-width: 0; }
+.dsg-notif-title {
+  font-size: 13.2px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--pdsg-text, var(--g-text));
+  margin-bottom: 3px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dsg-notif-title strong { font-weight: 700; color: var(--g-primary-hover); }
+.dsg-notif-time {
+  font-size: 11.5px;
+  color: var(--g-text-disabled);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dsg-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 34px 20px;
+  text-align: center;
+  color: var(--g-text-disabled);
+}
+.dsg-notif-empty .material-symbols-outlined { font-size: 34px; color: var(--g-border); }
+.dsg-notif-empty small { font-size: 12.5px; }
+
+.dsg-notif-foot {
+  border-top: 1px solid var(--g-border);
+  padding: 10px;
+  background: var(--g-surface-variant);
+}
+.dsg-notif-foot a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g-primary-hover);
+  text-decoration: none;
+  padding: 9px;
+  border-radius: 12px;
+  transition: background .15s ease;
+}
+.dsg-notif-foot a:hover { background: var(--g-primary-light); }
+
+/* ═══════════════ 8. TOASTS ═══════════════ */
+#toastContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+#toastContainer .toast { display: none !important; }
+
+.pdsg-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(380px, calc(100vw - 32px));
+  padding: 14px 16px;
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-left: 4px solid var(--g-primary);
+  border-radius: 16px;
+  box-shadow: 0 22px 50px -22px rgba(0, 0, 0, .4);
+  color: var(--pdsg-text, var(--g-text));
+  font-family: var(--g-font);
+  opacity: 0;
+  transform: translateY(-10px) scale(.97);
+  transition: opacity .28s cubic-bezier(.22, 1, .36, 1),
+              transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+.pdsg-toast.is-in { opacity: 1; transform: none; }
+.pdsg-toast.is-out { opacity: 0; transform: translateX(24px); }
+
+.pdsg-toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--g-primary-light);
+  color: var(--g-primary-hover);
+}
+.pdsg-toast-icon .material-symbols-outlined { font-size: 19px; }
+.pdsg-toast-body { flex: 1; min-width: 0; }
+.pdsg-toast-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 2px;
+}
+.pdsg-toast-msg {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--g-text-secondary);
+  margin: 0;
+}
+.pdsg-toast-close {
+  border: 0;
+  background: transparent;
+  color: var(--g-text-disabled);
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, color .15s ease;
+}
+.pdsg-toast-close:hover { background: var(--g-surface-variant); color: var(--pdsg-text, var(--g-text)); }
+.pdsg-toast-close .material-symbols-outlined { font-size: 18px; }
+
+.pdsg-toast--warning { border-left-color: #E9A23B; }
+.pdsg-toast--warning .pdsg-toast-icon { background: #FEF3E2; color: #B26A00; }
+.pdsg-toast--danger  { border-left-color: #E5484D; }
+.pdsg-toast--danger  .pdsg-toast-icon { background: #FDECEC; color: #C62A2F; }
+.pdsg-toast--info    { border-left-color: var(--g-primary); }
+
+html.dark:has(.dev-main) .pdsg-toast--warning .pdsg-toast-icon { background: #33260F; color: #F2C078; }
+html.dark:has(.dev-main) .pdsg-toast--danger  .pdsg-toast-icon { background: #331615; color: #F2999B; }
+
+.pdsg-toast-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--g-primary);
+  transform-origin: left;
+  animation: pdsgToastBar linear forwards;
+}
+.pdsg-toast--warning .pdsg-toast-progress { background: #E9A23B; }
+.pdsg-toast--danger  .pdsg-toast-progress { background: #E5484D; }
+@keyframes pdsgToastBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ═══════════════ 9. RESPONSIVE ═══════════════ */
+@media (max-width: 768px) {
+  /* --- Topbar: el saludo pasa a su propia fila. En una sola fila los
+     botones de la derecha le dejaban ~100px y el título se partía en 4. */
+  .dev-topbar-row {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+  .dash-greeting { order: 1; margin-bottom: 0; }
+  .dash-greeting-title { font-size: 21px; }
+  .dash-greeting-sub { font-size: 12px; }
+  .dash-date { margin-top: 8px; }
+  .dev-topbar-actions {
+    order: 2;
+    width: auto;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .dsg-dark-btn { width: 38px; height: 38px; }
+  .dsg-user-name { max-width: 120px; }
+
+  body:has(.dev-main) .pdsg-action { width: 34px; height: 34px; }
+  .dsg-notif-dropdown { width: min(340px, calc(100vw - 24px)) !important; }
+  #toastContainer { left: 16px; right: 16px; align-items: stretch; }
+  .pdsg-toast { width: 100%; }
+
+  /* /dios no lleva footer en móvil: la pill de navegación ocupa ese lugar.
+     Aquí el footer fijo (z-index 90) quedaba tapado por la pill (z-index 220). */
+  body:has(.dev-main) footer.footer { display: none !important; }
+  body:has(.dev-main) .dev-main .dev-content { padding-bottom: 84px; }
+
+  /* Tablas: mismo alto, menos ancho. Si la columna no cabe, la tabla
+     hace scroll dentro de su wrap (como .dtable de /dios, min-width
+     600px) en vez de partir el texto en varias líneas. */
+  body:has(.dev-main) .pdsg-table { min-width: 600px; }
+  body:has(.dev-main) .pdsg-table th,
+  body:has(.dev-main) .pdsg-table td { padding: 0 10px; }
+  body:has(.dev-main) .pdsg-table .tp-price,
+  body:has(.dev-main) .pdsg-table td[class*="price"] { white-space: nowrap; }
+
+  /* Modal → bottom sheet, igual que /dios: se ancla al borde inferior
+     con radio solo arriba y los botones del footer pasan a repartir el
+     ancho. Sin esto el modal quedaba centrado y los botones se partían. */
+  body:has(.dev-main) .modal-dialog,
+  body:has(.dev-main) .modal-dialog.modal-lg,
+  body:has(.dev-main) .modal-dialog.modal-xl {
+    max-width: 100%;
+    width: 100%;
+    margin: auto 0 0;
+  }
+  /* Los modales de Usuarios traían su propio centrado por ID
+     (#usModal .modal-dialog { margin:16px auto; min-height:calc(100%-32px);
+     display:flex }) que ganaba por especificidad y los dejaba centrados
+     (y estirados por el min-height) en vez de subir desde abajo como el
+     resto; se anulan con !important en móvil. */
+  body:has(.dev-main) #usModal .modal-dialog,
+  body:has(.dev-main) #usEditModal .modal-dialog,
+  body:has(.dev-main) #usPermModal .modal-dialog {
+    margin: auto 0 0 !important;
+    min-height: auto !important;
+    height: auto !important;
+    display: block !important;
+    align-items: stretch !important;
+  }
+  body:has(.dev-main) .modal-content {
+    max-height: 92vh;
+    height: auto !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+  body:has(.dev-main) .modal-header,
+  body:has(.dev-main) .tp-modal-head,
+  body:has(.dev-main) .pdsg-modal-bar { padding: 18px 18px 12px; }
+  body:has(.dev-main) .modal-body,
+  body:has(.dev-main) .tp-modal-body,
+  body:has(.dev-main) .pdsg-modal-body { padding: 0 18px 16px; }
+  body:has(.dev-main) .modal-footer,
+  body:has(.dev-main) .tp-modal-footer {
+    padding: 12px 18px 20px;
+    flex-wrap: wrap;
+  }
+  body:has(.dev-main) .modal-footer .btn,
+  body:has(.dev-main) .tp-modal-footer .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+@media (max-width: 520px) {
+  .dev-topbar { padding: 14px 14px 12px; }
+  /* El chip se reduce a avatar: el nombre completo no cabe junto al resto */
+  .dsg-user-meta,
+  .dsg-user-chevron { display: none; }
+  .dsg-user-btn { padding: 4px; gap: 0; }
+  .dsg-user-menu { min-width: 200px; }
+}
+
+/* ═══════════════ 10. DARK MONOCROMO (igual que /dios) ═══════════════ */
+/* panel-dsg.css fija negro puro (#000) y acentos verdes (#34a853, #0d2818)
+   en su sección html.dark. /dios usa la escala Material completa
+   (#0a0a0a lienzo · #111 superficie · grises) y no lleva verde.
+   Se redeclara con más especificidad (html.dark + body:has) para ganar
+   sin tocar panel-dsg.css. */
+
+html.dark:has(.dev-main) {
+  --pdsg-bg: var(--g-bg);
+  --pdsg-surface: var(--g-surface);
+  --pdsg-surface-soft: var(--g-surface-variant);
+  --pdsg-border: var(--g-border);
+  --pdsg-primary: var(--g-primary);
+  --pdsg-primary-dark: var(--g-primary-hover);
+  --pdsg-primary-light: var(--g-surface-variant);
+  --pdsg-text: var(--g-text);
+  --pdsg-muted: var(--g-text-secondary);
+  --pdsg-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 12px 28px -14px rgba(0, 0, 0, .6);
+
+  /* tokens del shell → escala de /dios en dark */
+  --g-surface: #111111;
+  --g-surface-variant: #1a1a1a;
+  --g-surface-hover: #262626;
+  --g-border: #262626;
+  --g-bg: #0a0a0a;
+  --g-primary: #fafafa;
+  --g-primary-light: #1f1f1f;
+  --g-primary-hover: #e5e5e5;
+}
+html.dark:has(.dev-main),
+html.dark body:has(.dev-main),
+html.dark #main-wrapper:has(.dev-main) {
+  background: var(--g-bg);
+}
+
+/* Superficies: #111 sobre #0a0a0a (antes todo #000, sin jerarquía) */
+html.dark body:has(.dev-main) .dev-card,
+html.dark body:has(.dev-main) .dev-card-head,
+html.dark body:has(.dev-main) .dev-card-body,
+html.dark body:has(.dev-main) .dev-stat-card,
+html.dark body:has(.dev-main) .dev-table,
+html.dark body:has(.dev-main) .dev-table-wrap,
+html.dark body:has(.dev-main) .dev-sidebar-head,
+html.dark body:has(.dev-main) .dev-sidebar-footer,
+html.dark body:has(.dev-main) .dev-mobile-nav,
+html.dark body:has(.dev-main) .dsg-user-btn,
+html.dark body:has(.dev-main) .dsg-dark-btn,
+html.dark body:has(.dev-main) .card,
+html.dark body:has(.dev-main) .dash-card,
+html.dark body:has(.dev-main) .dash-link-card,
+html.dark body:has(.dev-main) .pdsg-card,
+html.dark body:has(.dev-main) .pdsg-tabs,
+html.dark body:has(.dev-main) .pdsg-pagination {
+  background-color: #111111;
+  border-color: #262626;
+}
+html.dark body:has(.dev-main) footer.footer,
+html.dark body:has(.dev-main) footer.footer.bg-white {
+  background-color: var(--g-bg) !important;
+  border-top-color: #262626 !important;
+}
+
+/* Tabla: los tokens --sb-* ya son grises; solo hay que anular el
+   hover verde que panel-dsg pinta con rgba(52,168,83,.08) */
+html.dark body:has(.dev-main) .pdsg-table thead th {
+  background: #111111;
+  color: #a1a1aa;
+  border-bottom-color: #262626;
+}
+html.dark body:has(.dev-main) .pdsg-table tbody td {
+  color: #ededed;
+  border-bottom-color: #262626;
+}
+html.dark body:has(.dev-main) .pdsg-table tbody tr {
+  background: #141414;
+}
+html.dark body:has(.dev-main) .pdsg-table tbody tr:hover,
+html.dark body:has(.dev-main) .pdsg-table tbody tr:hover td {
+  background: #262626;
+}
+html.dark body:has(.dev-main) .pdsg-table tbody tr:hover td {
+  background: transparent !important;
+}
+
+/* Pestañas Activos / Inactivos: verde → gris alto */
+html.dark body:has(.dev-main) .pdsg-tab { color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-tab:hover { background: #1f1f1f; color: #ededed; }
+html.dark body:has(.dev-main) .pdsg-tab.is-active {
+  background: #262626;
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .pdsg-tab-count { background: #1f1f1f; color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-tab.is-active .pdsg-tab-count {
+  background: #ededed;
+  color: #111111;
+}
+
+/* Paginación: activo claro con texto oscuro (como .dtable-page.is-active) */
+html.dark body:has(.dev-main) .pdsg-pagination { border-top-color: #262626; }
+html.dark body:has(.dev-main) .pdsg-page { color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-page:hover:not(.is-active),
+html.dark body:has(.dev-main) .pdsg-page-nav:hover:not(:disabled) {
+  background: #1f1f1f;
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .pdsg-page.is-active {
+  background: #fafafa;
+  color: #0a0a0a;
+}
+html.dark body:has(.dev-main) .pdsg-page-nav { color: #a1a1aa; }
+
+/* Avatares y chips de fila */
+html.dark body:has(.dev-main) .pdsg-avatar {
+  background: #262626;
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .pdsg-chip-off { background: #1f1f1f; color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-user-name { color: #ededed; }
+html.dark body:has(.dev-main) .pdsg-mono { color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-empty { color: #a1a1aa; }
+
+/* Acciones de fila: neutras (la sección 3 ya las deja sin fondo;
+   aquí solo se anula el verde/ámbar que panel-dsg les asigna) */
+html.dark body:has(.dev-main) .pdsg-action { color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-action:hover { background: #1f1f1f; color: #ededed; }
+html.dark body:has(.dev-main) .pdsg-action-view,
+html.dark body:has(.dev-main) .pdsg-action-edit,
+html.dark body:has(.dev-main) .pdsg-action-on { background: transparent; color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-action-danger { background: transparent; color: #f87171; }
+html.dark body:has(.dev-main) .pdsg-action-danger:hover { background: #1f1f1f; color: #f87171; }
+
+html.dark body:has(.dev-main) .dev-mobile-modal { background: #111111 !important; }
+
+/* Acentos verdes codificados a mano en vistas → monocromo */
+html.dark body:has(.dev-main) .pdsg-modal-group-title i { color: #52525b; }
+html.dark body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-nombre { color: #ededed; }
+html.dark body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-num {
+  background: #1f1f1f;
+  color: #a1a1aa;
+}
+html.dark body:has(.dev-main) .dev-main button.btn-success,
+html.dark body:has(.dev-main) .dev-main .btn-primary {
+  background: #fafafa !important;
+  color: #0a0a0a;
+}
+html.dark body:has(.dev-main) .dev-main .table .btn-success.btn-sm {
+  background: #1f1f1f;
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .dev-main .form-check-input:checked {
+  background-color: #fafafa;
+  border-color: #fafafa;
+}
+html.dark body:has(.dev-main) .dev-main .nav-link.active {
+  color: #ededed !important;
+  background: #1f1f1f !important;
+}
+
+/* Paginación de DataTables: en dark --g-primary pasa a #fafafa, así que
+   el fondo claro necesitaba texto oscuro (salía blanco sobre blanco) */
+html.dark body:has(.dev-main) .dataTables_wrapper .page-item.active .page-link,
+html.dark body:has(.dev-main) .dataTables_wrapper .pagination .page-item.active .page-link {
+  background: #fafafa;
+  color: #0a0a0a;
+}
+html.dark body:has(.dev-main) .dataTables_wrapper .page-link { color: #a1a1aa; }
+html.dark body:has(.dev-main) .dataTables_wrapper .page-link:hover { background: #1f1f1f; color: #ededed; }
+
+/* tipo-plan.css y usuarios/permisos traen su propio dark verde
+   (#81c995, #143324, #28322c): se pasa a la escala de grises */
+html.dark body:has(.dev-main) .tp-page {
+  --tp-border: #262626;
+  --tp-muted: #a1a1aa;
+  --tp-surface: #111111;
+  --tp-accent: #ededed;
+}
+html.dark body:has(.dev-main) .tp-page .tp-add,
+html.dark body:has(.dev-main) .tp-page .tp-category,
+html.dark body:has(.dev-main) .tp-page .page-item.active .page-link { background: #1f1f1f; }
+html.dark body:has(.dev-main) .tp-page .tp-add:hover,
+html.dark body:has(.dev-main) .tp-page .tp-category:hover { background: #262626; }
+html.dark body:has(.dev-main) .tp-page .tp-type-icon { background: #1f1f1f; }
+html.dark body:has(.dev-main) .tp-page .tp-search { background: #1f1f1f; }
+html.dark body:has(.dev-main) .tp-page .tp-search:focus-within {
+  background: #1f1f1f;
+  box-shadow: 0 0 0 2px #3a3a3a;
+}
+
+/* El botón "Añadir"/"Nuevo" lleva también la clase .tp-add, que en dark
+   metía verde con más especificidad que la sección 3 */
+html.dark body:has(.dev-main) .pdsg-add-btn,
+html.dark body:has(.dev-main) .pdsg-add-btn:hover,
+html.dark body:has(.dev-main) .pdsg-add-btn:focus {
+  background: #fafafa;
+  border-color: #fafafa;
+  color: #0a0a0a;
+}
+
+/* Mismo tratamiento para las páginas que repiten el patrón verde
+   en su propio dark (usuarios, permisos, tipo_plan) */
+html.dark body:has(.dev-main) .us-page,
+html.dark body:has(.dev-main) .pe-page {
+  --tp-border: #262626;
+  --tp-muted: #a1a1aa;
+  --tp-surface: #111111;
+  --tp-accent: #ededed;
+  --us-border: #262626;
+  --us-muted: #a1a1aa;
+  --us-surface: #111111;
+  --us-accent: #ededed;
+  --pe-border: #262626;
+  --pe-muted: #a1a1aa;
+  --pe-surface: #111111;
+  --pe-accent: #ededed;
+}
+html.dark body:has(.dev-main) .us-page .us-add,
+html.dark body:has(.dev-main) .us-page .us-category,
+html.dark body:has(.dev-main) .us-page .page-item.active .page-link,
+html.dark body:has(.dev-main) .pe-page .pe-add,
+html.dark body:has(.dev-main) .pe-page .pe-category,
+html.dark body:has(.dev-main) .pe-page .page-item.active .page-link {
+  background: #1f1f1f;
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .us-page .us-search,
+html.dark body:has(.dev-main) .pe-page .pe-search { background: #1f1f1f; }
+html.dark body:has(.dev-main) .us-page .us-search:hover,
+html.dark body:has(.dev-main) .pe-page .pe-search:hover { background: #262626; }
+html.dark body:has(.dev-main) .us-page .us-search:focus-within,
+html.dark body:has(.dev-main) .pe-page .pe-search:focus-within {
+  background: #1f1f1f;
+  box-shadow: 0 0 0 2px #3a3a3a;
+}
+
+/* Badges de estado: verde → gris alto (rojo se reserva para peligro) */
+html.dark body:has(.dev-main) .us-badge-on,
+html.dark body:has(.dev-main) .pe-badge-on { background: #262626; color: #ededed; }
+html.dark body:has(.dev-main) .us-badge-off,
+html.dark body:has(.dev-main) .pe-badge-off { background: #1f1f1f; color: #a1a1aa; }
+
+/* Acciones de fila con hover de color (usuarios/permisos) → neutras */
+html.dark body:has(.dev-main) .us-page .pdsg-action-edit,
+html.dark body:has(.dev-main) .us-page .pdsg-action-info,
+html.dark body:has(.dev-main) .us-page .pdsg-action-warning,
+html.dark body:has(.dev-main) .us-page .pdsg-action-success,
+html.dark body:has(.dev-main) .us-page .pdsg-action-danger,
+html.dark body:has(.dev-main) .pe-page .pdsg-action-edit,
+html.dark body:has(.dev-main) .pe-page .pdsg-action-danger {
+  background: transparent;
+  color: #a1a1aa;
+}
+html.dark body:has(.dev-main) .us-page .pdsg-action-edit:hover,
+html.dark body:has(.dev-main) .us-page .pdsg-action-info:hover,
+html.dark body:has(.dev-main) .us-page .pdsg-action-warning:hover,
+html.dark body:has(.dev-main) .us-page .pdsg-action-success:hover { background: #1f1f1f; color: #ededed; }
+html.dark body:has(.dev-main) .us-page .pdsg-action-danger:hover,
+html.dark body:has(.dev-main) .pe-page .pdsg-action-danger:hover { background: #1f1f1f; color: #f87171; }
+
+/* Guardar en modales: verde → claro como el botón primario de /dios */
+html.dark body:has(.dev-main) .tp-modal-save { background: #fafafa; color: #0a0a0a; }
+html.dark body:has(.dev-main) .tp-modal-save:hover { background: #e5e5e5; color: #0a0a0a; }
+html.dark body:has(.dev-main) .tp-modal-icon { color: #a1a1aa; }
+
+/* Tablas y badges DENTRO de modales: Bootstrap deja .table en blanco */
+html.dark body:has(.dev-main) .modal .table { --bs-table-bg: transparent; --bs-table-color: #ededed; background: transparent; color: #ededed; }
+html.dark body:has(.dev-main) .modal .table > :not(caption) > * > * {
+  background: transparent;
+  color: #ededed;
+  border-bottom-color: #262626;
+}
+html.dark body:has(.dev-main) .modal .table thead th {
+  background: #111111;
+  color: #a1a1aa;
+  border-bottom-color: #262626;
+}
+html.dark body:has(.dev-main) .modal .table tbody tr { background: #141414; }
+html.dark body:has(.dev-main) .modal .table tbody tr:hover,
+html.dark body:has(.dev-main) .modal .table tbody tr:hover > * { background: #1f1f1f; }
+html.dark body:has(.dev-main) .modal .table-striped > tbody > tr:nth-of-type(odd) > * {
+  background: rgba(255, 255, 255, .02);
+  color: #ededed;
+}
+html.dark body:has(.dev-main) .badge.bg-success,
+html.dark body:has(.dev-main) .modal .badge.bg-success { background: #262626 !important; color: #ededed !important; }
+html.dark body:has(.dev-main) .badge.bg-secondary { background: #1f1f1f !important; color: #a1a1aa !important; }
+
+/* Avatar del modal: panel-dsg lo deja verde */
+html.dark body:has(.dev-main) .pdsg-avatar,
+html.dark body:has(.dev-main) .modal .pdsg-avatar { background: #262626; color: #ededed; }
+html.dark body:has(.dev-main) .modal .pdsg-suc-nombre { color: #ededed; }
+html.dark body:has(.dev-main) .modal .pdsg-suc-num { background: #1f1f1f; color: #a1a1aa; }
+html.dark body:has(.dev-main) .pdsg-modal-avatar,
+html.dark body:has(.dev-main) #modalSucursal .pdsg-modal-avatar,
+html.dark body:has(.dev-main) #modalPlan .pe-ms-icon { background: #262626; color: #ededed; }
+
+/* switches/checks de permisos en modo oscuro: pulgar y pista en grises */
+html.dark body:has(.dev-main) .tp-modal-body .form-switch .form-check-input {
+  --sw-thumb: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%239aa0a6'/%3e%3c/svg%3E");
+  --sw-on: var(--g-primary, #fafafa);
+  background-color: #3c4043;
+}
+html.dark body:has(.dev-main) .tp-modal-body .form-switch .form-check-input:checked {
+  --sw-thumb: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23161618'/%3e%3c/svg%3E");
+  background-color: var(--sw-on);
+}
+html.dark body:has(.dev-main) .tp-modal-body .form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(250, 250, 250, .18);
+}
+html.dark body:has(.dev-main) #usPermModal .form-check-input[type="checkbox"] {
+  --bs-form-check-bg: #111111;
+  border-color: #5f6368;
+}
+html.dark body:has(.dev-main) #usPermModal .form-check-input[type="checkbox"]:checked {
+  background-color: #ededed;
+  border-color: #ededed;
+}

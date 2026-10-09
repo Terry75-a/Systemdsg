@@ -5,22 +5,7 @@ $nuevosClientes = (int) ($nuevosClientes ?? 0);
 $totalPlanes = (int) ($totalPlanes ?? 0);
 $totalTipoPlan = (int) ($totalTipoPlan ?? 0);
 $totalUsuarios = (int) ($totalUsuarios ?? 0);
-
-$uname = session()->get('username') ?? 'Usuario';
-$nombre = session()->get('nombre') ?? $uname;
-$hora = (int) date('G');
-$saludo = match (true) {
-    $hora >= 6 && $hora < 12 => 'Buenos días',
-    $hora >= 12 && $hora < 19 => 'Buenas tardes',
-    default => 'Buenas noches',
-};
 ?>
-
-<!-- Saludo del panel -->
-<div class="dash-greeting">
-    <h1 class="dash-greeting-title"><?= esc($saludo) ?>, <?= esc($nombre) ?></h1>
-    <p class="dash-greeting-sub">Panel de Administración DSG Perú</p>
-</div>
 
 <?php $flashMsg = session()->getFlashdata('msg'); ?>
 <?php $flashTipo = session()->getFlashdata('tipo') ?? 'success'; ?>
@@ -159,19 +144,17 @@ $saludo = match (true) {
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Primer Toast: Arriba
+    // Notificaciones que salen al entrar / recargar la página
     setTimeout(function() {
-        showToast('👋 ¡Bienvenido! Panel de administración sincronizado.', 'success');
-    }, 500);
+        showToast('Bienvenido', 'Panel de administración sincronizado.', 'success');
+    }, 400);
 
-    // 2. Segundo Toast: Se coloca justo debajo del primero
     setTimeout(function() {
-        showToast('⚠️ Atención: Tienes 2 planes próximos a vencer este mes.', 'warning');
-    }, 1500);
+        showToast('Atención', 'Tienes 2 planes próximos a vencer este mes.', 'warning');
+    }, 1200);
 
-    // 3. Tercer Toast: Se coloca debajo del segundo
     setTimeout(function() {
-        showToast('💳 Alerta: Existe 1 pago pendiente de verificación.', 'danger');
-    }, 2500);
+        showToast('Pago pendiente', 'Existe 1 pago pendiente de verificación.', 'danger');
+    }, 2000);
 });
 </script>

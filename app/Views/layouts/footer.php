@@ -145,40 +145,79 @@
 </footer>
 <?php endif; ?>
 <!-- Contenedor único donde se van apilando todos los Toasts hacia abajo -->
-<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 999999;"></div>
+<div id="toastContainer" style="position:fixed; right:20px; bottom:20px; z-index: 999999;"></div>
 
 <script>
-function showToast(mensaje, tipo) {
+/* ══════════════════════════════════════════════════════════════
+   TOASTS — estilo Asisten DSG
+   Tipo: success · warning · danger · info
+   ══════════════════════════════════════════════════════════════ */
+function showToast(titulo, mensaje, tipo) {
+    // Compatibilidad: si llaman con la firma vieja (mensaje, tipo)
+    if (mensaje === undefined || (typeof mensaje === 'string' && ['success','warning','danger','info'].indexOf(mensaje) !== -1 && tipo === undefined)) {
+        tipo = mensaje || 'success';
+        mensaje = titulo;
+        titulo = '';
+    }
     tipo = tipo || 'success';
+
     var container = document.getElementById('toastContainer');
     if (!container) return;
 
-    // Crear un nuevo toast independiente para apilar
-    var toastDiv = document.createElement('div');
-    toastDiv.className = 'toast align-items-center text-bg-' + tipo + ' border-0 mb-2 shadow';
-    toastDiv.setAttribute('role', 'alert');
-    toastDiv.setAttribute('aria-live', 'assertive');
-    toastDiv.setAttribute('aria-atomic', 'true');
+    var icons = {
+        success: 'check_circle',
+        warning: 'priority_high',
+        danger:  'error',
+        info:    'info'
+    };
+    var titles = {
+        success: 'Listo',
+        warning: 'Atención',
+        danger:  'Alerta',
+        info:    'Información'
+    };
 
-    toastDiv.innerHTML = 
-        '<div class="d-flex">' +
-            '<div class="toast-body">' + mensaje + '</div>' +
-            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>' +
-        '</div>';
+    var el = document.createElement('div');
+    el.className = 'pdsg-toast pdsg-toast--' + tipo;
+    el.setAttribute('role', 'alert');
+    el.setAttribute('aria-live', 'assertive');
 
-    // Se agrega al final del contenedor (aparece debajo de los existentes)
-    container.appendChild(toastDiv);
+    var head = '<p class="pdsg-toast-title">' + (titulo || titles[tipo] || 'Aviso') + '</p>';
+    var body = '<div class="pdsg-toast-body">' + head +
+               (mensaje ? '<p class="pdsg-toast-msg">' + mensaje + '</p>' : '') + '</div>';
 
-    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
-        var toastInstance = new bootstrap.Toast(toastDiv, { delay: 6000 }); // Dura 6 segundos
-        
-        // Se destruye del DOM al cerrarse para no saturar memoria
-        toastDiv.addEventListener('hidden.bs.toast', function () {
-            toastDiv.remove();
-        });
+    el.innerHTML =
+        '<span class="pdsg-toast-icon"><span class="material-symbols-outlined">' + (icons[tipo] || 'info') + '</span></span>' +
+        body +
+        '<button type="button" class="pdsg-toast-close" aria-label="Cerrar">' +
+            '<span class="material-symbols-outlined">close</span>' +
+        '</button>' +
+        '<span class="pdsg-toast-progress"></span>';
 
-        toastInstance.show();
+    container.appendChild(el);
+
+    // entrada suave
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () { el.classList.add('is-in'); });
+    });
+
+    var dur = 6000;
+    var bar = el.querySelector('.pdsg-toast-progress');
+    if (bar) bar.style.animationDuration = dur + 'ms';
+
+    function cerrar() {
+        if (el.dataset.cerrado) return;
+        el.dataset.cerrado = '1';
+        el.classList.remove('is-in');
+        el.classList.add('is-out');
+        setTimeout(function () { el.remove(); }, 320);
     }
+
+    var timer = setTimeout(cerrar, dur);
+    el.querySelector('.pdsg-toast-close').addEventListener('click', function () {
+        clearTimeout(timer);
+        cerrar();
+    });
 }
 </script>
 </body>

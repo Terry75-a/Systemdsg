@@ -221,11 +221,15 @@
 
 <div class="modal fade" id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-light">
+    <div class="modal-content pdsg-modal-content">
+      <div class="pdsg-modal-bar">
     <input type="hidden" id="idEmpresaModal" name="id_empresa" value="">
-    <h5 class="modal-title" id="modalPlanLabel">Asignar Plan de Servicio</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <span class="pdsg-modal-avatar"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span>
+    <div class="pdsg-modal-head-info">
+      <h5 class="pdsg-modal-name" id="modalPlanLabel">Asignar Plan de Servicio</h5>
+      <span class="pdsg-modal-sub">Selecciona el plan y el periodo</span>
+    </div>
+    <button type="button" class="pdsg-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
 </div>
       <div class="modal-body">
     
