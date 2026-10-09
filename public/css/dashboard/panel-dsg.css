@@ -1014,7 +1014,73 @@ html.dark .pdsg-mcard-chevron { background: #1a1a1a; color: #9aa0a6; }
 .pdsg-modal-field-value.pdsg-mono { font-family: 'SF Mono', 'Consolas', monospace; }
 
 /* Sin tarjeta para el grupo de sucursales (tabla ya tiene su caja) */
-.pdsg-modal-group--table .pdsg-modal-card { background: none; border: none; padding: 0; }
+.pdsg-modal-group--table .pdsg-modal-card { background: none; border: none; padding: 0; box-shadow: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   REDISEÑO TOTAL — chrome de modal estilo EduconectaV2
+   (solo visual: banda de tinte en el header, cuerpo tintado y
+   tarjetas blancas elevadas. No toca estructura ni lógica.)
+   ══════════════════════════════════════════════════════════════ */
+.pdsg-modal-bar {
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px 18px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--sb-primary, #161618) 8%, transparent),
+    color-mix(in srgb, var(--sb-primary, #161618) 2%, transparent));
+  border-bottom: 1px solid color-mix(in srgb, var(--sb-outline-variant, #e4e4e7) 80%, transparent);
+}
+.pdsg-modal-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  font-size: 20px;
+  background: var(--sb-surface, #fff);
+  color: var(--sb-primary, #161618);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 0 0 1px color-mix(in srgb, var(--sb-primary, #161618) 8%, transparent);
+}
+.pdsg-modal-name { font-size: 19px; letter-spacing: -.02em; }
+.pdsg-modal-sub { font-size: 13px; }
+
+/* Cuerpo tintado para que las tarjetas floten */
+.pdsg-modal-body {
+  padding: 18px 24px 24px;
+  background: var(--sb-surface-container, #f6f6f7);
+}
+#modalVerPersona .pdsg-modal-scroll,
+#modalVerSucursal .pdsg-modal-scroll { background: var(--sb-surface-container, #f6f6f7); }
+
+/* Tarjetas blancas elevadas */
+.pdsg-modal-card {
+  background: var(--sb-surface, #fff);
+  border: 1px solid color-mix(in srgb, var(--sb-outline-variant, #e4e4e7) 70%, transparent);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px -18px rgba(0, 0, 0, .16);
+}
+.pdsg-modal-field-label { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.pdsg-modal-field-value { font-size: 14.5px; font-weight: 500; }
+
+/* Dark */
+html.dark .pdsg-modal-bar {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #ededed 8%, transparent),
+    color-mix(in srgb, #ededed 2%, transparent));
+  border-bottom-color: #262626;
+}
+html.dark .pdsg-modal-avatar {
+  background: #1a1a1a;
+  color: #ededed;
+  box-shadow: 0 0 0 1px #2c2c2c;
+}
+html.dark .pdsg-modal-body,
+html.dark #modalVerPersona .pdsg-modal-scroll,
+html.dark #modalVerSucursal .pdsg-modal-scroll { background: #0f0f0f; }
+html.dark .pdsg-modal-card {
+  background: #1a1a1a;
+  border-color: #262626;
+  box-shadow: 0 8px 24px -18px rgba(0, 0, 0, .6);
+}
 
 /* Tabla de sucursales (Google) */
 .pdsg-modal-table {

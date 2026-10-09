@@ -12,6 +12,9 @@ body.pe-frame {
   --pe-danger: #d93025;
   --sb-primary: #161618;
   --sb-on-primary: #ffffff;
+  --sb-surface: #ffffff;
+  --sb-surface-container: #f6f6f7;
+  --sb-outline-variant: #e4e4e7;
 }
 html.dark body.pe-frame {
   --pe-surface: #111111;
@@ -24,6 +27,9 @@ html.dark body.pe-frame {
   --pe-danger: #f28b82;
   --sb-primary: #ededed;
   --sb-on-primary: #0a0a0a;
+  --sb-surface: #111111;
+  --sb-surface-container: #0f0f0f;
+  --sb-outline-variant: #262626;
 }
 
 /* Editor de personas — diseño EduconectaV2 (tokens --sb-* replicados,
