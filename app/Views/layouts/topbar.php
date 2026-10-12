@@ -36,10 +36,17 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
         <span class="dsg-notif-badge" id="dsgNotifBadge" style="display: none;">0</span>
     </button>
 
-    <div class="dsg-notif-dropdown" id="dsgNotifDropdown" style="display: none;">
+    <!-- Backdrop del modal de notificaciones -->
+    <div class="dsg-notif-backdrop" id="dsgNotifBackdrop" aria-hidden="true"></div>
+
+    <!-- Modal minimal de notificaciones (centrado en desktop · bottom-sheet en mobile) -->
+    <div class="dsg-notif-dropdown" id="dsgNotifDropdown" role="dialog" aria-modal="true" aria-labelledby="dsgNotifTitle" style="display: none;">
         <div class="dsg-notif-header">
-            <span><span class="material-symbols-outlined" style="font-size:19px;">notifications</span> Notificaciones</span>
+            <span id="dsgNotifTitle"><span class="material-symbols-outlined" style="font-size:19px;">notifications</span> Notificaciones</span>
             <small class="dsg-notif-count" id="dsgNotifCountText">0 pendientes</small>
+            <button type="button" class="dsg-notif-close" id="dsgNotifClose" aria-label="Cerrar notificaciones">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         <div class="dsg-notif-list" id="dsgNotifList">
             <div class="dsg-notif-empty">
@@ -101,16 +108,40 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
     var $list =$('#dsgNotifList');
     var $countText =$('#dsgNotifCountText');
 
-    // 1. Abrir/cerrar dropdown al hacer click en la campana
+    // 1. Abrir/cerrar modal de notificaciones (minimal · backdrop · Escape · mobile bottom-sheet)
+    var $backdrop = $('#dsgNotifBackdrop');
+    var $closeBtn = $('#dsgNotifClose');
+
+    // Mover backdrop + modal al <body>: position:fixed queda roto si un
+    // ancestro (topbar/dev-main con transforms de GSAP) crea un containing
+    // block y el modal se ancla mal (cortado arriba en desktop).
+    $('body').append($backdrop, $drop);
+
+    function openNotif() {
+        $drop.stop(true, true).fadeIn(180);
+        $backdrop.addClass('is-open');
+        document.body.classList.add('dsg-notif-open');
+        $btn.attr('aria-expanded', 'true');
+    }
+    function closeNotif() {
+        $drop.stop(true, true).fadeOut(150);
+        $backdrop.removeClass('is-open');
+        document.body.classList.remove('dsg-notif-open');
+        $btn.attr('aria-expanded', 'false');
+    }
+    function toggleNotif() {
+        if ($drop.is(':visible')) closeNotif(); else openNotif();
+    }
+
+    $btn.attr('aria-haspopup', 'dialog').attr('aria-expanded', 'false');
     $btn.on('click', function(e) {
         e.stopPropagation();
-        $drop.fadeToggle(150);
+        toggleNotif();
     });
-
-    // Cerrar si hace clic fuera
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.dsg-notification-wrap').length) {$drop.fadeOut(150);
-        }
+    $backdrop.on('click', closeNotif);
+    $closeBtn.on('click', closeNotif);
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $drop.is(':visible')) closeNotif();
     });
 
     var emptyHtml = '<div class="dsg-notif-empty">' +
