@@ -234,24 +234,48 @@
             if (!ok) return;
             var fila = $(boton).closest('tr, .pdsg-mcard');
 
+            var csrfName = window.PDSG_LISTA_CFG?.csrfName || 'csrf_test_name';
+        var csrfHash = window.PDSG_LISTA_CFG?.csrfHash || '';
+
+        var payload = { 
+            estado: nuevoEstado 
+        };
+        // Incluir el token CSRF en la data
+        if (csrfHash) {
+            payload[csrfName] = csrfHash;
+        }
+
             $.ajax({
                 url: cfg.urlEliminar + '/' + idPersona,
                 type: "POST",
                 dataType: "json",
-                data: { estado: nuevoEstado },
+                headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfHash
+            },
+                data: payload,
                 success: function (response) {
-                    if (response.status === 'success') {
-                        if (fila && fila.length) fila.remove();
-                        cargarClientes();
-                        cargarContadores();
-                        alert(response.message || "Estado actualizado con éxito.");
-                    } else {
-                        alert("No se pudo cambiar el estado en la base de datos.");
-                    }
-                },
-                error: function () {
+                // Actualizar el token CSRF si el backend envía uno nuevo
+                if (response.csrfHash) {
+                    window.PDSG_LISTA_CFG.csrfHash = response.csrfHash;
+                }
+
+                if (response.status === 'success') {
+                    if (fila && fila.length) fila.remove();
+                    cargarClientes();
+                    cargarContadores();
+                    alert(response.message || "Estado actualizado con éxito.");
+                } else {
+                    alert(response.message || "No se pudo cambiar el estado en la base de datos.");
+                }
+            },
+                error: function (xhr) {
+                if (xhr.status === 403) {
+                    alert("Error 403: Sesión o token CSRF expirado. Recarga la página.");
+                } else {
                     alert("Error de comunicación con el servidor.");
                 }
+            }
             });
         });
     };
@@ -792,12 +816,28 @@
     }
 
     function pdsgCerrarAdd() {
-        bootstrap.Modal.getInstance(modalPersonaAdd)?.hide();
+    // 1. Quitar el foco del elemento activo (iframe o botón dentro del modal)
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
     }
+    
+    // 2. Devolver el foco al botón principal de la página
+    const btnAnadir = document.getElementById('btnAnadir');
+    if (btnAnadir) btnAnadir.focus();
+
+    // 3. Cerrar el modal con Bootstrap
+    bootstrap.Modal.getInstance(modalPersonaAdd)?.hide();
+}
 
     if (modalPersonaAdd) {
+    modalPersonaAdd.addEventListener('hide.bs.modal', function () {
+        // Asegurar que el foco no permanezca dentro antes de aplicar aria-hidden
+        if (document.activeElement && modalPersonaAdd.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+    });
         modalPersonaAdd.addEventListener('shown.bs.modal', pdsgAnimarAdd);
-        modalPersonaAdd.addEventListener('hide.bs.modal', pdsgResetAnimacionAdd);
+    modalPersonaAdd.addEventListener('hide.bs.modal', pdsgResetAnimacionAdd);
         modalPersonaAdd.addEventListener('hidden.bs.modal', function () {
             pdsgResetAnimacionAdd();
             if (modalPersonaAddLoading) modalPersonaAddLoading.hidden = true;

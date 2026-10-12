@@ -349,7 +349,7 @@
                                                     
                                                     
                                                 </button>
-                                                <button class="pdsg-action pdsg-action-danger btn-eliminar-sucursal" title="Eliminar"><i class="fa-solid fa-trash"></i><span>Eliminar</span></button>
+                                                <button type="button" class="pdsg-action pdsg-action-danger btn-eliminar-sucursal" title="Eliminar"><i class="fa-solid fa-trash"></i><span>Eliminar</span></button>
                                                 <!--<button  class="pdsg-suc-btn pdsg-suc-btn-del btn-eliminar-sucursal" title="Eliminar">
                                                     <i class="fa-solid fa-trash"></i><span>Eliminar</span>
                                                     

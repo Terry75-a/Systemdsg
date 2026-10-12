@@ -451,7 +451,15 @@ if (tbodySuc) {
         const btnEliminar = e.target.closest('.btn-eliminar-sucursal');
         if (!btnEliminar) return;
 
-        confirmDsg({ message: '¿Eliminar esta sucursal del formulario?' }).then(function (ok) {
+        // DETENER LA RECARGA DEL FORMULARIO Y LA PROPAGACIÓN AL MODAL
+        e.preventDefault();
+        e.stopPropagation();
+
+        const ejecutarConfirm = window.confirmDsg 
+            || (window.parent && window.parent.confirmDsg) 
+            || function(opts) { return Promise.resolve(window.confirm(opts.message || '¿Confirmar?')); };
+
+        ejecutarConfirm({ message: '¿Eliminar esta sucursal del formulario?' }).then(function (ok) {
             if (!ok) return;
 
             const fila = btnEliminar.closest('tr');
