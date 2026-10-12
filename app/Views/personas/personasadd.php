@@ -1606,19 +1606,198 @@ document.getElementById('formAsignarPlan').addEventListener('submit', async func
             const modal = bootstrap.Modal.getInstance(modalEl);
             if (modal) modal.hide();
 
-            alert(data.message || 'Plan asignado correctamente.');
+            pdsgToastPlan('success', 'Plan asignado', data.message || '¡Plan y pago registrados correctamente!');
         } else {
-            alert(data.message || 'Error al guardar el plan');
-
+            pdsgToastPlan('error', 'No se pudo guardar', data.message || 'Error al guardar el plan');
         }
-       
+
     } catch (err) {
         console.error(err);
-        alert('Error en la comunicación con el servidor');
+        pdsgToastPlan('error', 'Error de conexión', 'No se pudo comunicar con el servidor. Intente de nuevo.');
     } finally {
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = textoOriginal;
     }
 });
 
+/* ══════════════════════════════════════════════════════════════
+   TOAST PLAN — notificación flotante propia del formulario de
+   asignación de plan (corre dentro del iframe, no usa el
+   showToast del footer padre).
+   ══════════════════════════════════════════════════════════════ */
+function pdsgToastPlan(tipo, titulo, mensaje) {
+    var wrap = document.getElementById('pdsgPlanToastWrap');
+    if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = 'pdsgPlanToastWrap';
+        document.body.appendChild(wrap);
+    }
+
+    var icon = tipo === 'success' ? 'check_circle' : 'error';
+    var el = document.createElement('div');
+    el.className = 'pdsg-plan-toast pdsg-plan-toast--' + tipo;
+    el.setAttribute('role', 'alert');
+
+    el.innerHTML =
+        '<span class="pdsg-plan-toast-icon"><span class="material-symbols-outlined">' + icon + '</span></span>' +
+        '<div class="pdsg-plan-toast-body">' +
+            '<p class="pdsg-plan-toast-title">' + titulo + '</p>' +
+            '<p class="pdsg-plan-toast-msg">' + mensaje + '</p>' +
+        '</div>' +
+        '<button type="button" class="pdsg-plan-toast-close" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button>' +
+        '<span class="pdsg-plan-toast-bar"></span>';
+
+    wrap.appendChild(el);
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () { el.classList.add('is-in'); });
+    });
+
+    var dur = 5000;
+    var bar = el.querySelector('.pdsg-plan-toast-bar');
+    if (bar) bar.style.animationDuration = dur + 'ms';
+
+    function cerrar() {
+        if (el.dataset.cerrado) return;
+        el.dataset.cerrado = '1';
+        el.classList.remove('is-in');
+        el.classList.add('is-out');
+        setTimeout(function () { el.remove(); }, 320);
+    }
+    var timer = setTimeout(cerrar, dur);
+    el.querySelector('.pdsg-plan-toast-close').addEventListener('click', function () {
+        clearTimeout(timer);
+        cerrar();
+    });
+}
 </script>
+
+<style>
+/* Toast plan — tokens sb-, animación slide+scale, barra de progreso */
+#pdsgPlanToastWrap {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+.pdsg-plan-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: min(360px, calc(100vw - 40px));
+    padding: 14px 14px 16px;
+    background: var(--sb-surface, #fff);
+    color: var(--sb-on-surface, #161618);
+    border: 1px solid var(--sb-outline-variant, #e4e4e7);
+    border-radius: 16px;
+    box-shadow: 0 6px 28px rgba(32,33,36,.18), 0 1px 3px rgba(0,0,0,.06);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(24px) scale(.96);
+    transition: opacity .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);
+}
+.pdsg-plan-toast.is-in { opacity: 1; transform: none; }
+.pdsg-plan-toast.is-out { opacity: 0; transform: translateX(24px) scale(.96); }
+
+.pdsg-plan-toast-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 20px;
+}
+.pdsg-plan-toast--success .pdsg-plan-toast-icon {
+    background: color-mix(in srgb, #1a7f37 12%, transparent);
+    color: #1a7f37;
+}
+.pdsg-plan-toast--error .pdsg-plan-toast-icon {
+    background: color-mix(in srgb, #d93025 12%, transparent);
+    color: #d93025;
+}
+
+.pdsg-plan-toast-body { flex: 1; min-width: 0; padding-top: 1px; }
+.pdsg-plan-toast-title {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: var(--sb-on-surface, #161618);
+}
+.pdsg-plan-toast-msg {
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--sb-on-surface-variant, #52525b);
+}
+
+.pdsg-plan-toast-close {
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: var(--sb-on-surface-variant, #71717a);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background .15s, color .15s;
+}
+.pdsg-plan-toast-close:hover {
+    background: color-mix(in srgb, var(--sb-on-surface, #161618) 6%, transparent);
+    color: var(--sb-on-surface, #161618);
+}
+.pdsg-plan-toast-close .material-symbols-outlined { font-size: 17px; }
+
+.pdsg-plan-toast-bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    transform-origin: left;
+    animation-name: pdsgPlanToastBar;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+.pdsg-plan-toast--success .pdsg-plan-toast-bar { background: #1a7f37; }
+.pdsg-plan-toast--error   .pdsg-plan-toast-bar { background: #d93025; }
+@keyframes pdsgPlanToastBar {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+/* Dark mode */
+html.dark .pdsg-plan-toast,
+html.dark .pdsg-plan-toast {
+    background: #1f1f1f;
+    color: #e8eaed;
+    border-color: #2c2c2c;
+    box-shadow: 0 6px 28px rgba(0,0,0,.5);
+}
+html.dark .pdsg-plan-toast-title { color: #e8eaed; }
+html.dark .pdsg-plan-toast-msg   { color: #9aa0a6; }
+html.dark .pdsg-plan-toast-close { color: #9aa0a6; }
+html.dark .pdsg-plan-toast-close:hover {
+    background: rgba(255,255,255,.08);
+    color: #e8eaed;
+}
+html.dark .pdsg-plan-toast--success .pdsg-plan-toast-icon {
+    background: color-mix(in srgb, #81c995 16%, transparent);
+    color: #81c995;
+}
+html.dark .pdsg-plan-toast--error .pdsg-plan-toast-icon {
+    background: color-mix(in srgb, #f28b82 16%, transparent);
+    color: #f28b82;
+}
+html.dark .pdsg-plan-toast--success .pdsg-plan-toast-bar { background: #81c995; }
+html.dark .pdsg-plan-toast--error   .pdsg-plan-toast-bar { background: #f28b82; }
+</style>
