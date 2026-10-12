@@ -290,10 +290,10 @@
                                         <button class="dev-btn-icon" title="Integrantes" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
                                             <span class="material-symbols-outlined">group_add</span>
                                         </button>
-                                        <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;">
+                                        <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario? Se desasignarán sus integrantes."}'>
                                             <?= csrf_field() ?>
                                             <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
-                                            <button type="submit" class="dev-btn-icon dev-btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar este horario? Se desasignarán sus integrantes.')">
+                                            <button type="submit" class="dev-btn-icon dev-btn-danger" title="Eliminar">
                                                 <span class="material-symbols-outlined">delete</span>
                                             </button>
                                         </form>
@@ -341,10 +341,10 @@
                                 <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
-                                <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;">
+                                <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario?"}'>
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
-                                    <button type="submit" class="dev-btn-icon dev-btn-danger" onclick="return confirm('¿Eliminar este horario?')">
+                                    <button type="submit" class="dev-btn-icon dev-btn-danger">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
                                 </form>

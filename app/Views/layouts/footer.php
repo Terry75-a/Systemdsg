@@ -145,7 +145,149 @@
 </footer>
 <?php endif; ?>
 <!-- Contenedor único donde se van apilando todos los Toasts hacia abajo -->
-<div id="toastContainer" style="position:fixed; right:20px; bottom:20px; z-index: 999999;"></div>
+<div id="toastContainer" style="position:fixed; right:16px; bottom:16px; z-index: 999999;"></div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL GLOBAL DE CONFIRMACIÓN (eliminar / acciones irreversibles)
+     Uso JS:  confirmDsg('¿Eliminar este registro?').then(ok => { ... })
+     ────────────────────────────────────────────────────────────── -->
+<style>
+.dsg-cfm-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(32, 33, 36, .55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 10800;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s cubic-bezier(.4, 0, .2, 1);
+}
+.dsg-cfm-backdrop.is-open { opacity: 1; pointer-events: auto; }
+html.dark .dsg-cfm-backdrop { background: rgba(0, 0, 0, .65); }
+.dsg-cfm-card {
+    width: 100%; max-width: 400px;
+    background: var(--sb-surface, #fff);
+    color: var(--sb-on-surface, #161618);
+    border: 1px solid var(--sb-outline-variant, #e4e4e7);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(32, 33, 36, .22);
+    padding: 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    text-align: center;
+    transform: translateY(12px) scale(.97);
+    transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+}
+.dsg-cfm-backdrop.is-open .dsg-cfm-card { transform: none; }
+html.dark .dsg-cfm-card {
+    background: #1f1f1f; color: #e8eaed;
+    border-color: #2c2c2c;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .55);
+}
+.dsg-cfm-icon {
+    display: grid; place-items: center;
+    width: 48px; height: 48px; border-radius: 16px;
+    background: color-mix(in srgb, #d93025 10%, transparent);
+    color: #d93025;
+    font-size: 20px;
+}
+html.dark .dsg-cfm-icon { color: #f28b82; background: color-mix(in srgb, #f28b82 14%, transparent); }
+.dsg-cfm-title { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.dsg-cfm-msg { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--sb-on-surface-variant, #52525b); }
+html.dark .dsg-cfm-msg { color: #9aa0a6; }
+.dsg-cfm-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 8px; }
+.dsg-cfm-btn {
+    min-height: 44px; width: 100%;
+    border: 0; border-radius: 999px;
+    font-size: 14px; font-weight: 500; letter-spacing: .01em;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background-color .15s cubic-bezier(.4, 0, .2, 1), color .15s cubic-bezier(.4, 0, .2, 1);
+}
+.dsg-cfm-ok { background: #d93025; color: #fff; }
+.dsg-cfm-ok:hover { background: #c5221f; }
+html.dark .dsg-cfm-ok { background: transparent; color: #f28b82; box-shadow: inset 0 0 0 1px #5f6368; }
+html.dark .dsg-cfm-ok:hover { background: color-mix(in srgb, #f28b82 14%, transparent); }
+.dsg-cfm-cancel { background: transparent; color: var(--sb-on-surface-variant, #52525b); }
+.dsg-cfm-cancel:hover { background: var(--sb-surface-container-high, #ececee); color: var(--sb-on-surface, #161618); }
+html.dark .dsg-cfm-cancel { color: #9aa0a6; }
+html.dark .dsg-cfm-cancel:hover { background: #2c2c2c; color: #e8eaed; }
+@media (min-width: 480px) {
+    .dsg-cfm-actions { flex-direction: row-reverse; }
+}
+</style>
+<div class="dsg-cfm-backdrop" id="dsgConfirmBackdrop" aria-hidden="true">
+    <div class="dsg-cfm-card" role="alertdialog" aria-modal="true" aria-labelledby="dsgCfmTitle" aria-describedby="dsgCfmMsg">
+        <span class="dsg-cfm-icon"><span class="material-symbols-outlined">delete</span></span>
+        <h2 class="dsg-cfm-title" id="dsgCfmTitle">¿Eliminar?</h2>
+        <p class="dsg-cfm-msg" id="dsgCfmMsg">Esta acción no se puede deshacer.</p>
+        <div class="dsg-cfm-actions">
+            <button type="button" class="dsg-cfm-btn dsg-cfm-ok" id="dsgCfmOk"><span class="material-symbols-outlined" style="font-size:18px;">check</span> <span id="dsgCfmOkLabel">Eliminar</span></button>
+            <button type="button" class="dsg-cfm-btn dsg-cfm-cancel" id="dsgCfmCancel">Cancelar</button>
+        </div>
+    </div>
+</div>
+<script>
+/* confirmDsg(message|options) → Promise<boolean>
+   options: { title, message, okLabel, icon } */
+window.confirmDsg = function (opts) {
+    return new Promise(function (resolve) {
+        var backdrop = document.getElementById('dsgConfirmBackdrop');
+        var titleEl = document.getElementById('dsgCfmTitle');
+        var msgEl = document.getElementById('dsgCfmMsg');
+        var okBtn = document.getElementById('dsgCfmOk');
+        var cancelBtn = document.getElementById('dsgCfmCancel');
+        var okLabel = document.getElementById('dsgCfmOkLabel');
+        var iconEl = backdrop.querySelector('.dsg-cfm-icon .material-symbols-outlined');
+
+        if (typeof opts === 'string') opts = { message: opts };
+        opts = opts || {};
+
+        titleEl.textContent = opts.title || '¿Eliminar?';
+        msgEl.textContent = opts.message || 'Esta acción no se puede deshacer.';
+        okLabel.textContent = opts.okLabel || 'Eliminar';
+        if (iconEl) iconEl.textContent = opts.icon || 'delete';
+
+        var done = false;
+        function finish(val) {
+            if (done) return;
+            done = true;
+            backdrop.classList.remove('is-open');
+            backdrop.setAttribute('aria-hidden', 'true');
+            document.removeEventListener('keydown', onKey);
+            setTimeout(function () { resolve(val); }, 180);
+        }
+        function onKey(e) { if (e.key === 'Escape') finish(false); }
+
+        okBtn.onclick = function () { finish(true); };
+        cancelBtn.onclick = function () { finish(false); };
+        backdrop.onclick = function (e) { if (e.target === backdrop) finish(false); };
+        document.addEventListener('keydown', onKey);
+
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        cancelBtn.focus();
+    });
+};
+/* Delegación global: cualquier <form data-confirm-delete="mensaje"> espera
+   a confirmDsg antes de enviarse. Reemplaza a onsubmit="return confirm(…)" */
+document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    var msg = form.getAttribute('data-confirm-delete');
+    if (msg === null) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var opts = {};
+    try { opts = JSON.parse(msg) || {}; } catch (err) { opts = { message: msg }; }
+    if (typeof opts === 'string') opts = { message: opts };
+    confirmDsg(opts).then(function (ok) {
+        if (!ok) return;
+        form.removeAttribute('data-confirm-delete');
+        HTMLFormElement.prototype.submit.call(form);
+    });
+}, true);
+</script>
 
 <script>
 /* ══════════════════════════════════════════════════════════════

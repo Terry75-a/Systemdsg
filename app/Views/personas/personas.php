@@ -568,7 +568,8 @@ $.ajaxSetup({
         
         var textoConfirmacion = (nuevoEstado === 0) ? "¿Estás seguro de dar de baja a esta persona?" : "¿Estás seguro de activar de nuevo a esta persona?";
 
-        if (confirm(textoConfirmacion)) {
+        confirmDsg({ message: textoConfirmacion, okLabel: (nuevoEstado === 0 ? 'Dar de baja' : 'Activar'), icon: (nuevoEstado === 0 ? 'person_off' : 'person_check') }).then(function (ok) {
+        if (!ok) return;
             var fila = $(boton).closest('tr, .pdsg-mcard');
 
             $.ajax({
@@ -593,7 +594,7 @@ $.ajaxSetup({
                     alert("Error de comunicación con el servidor.");
                 }
             });
-        }
+        });
     }
 
     $('#modalVerPersona').on('show.bs.modal', function (event) {
@@ -698,7 +699,11 @@ if (p.sucursales && p.sucursales.length > 0) {
             return;
         }
 
-        if (confirm("¿Estás seguro de eliminar permanentemente a esta persona? Esta acción no se puede deshacer.")) {
+        confirmDsg({
+            title: '¿Eliminar permanentemente?',
+            message: '¿Estás seguro de eliminar permanentemente a esta persona? Esta acción no se puede deshacer.'
+        }).then(function (ok) {
+        if (!ok) return;
             var fila = $(boton).closest('tr, .pdsg-mcard');
 
             $.ajax({
@@ -720,7 +725,7 @@ if (p.sucursales && p.sucursales.length > 0) {
                     alert("Error de comunicación con el servidor.");
                 }
             });
-        }
+        });
     }
 
    function cargarDetallePersona(id) {

@@ -151,7 +151,8 @@
     });
 
     function eliminarPlan(id_plan) {
-        if (confirm('¿Estás seguro de que deseas eliminar este plan?')) {
+        confirmDsg({ message: '¿Estás seguro de que deseas eliminar este plan?' }).then(function (ok) {
+            if (!ok) return;
             $.ajax({
                 url: '<?= base_url('planes/eliminar') ?>',
                 type: 'POST',
@@ -168,7 +169,7 @@
                     alert('Ocurrió un error al intentar eliminar el plan.');
                 }
             });
-        }
+        });
     }
 </script>
 <script src="<?= base_url('js/plane-editor.js?v=' . filemtime(FCPATH . 'js/plane-editor.js')) ?>"></script>

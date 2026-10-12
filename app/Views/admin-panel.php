@@ -165,7 +165,7 @@
                                     <td><?= esc($u['last_login'] ?? 'Nunca') ?></td>
                                     <td>
                                         <div class="dev-table-actions">
-                                            <form method="post" action="<?= site_url('admin/delete-user') ?>" onsubmit="return confirm('¿Eliminar este empleado?')">
+                                            <form method="post" action="<?= site_url('admin/delete-user') ?>" data-confirm-delete='{"message":"¿Eliminar este empleado?"}'>
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                                                 <button type="submit" class="dev-btn-icon" title="Eliminar">
@@ -191,7 +191,7 @@
                                         <div class="dev-table-card-sub">DNI <?= esc($u['dni'] ?? '-') ?></div>
                                     </div>
                                 </div>
-                                <form method="post" action="<?= site_url('admin/delete-user') ?>" onsubmit="return confirm('¿Eliminar este empleado?')">
+                                <form method="post" action="<?= site_url('admin/delete-user') ?>" data-confirm-delete='{"message":"¿Eliminar este empleado?"}'>
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                                     <button type="submit" class="dev-btn-icon" title="Eliminar">

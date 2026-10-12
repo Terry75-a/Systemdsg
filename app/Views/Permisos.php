@@ -104,6 +104,7 @@
             </form>
         </div>
     </div>
+</div>
 
 <!-- Modal: Editar Permiso -->
 <div class="modal fade" id="peEditModal" tabindex="-1" aria-labelledby="peEditModalTitle" aria-describedby="peEditModalDescription" aria-hidden="true">
@@ -160,10 +161,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery / DataTables / Bootstrap ya vienen de header.php + footer.php -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <script>
@@ -263,15 +261,19 @@ $(document).ready(function () {
 
     $('#peSearch').on('input', function () { tablaPermisos.search(this.value).draw(); });
 
-    // Helper: limpia backdrops huérfanos al cerrar un modal
+    // Helper: limpia backdrops huérfanos SOLO si ningún modal quedó "abierto".
+    // Si un modal sigue en .show, Bootstrap aún gestiona su backdrop y no hay
+    // que tocar nada (rompería el estado interno y el siguiente clic lo oculta).
     function cleanBackdrops() {
+        if (document.querySelector('.modal.show')) return;
         document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
         document.body.classList.remove('modal-open');
         document.body.style.removeProperty('overflow');
         document.body.style.removeProperty('padding-right');
     }
 
-    // Limpieza al cerrar (hidden.bs.modal)
+    // Limpieza al cerrar (hidden.bs.modal) — se ejecuta cuando Bootstrap ya
+    // terminó su hide() y ningún modal quedó en .show.
     $('#peModal, #peEditModal').on('hidden.bs.modal', cleanBackdrops);
 
     // Abrir modal crear (limpia formulario)
@@ -348,9 +350,10 @@ $(document).ready(function () {
 
     // Eliminar
     $(document).on('click', '.pe-delete', function () {
-        if (!confirm('¿Eliminar este permiso?')) return;
         const id = $(this).data('id');
-        fetch(BASE_URL + 'permisos/eliminar/' + id, {
+        confirmDsg({ message: '¿Eliminar este permiso?' }).then(ok => {
+            if (!ok) return;
+            fetch(BASE_URL + 'permisos/eliminar/' + id, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -364,6 +367,7 @@ $(document).ready(function () {
                 tablaPermisos.ajax.reload();
             })
             .catch(() => alert('Error de conexión.'));
+        });
     });
 
     // Animación de entrada
@@ -373,10 +377,10 @@ $(document).ready(function () {
         });
     }
 
-    // Limpieza explícita al clicar Cancelar / Cerrar (data-bs-dismiss no siempre dispara hidden.bs.modal en test)
-    $('#peModal .tp-modal-cancel, #peModal .tp-modal-close, #peEditModal .tp-modal-cancel, #peEditModal .tp-modal-close').on('click', function() {
-        // hidden.bs.modal se disparará automáticamente, pero por si acaso:
-        setTimeout(cleanBackdrops, 200);
-    });
+    // Cancelar / Cerrar: solo limpia backdrops huérfanos DESPUÉS de que
+    // Bootstrap termine su hide() (hidden.bs.modal). No se toca el backdrop
+    // en el clic — robarlo con el modal aún en .show deja el estado interno
+    // inconsistente y el siguiente clic en "Asignar" lo OCULTA en vez de
+    // mostrarlo (el usuario solo ve el fondo opaco).
 });
 </script>

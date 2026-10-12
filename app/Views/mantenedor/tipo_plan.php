@@ -128,15 +128,16 @@
     })
 
     function eliminarTipoPlan(id_tipo_plan) {
-        if (confirm('¿Estás seguro de que deseas eliminar este tipo de plan?')) {
-            
+        confirmDsg({ message: '¿Estás seguro de que deseas eliminar este tipo de plan?' }).then(function (ok) {
+            if (!ok) return;
+
             $.ajax({
                 url: '<?= base_url('tipo_plan/eliminar/') ?>',
                 type: 'POST',
                 data: { id_tipo_plan: id_tipo_plan, ['<?= csrf_token() ?>']: document.querySelector('#tpForm input[name="<?= csrf_token() ?>"]').value },
                 success: function(response) {
                     if (response.status === 'success') {
-                        
+
                         alert(response.message);
                         tablaplanes.ajax.reload();
                     } else {
@@ -147,7 +148,7 @@
                     alert('Ocurrió un error al intentar eliminar el tipo de plan.');
                 }
             });
-        }
+        });
     }
 
     

@@ -418,11 +418,13 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             item.querySelector('.pdsg-action-danger').addEventListener('click', function () {
-                if (!confirm('¿Eliminar “' + ev.title + '”?')) return;
-                ev.remove();
-                showNotice('Evento eliminado.');
-                updateCount();
-                renderDayList(iso);
+                confirmDsg({ message: '¿Eliminar “' + ev.title + '”?' }).then(function (ok) {
+                    if (!ok) return;
+                    ev.remove();
+                    showNotice('Evento eliminado.');
+                    updateCount();
+                    renderDayList(iso);
+                });
             });
 
             dayList.appendChild(item);

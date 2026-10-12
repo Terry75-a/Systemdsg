@@ -599,7 +599,7 @@
 
 <!-- ════════════ MODAL PAGOS (solo visual) ════════════ -->
 <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-scrollable">
     <form class="modal-content" id="formPago" onsubmit="return false;">
 
       <div class="pe-ms-head">
@@ -622,32 +622,32 @@
               <input type="text" class="form-control" id="pagoConcepto" name="concepto" placeholder="Ej. Licencia Anual">
             </div>
 
-            <div class="col-12">
+            <div class="col-md-6">
               <label for="pagoDiasAviso">Cantidad de días de aviso:</label>
               <input type="number" min="0" class="form-control" id="pagoDiasAviso" name="dias_aviso" placeholder="Ej. 10">
             </div>
 
-            <div class="col-12">
-              <label for="pagoFechaVenc">Fecha de vencimiento:</label>
-              <input type="date" class="form-control" id="pagoFechaVenc" name="fecha_vencimiento">
-            </div>
-
-            <div class="col-12">
+            <div class="col-md-6">
               <label for="pagoMonto">Monto:</label>
               <input type="number" step="0.01" min="0" class="form-control" id="pagoMonto" name="monto" placeholder="Ej. 50.00">
             </div>
 
-            <div class="col-12">
-              <label for="pagoCorreo">Correo de notificación:</label>
-              <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">
+            <div class="col-md-6">
+              <label for="pagoFechaVenc">Fecha de vencimiento:</label>
+              <input type="date" class="form-control" id="pagoFechaVenc" name="fecha_vencimiento">
             </div>
 
-            <div class="col-12">
+            <div class="col-md-6">
               <label for="pagoEstado">Estado:</label>
               <select class="form-select" id="pagoEstado" name="estado">
                 <option value="1" selected>ACTIVO</option>
                 <option value="0">INACTIVO</option>
               </select>
+            </div>
+
+            <div class="col-12">
+              <label for="pagoCorreo">Correo de notificación:</label>
+              <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">
             </div>
 
           </div>
@@ -674,100 +674,8 @@
 .body-wrapper {
     padding-top: 20px !important;
 }
-/* ── Modal Pagos: estilos propios ── */
-#modalPago .modal-content {
-    border: 0;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-#modalPago .pe-ms-head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 22px;
-    border-bottom: 1px solid #e9ecef;
-}
-#modalPago .pe-ms-icon {
-    flex: 0 0 42px;
-    width: 42px;
-    height: 42px;
-    border-radius: 16px;
-    background: color-mix(in srgb, #161618 10%, transparent);
-    color: #161618;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-}
-#modalPago .pe-ms-head-info { flex: 1; min-width: 0; }
-#modalPago .pe-ms-head-info h2 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin: 0;
-}
-#modalPago .pe-ms-head-info p {
-    margin: 2px 0 0;
-    font-size: .82rem;
-    color: #6c757d;
-}
-#modalPago .pe-ms-close {
-    flex: 0 0 34px;
-    width: 34px;
-    height: 34px;
-    border: 0;
-    border-radius: 50%;
-    background: #f1f3f5;
-    color: #495057;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-#modalPago .pe-ms-close:hover { background: #e2e6ea; }
-
-#modalPago .pe-ms-body-wrap {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-}
-#modalPago .pe-ms-body { padding: 20px 22px; }
-#modalPago label {
-    display: block;
-    font-size: .85rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-#modalPago .pe-ms-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 14px 22px;
-    border-top: 1px solid #e9ecef;
-}
-#modalPago .pe-ms-cancel {
-    background: transparent;
-    border: 1px solid #dee2e6;
-    border-radius: 999px;
-    padding: 8px 20px;
-    color: #495057;
-}
-#modalPago .pe-ms-cancel:hover { background: #f8f9fa; }
-#modalPago .pe-ms-save {
-    background: #161618;
-    border: 1px solid #161618;
-    border-radius: 999px;
-    padding: 8px 22px;
-    color: #fff;
-    font-weight: 600;
-}
-#modalPago .pe-ms-save:hover { background: #000; border-color: #000; }
-/* dark: botón invertido (fondo claro, texto oscuro) */
-html.dark #modalPago .pe-ms-save { background: #ededed; border-color: #ededed; color: #111; }
-html.dark #modalPago .pe-ms-save:hover { background: #d4d4d8; border-color: #d4d4d8; }
-html.dark #modalPago .pe-ms-icon { background: color-mix(in srgb, #ededed 12%, transparent); color: #ededed; }
-html.dark #modalPago .pe-ms-close { background: #2c2c2c; color: #a1a1aa; }
-html.dark #modalPago .pe-ms-close:hover { background: #3c3c40; }
+/* Los estilos de #modalPago viven en persona-editor.css, junto al patrón
+   rediseñado de #modalSucursal/#modalPlan (mismo pe-ms-* + tokens sb-). */
 </style>
 
 <script src="<?= base_url('js/persona-editor.js?v=' . filemtime(FCPATH . 'js/persona-editor.js')) ?>"></script>
@@ -1209,33 +1117,37 @@ document.getElementById('tbodySucursales').addEventListener('click', function (e
     const btnEliminar = e.target.closest('.btn-eliminar-sucursal');
     if (!btnEliminar) return;
 
-    const fila = btnEliminar.closest('tr');
-    const indice = fila.getAttribute('data-indice');
+    confirmDsg({ message: '¿Eliminar esta sucursal del formulario?' }).then(function (ok) {
+        if (!ok) return;
 
-    // Si el índice empieza con 'existing_', significa que ya existe en la BD
-    if (indice && indice.startsWith('existing_')) {
-        const idSucursal = indice.replace('existing_', '');
-        
-        const inputEliminado = document.createElement('input');
-        inputEliminado.type = 'hidden';
-        inputEliminado.name = 'sucursales_eliminadas[]';
-        inputEliminado.value = idSucursal;
-        
-        document.getElementById('sucursalesEliminadasContainer').appendChild(inputEliminado);
-    }
+        const fila = btnEliminar.closest('tr');
+        const indice = fila.getAttribute('data-indice');
 
-    // Remover la fila de la vista
-    fila.remove();
+        // Si el índice empieza con 'existing_', significa que ya existe en la BD
+        if (indice && indice.startsWith('existing_')) {
+            const idSucursal = indice.replace('existing_', '');
 
-    // Mostrar mensaje si la tabla queda vacía
-    const tbody = document.getElementById('tbodySucursales');
-    if (tbody.querySelectorAll('tr').length === 0) {
-        tbody.innerHTML = `
-            <tr id="filaVacia">
-                <td colspan="4" class="text-center text-muted py-3">No hay sucursales registradas.</td>
-            </tr>
-        `;
-    }
+            const inputEliminado = document.createElement('input');
+            inputEliminado.type = 'hidden';
+            inputEliminado.name = 'sucursales_eliminadas[]';
+            inputEliminado.value = idSucursal;
+
+            document.getElementById('sucursalesEliminadasContainer').appendChild(inputEliminado);
+        }
+
+        // Remover la fila de la vista
+        fila.remove();
+
+        // Mostrar mensaje si la tabla queda vacía
+        const tbody = document.getElementById('tbodySucursales');
+        if (tbody.querySelectorAll('tr').length === 0) {
+            tbody.innerHTML = `
+                <tr id="filaVacia">
+                    <td colspan="4" class="text-center text-muted py-3">No hay sucursales registradas.</td>
+                </tr>
+            `;
+        }
+    });
 });
 
 // 5. Limpiar formulario al cerrar

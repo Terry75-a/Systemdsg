@@ -304,7 +304,7 @@
                                                 <b style="font-size:.875rem;"><?= esc($f['nombre']) ?></b>
                                                 <span style="display:block;font-size:.75rem;color:var(--g-text-secondary);"><?= date('d/m/Y', strtotime($f['fecha'])) ?></span>
                                             </div>
-                                            <form action="<?= site_url('admin/festivos/eliminar') ?>" method="POST" onsubmit="return confirm('¿Eliminar este festivo?');">
+                                            <form action="<?= site_url('admin/festivos/eliminar') ?>" method="POST" data-confirm-delete='{"message":"¿Eliminar este festivo?"}'>
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="fest_id" value="<?= (int) $f['id'] ?>">
                                                 <button type="submit" class="cfg-btn-ghost" style="height:34px;padding:0 12px;color:#dc2626;border-color:rgba(220,38,38,.4);">
