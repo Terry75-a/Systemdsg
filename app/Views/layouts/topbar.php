@@ -118,19 +118,19 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
     $('body').append($backdrop, $drop);
 
     function openNotif() {
-        $drop.stop(true, true).fadeIn(180);
+        $drop.addClass('is-open');
         $backdrop.addClass('is-open');
         document.body.classList.add('dsg-notif-open');
         $btn.attr('aria-expanded', 'true');
     }
     function closeNotif() {
-        $drop.stop(true, true).fadeOut(150);
+        $drop.removeClass('is-open');
         $backdrop.removeClass('is-open');
         document.body.classList.remove('dsg-notif-open');
         $btn.attr('aria-expanded', 'false');
     }
     function toggleNotif() {
-        if ($drop.is(':visible')) closeNotif(); else openNotif();
+        if ($drop.hasClass('is-open')) closeNotif(); else openNotif();
     }
 
     $btn.attr('aria-haspopup', 'dialog').attr('aria-expanded', 'false');
@@ -141,7 +141,7 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
     $backdrop.on('click', closeNotif);
     $closeBtn.on('click', closeNotif);
     $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' && $drop.is(':visible')) closeNotif();
+        if (e.key === 'Escape' && $drop.hasClass('is-open')) closeNotif();
     });
 
     var emptyHtml = '<div class="dsg-notif-empty">' +

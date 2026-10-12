@@ -550,6 +550,7 @@ body.dsg-notif-open { overflow: hidden; }
 
 /* Modal minimal de notificaciones — centrado en desktop */
 .dsg-notif-dropdown {
+  display: none;
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
@@ -563,9 +564,11 @@ body.dsg-notif-open { overflow: hidden; }
   box-shadow: 0 8px 32px rgba(32, 33, 36, .22) !important;
   z-index: 1000002 !important;
   overflow: hidden;
-  display: flex !important;
   flex-direction: column;
   animation: widgetNotifIn .2s cubic-bezier(.22, 1, .36, 1);
+}
+.dsg-notif-dropdown.is-open {
+  display: flex !important;
 }
 html.dark .dsg-notif-dropdown {
   background: #1f1f1f !important;
