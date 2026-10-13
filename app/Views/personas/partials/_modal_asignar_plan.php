@@ -11,6 +11,7 @@
     <button type="button" class="pdsg-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
 </div>
       <div class="modal-body">
+        <input type="hidden" name="id_tipo_pago" value="1">
     
     <div class="alert alert-dark text-white align-items-center mb-3" role="alert">
         <div>

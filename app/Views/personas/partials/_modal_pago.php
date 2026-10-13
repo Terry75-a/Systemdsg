@@ -55,9 +55,7 @@
       </div>
 
       <div class="pe-ms-footer" style="flex-shrink: 0;">
-        <button type="button" class="btn pe-ms-cancel" data-bs-dismiss="modal">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Salir
-        </button>
+        
         <button type="button" class="btn pe-ms-save" id="btnGuardarPago">
           <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar
         </button>

@@ -447,10 +447,12 @@ public function index($id = null)
         // Parámetros recibidos
         $idPlan           = $this->request->getPost('id_plan');
         $idTipoPlan       = $this->request->getPost('id_tipo_plan');
+        $id_tipo_pago     = $this->request->getPost('id_tipo_pago') ?: 1;
         $fechaInicio      = $this->request->getPost('fecha_de_inicio');
         $fechaVencimiento = $this->request->getPost('fecha_de_vencimiento');
         $precio           = $this->request->getPost('precio');
         $observaciones    = $this->request->getPost('observaciones');
+
 
         // Campos de finalización mensual
         $tipoFin         = $this->request->getPost('tipo_fin') ?: 'SIN_FIN';
@@ -470,6 +472,7 @@ public function index($id = null)
             'id_sucursal'          => (int)$idSucursal,
             'id_plan'              => !empty($idPlan) ? (int)$idPlan : null,
             'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
+            'id_tipo_pago'         => (int)$id_tipo_pago,
             'fecha_de_inicio'      => $fechaInicio,
             'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',

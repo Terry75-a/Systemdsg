@@ -93,9 +93,7 @@
             </div>
 
             <div class="pe-ms-footer">
-                <button type="button" class="btn pe-ms-cancel" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Cancelar
-                </button>
+                
                 <button type="button" id="btnGuardarSucursalLista" class="btn pe-ms-save">
                     <i class="fa-solid fa-check" aria-hidden="true"></i> <span id="btnGuardarSucursalTexto">Agregar a la Lista</span>
                 </button>
