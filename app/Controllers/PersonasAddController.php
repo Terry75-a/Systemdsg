@@ -509,4 +509,84 @@ public function index($id = null)
             ]);
         }
     }
+
+    public function guardarOtrosPagos()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'status'  => 'error',
+                'message' => 'Petición no permitida.'
+            ]);
+        }
+
+        $idSucursal = $this->request->getPost('id_sucursal');
+
+        // Validar sucursal
+        if (empty($idSucursal) || strpos($idSucursal, 'temp_') === 0 || !is_numeric($idSucursal)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Primero debe guardar los cambios de la sucursal antes de registrar pagos.'
+            ]);
+        }
+
+        $concepto         = $this->request->getPost('concepto');
+        $monto            = $this->request->getPost('monto');
+        $fechaVencimiento = $this->request->getPost('fecha_vencimiento');
+        $diasAviso        = $this->request->getPost('dias_aviso');
+        $correo           = $this->request->getPost('correo_notificacion');
+        $estado           = $this->request->getPost('estado') ?? 1;
+
+        if (empty($concepto) || empty($monto)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'El concepto y el monto son obligatorios.'
+            ]);
+        }
+
+        // Armar el detalle para observaciones
+        $obs = trim($concepto);
+        if (!empty($correo)) {
+            $obs .= " | Correo de aviso: " . trim($correo);
+        }
+
+        $dataPago = [
+            'id_sucursal'          => (int)$idSucursal,
+            'id_plan'              => null,
+            'id_tipo_plan'         => null,
+            'id_tipo_pago'         => 2, // 2 = Otros Pagos
+            'fecha_de_inicio'      => date('Y-m-d'),
+            'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'tipo_fin'             => 'FECHA',
+            'num_repeticiones'     => !empty($diasAviso) ? (int)$diasAviso : null,
+            'fecha_fin'            => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'precio'               => (float)$monto,
+            'observaciones'        => $obs,
+            'estado'               => (int)$estado,
+            'created_at'           => date('Y-m-d H:i:s'),
+        ];
+
+        try {
+            $pagosModel = new \App\Models\PagosModel();
+            $idInsertado = $pagosModel->insert($dataPago);
+
+            if ($idInsertado) {
+                return $this->response->setJSON([
+                    'status'  => 'success',
+                    'message' => '¡Pago registrado correctamente!'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'No se pudo registrar el pago.',
+                    'errors'  => $pagosModel->errors()
+                ]);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Error guardarOtrosPagos: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Error en la base de datos: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

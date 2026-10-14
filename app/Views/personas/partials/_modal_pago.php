@@ -2,6 +2,11 @@
   <div class="modal-dialog modal-dialog-scrollable">
     <form class="modal-content" id="formPago" onsubmit="return false;">
 
+      <!-- CAMPOS OCULTOS NECESARIOS -->
+      <input type="hidden" id="pagoIdSucursal" name="id_sucursal" value="">
+      <input type="hidden" id="pagoIdEmpresa" name="id_empresa" value="">
+      <input type="hidden" name="id_tipo_pago" value="2">
+
       <div class="pe-ms-head">
         <span class="pe-ms-icon"><i class="fa-solid fa-money-bill" aria-hidden="true"></i></span>
         <div class="pe-ms-head-info">
@@ -18,8 +23,8 @@
           <div class="row g-3">
 
             <div class="col-12">
-              <label for="pagoConcepto">Concepto:</label>
-              <input type="text" class="form-control" id="pagoConcepto" name="concepto" placeholder="Ej. Licencia Anual">
+              <label for="pagoConcepto">Concepto:<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="pagoConcepto" name="concepto" placeholder="Ej. Soporte técnico, Mantenimiento..." required>
             </div>
 
             <div class="col-md-6">
@@ -28,8 +33,8 @@
             </div>
 
             <div class="col-md-6">
-              <label for="pagoMonto">Monto:</label>
-              <input type="number" step="0.01" min="0" class="form-control" id="pagoMonto" name="monto" placeholder="Ej. 50.00">
+              <label for="pagoMonto">Monto:<span class="text-danger">*</span></label>
+              <input type="number" step="0.01" min="0" class="form-control" id="pagoMonto" name="monto" placeholder="Ej. 50.00" required>
             </div>
 
             <div class="col-md-6">
@@ -55,8 +60,7 @@
       </div>
 
       <div class="pe-ms-footer" style="flex-shrink: 0;">
-        
-        <button type="button" class="btn pe-ms-save" id="btnGuardarPago">
+        <button type="submit" class="btn pe-ms-save" id="btnGuardarPago">
           <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar
         </button>
       </div>

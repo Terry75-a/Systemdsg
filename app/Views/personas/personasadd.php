@@ -345,7 +345,7 @@
                                             </td>
                                             <td class="text-end">
                                                 <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
-                                                   <i class="fa-solid fa-pen-to-square"></i> <span>Editar</span>
+                                                   <i class="fa-solid fa-pen-to-square"><span>Editar</span></i> 
                                                     
                                                     
                                                 </button>

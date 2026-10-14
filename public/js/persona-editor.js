@@ -721,6 +721,87 @@ if (formPlan) {
     });
 }
 
+// ════════════════════════════════════════════════════
+// GESTIÓN DE OTROS PAGOS (MODAL PAGO)
+// ════════════════════════════════════════════════════
+if (tablaSuc) {
+    tablaSuc.addEventListener('click', function (e) {
+        const btnPago = e.target.closest('.btn-asignar-tipo-pagos');
+        if (!btnPago) return;
+
+        const fila = btnPago.closest('tr');
+        const indice = fila.getAttribute('data-indice');
+        const idSucursal = indice ? indice.replace('existing_', '') : '';
+
+        if (!idSucursal || indice.startsWith('temp_')) {
+            alert('Primero debe guardar los cambios de la persona/sucursal antes de registrar pagos.');
+            return;
+        }
+
+        // Limpiar formulario y pasar la sucursal
+        const formP = document.getElementById('formPago');
+        if (formP) formP.reset();
+
+        document.getElementById('pagoIdSucursal').value = idSucursal;
+
+        const modalPago = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPago'));
+        modalPago.show();
+    });
+}
+
+// Envío del formulario de Otros Pagos
+const formPago = document.getElementById('formPago');
+if (formPago) {
+    formPago.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const btnSubmit = document.getElementById('btnGuardarPago');
+        const textoOriginal = btnSubmit.innerHTML;
+
+        const concepto = document.getElementById('pagoConcepto').value.trim();
+        const monto = document.getElementById('pagoMonto').value.trim();
+
+        if (!concepto || !monto) {
+            alert('Por favor complete el concepto y el monto.');
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Guardando...';
+
+        try {
+            const formData = new FormData(this);
+            formData.append(csrfName, csrfHash);
+
+            const res = await fetch(`${BASE_URL}personas/guardarOtrosPagos`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfHash
+                }
+            });
+            const data = await res.json();
+
+            if (data.status === 'success' || data.success) {
+                const modalEl = document.getElementById('modalPago');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                pdsgToastPlan('success', 'Pago registrado', data.message || 'Pago registrado exitosamente.');
+                formPago.reset();
+            } else {
+                pdsgToastPlan('error', 'Error al guardar', data.message || 'No se pudo guardar el pago.');
+            }
+        } catch (err) {
+            console.error(err);
+            pdsgToastPlan('error', 'Error de conexión', 'No se pudo comunicar con el servidor.');
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = textoOriginal;
+        }
+    });
+}
+
 function pdsgToastPlan(tipo, titulo, mensaje) {
     var wrap = document.getElementById('pdsgPlanToastWrap');
     if (!wrap) {
