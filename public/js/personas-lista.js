@@ -11,6 +11,7 @@
 
     var estadoActual = 1;
     var todosClientes = [];
+    var terminoBusqueda = '';
     var paginaActual = 1;
     var POR_PAGINA = 5;
 
@@ -60,17 +61,30 @@
     function ocultarMiles(v) { return String(v == null ? '' : v); }
 
     function pintarTabla() {
-        var total = todosClientes.length;
+        var clientesFiltrados = todosClientes.filter(function (c) {
+            if (!terminoBusqueda) return true;
+            var q = terminoBusqueda.toLowerCase();
+            var nombre    = (c.nombre || '').toLowerCase();
+            var dni       = (c.dni || '').toLowerCase();
+            var telefono  = (c.telefono || '').toLowerCase();
+            var direccion = (c.direccion || '').toLowerCase();
+
+            return nombre.includes(q) || dni.includes(q) || telefono.includes(q) || direccion.includes(q);
+        });
+
+        // 2. Calcular paginación sobre los resultados filtrados
+        var total = clientesFiltrados.length;
         var totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
         if (paginaActual > totalPaginas) paginaActual = totalPaginas;
         var inicio = (paginaActual - 1) * POR_PAGINA;
-        var filas = todosClientes.slice(inicio, inicio + POR_PAGINA);
+        var filas = clientesFiltrados.slice(inicio, inicio + POR_PAGINA);
 
         var esMobile = window.innerWidth <= 768;
-        var $empty =$('#pdsgEmpty');
+        var $empty = $('#pdsgEmpty');
 
         if (!filas.length) {
-            $empty.removeAttr('hidden');$('#pdsgPagination').attr('hidden', true);
+            $empty.removeAttr('hidden');
+            $('#pdsgPagination').attr('hidden', true);
             $('#pdsgMlist').empty();
             $('#tablaClientes tbody').empty();
             return;
@@ -183,6 +197,28 @@
     $(document).ready(function () {
         cargarContadores();
         cargarClientes();
+
+        $('#buscarCliente').on('input', function () {
+            terminoBusqueda = $(this).val().trim();
+            paginaActual = 1; // Reiniciar a la primera página al escribir
+            pintarTabla();
+        });
+
+        // Limpiar o reiniciar buscador al cambiar de pestaña
+        $('#pestanasEstado .pdsg-tab').on('click', function (e) {
+            e.preventDefault();
+            $('#pestanasEstado .pdsg-tab').removeClass('is-active');
+            $(this).addClass('is-active');
+
+            estadoActual = $(this).data('estado');
+            if (estadoActual == 0) {
+                $('#btnAnadir').hide();
+            } else {
+                $('#btnAnadir').show();
+            }
+            paginaActual = 1;
+            cargarClientes();
+        });
 
         if (typeof showToast === 'function') {
             showToast('Clientes nuevos', 'success');

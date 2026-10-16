@@ -338,32 +338,37 @@
                                                 <input type="hidden" name="sucursales[<?= $indice; ?>][telefono]" value="<?= esc($telSuc); ?>">
                                             </td>
                                             <td class="text-center">
-                                                <span class="pdsg-chip <?= $estSuc == 1 ? 'pdsg-chip-on' : 'pdsg-chip-off' ?>">
-                                                    <i class="fa-solid fa-circle"></i> <?= $estSuc == 1 ? 'Activo' : 'Inactivo' ?>
-                                                </span>
-                                                <input type="hidden" name="sucursales[<?= $indice; ?>][estado]" value="<?= $estSuc; ?>">
-                                            </td>
+                                             <span class="pdsg-chip <?= $estSuc == 1 ? 'pdsg-chip-on' : 'pdsg-chip-off' ?>">
+                                             <i class="fa-solid fa-circle"></i> <?= $estSuc == 1 ? 'Activo' : 'Inactivo' ?>
+                                                 </span>
+                                             <input type="hidden" name="sucursales[<?= $indice; ?>][estado]" value="<?= $estSuc; ?>">
+                                               </td>
                                             <td class="text-end">
-                                                <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
-                                                   <i class="fa-solid fa-pen-to-square"><span>Editar</span></i> 
-                                                    
-                                                    
-                                                </button>
-                                                <button type="button" class="pdsg-action pdsg-action-danger btn-eliminar-sucursal" title="Eliminar"><i class="fa-solid fa-trash"></i><span>Eliminar</span></button>
-                                                <!--<button  class="pdsg-suc-btn pdsg-suc-btn-del btn-eliminar-sucursal" title="Eliminar">
-                                                    <i class="fa-solid fa-trash"></i><span>Eliminar</span>
-                                                    
-                                                </button> !-->
-                                                <button type="button" class="pdsg-suc-btn pdsg-suc-btn-more btn-asignar-plan"
-                                                    data-id-persona="<?= esc($idSuc); ?>"
-                                                    data-nombre-persona="<?= esc($nomSuc); ?>"
-                                                    title="Asignar Plan">
-                                                    <i class="fa-solid fa-inbox"></i> <span>Plan</span>
-                                                </button>
-                                                <button type="button" class="pdsg-suc-btn pdsg-suc-btn-payment btn-asignar-tipo-pagos" title="tipopago">
-                                                      <i class="fa-solid fa-money-bill"></i> <span>Pagos</span>
-                                                </button>
-                                            </td>
+                                             <button type="button" class="pdsg-suc-btn pdsg-suc-btn-edit btn-editar-sucursal" title="Editar">
+                                             <i class="fa-solid fa-pen-to-square"></i>
+                                               </button>
+
+                                                 <!-- BOTÓN CONDICIONAL SEGÚN ESTADO (DESACTIVAR O ACTIVAR) -->
+                                              <?php if ($estSuc == 1): ?>
+                                           <button type="button" class="pdsg-suc-btn pdsg-suc-btn-del btn-toggle-estado-sucursal" title="Desactivar">
+                                                <i class="fa-solid fa-trash"></i>
+                                                   </button>
+                                           <?php else: ?>
+                                           <button type="button" class="pdsg-suc-btn pdsg-suc-btn-on btn-toggle-estado-sucursal" title="Activar" style="color: #10b981; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">
+                                                <i class="fa-solid fa-check"></i>
+                                                       </button>
+                                              <?php endif; ?>
+
+                                            <button type="button" class="pdsg-suc-btn pdsg-suc-btn-more btn-asignar-plan"
+                                              data-id-persona="<?= esc($idSuc); ?>"
+                                            data-nombre-persona="<?= esc($nomSuc); ?>"
+                                               title="Asignar Plan">
+                                               <i class="fa-solid fa-inbox"></i>
+                                                 </button>
+                                            <button type="button" class="pdsg-suc-btn pdsg-suc-btn-payment btn-asignar-tipo-pagos" title="tipopago">
+                                               <i class="fa-solid fa-money-bill"></i>
+                                                   </button>
+                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>

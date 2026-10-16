@@ -55,6 +55,11 @@
               <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">
             </div>
 
+            <div class="col-12">
+  <label for="pagoObservaciones">Observaciones:</label>
+  <textarea class="form-control" id="pagoObservaciones" name="observaciones" rows="2" placeholder="Detalles u observaciones adicionales..."></textarea>
+</div>
+
           </div>
         </div>
       </div>

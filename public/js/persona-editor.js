@@ -322,6 +322,31 @@ if (btnAbrirModalNuevaSuc) {
         document.getElementById('provincia_sucursal').innerHTML = '<option value="">--Seleccionar--</option>';
         document.getElementById('distrito_sucursal').innerHTML = '<option value="">--Seleccionar--</option>';
 
+        const primeraFila = document.querySelector('#tbodySucursales tr:not(#filaVacia)');
+
+        if (primeraFila) {
+            const indice = primeraFila.getAttribute('data-indice');
+            
+            // Función auxiliar para leer los inputs ocultos de la fila
+            const getVal = (campo) => {
+                return primeraFila.querySelector(`input[name="sucursales[${indice}][${campo}]"]`)?.value 
+                    || primeraFila.querySelector(`input[name*="[${campo}]"]`)?.value 
+                    || '';
+            };
+
+            // 3. Extraer valores de la primera sucursal
+            const primerNombre        = getVal('nombre_sucursal');
+            const primerRepresentante = getVal('representante_sucursal') || getVal('representante');
+            const primerTelefono      = getVal('telefono');
+            const primerCorreo        = getVal('correo');
+
+            // 4. Precargar los campos del modal
+            document.getElementById('nombre_sucursal').value        = primerNombre;
+            document.getElementById('representante_sucursal').value = primerRepresentante;
+            document.getElementById('telefono_sucursal').value      = primerTelefono;
+            document.getElementById('correo_sucursal').value        = primerCorreo;
+        }
+
         const modal = obtenerModalSucursal();
         if (modal) modal.show();
     });
@@ -360,6 +385,23 @@ if (tablaSuc) {
         const modal = obtenerModalSucursal();
         if (modal) modal.show();
     });
+}
+
+// Función auxiliar para renderizar el botón de Desactivar (tacho) o Activar (check)
+function renderBtnEstadoSucursal(estado) {
+    if (String(estado) === '1') {
+        return `
+            <button type="button" class="pdsg-suc-btn pdsg-suc-btn-del btn-toggle-estado-sucursal" title="Desactivar">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        `;
+    } else {
+        return `
+            <button type="button" class="pdsg-suc-btn pdsg-suc-btn-on btn-toggle-estado-sucursal" title="Activar" style="color: #10b981; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">
+                <i class="fa-solid fa-check"></i>
+            </button>
+        `;
+    }
 }
 
 const btnGuardarSucLista = document.getElementById('btnGuardarSucursalLista');
@@ -448,43 +490,51 @@ if (btnGuardarSucLista) {
 const tbodySuc = document.getElementById('tbodySucursales');
 if (tbodySuc) {
     tbodySuc.addEventListener('click', function (e) {
-        const btnEliminar = e.target.closest('.btn-eliminar-sucursal');
-        if (!btnEliminar) return;
+        const btnToggle = e.target.closest('.btn-toggle-estado-sucursal, .btn-eliminar-sucursal');
+        if (!btnToggle) return;
 
-        // DETENER LA RECARGA DEL FORMULARIO Y LA PROPAGACIÓN AL MODAL
+        // Evitar submit o propagación indebida
         e.preventDefault();
         e.stopPropagation();
+
+        const fila = btnToggle.closest('tr');
+        if (!fila) return;
+
+        const indice = fila.getAttribute('data-indice');
+        const inputEstado = fila.querySelector(`input[name="sucursales[${indice}][estado]"]`);
+        const tdEstado = fila.querySelector('td.text-center');
+
+        const estadoActual = inputEstado ? String(inputEstado.value) : '1';
+        const esActivo = (estadoActual === '1');
+        const nuevoEstado = esActivo ? '0' : '1';
+
+        const mensajeConfirm = esActivo 
+            ? '¿Desea desactivar esta sucursal?' 
+            : '¿Desea activar nuevamente esta sucursal?';
 
         const ejecutarConfirm = window.confirmDsg 
             || (window.parent && window.parent.confirmDsg) 
             || function(opts) { return Promise.resolve(window.confirm(opts.message || '¿Confirmar?')); };
 
-        ejecutarConfirm({ message: '¿Eliminar esta sucursal del formulario?' }).then(function (ok) {
+        ejecutarConfirm({ 
+            message: mensajeConfirm,
+            okLabel: esActivo ? 'Desactivar' : 'Activar',
+            icon: esActivo ? 'power_settings_new' : 'check_circle'
+        }).then(function (ok) {
             if (!ok) return;
 
-            const fila = btnEliminar.closest('tr');
-            const indice = fila.getAttribute('data-indice');
-
-            if (indice && indice.startsWith('existing_')) {
-                const idSucursal = indice.replace('existing_', '');
-                const inputEliminado = document.createElement('input');
-                inputEliminado.type = 'hidden';
-                inputEliminado.name = 'sucursales_eliminadas[]';
-                inputEliminado.value = idSucursal;
-
-                document.getElementById('sucursalesEliminadasContainer').appendChild(inputEliminado);
-            }
-
-            fila.remove();
-
-            const tbody = document.getElementById('tbodySucursales');
-            if (tbody.querySelectorAll('tr').length === 0) {
-                tbody.innerHTML = `
-                    <tr id="filaVacia">
-                        <td colspan="4" class="text-center text-muted py-3">No hay sucursales registradas.</td>
-                    </tr>
+            // 1. Actualizar el chip y el input oculto de estado
+            if (tdEstado) {
+                tdEstado.innerHTML = `
+                    <span class="pdsg-chip ${nuevoEstado === '1' ? 'pdsg-chip-on' : 'pdsg-chip-off'}">
+                        <i class="fa-solid fa-circle"></i> ${nuevoEstado === '1' ? 'Activo' : 'Inactivo'}
+                    </span>
+                    <input type="hidden" name="sucursales[${indice}][estado]" value="${nuevoEstado}">
                 `;
             }
+
+            // 2. Reemplazar el botón (tacho <-> check verde)
+            btnToggle.outerHTML = renderBtnEstadoSucursal(nuevoEstado);
         });
     });
 }

@@ -384,16 +384,20 @@ public function index($id = null)
                             'estado'           => isset($datosSucursal['estado']) ? (int)$datosSucursal['estado'] : 1,
                         ];
 
-                        // Si el índice viene como 'existing_123', es una sucursal que ya existe: la ACTUALIZAMOS
-                        if (strpos((string)$indice, 'existing_') === 0) {
-                            $idSucursalExistente = (int)str_replace('existing_', '', (string)$indice);
-                            $dataSucursal['updated_at'] = date('Y-m-d H:i:s');
-                            $empresaSucursalModel->update($idSucursalExistente, $dataSucursal);
-                        } else {
-                            // Es una sucursal nueva: la INSERTAMOS
-                            $dataSucursal['created_at'] = date('Y-m-d H:i:s');
-                            $empresaSucursalModel->insert($dataSucursal);
-                        }
+                       // Si el índice viene como 'existing_123', es una sucursal que ya existe: la ACTUALIZAMOS
+if (strpos((string)$indice, 'existing_') === 0) {
+    $idSucursalExistente = (int)str_replace('existing_', '', (string)$indice);
+    $dataSucursal['updated_at'] = date('Y-m-d H:i:s');
+
+    // Actualización directa garantizada en BD
+    $this->db->table('empresa_sucursales')
+             ->where('id_sucursal', $idSucursalExistente)
+             ->update($dataSucursal);
+} else {
+    // Es una sucursal nueva: la INSERTAMOS
+    $dataSucursal['created_at'] = date('Y-m-d H:i:s');
+    $this->db->table('empresa_sucursales')->insert($dataSucursal);
+}
                     }
                 }
             }
@@ -554,13 +558,15 @@ public function index($id = null)
             'id_plan'              => null,
             'id_tipo_plan'         => null,
             'id_tipo_pago'         => 2, // 2 = Otros Pagos
+            'concepto'             => trim($concepto),
             'fecha_de_inicio'      => date('Y-m-d'),
             'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => 'FECHA',
             'num_repeticiones'     => !empty($diasAviso) ? (int)$diasAviso : null,
             'fecha_fin'            => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'precio'               => (float)$monto,
-            'observaciones'        => $obs,
+            'observaciones'        => $this->request->getPost('observaciones') ?: null, // Directo
+    'correo_notificacion'  => !empty($correo) ? trim($correo) : null,          // Columna propia
             'estado'               => (int)$estado,
             'created_at'           => date('Y-m-d H:i:s'),
         ];
