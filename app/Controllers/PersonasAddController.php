@@ -452,10 +452,12 @@ if (strpos((string)$indice, 'existing_') === 0) {
         $idPlan           = $this->request->getPost('id_plan');
         $idTipoPlan       = $this->request->getPost('id_tipo_plan');
         $id_tipo_pago     = $this->request->getPost('id_tipo_pago') ?: 1;
+        $concepto          = $this->request->getPost('concepto');
         $fechaInicio      = $this->request->getPost('fecha_de_inicio');
         $fechaVencimiento = $this->request->getPost('fecha_de_vencimiento');
         $precio           = $this->request->getPost('precio');
         $observaciones    = $this->request->getPost('observaciones');
+        $correo_notificacion = $this->request->getPost('correo_notificacion');
 
 
         // Campos de finalización mensual
@@ -477,6 +479,7 @@ if (strpos((string)$indice, 'existing_') === 0) {
             'id_plan'              => !empty($idPlan) ? (int)$idPlan : null,
             'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
             'id_tipo_pago'         => (int)$id_tipo_pago,
+             'concepto'            =>  !empty($concepto) ? trim($concepto) : null,
             'fecha_de_inicio'      => $fechaInicio,
             'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',
