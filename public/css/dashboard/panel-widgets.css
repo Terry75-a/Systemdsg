@@ -155,11 +155,10 @@ body:has(.dev-main) .us-user-wrap {
   align-items: center;
   gap: 10px;
 }
-/* DNI e ID de sucursal: pill monoespaciada gris, idéntica a la de /dios
+/* DNI: pill monoespaciada gris, idéntica a la de /dios
    (.us-code y .tp-code NO entran aquí: son el <td> del número de fila, y
    forzarles inline-flex rompe la celda; ese número se queda como texto) */
-body:has(.dev-main) .us-person-dni,
-body:has(.dev-main) .pdsg-modal-content .pdsg-suc-num {
+body:has(.dev-main) .us-person-dni {
   display: inline-flex;
   align-items: center;
   background: var(--g-surface-variant);
@@ -337,8 +336,7 @@ body:has(.dev-main) #modalVerPersona.modal .modal-content {
 }
 /* acentos verdes codificados a mano → monocromo de /dios */
 body:has(.dev-main) .pdsg-modal-group-title i { color: var(--g-text-disabled); }
-body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-nombre { color: var(--g-primary); }
-body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-num { background: var(--g-surface-variant); color: var(--g-text-secondary); }
+body:has(.dev-main) .pdsg-suc-card .pdsg-suc-nombre { color: var(--g-primary); }
 
 /* avatar del encabezado del modal: panel-dsg lo dejaba verde con hex
    fijos (#e6f4ea/#1b7a42). /dios pinta el avatar con los tokens de
@@ -1104,11 +1102,7 @@ html.dark body:has(.dev-main) .dev-mobile-modal { background: #111111 !important
 
 /* Acentos verdes codificados a mano en vistas → monocromo */
 html.dark body:has(.dev-main) .pdsg-modal-group-title i { color: #52525b; }
-html.dark body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-nombre { color: #ededed; }
-html.dark body:has(.dev-main) .pdsg-modal-table .table .pdsg-suc-num {
-  background: #1f1f1f;
-  color: #a1a1aa;
-}
+html.dark body:has(.dev-main) .pdsg-suc-card .pdsg-suc-nombre { color: #ededed; }
 html.dark body:has(.dev-main) .dev-main button.btn-success,
 html.dark body:has(.dev-main) .dev-main .btn-primary {
   background: #fafafa !important;
@@ -1259,7 +1253,6 @@ html.dark body:has(.dev-main) .badge.bg-secondary { background: #1f1f1f !importa
 html.dark body:has(.dev-main) .pdsg-avatar,
 html.dark body:has(.dev-main) .modal .pdsg-avatar { background: #262626; color: #ededed; }
 html.dark body:has(.dev-main) .modal .pdsg-suc-nombre { color: #ededed; }
-html.dark body:has(.dev-main) .modal .pdsg-suc-num { background: #1f1f1f; color: #a1a1aa; }
 html.dark body:has(.dev-main) .pdsg-modal-avatar,
 html.dark body:has(.dev-main) #modalSucursal .pdsg-modal-avatar,
 html.dark body:has(.dev-main) #modalPlan .pe-ms-icon { background: #262626; color: #ededed; }

@@ -77,27 +77,16 @@
             </div>
           </div>
 
-          <div class="pdsg-modal-group pdsg-modal-group--table">
-            <span class="pdsg-modal-group-title"><i class="fa-solid fa-shop"></i> Sucursales</span>
-            <div class="table-responsive pdsg-modal-table">
-              <table class="table table-sm table-hover align-middle mb-0" id="tablaSucursales">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th class="text-center">Estado</th>
-                  </tr>
-                </thead>
-                <tbody id="ver_sucursales">
-                  <tr id="sucursales_vacio">
-                    <td colspan="5" class="text-center text-muted py-3">
-                      <i class="bi bi-inbox me-1"></i> Sin sucursales registradas
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="pdsg-modal-group pdsg-modal-group--suc">
+            <span class="pdsg-modal-group-title">
+              <i class="fa-solid fa-shop"></i> Sucursales
+              <span class="pdsg-suc-count" id="ver_suc_count" hidden>0</span>
+            </span>
+            <div class="pdsg-suc-grid" id="ver_sucursales">
+              <div class="pdsg-suc-empty" id="sucursales_vacio">
+                <i class="bi bi-inbox"></i>
+                <span>Sin sucursales registradas</span>
+              </div>
             </div>
           </div>
 
