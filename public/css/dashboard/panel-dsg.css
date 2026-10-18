@@ -902,6 +902,30 @@ html.dark .pdsg-mcard-chevron { background: #1a1a1a; color: #9aa0a6; }
   max-width: 640px;
   margin: 0 auto;
 }
+
+/* PC: el modal respira para que las tarjetas de sucursales (y todos los
+   datos) quepan completos sin apretarse ni cortarse. */
+@media (min-width: 768px) {
+  #modalVerPersona.modal .modal-dialog { max-width: 720px; }
+  #modalVerPersona.modal .modal-content { max-width: 720px; }
+  #modalVerSucursal.modal .modal-dialog { max-width: 560px; }
+}
+@media (min-width: 992px) {
+  #modalVerPersona.modal .modal-dialog { max-width: 860px; }
+  #modalVerPersona.modal .modal-content { max-width: 860px; }
+  #modalVerSucursal.modal .modal-dialog { max-width: 620px; }
+}
+
+/* Modal de detalle de sucursal: centrado en pantalla (en móvil pasa a
+   pantalla completa con la regla de ≤480px) */
+@media (min-width: 481px) {
+  #modalVerSucursal.modal .modal-dialog {
+    margin: 16px auto;
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 32px);
+  }
+}
 #modalVerPersona .pdsg-modal-scroll {
   max-height: min(85vh, 760px);
   overflow-y: auto;
@@ -1013,8 +1037,8 @@ html.dark .pdsg-mcard-chevron { background: #1a1a1a; color: #9aa0a6; }
 }
 .pdsg-modal-field-value.pdsg-mono { font-family: 'SF Mono', 'Consolas', monospace; }
 
-/* Sin tarjeta para el grupo de sucursales (tabla ya tiene su caja) */
-.pdsg-modal-group--table .pdsg-modal-card { background: none; border: none; padding: 0; box-shadow: none; }
+/* Sin tarjeta para el grupo de sucursales (las tarjetas tienen su propio marco) */
+.pdsg-modal-group--suc .pdsg-modal-card { background: none; border: none; padding: 0; box-shadow: none; }
 
 /* ══════════════════════════════════════════════════════════════
    REDISEÑO TOTAL — chrome de modal estilo EduconectaV2
@@ -1082,50 +1106,172 @@ html.dark .pdsg-modal-card {
   box-shadow: 0 8px 24px -18px rgba(0, 0, 0, .6);
 }
 
-/* Tabla de sucursales (Google) */
-.pdsg-modal-table {
-  border: 1px solid #e8eaed;
-  border-radius: 12px;
-  overflow: hidden;
+/* ══════════════════════════════════════════════════════════════
+   SUCURSALES EN TARJETAS (reemplazan a la tabla)
+   En PC se ven todas; en móvil sólo lo esencial y el resto vive
+   en el modal de detalle.
+   ══════════════════════════════════════════════════════════════ */
+.pdsg-suc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
 }
-.pdsg-modal-table .table { font-size: 13px; margin-bottom: 0; }
-.pdsg-modal-table .table thead th {
-  font-size: 11.5px;
-  font-weight: 500;
-  color: #5f6368;
-  border-bottom: 1px solid #e8eaed;
-  white-space: nowrap;
-  background: #f8f9fa;
-  padding: 10px 14px;
+/* PC: varias tarjetas por fila (siempre caben todas las del sector) */
+@media (min-width: 768px) {
+  .pdsg-suc-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
 }
-.pdsg-modal-table .table tbody td { padding: 10px 14px; border-color: #eef0f2; color: #202124; }
-
-/* Filas de sucursales clicables */
-.pdsg-modal-table .table .pdsg-suc-row {
-  cursor: pointer;
-  transition: background .15s ease;
+.pdsg-suc-card {
   position: relative;
+  min-width: 0;
+  background: var(--g-surface, #fff);
+  border: 1px solid color-mix(in srgb, var(--sb-outline-variant, #e4e4e7) 80%, transparent);
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, .05);
+  transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease;
 }
-.pdsg-modal-table .table .pdsg-suc-row:hover { background: #f5f7f9; }
-.pdsg-modal-table .table .pdsg-suc-row:active { background: #eceff2; }
-.pdsg-modal-table .table .pdsg-suc-num {
+.pdsg-suc-card:hover {
+  border-color: color-mix(in srgb, var(--g-primary, #1b7a42) 35%, transparent);
+  box-shadow: 0 8px 22px -16px rgba(60, 64, 67, .7);
+  transform: translateY(-1px);
+}
+.pdsg-suc-card:active { transform: scale(.995); }
+.pdsg-suc-card:focus-visible { outline: 2px solid var(--g-primary, #1b7a42); outline-offset: 2px; }
+
+/* Cabecera: avatar + nombre + dirección + estado */
+.pdsg-suc-top { display: flex; align-items: center; gap: 12px; }
+.pdsg-suc-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: var(--g-primary-light, #e6f4ea);
+  color: var(--g-primary, #1b7a42);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--g-font-display, 'Google Sans', sans-serif);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: #f0f2f4;
-  color: #5f6368;
+  flex-shrink: 0;
+}
+.pdsg-suc-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.pdsg-suc-nombre {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--g-primary, #1a73e8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pdsg-suc-dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--g-text-secondary, #5f6368);
+}
+.pdsg-suc-dir i { font-size: 11px; flex-shrink: 0; }
+.pdsg-suc-dir-txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pdsg-suc-top .pdsg-chip { flex-shrink: 0; font-size: 11.5px; padding: 4px 10px; }
+.pdsg-suc-chevron {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--g-surface-variant, #f1f3f4);
+  color: var(--g-text-secondary, #5f6368);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.pdsg-suc-card:hover .pdsg-suc-chevron {
+  background: var(--g-primary, #1b7a42);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+/* Detalle de la tarjeta: todos los datos en rejilla de 2 columnas */
+.pdsg-suc-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 16px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px dashed color-mix(in srgb, var(--sb-outline-variant, #e4e4e7) 90%, transparent);
+}
+.pdsg-suc-field { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pdsg-suc-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--g-text-secondary, #5f6368);
+}
+.pdsg-suc-field-label i { font-size: 10.5px; width: 13px; text-align: center; }
+.pdsg-suc-field-value {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g-text, #202124);
+  overflow-wrap: anywhere;
+}
+.pdsg-suc-field--mono .pdsg-suc-field-value {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Sólo en móvil: el aviso de que hay más detalle tras el toque */
+.pdsg-suc-foot {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px dashed color-mix(in srgb, var(--sb-outline-variant, #e4e4e7) 90%, transparent);
   font-size: 12px;
   font-weight: 600;
+  color: var(--g-primary, #1b7a42);
 }
-.pdsg-modal-table .table .pdsg-suc-nombre { font-weight: 500; color: #1a73e8; }
-.pdsg-modal-table .table .pdsg-suc-row:hover .pdsg-suc-nombre { text-decoration: underline; }
-html.dark .pdsg-modal-table .table .pdsg-suc-row:hover { background: #2b2b2b; }
-html.dark .pdsg-modal-table .table .pdsg-suc-row:active { background: #333; }
-html.dark .pdsg-modal-table .table .pdsg-suc-num { background: #2b2b2b; color: #9aa0a6; }
-html.dark .pdsg-modal-table .table .pdsg-suc-nombre { color: #8ab4f8; }
+
+/* Contador del título "Sucursales (n)" */
+.pdsg-suc-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--g-surface-variant, #f1f3f4);
+  color: var(--g-text-secondary, #5f6368);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.pdsg-suc-count[hidden] { display: none; }
+
+/* Estado vacío */
+.pdsg-suc-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 26px 16px;
+  border: 1px dashed var(--g-border, #e4e4e7);
+  border-radius: 14px;
+  background: var(--g-surface, #fff);
+  color: var(--g-text-secondary, #5f6368);
+  font-size: 13.5px;
+}
+.pdsg-suc-empty i { font-size: 22px; opacity: .35; }
 
 /* Backdrop: alfa solo en background (opacity del componente a 1) */
 .modal-backdrop.show {
@@ -1159,46 +1305,18 @@ html.dark .pdsg-modal-table .table .pdsg-suc-nombre { color: #8ab4f8; }
   }
   #modalVerSucursal .pdsg-modal-scroll { max-height: none; flex: 1; }
 
-  /* Tabla de sucursales -> tarjetas apiladas (sin scroll horizontal) */
-  .pdsg-modal-table { border: none; border-radius: 0; overflow: visible; }
-  .pdsg-modal-table .table thead { display: none; }
-  .pdsg-modal-table .table tbody,
-  .pdsg-modal-table .table tbody tr { display: block; width: 100%; }
-  .pdsg-modal-table .table tbody tr.pdsg-suc-row {
-    border: 1px solid #e8eaed;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    padding: 12px 14px;
-    background: #fafbfc;
-  }
-  .pdsg-modal-table .table tbody tr:last-child { margin-bottom: 0; }
-  .pdsg-modal-table .table tbody td {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    padding: 7px 0;
-    border: none;
-  }
-  .pdsg-modal-table .table tbody td::before {
-    content: attr(data-label);
-    flex-shrink: 0;
-    font-size: 11px;
-    color: #80868b;
-    min-width: 64px;
-  }
-  .pdsg-modal-table .table tbody td.text-center { justify-content: space-between; }
-  .pdsg-modal-table .table tbody td.text-center::before {
-    content: attr(data-label);
-    font-size: 11px;
-    color: #80868b;
-  }
-  html.dark .pdsg-modal-table .table tbody tr.pdsg-suc-row {
-    background: #1c1c1c;
-    border-color: #2b2b2b;
-  }
-  html.dark .pdsg-modal-table .table tbody td::before,
-  html.dark .pdsg-modal-table .table tbody td.text-center::before { color: #9aa0a6; }
+}
+
+/* Móvil: tarjeta compacta con lo esencial; el detalle completo
+   se abre tocando la tarjeta (modal). */
+@media (max-width: 767px) {
+  .pdsg-suc-grid { gap: 10px; }
+  .pdsg-suc-card { border-radius: 14px; padding: 13px 14px; }
+  .pdsg-suc-fields { grid-template-columns: minmax(0, 1fr); }
+  .pdsg-suc-field--extra { display: none; }
+  .pdsg-suc-chevron { display: none; }
+  .pdsg-suc-foot { display: flex; }
+  .pdsg-suc-card:hover { transform: none; }
 }
 
 /* Pantallas muy pequeñas — grid vertical */
@@ -1217,15 +1335,28 @@ html.dark .pdsg-modal-sub { color: #9aa0a6; }
 html.dark .pdsg-modal-close { color: #9aa0a6; }
 html.dark .pdsg-modal-close:hover { background: #2b2b2b; }
 html.dark .pdsg-modal-card { background: #262626; border-color: #2b2b2b; }
-html.dark .pdsg-modal-group--table .pdsg-modal-card { background: none; border-color: transparent; }
+html.dark .pdsg-modal-group--suc .pdsg-modal-card { background: none; border-color: transparent; }
 html.dark .pdsg-modal-group-title { color: #9aa0a6; }
 html.dark .pdsg-modal-group-title i { color: #a1a1aa; }
 html.dark .pdsg-modal-field-label { color: #9aa0a6; }
 html.dark .pdsg-modal-field-value { color: #e8eaed; }
 html.dark .pdsg-modal-avatar { background: color-mix(in srgb, #ededed 12%, transparent); color: #ededed; }
-html.dark .pdsg-modal-table { border-color: #2b2b2b; }
-html.dark .pdsg-modal-table .table thead th { background: #262626; color: #9aa0a6; border-bottom-color: #2b2b2b; }
-html.dark .pdsg-modal-table .table tbody td { color: #e8eaed; border-color: #2b2b2b; }
+html.dark .pdsg-suc-card {
+  background: #1a1a1a;
+  border-color: #2b2b2b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+}
+html.dark .pdsg-suc-card:hover { border-color: #3c4043; box-shadow: 0 8px 22px -16px rgba(0, 0, 0, .9); }
+html.dark .pdsg-suc-avatar { background: #262626; color: #ededed; }
+html.dark .pdsg-suc-nombre { color: #8ab4f8; }
+html.dark .pdsg-suc-dir { color: #9aa0a6; }
+html.dark .pdsg-suc-chevron { background: #1c1c1c; color: #9aa0a6; }
+html.dark .pdsg-suc-fields { border-top-color: #2f2f2f; }
+html.dark .pdsg-suc-field-label { color: #9aa0a6; }
+html.dark .pdsg-suc-field-value { color: #e8eaed; }
+html.dark .pdsg-suc-foot { border-top-color: #2f2f2f; color: #34a853; }
+html.dark .pdsg-suc-count { background: #1f1f1f; color: #9aa0a6; }
+html.dark .pdsg-suc-empty { background: #1a1a1a; border-color: #2b2b2b; color: #9aa0a6; }
 html.dark .modal-backdrop.show {
   --bs-backdrop-opacity: 1;
   background-color: rgba(0, 0, 0, .65) !important;

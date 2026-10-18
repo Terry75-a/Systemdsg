@@ -59,6 +59,71 @@
 
     function ocultarMiles(v) { return String(v == null ? '' : v); }
 
+    function escHtml(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, function (m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+    }
+
+    function inicialesSucursal(nombre) {
+        var n = (nombre || '').trim().split(/\s+/);
+        return ((n[0] || 'S').charAt(0) + (n[1] ? n[1].charAt(0) : '')).toUpperCase();
+    }
+
+    /**
+     * Tarjeta de sucursal (reemplaza a la fila de tabla).
+     * - En PC: tarjeta ancha con todos los datos a la vista.
+     * - En móvil: solo lo esencial; al tocarla abre el modal con el detalle.
+     */
+    function tarjetaSucursal(s, index) {
+        var chip = (s.estado == 1)
+            ? '<span class="pdsg-chip pdsg-chip-on"><i class="fa-solid fa-circle"></i> Activo</span>'
+            : '<span class="pdsg-chip pdsg-chip-off"><i class="fa-solid fa-circle"></i> Inactivo</span>';
+
+        var campos = [
+            ['fa-solid fa-phone', 'Teléfono', s.telefono, ''],
+            ['fa-solid fa-envelope', 'Correo', s.correo, ' pdsg-suc-field--extra'],
+            ['fa-solid fa-user-tie', 'Representante', s.representante, ' pdsg-suc-field--extra'],
+            ['fa-solid fa-tags', 'Tipo', s.tipo, ' pdsg-suc-field--extra'],
+            ['fa-solid fa-hashtag', 'Código cliente', s.codigo_cliente, ' pdsg-suc-field--extra pdsg-suc-field--mono']
+        ];
+
+        var htmlCampos = campos.map(function (c) {
+            return `
+                <div class="pdsg-suc-field${c[3]}">
+                    <span class="pdsg-suc-field-label"><i class="${c[0]}"></i> ${c[1]}</span>
+                    <span class="pdsg-suc-field-value">${escHtml(c[2]) || '—'}</span>
+                </div>`;
+        }).join('');
+
+        return `
+            <article class="pdsg-suc-card pdsg-suc-row" role="button" tabindex="0"
+                data-index="${index}"
+                data-nombre="${escHtml(s.nombre_sucursal || '')}"
+                data-codigo="${escHtml(s.codigo_cliente || '')}"
+                data-representante="${escHtml(s.representante || '')}"
+                data-tipo="${escHtml(s.tipo || '')}"
+                data-telefono="${escHtml(s.telefono || '')}"
+                data-correo="${escHtml(s.correo || '')}"
+                data-direccion="${escHtml(s.direccion || '')}"
+                data-estado="${escHtml(s.estado || 0)}"
+                aria-label="Ver detalle de la sucursal ${escHtml(s.nombre_sucursal || '')}"
+                title="Ver detalle de la sucursal">
+                <div class="pdsg-suc-top">
+                    <span class="pdsg-suc-avatar">${inicialesSucursal(s.nombre_sucursal)}</span>
+                    <div class="pdsg-suc-id">
+                        <span class="pdsg-suc-nombre">${escHtml(s.nombre_sucursal) || '-'}</span>
+                        <span class="pdsg-suc-dir"><i class="fa-solid fa-location-dot"></i><span class="pdsg-suc-dir-txt">${escHtml(s.direccion) || '—'}</span></span>
+                    </div>
+                    ${chip}
+                    <span class="pdsg-suc-chevron"><i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <div class="pdsg-suc-fields">${htmlCampos}</div>
+                <div class="pdsg-suc-foot"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver detalle completo</div>
+            </article>
+        `;
+    }
+
     function pintarTabla() {
         var total = todosClientes.length;
         var totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
@@ -316,42 +381,27 @@
                     $('#ver_provincia').text(p.provincia || '-');
                     $('#ver_distrito').text(p.distrito || '-');
 
-                    var tbody = $('#ver_sucursales');
-                    tbody.empty();
+                    var cont = $('#ver_sucursales');
+                    cont.empty();
 
-                    if (p.sucursales && p.sucursales.length > 0) {
-                        p.sucursales.forEach(function (sucursal, index) {
-                            var estadoBadge = (sucursal.estado == 1)
-                                ? '<span class="badge bg-success">Activo</span>'
-                                : '<span class="badge bg-danger">Inactivo</span>';
+                    var listaSucursales = p.sucursales || [];
+                    var contadorSuc = $('#ver_suc_count');
+                    if (listaSucursales.length) {
+                        contadorSuc.text(listaSucursales.length).removeAttr('hidden');
+                    } else {
+                        contadorSuc.attr('hidden', true);
+                    }
 
-                            var fila = `
-                                <tr class="pdsg-suc-row" data-index="${index}"
-                                    data-nombre="${sucursal.nombre_sucursal || ''}"
-                                    data-codigo="${sucursal.codigo_cliente || ''}"
-                                    data-representante="${sucursal.representante || ''}"
-                                    data-tipo="${sucursal.tipo || ''}"
-                                    data-telefono="${sucursal.telefono || ''}"
-                                    data-correo="${sucursal.correo || ''}"
-                                    data-direccion="${sucursal.direccion || ''}"
-                                    data-estado="${sucursal.estado || 0}"
-                                    title="Ver detalle de la sucursal">
-                                    <td data-label="#"><span class="pdsg-suc-num">${index + 1}</span></td>
-                                    <td data-label="Nombre" class="pdsg-suc-nombre">${sucursal.nombre_sucursal || '-'}</td>
-                                    <td data-label="Dirección">${sucursal.direccion || '-'}</td>
-                                    <td data-label="Teléfono">${sucursal.telefono || '-'}</td>
-                                    <td data-label="Estado" class="text-center">${estadoBadge}</td>
-                                </tr>
-                            `;
-                            tbody.append(fila);
+                    if (listaSucursales.length) {
+                        listaSucursales.forEach(function (sucursal, index) {
+                            cont.append(tarjetaSucursal(sucursal, index));
                         });
                     } else {
-                        tbody.append(`
-                            <tr id="sucursales_vacio">
-                                <td colspan="5" class="text-center text-muted py-3">
-                                    <i class="bi bi-inbox me-1"></i> Sin sucursales registradas
-                                </td>
-                            </tr>
+                        cont.append(`
+                            <div class="pdsg-suc-empty" id="sucursales_vacio">
+                                <i class="bi bi-inbox"></i>
+                                <span>Sin sucursales registradas</span>
+                            </div>
                         `);
                     }
                 }
@@ -619,6 +669,13 @@
     });
 
     // ── Modal Ver Sucursal ──
+    $(document).on('keydown', '#ver_sucursales .pdsg-suc-row', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
     $(document).on('click', '#ver_sucursales .pdsg-suc-row', function () {
         var $fila =$(this);
         var suc = {
