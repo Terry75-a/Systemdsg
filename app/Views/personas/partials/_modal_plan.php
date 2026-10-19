@@ -77,9 +77,7 @@
       </div>
 
       <div class="pe-ms-footer" style="flex-shrink: 0;">
-        <button type="button" class="btn pe-ms-cancel" data-bs-dismiss="modal">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Cancelar
-        </button>
+        
         <button type="submit" class="btn pe-ms-save" id="btnGuardarPlan">
           <i class="fa-solid fa-check" aria-hidden="true"></i> Asignar Plan
         </button>

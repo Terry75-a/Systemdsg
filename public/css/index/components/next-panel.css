@@ -1014,7 +1014,8 @@ html.dark:has(.dev-main) .rp-chip.on,
 html.dark:has(.dev-main) .in-chip.on,
 html.dark:has(.dev-main) .att-chip.on,
 html.dark:has(.dev-main) .att-page.on,
-html.dark:has(.dev-main) .detail-btn-edit {
+html.dark:has(.dev-main) .detail-btn-edit,
+html.dark:has(.dev-main) .notif-mark-all {
   color: #0a0a0a;
 }
 /* :hover pinta el primary de fondo, pero en reposo el texto es claro

@@ -384,16 +384,20 @@ public function index($id = null)
                             'estado'           => isset($datosSucursal['estado']) ? (int)$datosSucursal['estado'] : 1,
                         ];
 
-                        // Si el índice viene como 'existing_123', es una sucursal que ya existe: la ACTUALIZAMOS
-                        if (strpos((string)$indice, 'existing_') === 0) {
-                            $idSucursalExistente = (int)str_replace('existing_', '', (string)$indice);
-                            $dataSucursal['updated_at'] = date('Y-m-d H:i:s');
-                            $empresaSucursalModel->update($idSucursalExistente, $dataSucursal);
-                        } else {
-                            // Es una sucursal nueva: la INSERTAMOS
-                            $dataSucursal['created_at'] = date('Y-m-d H:i:s');
-                            $empresaSucursalModel->insert($dataSucursal);
-                        }
+                       // Si el índice viene como 'existing_123', es una sucursal que ya existe: la ACTUALIZAMOS
+if (strpos((string)$indice, 'existing_') === 0) {
+    $idSucursalExistente = (int)str_replace('existing_', '', (string)$indice);
+    $dataSucursal['updated_at'] = date('Y-m-d H:i:s');
+
+    // Actualización directa garantizada en BD
+    $this->db->table('empresa_sucursales')
+             ->where('id_sucursal', $idSucursalExistente)
+             ->update($dataSucursal);
+} else {
+    // Es una sucursal nueva: la INSERTAMOS
+    $dataSucursal['created_at'] = date('Y-m-d H:i:s');
+    $this->db->table('empresa_sucursales')->insert($dataSucursal);
+}
                     }
                 }
             }
@@ -447,10 +451,14 @@ public function index($id = null)
         // Parámetros recibidos
         $idPlan           = $this->request->getPost('id_plan');
         $idTipoPlan       = $this->request->getPost('id_tipo_plan');
+        $id_tipo_pago     = $this->request->getPost('id_tipo_pago') ?: 1;
+        $concepto          = $this->request->getPost('concepto');
         $fechaInicio      = $this->request->getPost('fecha_de_inicio');
         $fechaVencimiento = $this->request->getPost('fecha_de_vencimiento');
         $precio           = $this->request->getPost('precio');
         $observaciones    = $this->request->getPost('observaciones');
+        $correo_notificacion = $this->request->getPost('correo_notificacion');
+
 
         // Campos de finalización mensual
         $tipoFin         = $this->request->getPost('tipo_fin') ?: 'SIN_FIN';
@@ -470,6 +478,8 @@ public function index($id = null)
             'id_sucursal'          => (int)$idSucursal,
             'id_plan'              => !empty($idPlan) ? (int)$idPlan : null,
             'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
+            'id_tipo_pago'         => (int)$id_tipo_pago,
+             'concepto'            =>  !empty($concepto) ? trim($concepto) : null,
             'fecha_de_inicio'      => $fechaInicio,
             'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',
@@ -500,6 +510,88 @@ public function index($id = null)
             }
         } catch (\Throwable $e) {
             log_message('error', 'Error al guardar pago: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Error en la base de datos: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function guardarOtrosPagos()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'status'  => 'error',
+                'message' => 'Petición no permitida.'
+            ]);
+        }
+
+        $idSucursal = $this->request->getPost('id_sucursal');
+
+        // Validar sucursal
+        if (empty($idSucursal) || strpos($idSucursal, 'temp_') === 0 || !is_numeric($idSucursal)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Primero debe guardar los cambios de la sucursal antes de registrar pagos.'
+            ]);
+        }
+
+        $concepto         = $this->request->getPost('concepto');
+        $monto            = $this->request->getPost('monto');
+        $fechaVencimiento = $this->request->getPost('fecha_vencimiento');
+        $diasAviso        = $this->request->getPost('dias_aviso');
+        $correo           = $this->request->getPost('correo_notificacion');
+        $estado           = $this->request->getPost('estado') ?? 1;
+
+        if (empty($concepto) || empty($monto)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'El concepto y el monto son obligatorios.'
+            ]);
+        }
+
+        // Armar el detalle para observaciones
+        $obs = trim($concepto);
+        if (!empty($correo)) {
+            $obs .= " | Correo de aviso: " . trim($correo);
+        }
+
+        $dataPago = [
+            'id_sucursal'          => (int)$idSucursal,
+            'id_plan'              => null,
+            'id_tipo_plan'         => null,
+            'id_tipo_pago'         => 2, // 2 = Otros Pagos
+            'concepto'             => trim($concepto),
+            'fecha_de_inicio'      => date('Y-m-d'),
+            'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'tipo_fin'             => 'FECHA',
+            'num_repeticiones'     => !empty($diasAviso) ? (int)$diasAviso : null,
+            'fecha_fin'            => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'precio'               => (float)$monto,
+            'observaciones'        => $this->request->getPost('observaciones') ?: null, // Directo
+    'correo_notificacion'  => !empty($correo) ? trim($correo) : null,          // Columna propia
+            'estado'               => (int)$estado,
+            'created_at'           => date('Y-m-d H:i:s'),
+        ];
+
+        try {
+            $pagosModel = new \App\Models\PagosModel();
+            $idInsertado = $pagosModel->insert($dataPago);
+
+            if ($idInsertado) {
+                return $this->response->setJSON([
+                    'status'  => 'success',
+                    'message' => '¡Pago registrado correctamente!'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'No se pudo registrar el pago.',
+                    'errors'  => $pagosModel->errors()
+                ]);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Error guardarOtrosPagos: ' . $e->getMessage());
             return $this->response->setJSON([
                 'status'  => 'error',
                 'message' => 'Error en la base de datos: ' . $e->getMessage()

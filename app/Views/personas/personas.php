@@ -9,7 +9,8 @@
 </div>
 
 <div class="pdsg-card pdsg-table-card">
-
+          
+        
     <div class="pdsg-tabs" id="pestanasEstado">
         <button type="button" class="pdsg-tab is-active" data-estado="1">
             <span class="pdsg-tab-label">Activos</span>
@@ -19,6 +20,15 @@
             <span class="pdsg-tab-label">Inactivos</span>
             <span class="pdsg-tab-count" id="countInactivos">-</span>
         </button>
+
+        <div class="pdsg-search-wrap" style="min-width: 260px; max-width: 360px; width: 100%;">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 text-muted">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="buscarCliente" class="form-control border-start-0 ps-0" placeholder="Buscar por nombre, DNI, teléfono..." autocomplete="off">
+            </div>
+        </div>
     </div>
 
     <div class="pdsg-table-wrap">
