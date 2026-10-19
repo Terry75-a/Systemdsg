@@ -156,6 +156,166 @@
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           ASISTENCIAS · diseño premium (scoped a esta página).
+           Estética tipo Next.js/Vercel: bordes sutiles, sombras en capas,
+           tipografía con tracking ajustado y micro-interacciones suaves.
+           Colocado DESPUÉS de next-panel.css para ganar la cascada sin
+           tocar los CSS compartidos.
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* ── Tarjetas de filtro · tratamiento premium ──────────────── */
+        .att-filters { gap: 16px; }
+        .att-fcard {
+            border: 1px solid var(--g-border); border-radius: 16px;
+            box-shadow: 0 1px 2px rgba(16,24,40,.04);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .att-fcard:hover { box-shadow: 0 6px 16px rgba(16,24,40,.06); }
+        .att-fcard .dev-card-head {
+            padding: 15px 18px; border-bottom: 1px solid var(--g-border);
+            align-items: center;
+        }
+        .att-fcard .dev-card-head h2 { font-size: .9rem; font-weight: 600; letter-spacing: -.01em; }
+        .att-fbody { padding: 16px 18px 18px; }
+
+        /* ── Controles · inputs y botones modernos ─────────────────── */
+        .att-input {
+            border-radius: 10px; transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .att-input:hover { border-color: var(--g-text-disabled); }
+        .att-input:focus { border-color: #1b7a42; box-shadow: 0 0 0 3px rgba(27,122,66,.12); }
+        .att-go {
+            border-radius: 10px; font-weight: 600; letter-spacing: -.01em;
+            transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+        }
+        .att-go:not(.att-go-ghost):hover { background: #1f8c4d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,122,66,.28); }
+        .att-go-ghost { border-radius: 10px; transition: background .15s ease, border-color .15s ease; }
+        .att-go-ghost:hover { background: var(--g-surface-variant); border-color: var(--g-text-disabled); filter: none; }
+        .att-chip {
+            border-radius: 9px; font-weight: 500;
+            transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+        }
+        .att-chip:hover { border-color: var(--g-text-disabled); color: var(--g-text); }
+        .att-chip.on {
+            background: #1b7a42; border-color: #1b7a42; color: #fff;
+            box-shadow: 0 1px 2px rgba(27,122,66,.35);
+        }
+        .att-chip b { font-weight: 700; }
+
+        /* ── KPIs · tarjetas individuales premium ──────────────────── */
+        body:has(.dev-main) .dev-stats-grid.att-kpis {
+            gap: 14px; background: transparent; border-radius: 0;
+            overflow: visible; grid-auto-flow: initial; grid-auto-columns: initial;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card {
+            border: 1px solid var(--g-border); border-radius: 15px;
+            background: var(--g-surface); padding: 18px;
+            box-shadow: 0 1px 2px rgba(16,24,40,.04);
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card:hover {
+            border-color: var(--g-text-disabled);
+            box-shadow: 0 8px 20px rgba(16,24,40,.08); transform: translateY(-2px);
+        }
+        /* chips de icono con color funcional */
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon {
+            width: 40px; height: 40px; border-radius: 12px; margin-bottom: 14px;
+            background: var(--g-surface-variant) !important; color: var(--g-text-secondary) !important;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-accent { background: rgba(27,122,66,.12) !important; color: #1b7a42 !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-green  { background: rgba(22,163,74,.13) !important; color: #16a34a !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-amber  { background: rgba(217,119,6,.14)  !important; color: #b45309 !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-red    { background: rgba(220,38,38,.13) !important; color: #dc2626 !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-blue   { background: rgba(37,99,235,.13) !important; color: #2563eb !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-icon .material-symbols-outlined { font-size: 21px; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-label {
+            font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+            color: var(--g-text-secondary); margin-bottom: 8px;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-value {
+            font-size: 27px; font-weight: 700; letter-spacing: -.02em; line-height: 1;
+            font-variant-numeric: tabular-nums; color: var(--g-text);
+        }
+        /* KPI activo (filtro aplicado): acento de color según estado */
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on { box-shadow: inset 0 0 0 1.5px currentColor, 0 1px 2px rgba(16,24,40,.04); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-accent { color: #1b7a42; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-green  { color: #16a34a; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-amber  { color: #b45309; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-red    { color: #dc2626; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-blue   { color: #2563eb; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on .dev-stat-value { color: currentColor; }
+
+        /* ── Registros · lista moderna ─────────────────────────────── */
+        .att-list { padding: 8px; gap: 2px; }
+        .att-item {
+            border: 1px solid transparent; border-radius: 12px;
+            transition: background .15s ease, border-color .15s ease;
+        }
+        .att-item:hover { background: var(--g-surface-variant); border-color: var(--g-border); }
+        .att-av { border-radius: 11px; font-weight: 600; }
+        .att-name { font-weight: 600; letter-spacing: -.01em; }
+        .att-estado {
+            padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: .78rem;
+        }
+        .att-estado.present { color: #15803d; background: rgba(34,197,94,.13); }
+        .att-estado.late    { color: #b45309; background: rgba(245,158,11,.15); }
+        .att-estado.absent  { color: #475569; background: rgba(100,116,139,.14); }
+        .att-estado.no_exit { color: #1d4ed8; background: rgba(59,130,246,.13); }
+        /* avatar con tinte sutil del estado */
+        .att-item:has(.att-estado.present) .att-av { background: rgba(34,197,94,.12); color: #16a34a; }
+        .att-item:has(.att-estado.late)    .att-av { background: rgba(245,158,11,.14); color: #b45309; }
+        .att-item:has(.att-estado.absent)  .att-av { background: rgba(100,116,139,.13); color: #64748b; }
+        .att-item:has(.att-estado.no_exit) .att-av { background: rgba(59,130,246,.12); color: #2563eb; }
+        .att-edit { border-radius: 10px; transition: border-color .15s ease, color .15s ease, background .15s ease; }
+        .att-edit:hover { background: var(--g-surface-variant); }
+
+        /* ── Tarjeta Registros · cabecera pulida ───────────────────── */
+        .dev-card { border: 1px solid var(--g-border); border-radius: 16px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+
+        /* ── Botón Filtrar · verde consistente en oscuro ─────────────
+           :not(.att-go-ghost) para no pintar el botón CSV (outline) */
+        html.dark .att-go:not(.att-go-ghost) { background: #1b7a42; color: #ffffff; }
+        html.dark .att-go:not(.att-go-ghost):hover { background: #1f8c4d; box-shadow: 0 4px 12px rgba(27,122,66,.35); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MODO OSCURO · ajustes de superficie, sombras y acentos
+           ═══════════════════════════════════════════════════════════════ */
+        html.dark .att-fcard, html.dark .dev-card {
+            box-shadow: 0 1px 2px rgba(0,0,0,.4);
+        }
+        html.dark .att-fcard:hover { box-shadow: 0 8px 22px rgba(0,0,0,.5); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card {
+            box-shadow: 0 1px 2px rgba(0,0,0,.4);
+        }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card:hover {
+            border-color: #3f3f46; box-shadow: 0 10px 26px rgba(0,0,0,.55);
+        }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-accent { background: rgba(52,168,83,.16)  !important; color: #4ade80 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-green  { background: rgba(34,197,94,.16)  !important; color: #4ade80 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-amber  { background: rgba(251,191,36,.15) !important; color: #fbbf24 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-red    { background: rgba(248,113,113,.15)!important; color: #f87171 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-blue   { background: rgba(96,165,250,.15) !important; color: #60a5fa !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-accent { color: #4ade80; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-green  { color: #4ade80; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-amber  { color: #fbbf24; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-red    { color: #f87171; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on.si-blue   { color: #60a5fa; }
+        html.dark .att-item:hover { background: #161616; border-color: #262626; }
+        html.dark .att-chip:hover { border-color: #3f3f46; }
+        html.dark .att-input:hover { border-color: #3f3f46; }
+        html.dark .att-estado.present { color: #4ade80; background: rgba(34,197,94,.14); }
+        html.dark .att-estado.late    { color: #fbbf24; background: rgba(251,191,36,.13); }
+        html.dark .att-estado.absent  { color: #94a3b8; background: rgba(148,163,184,.13); }
+        html.dark .att-estado.no_exit { color: #60a5fa; background: rgba(96,165,250,.13); }
+        html.dark .att-item:has(.att-estado.present) .att-av { background: rgba(34,197,94,.14); color: #4ade80; }
+        html.dark .att-item:has(.att-estado.late)    .att-av { background: rgba(251,191,36,.13); color: #fbbf24; }
+        html.dark .att-item:has(.att-estado.absent)  .att-av { background: rgba(148,163,184,.13); color: #94a3b8; }
+        html.dark .att-item:has(.att-estado.no_exit) .att-av { background: rgba(96,165,250,.13); color: #60a5fa; }
+    </style>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>
@@ -279,14 +439,14 @@
                 </div>
 
                 <!-- KPIs · métricas unidas (card del dashboard) -->
-                <div class="dev-stats-grid">
+                <div class="dev-stats-grid att-kpis">
                     <?php
                         $kpis = [
                             [''        , 'summarize'   , 'Total registros', $totalRegistros, 'si-accent'],
                             ['present' , 'check_circle', 'Presentes'      , $totalPresentes, 'si-green'],
                             ['late'    , 'schedule'    , 'Tardanzas'      , $totalTardanzas, 'si-amber'],
                             ['absent'  , 'cancel'      , 'Faltas'         , $totalFaltas   , 'si-red'],
-                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-accent'],
+                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-blue'],
                         ];
                         foreach ($kpis as [$est, $ico, $lbl, $num, $cls]): ?>
                             <a class="dev-stat-card att-stat <?= $filtroEstado === $est ? 'on' : '' ?>"
