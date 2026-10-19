@@ -956,7 +956,10 @@ html.dark:has(.dev-main) {
   --g-border: #262626;
   --g-text: #ededed;
   --g-text-secondary: #a1a1aa;
-  --g-text-disabled: #52525b;
+  /* era #52525b → 2.4:1 sobre --g-surface (#111); los labels de 10px
+     (stat-label, personal-stat-label, meta, placeholders) quedaban casi
+     invisibles. #8a8a94 da ≈5:1 y mantiene la jerarquía bajo secondary */
+  --g-text-disabled: #8a8a94;
   --g-primary: #fafafa;
   --g-primary-hover: #e5e5e5;
   --g-primary-light: #1f1f1f;
@@ -995,6 +998,29 @@ html.dark:has(.dev-main) {
 html.dark body {
   background: #0a0a0a;
   color: #ededed;
+}
+/* ─────────────────────────────────────────────────────────────
+   Texto sobre superficies con --g-primary de fondo.
+   En oscuro --g-primary es casi blanco (#fafafa): cualquier
+   elemento que lo use de fondo y pinte texto blanco/heredado
+   queda ilegible. Se fuerza texto oscuro. Mismo criterio que ya
+   se aplicó a la paginación (.dtable-page.is-active) y que
+   asistencias.php resuelve con var(--g-bg).
+   ───────────────────────────────────────────────────────────── */
+html.dark:has(.dev-main) .hg-day.on,
+html.dark:has(.dev-main) .cfg-btn,
+html.dark:has(.dev-main) .rp-go,
+html.dark:has(.dev-main) .rp-chip.on,
+html.dark:has(.dev-main) .in-chip.on,
+html.dark:has(.dev-main) .att-chip.on,
+html.dark:has(.dev-main) .att-page.on,
+html.dark:has(.dev-main) .detail-btn-edit {
+  color: #0a0a0a;
+}
+/* :hover pinta el primary de fondo, pero en reposo el texto es claro
+   sobre superficie oscura → sólo se invierte al pasar el ratón */
+html.dark:has(.dev-main) .hr-int-btn:hover {
+  color: #0a0a0a;
 }
 html.dark .dev-sidebar,
 html.dark .dev-sidebar-head,

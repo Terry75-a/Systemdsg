@@ -150,7 +150,7 @@ html.dark .dev-recent-avatar { background: #0d2818; color: #34a853; }
 
 /* ── Empty State ── */
 html.dark .dev-empty { color: #5f6368; }
-html.dark .dev-empty .material-symbols-outlined { color: #333333; }
+html.dark .dev-empty .material-symbols-outlined { color: #6b7280; }
 
 /* ── Profile ── */
 html.dark .dev-profile-avatar { background: #34a853; }
