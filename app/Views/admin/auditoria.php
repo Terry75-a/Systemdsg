@@ -8,9 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         .ad-wrap { display: flex; flex-direction: column; gap: 20px; }
         .ad-back {
@@ -35,10 +36,68 @@
         .ad-val.nuevo { background: rgba(27,122,66,.12); color: var(--g-primary); }
         .ad-arrow { color: var(--g-text-secondary); margin: 0 6px; }
         .ad-empty { padding: 26px 18px; text-align: center; color: var(--g-text-secondary); font-size: .87rem; }
+
+        /* Mapa en auditoría */
+        .ad-map-wrap { grid-column: 1 / -1; margin-top: 6px; }
+        .ad-map-container {
+            width: 100%; height: 300px; border-radius: 12px;
+            background: var(--g-surface-variant); overflow: hidden;
+        }
+        .ad-map-msg { text-align: center; padding: 40px 20px; color: var(--g-text-secondary); font-size: .9rem; }
+        .ad-map-msg .material-symbols-outlined { font-size: 2.5rem; display: block; margin-bottom: 10px; opacity: .5; }
+
         @media (max-width: 860px) { .ad-grid { grid-template-columns: 1fr 1fr; } }
+
+        /* ═══════════════════════════════════════════════════════════════
+           AUDITORÍA · panel admin de sorteroOS
+           Las tarjetas con marco se vuelven secciones: título sobre el
+           fondo de página y el contenido en un bloque blanco redondeado.
+           ═══════════════════════════════════════════════════════════════ */
+        .ad-sec-head { margin: 0 0 12px; }
+        .ad-sec-head--split { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .ad-sec-head h2 {
+            margin: 0; font-family: inherit; font-size: 11px; font-weight: 600;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .ad-sec-head h2 .material-symbols-outlined { font-size: 15px; color: inherit; }
+        /* La cabecera de la entidad lleva el nombre de la persona, no un rótulo */
+        .ad-sec-head--entity {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .ad-sec-head--entity h2 {
+            font-size: 16px; font-weight: 500; letter-spacing: 0; text-transform: none;
+            color: var(--sb-on-surface);
+        }
+        .ad-sec-head--entity h2 .material-symbols-outlined { font-size: 19px; color: var(--sb-primary); }
+        .ad-count {
+            padding: 4px 11px; border-radius: 999px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 55%, var(--sb-surface));
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 40%, transparent);
+            color: var(--sb-on-surface-variant); font-size: 12px; font-weight: 500;
+        }
+        .ad-block { background: var(--sb-surface); border-radius: 16px; overflow: hidden; }
+        .ad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 24px; padding: 4px 20px 18px; }
+        .ad-kv { padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--sb-outline-variant) 55%, transparent); }
+        .ad-kv .k {
+            font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 55%, transparent); margin-bottom: 4px;
+        }
+        .ad-kv .v { font-size: 13.5px; font-weight: 500; color: var(--sb-on-surface); word-break: break-word; }
+        .ad-kv .v.muted { color: var(--sb-on-surface-variant); font-weight: 400; }
+        .ad-map-wrap { grid-column: 1 / -1; margin-top: 6px; padding: 0 20px 20px; }
+        .ad-map-container { width: 100%; height: 300px; border-radius: 12px; background: var(--sb-surface-container); overflow: hidden; }
+        .ad-map-msg { text-align: center; padding: 40px 20px; color: var(--sb-on-surface-variant); font-size: 13px; }
+        .ad-empty { padding: 26px 20px; text-align: center; color: var(--sb-on-surface-variant); font-size: 13px; }
+        .ad-val { background: var(--sb-surface-container); }
+        .ad-val.nuevo { background: color-mix(in srgb, var(--sb-primary) 12%, transparent); color: var(--sb-primary); }
+        .ad-arrow { color: var(--sb-on-surface-variant); }
+        .ad-back { color: var(--sb-primary); font-weight: 500; }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => $activePage ?? 'asistencias']) ?>
@@ -62,11 +121,11 @@
                     <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> Volver a asistencias
                 </a>
 
-                <div class="dev-card">
-                    <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">fact_check</span> <?= esc($att['name'] ?? '') ?></h2>
-                        <span class="badge <?= esc($att['status'] ?? '') ?>"><?= esc($att['status'] ?? '') ?></span>
-                    </div>
+                <div class="ad-sec-head ad-sec-head--entity">
+                    <h2><span class="material-symbols-outlined">fact_check</span> <?= esc($att['name'] ?? '') ?></h2>
+                    <span class="badge <?= esc($att['status'] ?? '') ?>"><?= esc($att['status'] ?? '') ?></span>
+                </div>
+                <div class="ad-block">
                     <div class="ad-grid">
                         <div class="ad-kv"><div class="k">Fecha</div><div class="v"><?= esc($att['date'] ?? '') ?></div></div>
                         <div class="ad-kv"><div class="k">DNI</div><div class="v"><?= esc($att['dni'] ?? '—') ?></div></div>
@@ -77,14 +136,24 @@
                         <div class="ad-kv"><div class="k">IP de origen</div><div class="v <?= empty($att['ip']) ? 'muted' : '' ?>"><?= esc($att['ip'] ?? '—') ?></div></div>
                         <div class="ad-kv"><div class="k">Evidencia</div><div class="v <?= empty($att['evidencia']) ? 'muted' : '' ?>"><?= ! empty($att['evidencia']) ? '<a href="' . base_url('uploads/' . esc($att['evidencia'])) . '" target="_blank" rel="noopener">Ver selfie</a>' : '—' ?></div></div>
                     </div>
+
+                    <!-- Mapa de ubicación -->
+                    <div class="ad-map-wrap">
+                        <div class="ad-map-container" id="mapContainer" style="display:<?= empty($att['lat']) ? 'none' : 'block' ?>;">
+                            <div id="map" style="width:100%; height:100%;"></div>
+                        </div>
+                        <div class="ad-map-msg" id="mapMsg" style="<?= empty($att['lat']) ? 'display:block;' : 'display:none;' ?>">
+                            <span class="material-symbols-outlined">location_on</span>
+                            Esta marcación no tiene ubicación registrada
+                        </div>
+                    </div>
                 </div>
 
-                <div class="dev-card">
-                    <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">history</span> Historial de cambios</h2>
-                        <span style="font-size:.78rem;color:var(--g-text-secondary);"><?= count($logs ?? []) ?> movimiento(s)</span>
-                    </div>
-
+                <div class="ad-sec-head ad-sec-head--split">
+                    <h2><span class="material-symbols-outlined">history</span> Historial de cambios</h2>
+                    <span class="ad-count"><?= count($logs ?? []) ?> movimiento(s)</span>
+                </div>
+                <div class="ad-block">
                     <?php if (empty($logs)): ?>
                         <div class="ad-empty">Esta marcación nunca fue editada a mano.</div>
                     <?php else: ?>
@@ -123,5 +192,30 @@
             </div>
         </div>
     </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var lat = <?= json_encode($att['lat'] ?? null) ?>;
+            var lng = <?= json_encode($att['lng'] ?? null) ?>;
+            var mapContainer = document.getElementById('map');
+
+            if (lat !== null && lng !== null && lat !== 0 && lng !== 0) {
+                var map = L.map('map').setView([parseFloat(lat), parseFloat(lng)], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map)
+                    .bindPopup('Ubicación de la marcación').openPopup();
+                setTimeout(function() { map.invalidateSize(); }, 100);
+            }
+        });
+    </script>
+
+<!-- Campana de notificaciones (compartida en todas las secciones admin) -->
+<?= view('partials/admin-notif-bell') ?>
+<?= view('partials/pwa-js') ?>
 </body>
 </html>
+<!-- PWA -->
+    <?= view('partials/pwa-head') ?>

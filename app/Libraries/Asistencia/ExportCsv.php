@@ -14,6 +14,7 @@ class ExportCsv
         'present' => 'Presente',
         'late'    => 'Tardanza',
         'absent'  => 'Falta',
+        'absent_justified' => 'Falta justificada',
         'no_exit' => 'Sin salida',
     ];
 

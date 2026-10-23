@@ -99,6 +99,10 @@ class ConfigAdminController extends AdminBaseController
             'cfg_tolerancia'      => ['tolerancia_default', fn ($v) => (int) $v],
             'cfg_notif_email'     => ['notif_email',        fn ($v) => (bool) $v],
             'cfg_notif_email_dest' => ['notif_email_dest',  fn ($v) => trim($v)],
+            'cfg_geo_lat'         => ['geo_lat',            fn ($v) => trim($v) !== '' && is_numeric($v) ? (float) $v : null],
+            'cfg_geo_lng'         => ['geo_lng',            fn ($v) => trim($v) !== '' && is_numeric($v) ? (float) $v : null],
+            'cfg_geo_radio_m'     => ['geo_radio_m',        fn ($v) => max(0, (int) $v)],
+            'cfg_geo_requerido'   => ['geo_requerido',      fn ($v) => (int) ((bool) $v)],
         ];
         foreach ($map as $field => [$column, $process]) {
             if (array_key_exists($field, $post)) {
@@ -116,5 +120,78 @@ class ConfigAdminController extends AdminBaseController
         $s->setFlashdata('msg', 'Configuración guardada');
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('admin/configuracion'));
+    }
+
+    /**
+     * Polling de notificaciones (fallback cPanel cuando SSE no está disponible)
+     * GET /admin/notificaciones/poll?since=<id>
+     */
+    public function pollNotificaciones()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $adminId = (int) $this->adminId();
+        $since   = (int) $this->request->getGet('since');
+
+        $notifs = (new \App\Models\NotificationModel())
+            ->where('admin_id', $adminId)
+            ->where('id >', $since)
+            ->orderBy('id', 'ASC')
+            ->limit(20)
+            ->findAll();
+
+        return $this->response->setJSON(['ok' => true, 'notificaciones' => $notifs]);
+    }
+
+    /**
+     * Lista de notificaciones para el modal de la campana
+     * GET /admin/notificaciones
+     */
+    public function listarNotificaciones()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $adminId = (int) $this->adminId();
+        $model   = new \App\Models\NotificationModel();
+
+        return $this->response->setJSON([
+            'ok'            => true,
+            'no_leidas'     => $model->getUnreadCount($adminId),
+            'notificaciones' => $model->getForAdmin($adminId, 30),
+        ]);
+    }
+
+    /**
+     * Marca notificaciones como leídas: una por ?id= o todas
+     * POST /admin/notificaciones/marcar-leidas
+     */
+    public function marcarLeidas()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $adminId = (int) $this->adminId();
+        $model   = new \App\Models\NotificationModel();
+        $id      = (int) $this->request->getPost('id');
+
+        if ($id > 0) {
+            $model->markAsRead($id, $adminId);
+        } else {
+            $model->markAllAsRead($adminId);
+        }
+
+        return $this->response->setJSON(['ok' => true, 'no_leidas' => $model->getUnreadCount($adminId)]);
+    }
+
+    /**
+     * Contador ligero para el badge (no carga la lista)
+     * GET /admin/notificaciones/badge
+     */
+    public function badgeNotificaciones()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $adminId = (int) $this->adminId();
+        $model   = new \App\Models\NotificationModel();
+
+        return $this->response->setJSON([
+            'ok'         => true,
+            'no_leidas'  => $model->getUnreadCount($adminId),
+        ]);
     }
 }

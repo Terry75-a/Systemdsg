@@ -13,6 +13,7 @@ class ConfigModel extends Model
     protected $allowedFields = [
         'admin_id', 'empresa', 'ruc', 'direccion', 'email', 'telefono',
         'horario_default', 'tolerancia_default', 'notif_email', 'notif_email_dest',
+        'geo_lat', 'geo_lng', 'geo_radio_m', 'geo_requerido',
     ];
 
     public function getConfig(?int $adminId = null): array

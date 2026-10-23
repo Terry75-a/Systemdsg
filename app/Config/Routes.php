@@ -27,6 +27,9 @@ $routes->get('asisten-dsg', 'Home::asistencia');
 $routes->get('precio-asisten', 'Home::precioAsisten');
 $routes->get('terminos', 'Home::terminos');
 
+// QR de asistencia — se abre al escanear el QR descargable (pública)
+$routes->get('escanear', 'QrController::escanear');
+
 // Sitemap dinámico (usa el baseURL configurado)
 $routes->get('sitemap.xml', function () {
     $base = rtrim(base_url(), '/');
@@ -60,6 +63,8 @@ $routes->get('dios/codigos', 'DevController::codigos');
 $routes->get('dios/empleados', 'DevController::empleados');
 $routes->get('dios/estructura', 'DevController::estructura');
 $routes->get('dios/auditoria', 'DevController::auditoria');
+$routes->get('dios/sesiones', 'DevController::sesiones');
+$routes->get('dios/datos', 'DevController::datos');
 $routes->get('dios/perfil', 'DevController::perfil');
 $routes->post('dios/update-password', 'DevController::updatePassword');
 $routes->post('dios/create-admin', 'DevController::createAdmin');
@@ -86,6 +91,9 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('update-attendance', 'Admin\AsistenciaAdminController::updateAttendance');
     $routes->post('exportar/asistencias', 'Admin\AsistenciaAdminController::exportAsistencias');
 
+    // Tiempo real (SSE)
+    $routes->get('realtime/asistencias', 'RealtimeController::adminAsistencias');
+
     // Incidencias
     $routes->get('incidencias', 'Admin\IncidenciaAdminController::incidencias');
     $routes->post('create-incident', 'Admin\IncidenciaAdminController::createIncident');
@@ -97,6 +105,10 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('festivos/guardar', 'Admin\ConfigAdminController::saveFestivo');
     $routes->post('festivos/eliminar', 'Admin\ConfigAdminController::deleteFestivo');
     $routes->get('festivos/eliminar/(:num)', 'Admin\ConfigAdminController::deleteFestivo/$1');
+    $routes->get('notificaciones/poll', 'Admin\ConfigAdminController::pollNotificaciones');
+    $routes->get('notificaciones', 'Admin\ConfigAdminController::listarNotificaciones');
+    $routes->post('notificaciones/marcar-leidas', 'Admin\ConfigAdminController::marcarLeidas');
+    $routes->get('notificaciones/badge', 'Admin\ConfigAdminController::badgeNotificaciones');
 
     // Admin CRUD
     $routes->post('create-employee', 'AdminController::createEmployee');
@@ -116,6 +128,14 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
 });
 $routes->post('enviar', 'EmailController::enviar'); // Formulario de contacto
 
+// Web Push (sesión verificada dentro del controller)
+$routes->get('push/clave', 'PushController::clave');
+$routes->post('push/suscribir', 'PushController::suscribir');
+$routes->post('push/cancelar', 'PushController::cancelar');
+
+// Cron de faltas (token en ?token= o header X-Cron-Token)
+$routes->get('cron/faltas', 'CronController::faltas');
+
 // ══════════════════════════════════════════════════════════════
 // EMPLEADO / PRACTICANTE — Dashboard propio (sesión + personal)
 // ══════════════════════════════════════════════════════════════
@@ -126,10 +146,26 @@ $routes->group('mi-panel', ['filter' => 'asistencia'], static function ($routes)
     $routes->get('incidencias', 'EmployeeController::incidencias');
     $routes->post('registrar', 'EmployeeController::registrar');
     $routes->post('justificar-incidencia', 'EmployeeController::justificarIncidencia');
+    $routes->post('crear-incidencia', 'EmployeeController::crearIncidencia');
+    $routes->get('perfil', 'EmployeeController::perfil');
     $routes->get('bio-session', 'EmployeeController::bioSession');
     $routes->post('guardar-huella', 'EmployeeController::guardarHuella');
     $routes->post('verify-huella', 'EmployeeController::verifyHuella');
     $routes->post('guardar-rostro', 'EmployeeController::guardarRostro');
+
+    // Estado actual - polling fallback (cPanel compatible)
+    $routes->get('estado-actual', 'EmployeeController::estadoActual');
+
+    // Notificaciones del empleado (campana del panel)
+    $routes->get('notificaciones', 'EmployeeController::notificaciones');
+    $routes->post('notificaciones/marcar-leidas', 'EmployeeController::marcarLeidas');
+    $routes->get('notificaciones/badge', 'EmployeeController::badgeNotificaciones');
+
+    // Evidencias biométricas (sólo con sesión)
+    $routes->get('evidencia/(:segment)/(:segment)', 'EvidenciaController::ver/$1/$2');
+
+    // Tiempo real (SSE)
+    $routes->get('realtime/asistencias', 'RealtimeController::empleadoAsistencias');
 });
 
 // Demo pública (sin autenticación, solo para mostrar funcionalidades)

@@ -9,7 +9,10 @@
     // y cual es la hora de salida esperada (para detectar salida anticipada)
     $bioMarkExit      = (bool) (($bioMark['exit'] ?? false) === true);
     $bioMarkHoraSalida = (string) ($bioMark['hora_salida'] ?? '');
+    // ID del horario del usuario (para validar QR)
+    $userScheduleId   = (int) ($userScheduleId ?? 0);
 ?>
+<script src="<?= base_url('js/vendor/jsQR.js') ?>"></script>
 <style>
 .bio-card {
     background: var(--g-surface, #1b2430); border: 1px solid var(--g-border, #26323f);
@@ -53,6 +56,15 @@
 .bio-dialog-foot { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 18px; border-top: 1px solid var(--g-border, #26323f); }
 .bio-cam-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #0b0f14; aspect-ratio: 4/3; margin-bottom: 12px; }
 .bio-cam-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bio-cam-flip {
+    position: absolute; top: 8px; right: 8px; z-index: 10;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s, transform .15s;
+}
+.bio-cam-flip:hover { background: rgba(0,0,0,.75); }
+.bio-cam-flip .material-symbols-outlined { font-size: 20px; }
 .bio-cam-err { padding: 26px; text-align: center; color: var(--g-text-secondary, #a9b6c8); font-size: 12.5px; }
 .bio-shot { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 8px; }
 .bio-prev { border-radius: 14px; max-height: 190px; width: 100%; object-fit: cover; }
@@ -108,6 +120,38 @@
 </div>
 
 <!-- Modal: capturar rostro (camara) -->
+<!-- Modal: escanear QR del horario (primer paso obligatorio) -->
+<div class="bio-modal" id="bioQrModal">
+    <div class="bio-dialog" style="max-width: 380px;">
+        <div class="bio-dialog-head">
+            <h3><span class="material-symbols-outlined">qr_code_scanner</span> Escanear QR del horario</h3>
+            <button class="bio-x" onclick="bioCloseQr()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="bio-dialog-body">
+            <div class="bio-cam-wrap" id="bioQrCamWrap">
+                <video id="bioQrCam" autoplay playsinline muted></video>
+                <button type="button" class="bio-cam-flip" id="bioQrCamFlip" onclick="bioFlipCam('bioQrCam')" title="Voltear cámara">
+                    <span class="material-symbols-outlined">flip_camera_ios</span>
+                </button>
+                <div class="bio-cam-err" id="bioQrCamErr" style="display:none;">
+                    No se pudo abrir la cámara. Concede permiso o usa otro dispositivo.
+                </div>
+            </div>
+            <div style="margin-top:12px; font-size:12.5px; color:var(--g-text-secondary,#a9b6c8); text-align:center; line-height:1.6;">
+                Apunta la cámara al <strong>QR de tu horario</strong> que está impreso.<br>
+                Se validará automáticamente.
+            </div>
+            <div class="bio-state-msg" id="bioQrMsg"></div>
+        </div>
+        <div class="bio-dialog-foot">
+            <button type="button" class="dev-btn dev-btn-outline" onclick="bioCloseQr()">Cancelar</button>
+            <button type="button" class="dev-btn dev-btn-primary" id="bioQrManualBtn" onclick="bioQrManualInput()">
+                <span class="material-symbols-outlined">keyboard</span> Ingresar código manual
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="bio-modal" id="bioRostroModal">
     <div class="bio-dialog">
         <div class="bio-dialog-head">
@@ -117,6 +161,9 @@
         <div class="bio-dialog-body">
             <div class="bio-cam-wrap" id="bioCamWrap">
                 <video id="bioCam" autoplay playsinline muted></video>
+                <button type="button" class="bio-cam-flip" id="bioCamFlip" onclick="bioFlipCam('bioCam')" title="Voltear cámara">
+                    <span class="material-symbols-outlined">flip_camera_ios</span>
+                </button>
                 <div class="bio-cam-err" id="bioCamErr" style="display:none;">
                     No se pudo abrir la camara.<br>Usa el boton "Subir foto" como alternativa.
                 </div>
@@ -164,6 +211,9 @@
             <div id="bioCheckFacialBox">
                 <div class="bio-cam-wrap" id="bioCheckCamWrap">
                     <video id="bioCheckCam" autoplay playsinline muted></video>
+                    <button type="button" class="bio-cam-flip" id="bioCheckCamFlip" onclick="bioFlipCam('bioCheckCam')" title="Voltear cámara">
+                        <span class="material-symbols-outlined">flip_camera_ios</span>
+                    </button>
                     <div class="bio-cam-err" id="bioCheckCamErr" style="display:none;">
                         No se pudo abrir la camara.<br>Sin camara no puedes verificar tu rostro.
                     </div>
@@ -218,7 +268,11 @@
         humino_selfie: '',
         stream: null,
         checkStream: null,
-        pendingEvidencia: ''
+        pendingEvidencia: '',
+        qrStream: null,
+        qrLastDecode: 0,
+        qrDecoder: null,
+        qrScanning: false
     };
     function $(id) { return document.getElementById(id); }
     function csrfToken() {
@@ -280,9 +334,11 @@
             errEl.style.display = 'block';
             return Promise.reject(new Error('no getUserMedia'));
         }
-        return navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 720 } }, audio: false })
+        var facing = video.dataset.facing || 'user';
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 720 } }, audio: false })
             .then(function (stream) {
                 video.srcObject = stream;
+                video.dataset.facing = facing;
                 if (video.id === 'bioCheckCam') window.__bioState.checkStream = stream;
                 else window.__bioState.stream = stream;
             })
@@ -291,6 +347,18 @@
                 throw new Error('cam');
             });
     }
+
+    // Voltear cámara (front/back)
+    window.bioFlipCam = function (videoId) {
+        var video = $(videoId);
+        if (!video || !video.srcObject) return;
+        var current = video.dataset.facing || 'user';
+        var next = current === 'user' ? 'environment' : 'user';
+        video.dataset.facing = next;
+        var stream = video.srcObject;
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        startCam(video, $(videoId + 'Err') || $(videoId.replace('Cam', 'CamErr')));
+    };
     function snap(video, imgEl, wrap, saveBtn) {
         var v = video.videoWidth > 0 ? video : null;
         if (!v) { msg('bioRostroMsg', 'Primero captura el video (camara activa y permitida).', false); return; }
@@ -400,15 +468,127 @@
             msg('bioRostroMsg', 'Error de red al guardar.', false);
         });
     };
+    // ── Verificacion al marcar: huella O rostro ────────────────
+    var B = window.__bioState;
+
     window.bioCloseRostro = function () {
         $('bioRostroModal').classList.remove('c-open');
         if (window.__bioState.stream) { window.__bioState.stream.getTracks().forEach(function (t) { t.stop(); }); window.__bioState.stream = null; }
     };
 
-    // ── Verificacion al marcar: huella O rostro ────────────────
-    var B = window.__bioState;
+    // ═════════════════════════════════════════════════════════
+    // ESCANER QR DEL HORARIO (primer paso obligatorio)
+    // ═════════════════════════════════════════════════════════
 
-    window.openBioCheck = function () {
+    async function bioQrInitDecoder() {
+        if (window.__bioState.qrDecoder) return window.__bioState.qrDecoder;
+        if (window.jsQR) {
+            window.__bioState.qrDecoder = window.jsQR;
+            return window.__bioState.qrDecoder;
+        }
+        throw new Error('jsQR no cargado');
+    }
+
+    function bioStartQrScanner() {
+        var video = $('bioQrCam');
+        var errEl = $('bioQrCamErr');
+        var msgEl = $('bioQrMsg');
+        var B = window.__bioState;
+        if (B.qrStream) return;
+        B.qrScanning = true;
+        msgEl.className = 'bio-state-msg show';
+        msgEl.textContent = 'Iniciando cámara…';
+        startCam(video, errEl).then(function () {
+            msgEl.className = 'bio-state-msg';
+            bioQrLoop();
+        }).catch(function () {
+            B.qrScanning = false;
+        });
+    }
+
+    function bioQrLoop() {
+        var B = window.__bioState;
+        if (!B.qrScanning) return;
+        var video = $('bioQrCam');
+        if (!B.qrDecoder) {
+            bioQrInitDecoder().then(function () { if (B.qrScanning) requestAnimationFrame(bioQrLoop); });
+            return;
+        }
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            var w = video.videoWidth, h = video.videoHeight;
+            if (w > 0 && h > 0) {
+                var canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                var ctx = canvas.getContext('2d', { willReadFrequently: true });
+                ctx.drawImage(video, 0, 0, w, h);
+                var imgData = ctx.getImageData(0, 0, w, h);
+                var code = window.__bioState.qrDecoder(imgData.data, w, h);
+                if (code && code.data) {
+                    var now = Date.now();
+                    if (now - B.qrLastDecode > 1500) {
+                        B.qrLastDecode = now;
+                        bioProcessQr(code.data);
+                        return; // stop loop, will restart after processing
+                    }
+                }
+            }
+        }
+        if (B.qrScanning) requestAnimationFrame(bioQrLoop);
+    }
+
+    function bioProcessQr(data) {
+        var B = window.__bioState;
+        B.qrScanning = false;
+        // extraer token de URL tipo .../escanear?token=XXXX
+        var m = data.match(/[?&]token=([a-f0-9]{40})/i);
+        if (!m) {
+            msg('bioQrMsg', 'QR no reconocido. Apunta al QR de tu horario.', false);
+            setTimeout(function () { if (B.qrScanning === false) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
+            return;
+        }
+        var token = m[1];
+        var msgEl = $('bioQrMsg');
+        msgEl.className = 'bio-state-msg show bio-msg-ok';
+        msgEl.textContent = 'QR detectado, verificando…';
+        var fd = new FormData();
+        fd.set('token', token);
+        fetch('<?= site_url('mi-panel/verificar-qr') ?>', {
+            method: 'POST', body: fd, credentials: 'same-origin'
+        }).then(function (r) { return r.json(); })
+        .then(function (res) {
+            if (res.ok) {
+                msgEl.className = 'bio-state-msg show bio-msg-ok';
+                msgEl.textContent = res.msg || 'QR verificado ✓';
+                stopQrStream();
+                setTimeout(function () {
+                    bioCloseQr();
+                    openBioCheckModal();
+                }, 600);
+            } else {
+                msg('bioQrMsg', res.msg || 'QR no válido', false);
+                setTimeout(function () { if (!B.qrScanning) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
+            }
+        }).catch(function () {
+            msg('bioQrMsg', 'Error de red. Reintenta.', false);
+            setTimeout(function () { if (!B.qrScanning) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
+        });
+    }
+
+    function stopQrStream() {
+        var B = window.__bioState;
+        B.qrScanning = false;
+        if (B.qrStream) { B.qrStream.getTracks().forEach(function (t) { t.stop(); }); B.qrStream = null; }
+    }
+
+    window.bioCloseQr = function () {
+        var B = window.__bioState;
+        B.qrScanning = false;
+        $('bioQrModal').classList.remove('c-open');
+        stopQrStream();
+    };
+
+    // Abre el modal biométrico (huella/rostro) DESPUÉS de QR verificado
+    window.openBioCheckModal = function () {
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
         if (!tH && !tR) {
@@ -445,6 +625,62 @@
             showMethod(m);
         });
     };
+
+    window.bioQrManualInput = function () {
+        var token = prompt('Ingresa el código del QR (40 caracteres):');
+        if (token && token.length === 40 && /^[a-f0-9]{40}$/i.test(token)) {
+            bioProcessQr('https://x.escanear?token=' + token);
+        }
+    };
+
+    window.openBioCheck = function () {
+        var tH = <?= $bHuella ?> > 0;
+        var tR = <?= $bRostro ?> > 0;
+        if (!tH && !tR) {
+            alert('Registra tu huella o tu rostro en la seccion Biometria antes de marcar asistencia.');
+            return;
+        }
+        // Horario asignado al usuario
+        var myScheduleId = <?= (int) $userScheduleId ?>;
+        if (!myScheduleId) {
+            alert('No tienes un horario asignado. Contacta a tu administrador.');
+            return;
+        }
+        B.humino_huellaOk = false;
+        B.facialOk = false;
+        B.selfie = '';
+        B.myScheduleId = myScheduleId;
+
+        // 1️⃣ Primero: obtener ubicación (si el admin la exige, el servidor bloqueará)
+        bioGetLocation().then(function (geo) {
+            B.geo = geo;
+            // 2️⃣ Luego: abrir modal biométrico
+            openBioCheckModal();
+        }).catch(function (err) {
+            B.geo = null;
+            console.warn('Geolocation error:', err);
+            // Si el admin exigió geo, el servidor rechazará el marcado
+            openBioCheckModal();
+        });
+    };
+
+    function bioGetLocation() {
+        return new Promise(function (resolve, reject) {
+            if (!navigator.geolocation) {
+                reject(new Error('Geolocation not supported'));
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                function (pos) {
+                    resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy });
+                },
+                function (err) {
+                    reject(err);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        });
+    }
 
     function setupEarlyExit() {
         if (<?= $bioMarkExit ? '1' : '0' ?> !== 1) return false;
@@ -636,13 +872,12 @@
         }
         $('bioCheckEvi').value = B.selfie;
         $('bioCheckMetodo').value = B.method;
-        bioGeo().then(function (geo) {
-            if (geo) {
-                $('bioLat').value = geo.lat;
-                $('bioLng').value = geo.lng;
-            }
-            return fetchFreshCsrf();
-        }).then(function (tok) {
+        // Usar la ubicación ya obtenida al abrir el modal
+        if (B.geo) {
+            $('bioLat').value = B.geo.lat;
+            $('bioLng').value = B.geo.lng;
+        }
+        fetchFreshCsrf().then(function (tok) {
             var inp = $('bioCheckForm').querySelector('input[name=csrf_test_name]');
             if (inp) inp.value = tok;
             $('bioCheckForm').submit();

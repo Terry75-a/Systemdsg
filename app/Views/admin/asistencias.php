@@ -8,65 +8,94 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         .att-wrap { display: flex; flex-direction: column; gap: 22px; }
 
-        /* ── Filtros en tarjetas ──────────────── */
-        .att-filters {
-            display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) minmax(0, 1.25fr);
-            gap: 14px;
+        /* ── Toolbar de filtros · lenguaje sorteroOS / Educonecta ──────
+           Una sola barra con todo el control en dos filas, en lugar de tres
+           tarjetas de alturas desiguales que estiraban su fondo y dejaban
+           huecos vacíos. Los controles siguen la receta de .sb-btn de
+           packages/sb-ui/styles.css:307 —radio 12px, padding 10/20, fondo
+           surface-container y hover surface-container-high— y el foco usa su
+           doble anillo `0 0 0 2px surface, 0 0 0 4px primary`. */
+        .att-toolbar {
+            display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;
+            background: var(--sb-surface); border-radius: 16px; padding: 16px 18px;
         }
-        .att-fcard { display: flex; flex-direction: column; min-width: 0; }
-        .att-fcard .dev-card-head { flex: none; }
-        .att-fcard .dev-card-head h2 { font-size: 0.95rem; letter-spacing: -0.01em; }
-        .att-fbody {
-            padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; flex: 1;
+        .att-tb-main { flex: 1 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+        .att-tb-row { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+        .att-tb-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+        .att-tb-group--grow { flex: 1 1 320px; }
+        .att-tb-label {
+            font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
         }
-        .att-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .att-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-        .att-field > label { font-size: 0.78rem; font-weight: 500; color: var(--g-text-secondary); }
+        /* Filete vertical entre bloques de la barra */
+        .att-tb-div {
+            align-self: stretch; flex: none; width: 1px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 70%, transparent);
+        }
+        .att-dates { display: flex; align-items: center; gap: 8px; }
+        .att-dates-sep { color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent); }
         .att-input {
-            height: 40px; padding: 0 12px; border: 1px solid var(--g-border); width: 100%;
-            border-radius: 12px; background: var(--g-surface); color: var(--g-text);
-            font-size: 0.875rem; font-family: inherit; outline: none;
+            width: 158px; height: 38px; padding: 0 10px;
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+            border-radius: 12px; background: var(--sb-surface); color: var(--sb-on-surface);
+            font-size: 0.85rem; font-family: inherit; outline: none;
+            transition: border-color 125ms ease, box-shadow 125ms ease;
         }
-        .att-input:focus { border-color: var(--g-primary); box-shadow: 0 0 0 3px rgba(27,122,66,.12); }
-        .att-go {
-            height: 40px; padding: 0 18px; border: 0; border-radius: 12px; cursor: pointer;
-            background: var(--g-primary); color: var(--g-bg, #fff); font-weight: 600; font-size: 0.875rem;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            font-family: inherit; width: 100%;
+        .att-input:hover { border-color: var(--sb-outline-variant); }
+        .att-input:focus, .att-input:focus-visible {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary);
         }
-        .att-go:hover { filter: brightness(1.07); }
-        .att-go-ghost {
-            background: transparent; color: var(--g-text); border: 1px solid var(--g-border);
-            height: 36px; border-radius: 12px; width: auto; padding: 0 16px;
-        }
-        .att-go-ghost:hover { background: var(--g-surface-variant); filter: none; }
-        .att-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .att-quick .att-chip { height: 36px; justify-content: center; }
-        .att-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; align-content: flex-start; }
-        .att-chip {
-            height: 34px; padding: 0 14px; border: 1px solid var(--g-border);
-            border-radius: 999px; background: var(--g-surface); color: var(--g-text-secondary); cursor: pointer;
-            font-size: 0.8rem; font-weight: 500; font-family: inherit;
+        /* Controles segmentados: Hoy/Semana/Mes/Todo y los estados */
+        .att-seg { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+        .att-seg-btn {
+            height: 38px; padding: 0 16px; border: 1px solid transparent; border-radius: 50px;
+            background: var(--sb-surface-container); color: var(--sb-on-surface); cursor: pointer;
+            font-size: 0.85rem; font-weight: 500; font-family: inherit; white-space: nowrap;
             display: inline-flex; align-items: center; gap: 6px;
-            transition: background 150ms, color 150ms, border-color 150ms;
+            transition: none;
         }
-        .att-chip:hover { background: var(--g-surface-variant); color: var(--g-text); }
-        .att-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: var(--g-bg, #fff); }
-        .att-chip b { font-size: 0.72rem; font-weight: 700; opacity: .85; }
+        .att-seg-btn:hover { background: var(--sb-surface-container-high); }
+        .att-seg-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary); }
+        .att-seg-btn.on { background: var(--sb-primary); color: #fff; }
+        .att-seg-count {
+            font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; opacity: .55;
+        }
+        .att-seg-btn.on .att-seg-count { opacity: .85; }
+        /* Acciones (sb-btn) */
+        /* CTA EduconectaV2 — píldora .lg-submit: r999 · h48 · 14px/600 ·
+           hover plano: cambia de color sin moverse (sin translate/scale) */
+        .att-go {
+            height: 48px; padding: 0 26px; border: 0; border-radius: 50px; cursor: pointer;
+            background: var(--sb-primary); color: #fff; font-weight: 600; font-size: 14px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: inherit; flex: none;
+            transition: none;
+        }
+        .att-go:hover { background: color-mix(in srgb, var(--sb-primary) 88%, #000); }
+        .att-go:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary); }
+        .att-go-ghost {
+            background: var(--sb-surface-container); color: var(--sb-on-surface);
+            width: auto; padding: 0 26px;
+        }
+        .att-go-ghost:hover { background: var(--sb-surface-container-high); filter: none; }
+        /* Columna de disparadores: Filtrar + CSV juntos y alineados en una
+           misma línea, centrados respecto a las dos filas de la barra.
+           Los botones viven fuera de sus formularios y los disparan con
+           form="" (los <form> no se pueden anidar). */
+        .att-tb-actions {
+            display: flex; align-items: center; gap: 10px; flex: none;
+            align-self: center;
+        }
 
-        /* ── KPIs: métricas unidas (card del dashboard) ── */
-        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on {
-            background: var(--sb-surface-container-low);
-            box-shadow: inset 0 0 0 1px var(--g-primary) !important;
-        }
-        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on .dev-stat-value { color: var(--g-primary); }
-        body:has(.dev-main) .dev-stats-grid .dev-stat-card.att-stat.on .dev-stat-label { color: var(--g-text-secondary); }
+        /* ── KPIs: estado "filtro aplicado" → ver el bloque de métricas más abajo ── */
 
         /* ── Registros ───────────────────────── */
         .att-list { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px 18px; }
@@ -93,69 +122,364 @@
         .att-estado.absent  { color: #64748b; } .att-estado.absent  i { background: #94a3b8; }
         .att-estado.no_exit { color: #2563eb; } .att-estado.no_exit i { background: #3b82f6; }
         .att-edit {
-            width: 36px; height: 36px; border: 1px solid var(--g-border); border-radius: 10px;
+            width: 36px; height: 36px; border: 1px solid var(--g-border); border-radius: 50px;
             background: transparent; color: var(--g-text-secondary); cursor: pointer;
-            display: grid; place-items: center; flex: none; transition: border-color 200ms, color 200ms;
+            display: grid; place-items: center; flex: none; transition: none;
         }
         .att-edit:hover { border-color: var(--g-primary); color: var(--g-primary); }
         .att-edit .material-symbols-outlined { font-size: 18px; }
 
-        /* ── Detalle ─────────────────────────── */
-        .detail-overlay {
-            position: fixed; inset: 0; z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,.4); backdrop-filter: blur(4px);
-            opacity: 0; visibility: hidden; transition: opacity 200ms, visibility 200ms;
-        }
-        .detail-overlay.active { opacity: 1; visibility: visible; }
-        .detail-card {
-            background: var(--g-surface); border-radius: 24px; width: 90%; max-width: 460px;
-            max-height: 85vh; overflow-y: auto;
-            transform: scale(.96); transition: transform 200ms;
-        }
-        .detail-overlay.active .detail-card { transform: scale(1); }
-        .detail-head { padding: 22px 24px 14px; display: flex; align-items: center; gap: 14px; }
-        .detail-av {
-            width: 52px; height: 52px; border-radius: 14px; color: #fff; font-size: 1.2rem; font-weight: 600;
+        /* ── Detalle — canon EduconectaV2: dev-modal (r20 · hairline ·
+           overlay neutro) con footer de dev-btn; dentro del body sólo
+           la fila de identidad (chip de estado + DNI) ── */
+        .detail-who { display: flex; align-items: center; gap: 14px; padding: 4px 0 18px; }
+        .detail-avatar {
+            width: 48px; height: 48px; border-radius: 14px; color: #fff; font-size: 1.2rem; font-weight: 600;
             display: grid; place-items: center; flex: none;
         }
-        .detail-name { font-size: 1.05rem; font-weight: 600; color: var(--g-text); }
-        .detail-sub { font-size: 0.8rem; color: var(--g-text-secondary); margin-top: 2px; }
-        .detail-close { margin-left: auto; }
-        .detail-body { padding: 0 24px 8px; }
+        .detail-sub { font-size: 0.8rem; color: var(--g-text-secondary); }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
         .detail-field { display: flex; flex-direction: column; gap: 4px; }
         .detail-label { font-size: 0.72rem; font-weight: 600; color: var(--g-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
         .detail-value {
             font-size: 0.9rem; font-weight: 500; color: var(--g-text);
-            padding: 10px 14px; background: var(--g-surface-variant); border-radius: 12px;
+            padding: 10px 14px; background: var(--sb-surface-container); border-radius: 12px;
             font-variant-numeric: tabular-nums;
         }
-        .detail-actions { display: flex; gap: 10px; padding: 16px 24px 22px; }
 
-        @media (max-width: 1024px) {
-            .att-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .att-fcard--estado { grid-column: 1 / -1; }
-        }
         @media (max-width: 760px) {
-            .att-filters { grid-template-columns: 1fr; }
-            .att-fcard--estado { grid-column: auto; }
-            .att-fields { grid-template-columns: 1fr; }
-            .att-go { justify-content: center; }
+            /* La barra se apila: los inputs de fecha ocupan su fila */
+            .att-tb-row { align-items: stretch; }
+            .att-tb-div { display: none; }
+            .att-dates { width: 100%; }
+            .att-dates .att-input { flex: 1 1 120px; width: auto; }
+            .att-seg { width: 100%; }
+            .att-tb-actions { flex: 1 1 100%; align-self: stretch; }
+            .att-tb-actions .att-go { flex: 1 1 calc(50% - 5px); justify-content: center; }
         }
         /* ── Paginación ─────────────────────── */
         .att-pager { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding: 16px 18px 20px; }
         .att-page {
             min-width: 34px; height: 34px; padding: 0 9px; display: inline-flex; align-items: center; justify-content: center;
-            border: 1px solid var(--g-border); border-radius: 9px; background: transparent;
+            border: 1px solid var(--g-border); border-radius: 50px; background: transparent;
             color: var(--g-text); font-size: .82rem; font-weight: 600; text-decoration: none; font-family: inherit;
         }
         .att-page:hover { background: var(--g-surface-variant); }
         .att-page.on { background: var(--g-primary); border-color: var(--g-primary); color: var(--g-bg, #fff); }
         .att-page-info { font-size: .78rem; color: var(--g-text-secondary); margin-left: 8px; }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           ASISTENCIAS · diseño premium (scoped a esta página).
+           Estética tipo Next.js/Vercel: bordes sutiles, sombras en capas,
+           tipografía con tracking ajustado y micro-interacciones suaves.
+           Colocado DESPUÉS de next-panel.css para ganar la cascada sin
+           tocar los CSS compartidos.
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* ── Los controles de la barra de filtros se definen en el primer
+           bloque <style>, antes que next-panel.css: aquí no se pisan ── */
+
+        /* ── KPIs · rejilla de métricas sorteroOS ────────────────────────
+           Réplica de minimalist-dashboard.tsx: contenedor rounded-2xl con
+           hairlines (gap-px + bg outline-variant/20), y cada celda
+           bg-surface p-5 flex-col gap-3 con una fila arriba que lleva el
+           icono (h-4 w-4, tenue y a color en hover) y, debajo, label 10px
+           uppercase tracking-wider + valor text-xl bold tracking-tight.
+
+           Estas celdas son enlaces que aplican filtro, así que además
+           heredan hover y focus-visible. Los `!important` del icono son
+           inevitables: next-panel.css:439 fija su color con !important
+           (educonecta.css agrupa .dev-stat-icon del mismo modo). */
+        body:has(.dev-main) .dev-stats-grid.att-kpis {
+            gap: 1px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent);
+            border-radius: 16px;
+            overflow: hidden;
+            grid-auto-flow: initial;
+            grid-auto-columns: initial;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-bottom: 24px;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card {
+            background: var(--sb-surface);
+            border: 0;
+            border-radius: 0;
+            padding: 20px;                    /* p-5 */
+            display: flex;
+            flex-direction: column;           /* gap-3 va por margen: así label→valor
+                                                 conserva su mt-0.5 de 2px */
+            transition: background-color 150ms ease;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card:hover {
+            background: var(--sb-surface-container-low);
+            border-color: transparent;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-card:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--sb-primary) 70%, transparent);
+            outline-offset: -2px;
+            z-index: 1;
+        }
+        /* Fila del icono: desnuda, sin chip de color, a la izquierda */
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon {
+            width: auto; height: auto; margin-bottom: 12px; border-radius: 0;  /* gap-3 */
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon .material-symbols-outlined {
+            font-size: 16px;                   /* h-4 w-4 */
+            opacity: .55;
+            transition: opacity 150ms ease;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-accent .material-symbols-outlined { color: var(--sb-primary) !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-green  .material-symbols-outlined { color: #16a34a !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-amber  .material-symbols-outlined { color: #b45309 !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-red    .material-symbols-outlined { color: #dc2626 !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-blue   .material-symbols-outlined { color: #2563eb !important; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat:hover .dev-stat-icon .material-symbols-outlined { opacity: 1; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-label {
+            font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            margin-bottom: 2px;
+        }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .dev-stat-value {
+            font-size: 20px;                   /* text-xl */
+            font-weight: 700;
+            letter-spacing: -.025em;           /* tracking-tight */
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+            color: var(--sb-on-surface);
+        }
+        /* Filtro aplicado (radio-cards): tinte de color según estado, sin
+           anillo — el anillo rompía la rejilla de hairlines */
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on { box-shadow: none; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) { background: color-mix(in srgb, var(--sb-primary) 7%, var(--sb-surface)); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  { background: color-mix(in srgb, #16a34a 7%, var(--sb-surface)); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  { background: color-mix(in srgb, #b45309 7%, var(--sb-surface)); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    { background: color-mix(in srgb, #dc2626 7%, var(--sb-surface)); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   { background: color-mix(in srgb, #2563eb 7%, var(--sb-surface)); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on .dev-stat-icon .material-symbols-outlined { opacity: 1; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) .dev-stat-value,
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) .dev-stat-label { color: var(--sb-primary); }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  .dev-stat-value,
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  .dev-stat-label { color: #16a34a; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  .dev-stat-value,
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  .dev-stat-label { color: #b45309; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    .dev-stat-value,
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    .dev-stat-label { color: #dc2626; }
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   .dev-stat-value,
+        body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   .dev-stat-label { color: #2563eb; }
+
+        @media (min-width: 768px) {
+            body:has(.dev-main) .dev-stats-grid.att-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1200px) {
+            body:has(.dev-main) .dev-stats-grid.att-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+        }
+
+        /* ── Registros · lista moderna ─────────────────────────────── */
+        .att-list { padding: 8px; gap: 2px; }
+        .att-item {
+            border: 1px solid transparent; border-radius: 12px;
+            transition: background .15s ease, border-color .15s ease;
+        }
+        .att-item:hover { background: var(--g-surface-variant); border-color: var(--g-border); }
+        .att-av { border-radius: 11px; font-weight: 600; }
+        .att-name { font-weight: 600; letter-spacing: -.01em; }
+        .att-estado {
+            padding: 6px 12px; border-radius: 50px; font-weight: 600; font-size: .78rem;
+        }
+        .att-estado.present { color: #15803d; background: rgba(34,197,94,.13); }
+        .att-estado.late    { color: #b45309; background: rgba(245,158,11,.15); }
+        .att-estado.absent  { color: #475569; background: rgba(100,116,139,.14); }
+        .att-estado.no_exit { color: #1d4ed8; background: rgba(59,130,246,.13); }
+        /* avatar con tinte sutil del estado */
+        .att-item:has(.att-estado.present) .att-av { background: rgba(34,197,94,.12); color: #16a34a; }
+        .att-item:has(.att-estado.late)    .att-av { background: rgba(245,158,11,.14); color: #b45309; }
+        .att-item:has(.att-estado.absent)  .att-av { background: rgba(100,116,139,.13); color: #64748b; }
+        .att-item:has(.att-estado.no_exit) .att-av { background: rgba(59,130,246,.12); color: #2563eb; }
+        .att-edit { border-radius: 50px; transition: none; }
+        .att-edit:hover { background: var(--g-surface-variant); }
+
+        /* ── Tarjeta Registros · cabecera pulida ───────────────────── */
+        .dev-card { border: 1px solid var(--g-border); border-radius: 16px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+
+        /* ── Botón Filtrar · verde consistente en oscuro ─────────────
+           :not(.att-go-ghost) para no pintar el botón CSV (outline) */
+        html.dark .att-go:not(.att-go-ghost) { background: #1b7a42; color: #ffffff; }
+        html.dark .att-go:not(.att-go-ghost):hover { background: #1f8c4d; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MODO OSCURO · ajustes de superficie, sombras y acentos
+           ═══════════════════════════════════════════════════════════════ */
+        html.dark .dev-card {
+            box-shadow: 0 1px 2px rgba(0,0,0,.4);
+        }
+        /* KPIs · oscuro: mismo diseño, iconos en tono claro y sin sombras */
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-accent .material-symbols-outlined { color: #4ade80 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-green  .material-symbols-outlined { color: #4ade80 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-amber  .material-symbols-outlined { color: #fbbf24 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-red    .material-symbols-outlined { color: #f87171 !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat .dev-stat-icon.si-blue   .material-symbols-outlined { color: #60a5fa !important; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) { background: color-mix(in srgb, #4ade80 12%, var(--sb-surface)); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  { background: color-mix(in srgb, #4ade80 12%, var(--sb-surface)); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  { background: color-mix(in srgb, #fbbf24 12%, var(--sb-surface)); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    { background: color-mix(in srgb, #f87171 12%, var(--sb-surface)); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   { background: color-mix(in srgb, #60a5fa 12%, var(--sb-surface)); }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) .dev-stat-value,
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-accent) .dev-stat-label { color: #4ade80; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  .dev-stat-value,
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-green)  .dev-stat-label { color: #4ade80; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  .dev-stat-value,
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-amber)  .dev-stat-label { color: #fbbf24; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    .dev-stat-value,
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-red)    .dev-stat-label { color: #f87171; }
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   .dev-stat-value,
+        html.dark body:has(.dev-main) .dev-stats-grid.att-kpis .att-stat.on:has(.si-blue)   .dev-stat-label { color: #60a5fa; }
+        html.dark .att-item:hover { background: #161616; border-color: #262626; }
+        html.dark .att-input:hover { border-color: #3f3f46; }
+        html.dark .att-estado.present { color: #4ade80; background: rgba(34,197,94,.14); }
+        html.dark .att-estado.late    { color: #fbbf24; background: rgba(251,191,36,.13); }
+        html.dark .att-estado.absent  { color: #94a3b8; background: rgba(148,163,184,.13); }
+        html.dark .att-estado.no_exit { color: #60a5fa; background: rgba(96,165,250,.13); }
+        html.dark .att-item:has(.att-estado.present) .att-av { background: rgba(34,197,94,.14); color: #4ade80; }
+        html.dark .att-item:has(.att-estado.late)    .att-av { background: rgba(251,191,36,.13); color: #fbbf24; }
+        html.dark .att-item:has(.att-estado.absent)  .att-av { background: rgba(148,163,184,.13); color: #94a3b8; }
+        html.dark .att-item:has(.att-estado.no_exit) .att-av { background: rgba(96,165,250,.13); color: #60a5fa; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ASISTENCIAS · lenguaje sorteroOS  (igual que el dashboard)
+           sorteroOS no usa card con borde: el título queda apoyado sobre el
+           fondo de página (11px, mayúsculas, tracking amplio, muy apagado)
+           y el "card" lo forma el bloque de contenido de abajo —redondo, sin
+           marco ni sombra, con hairlines de 1px—.
+
+           Aquí NO se toca el markup de Registros: el .dev-card pasa a
+           transparente, su cabecera queda viviendo sobre el fondo y
+           .att-list es el que se convierte en el bloque blanco.
+
+           Todos los selectores llevan `body:has(.dev-main)` + una clase más:
+           así superan las reglas de este mismo archivo (0,2,1 / 0,3,1) y las
+           de next-panel.css sin necesidad de !important. */
+        body:has(.dev-main) .dev-card {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        /* Cabecera: micro-título sobre el fondo, sin divisoria ni padding lateral */
+        body:has(.dev-main) .dev-card .dev-card-head {
+            padding: 0 0 16px;
+            border-bottom: 0;
+            border-radius: 0;
+            align-items: baseline;
+        }
+        body:has(.dev-main) .dev-card .dev-card-head h2 {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            gap: 6px;
+        }
+        body:has(.dev-main) .dev-card .dev-card-head h2 .material-symbols-outlined {
+            font-size: 15px;
+            color: inherit;
+        }
+
+        /* ── Registros · lista con hairlines (rounded-2xl + space-y-px) ── */
+        body:has(.dev-main) .dev-card .att-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 10%, transparent);
+            border-radius: 16px;
+            overflow: hidden;
+            padding: 0;
+        }
+        body:has(.dev-main) .dev-card .att-item {
+            background: var(--sb-surface);
+            border: 0;
+            border-radius: 0;
+            padding: 16px 20px;
+            transition: background .15s ease;
+        }
+        body:has(.dev-main) .dev-card .att-item:hover {
+            background: var(--sb-surface-container-low);
+            border-color: transparent;
+        }
+        /* Caja del avatar: 32px / r8 / surface-container y neutra — se
+           apagan los tintes por estado. Lleva .att-item en la cadena para
+           ganarle a `html.dark .att-item:has(.att-estado.x) .att-av`
+           (0,4,2), que si no repondría el tinte en modo oscuro. */
+        body:has(.dev-main) .dev-card .att-item .att-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--sb-surface-container);
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        body:has(.dev-main) .dev-card .att-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--sb-on-surface);
+        }
+        body:has(.dev-main) .dev-card .att-dni {
+            font-size: 12px;
+            font-weight: 400;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        /* Meta (fecha · entrada · salida): una línea tenue, sin negritas negras */
+        body:has(.dev-main) .dev-card .att-meta {
+            font-size: 12px;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        body:has(.dev-main) .dev-card .att-meta b {
+            color: inherit;
+            font-weight: 500;
+        }
+        /* Acciones de fila: sin marco */
+        body:has(.dev-main) .dev-card .att-edit {
+            width: 32px;
+            height: 32px;
+            border: 0;
+            border-radius: 50px;
+            background: transparent;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        body:has(.dev-main) .dev-card .att-edit:hover {
+            border-color: transparent;
+            background: var(--sb-surface-container);
+            color: var(--sb-primary);
+        }
+        body:has(.dev-main) .dev-card .att-pager { margin-top: 12px; }
+        /* Estado vacío: ese bloque es el card */
+        body:has(.dev-main) .dev-card .dev-empty {
+            background: var(--sb-surface);
+            border-radius: 16px;
+        }
+
+        /* ── Red de seguridad EduconectaV2 ──
+           Mismas decisiones que educonecta.css (4c píldora · 7 modales
+           r20 flat): si el SW todavía sirve una hoja vieja, la página
+           se ve bien igual porque el <style> llega siempre fresco. */
+        button, [class*="btn"], [class*="-close"], [class*="-chip"] {
+            border-radius: 50px !important;
+        }
+        .dev-modal {
+            border-radius: 20px;
+            border: 1px solid var(--sb-outline-variant);
+            box-shadow: none;
+        }
+        .dev-modal-overlay {
+            background: rgba(0, 0, 0, 0.32);
+            backdrop-filter: none !important;
+        }
+    </style>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>
@@ -199,94 +523,98 @@
                     };
                 ?>
 
-                <!-- Filtros en tarjetas -->
-                <div class="att-filters">
-                    <div class="dev-card att-fcard">
-                        <div class="dev-card-head">
-                            <h2><span class="material-symbols-outlined">date_range</span> Rango de fechas</h2>
-                            <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" class="att-csv">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
-                                <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
-                                <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
-                                <button type="submit" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
-                                    <span class="material-symbols-outlined">download</span> CSV
-                                </button>
-                            </form>
-                        </div>
-                        <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-fbody">
-                            <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
-                            <div class="att-fields">
-                                <div class="att-field">
-                                    <label for="fecha_inicio">Desde</label>
-                                    <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
-                                </div>
-                                <div class="att-field">
-                                    <label for="fecha_fin">Hasta</label>
-                                    <input type="date" class="att-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                <!-- Barra de filtros · una sola barra con todo el control,
+                     en lugar de tres tarjetas de alturas desiguales -->
+                <div class="att-toolbar">
+                    <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-tb-main">
+                        <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
+
+                        <div class="att-tb-row">
+                            <div class="att-tb-group">
+                                <span class="att-tb-label" id="lbl-rango">Rango de fechas</span>
+                                <div class="att-dates" role="group" aria-labelledby="lbl-rango">
+                                    <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio"
+                                           value="<?= esc($fecha_inicio ?? '') ?>" aria-label="Desde">
+                                    <span class="att-dates-sep" aria-hidden="true">→</span>
+                                    <input type="date" class="att-input" id="fecha_fin" name="fecha_fin"
+                                           value="<?= esc($fecha_fin ?? '') ?>" aria-label="Hasta">
                                 </div>
                             </div>
-                            <button type="submit" class="att-go">
-                                <span class="material-symbols-outlined">search</span> Filtrar
-                            </button>
-                        </form>
-                    </div>
 
-                    <div class="dev-card att-fcard">
-                        <div class="dev-card-head">
-                            <h2><span class="material-symbols-outlined">history</span> Periodo</h2>
-                        </div>
-                        <div class="att-fbody">
-                            <div class="att-quick">
-                                <button type="button" class="att-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
-                                <button type="button" class="att-chip <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Semana</button>
-                                <button type="button" class="att-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Mes</button>
-                                <button type="button" class="att-chip <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
+                            <span class="att-tb-div" aria-hidden="true"></span>
+
+                            <div class="att-tb-group">
+                                <span class="att-tb-label" id="lbl-periodo">Periodo</span>
+                                <div class="att-seg" role="group" aria-labelledby="lbl-periodo">
+                                    <button type="button" class="att-seg-btn <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
+                                    <button type="button" class="att-seg-btn <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Semana</button>
+                                    <button type="button" class="att-seg-btn <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Mes</button>
+                                    <button type="button" class="att-seg-btn <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="dev-card att-fcard att-fcard--estado">
-                        <div class="dev-card-head">
-                            <h2><span class="material-symbols-outlined">filter_alt</span> Estado</h2>
-                        </div>
-                        <div class="att-fbody">
-                            <div class="att-chips">
-                                <?php
-                                    // Los conteos sólo tienen sentido sin filtro de estado (con filtro, el resto queda en 0)
-                                    $conteos = $filtroEstado === '' ? [
-                                        ''         => $totalRegistros,
-                                        'present'  => $totalPresentes,
-                                        'late'     => $totalTardanzas,
-                                        'absent'   => $totalFaltas,
-                                        'no_exit'  => $totalSinSalida,
-                                    ] : [];
-                                    $estados = [
-                                        ''         => 'Todos',
-                                        'present'  => 'Presentes',
-                                        'late'     => 'Tardanzas',
-                                        'absent'   => 'Faltas',
-                                        'no_exit'  => 'Sin salida',
-                                    ];
-                                    foreach ($estados as $val => $txt): ?>
-                                        <button type="button" class="att-chip <?= $filtroEstado === $val ? 'on' : '' ?>" onclick="estado('<?= $val ?>')">
-                                            <?= $txt ?><?= isset($conteos[$val]) ? ' <b>' . $conteos[$val] . '</b>' : '' ?>
-                                        </button>
+                        <div class="att-tb-row">
+                            <div class="att-tb-group att-tb-group--grow">
+                                <span class="att-tb-label" id="lbl-estado">Estado</span>
+                                <div class="att-seg" role="group" aria-labelledby="lbl-estado">
+                                    <?php
+                                        // Los conteos sólo tienen sentido sin filtro de estado (con filtro, el resto queda en 0)
+                                        $conteos = $filtroEstado === '' ? [
+                                            ''         => $totalRegistros,
+                                            'present'  => $totalPresentes,
+                                            'late'     => $totalTardanzas,
+                                            'absent'   => $totalFaltas,
+                                            'no_exit'  => $totalSinSalida,
+                                        ] : [];
+                                        $estados = [
+                                            ''         => 'Todos',
+                                            'present'  => 'Presentes',
+                                            'late'     => 'Tardanzas',
+                                            'absent'   => 'Faltas',
+                                            'no_exit'  => 'Sin salida',
+                                        ];
+                                        foreach ($estados as $val => $txt): ?>
+                                            <button type="button" class="att-seg-btn <?= $filtroEstado === $val ? 'on' : '' ?>" onclick="estado('<?= $val ?>')">
+                                                <?= $txt ?><?= isset($conteos[$val]) ? '<span class="att-seg-count">' . $conteos[$val] . '</span>' : '' ?>
+                                            </button>
                                     <?php endforeach; ?>
+                                </div>
                             </div>
                         </div>
+                    </form>
+
+                    <!-- Filtrar y CSV juntos y alineados: Filtrar dispara el
+                         form GET y CSV el form POST vía el atributo form=""
+                         (los <form> no se pueden anidar) -->
+                    <div class="att-tb-actions">
+                        <button type="submit" form="filtro-form" class="att-go">
+                            <span class="material-symbols-outlined">search</span> Filtrar
+                        </button>
+                        <button type="submit" form="csv-form" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
+                            <span class="material-symbols-outlined">download</span> CSV
+                        </button>
                     </div>
+
+                    <!-- El CSV en su propio form, oculto: sólo aporta los
+                         campos (fechas + estado) que envía el botón de arriba -->
+                    <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" id="csv-form" hidden>
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                        <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                        <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
+                    </form>
                 </div>
 
-                <!-- KPIs · métricas unidas (card del dashboard) -->
-                <div class="dev-stats-grid">
+                <!-- KPIs · rejilla de métricas sorteroOS (también filtran por estado) -->
+                <div class="dev-stats-grid att-kpis">
                     <?php
                         $kpis = [
                             [''        , 'summarize'   , 'Total registros', $totalRegistros, 'si-accent'],
                             ['present' , 'check_circle', 'Presentes'      , $totalPresentes, 'si-green'],
                             ['late'    , 'schedule'    , 'Tardanzas'      , $totalTardanzas, 'si-amber'],
                             ['absent'  , 'cancel'      , 'Faltas'         , $totalFaltas   , 'si-red'],
-                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-accent'],
+                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-blue'],
                         ];
                         foreach ($kpis as [$est, $ico, $lbl, $num, $cls]): ?>
                             <a class="dev-stat-card att-stat <?= $filtroEstado === $est ? 'on' : '' ?>"
@@ -306,7 +634,21 @@
                     <?php if (empty($attendance)): ?>
                         <div class="dev-empty">
                             <span class="material-symbols-outlined">event_busy</span>
-                            <p>No hay registros de asistencia en este rango.</p>
+                            <p>
+                                <strong>Sin marcaciones en el rango elegido.</strong><br>
+                                <?php
+                                    // El mensaje dice la verdad de ambos filtros:
+                                    // si hay rango lo nombra, y si hay filtro de estado lo señala
+                                    $etiquetaEstado = ['present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida'][$estado] ?? '';
+                                    if ($fecha_inicio && $fecha_fin) {
+                                        echo 'Buscando entre el ', date('d/m/Y', strtotime($fecha_inicio)), ' y el ', date('d/m/Y', strtotime($fecha_fin));
+                                    } else {
+                                        echo 'Buscando todo el histórico';
+                                    }
+                                    echo $etiquetaEstado !== '' ? ' con estado «' . esc($etiquetaEstado) . '»' : '';
+                                ?>.
+                                Elige «Todo» para ver el listado completo, o cambia el periodo.
+                            </p>
                         </div>
                     <?php else: ?>
                         <div class="att-list">
@@ -378,19 +720,17 @@
     </main>
 
     <!-- Detail Modal -->
-    <div class="detail-overlay" id="attDetailOverlay" onclick="if(event.target===this)closeDetail()">
-        <div class="detail-card">
-            <div class="detail-head">
-                <div class="detail-av" id="attDetailAvatar">E</div>
-                <div>
-                    <div class="detail-name" id="attDetailName">-</div>
+    <div class="dev-modal-overlay" id="attDetailOverlay" onclick="if(event.target===this)closeDetail()">
+        <div class="dev-modal" style="max-width:460px;">
+            <div class="dev-modal-head">
+                <h3><span class="material-symbols-outlined">fact_check</span> <span id="attDetailName">-</span></h3>
+                <button type="button" class="dev-btn-icon" onclick="closeDetail()"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="dev-modal-body">
+                <div class="detail-who">
+                    <div class="detail-avatar" id="attDetailAvatar">E</div>
                     <div class="detail-sub" id="attDetailDni">-</div>
                 </div>
-                <button type="button" class="dev-modal-close detail-close" onclick="closeDetail()">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <div class="detail-body">
                 <div class="detail-grid">
                     <div class="detail-field">
                         <div class="detail-label">Fecha</div>
@@ -412,9 +752,21 @@
                         <div class="detail-label">Observación</div>
                         <div class="detail-value" id="attDetailObs">-</div>
                     </div>
+
+                    <!-- Mapa de ubicación -->
+                    <div class="detail-field" style="grid-column:span 2;">
+                        <div class="detail-label">Ubicación</div>
+                        <div class="detail-value" style="padding:0; min-height:200px;">
+                            <div id="mapContainer" style="width:100%; height:0; border-radius:12px; overflow:hidden; background:var(--g-surface-variant); display:none;"></div>
+                            <div id="mapMsg" style="text-align:center; padding:40px; color:var(--g-text-secondary); font-size:0.9rem;">
+                                <span class="material-symbols-outlined" style="font-size:2rem; display:block; margin-bottom:8px;">location_off</span>
+                                <span>Esta marcación no tiene ubicación registrada</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="detail-actions">
+            <div class="dev-modal-footer">
                 <button type="button" class="dev-btn dev-btn-text" onclick="closeDetail()">Cerrar</button>
                 <a class="dev-btn dev-btn-outline" id="attDetailAuditBtn" href="<?= site_url('admin/asistencias') ?>" style="text-decoration:none;">
                     <span class="material-symbols-outlined">manage_search</span> Auditoría
@@ -484,6 +836,7 @@
                 'id' => (int) $r['id'], 'name' => $r['name'] ?? 'Empleado', 'dni' => $r['dni'] ?? '',
                 'date' => $r['date'] ?? '', 'time_in' => $r['time_in'] ?? '', 'time_out' => $r['time_out'] ?? '',
                 'status' => $r['status'] ?? '', 'observacion' => $r['observacion'] ?? '',
+                'lat' => $r['lat'] ?? null, 'lng' => $r['lng'] ?? null,
             ];
         }
         echo json_encode($attRowsMap, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
@@ -512,13 +865,74 @@
         document.getElementById('attDetailObs').textContent = r.observacion || 'Sin observación';
         document.getElementById('attDetailAuditBtn').href = '<?= site_url('admin/auditoria/') ?>' + r.id;
         document.getElementById('attDetailEditBtn').onclick = function () { closeDetail(); openEdit(r.id); };
+
+        // Mapa
+        var mapContainer = document.getElementById('mapContainer');
+        var mapMsg = document.getElementById('mapMsg');
+        var lat = parseFloat(r.lat);
+        var lng = parseFloat(r.lng);
+        if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+            // Mostrar mapa
+            document.getElementById('mapMsg').style.display = 'none';
+            mapContainer.style.display = 'block';
+            // Inicializar mapa después de que el modal sea visible
+            setTimeout(function() {
+                if (!document.getElementById('mapContainer')._leaflet_id) {
+                    var map = L.map('mapContainer').setView([parseFloat(r.lat), parseFloat(r.lng)], 16);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(map);
+                    L.marker([parseFloat(r.lat), parseFloat(r.lng)]).addTo(map)
+                        .bindPopup('Ubicación de la marcación').openPopup();
+                    document.getElementById('mapContainer')._leaflet_map = map;
+                    setTimeout(function() { map.invalidateSize(); }, 100);
+                }
+            }, 100);
+        } else {
+            // No hay ubicación
+            document.getElementById('mapMsg').style.display = 'block';
+            mapContainer.style.display = 'none';
+        }
+
         document.getElementById('attDetailOverlay').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-    function closeDetail() {
-        document.getElementById('attDetailOverlay').classList.remove('active');
-        document.body.style.overflow = '';
-    }
+    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        var mapCache = {};
+        function openMap(lat, lng) {
+            if (!lat || !lng || lat === '0' || lng === '0') {
+                alert('Esta asistencia no tiene ubicación registrada');
+                return;
+            }
+            var mapDiv = document.getElementById('mapContainer');
+            if (mapDiv._leaflet_id) {
+                mapDiv._leaflet_map.remove();
+                mapDiv._leaflet_map = null;
+            }
+            mapDiv.style.height = '300px';
+            var map = L.map('mapContainer').setView([lat, lng], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup('Ubicación de la marcación').openPopup();
+            mapDiv._leaflet_map = map;
+            // Force map to recalculate size after modal is visible
+            setTimeout(function() { map.invalidateSize(); }, 100);
+        }
+
+        function closeDetail() {
+            document.getElementById('attDetailOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            // Clean up map if open
+            var mapDiv = document.getElementById('mapContainer');
+            if (mapDiv && mapDiv._leaflet_map) {
+                mapDiv._leaflet_map.remove();
+                mapDiv._leaflet_map = null;
+            }
+        }
 
     function openEdit(id) {
         var r = attRows[id];
@@ -570,6 +984,51 @@
         } else { fi.value = ''; ff.value = ''; }
         form.submit();
     }
+
+    // ════════════════════════════════════════════
+    // TIEMPO REAL - Helpers para SSE
+    // ════════════════════════════════════════════
+    window.agregarFilaAsistencia = function(datos) {
+        // Insertar nueva fila al principio de la tabla
+        var tbody = document.querySelector('.att-list');
+        if (!tbody) return;
+        
+        var st = datos.status || 'absent';
+        var m = window.statusMeta ? window.statusMeta[st] : {label: st, color: '#64748b', bg: '#94a3b8'};
+        
+        var div = document.createElement('div');
+        div.className = 'att-item';
+        div.onclick = function() { openDetail(datos.id); };
+        div.innerHTML = '<div class="att-av">' + (datos.name || 'E').charAt(0).toUpperCase() + '</div>' +
+            '<div class="att-main">' +
+                '<div class="att-name"><b>' + (datos.name || 'Empleado') + '</b><span class="att-dni">' + (datos.dni || '—') + '</span></div>' +
+                '<div class="att-meta"><span><b>' + (datos.date || '-') + '</b></span><span>Entrada <b>' + (datos.time_in || '-') + '</b></span><span>Salida <b>' + (datos.time_out || '-') + '</b></span></div>' +
+            '</div>' +
+            '<span class="att-estado ' + st + '" style="color:' + m.color + '"><i style="background:' + m.bg + '"></i>' + m.label + '</span>' +
+            '<a class="att-edit" href="' + window.location.origin + '/admin/auditoria/' + datos.id + '" onclick="event.stopPropagation();" title="Auditoría"><span class="material-symbols-outlined">manage_search</span></a>' +
+            '<button type="button" class="att-edit" onclick="event.stopPropagation(); openEdit(' + datos.id + ')" title="Editar"><span class="material-symbols-outlined">edit</span></button>';
+        
+        tbody.insertBefore(div, tbody.firstChild);
+    };
+
+    window.actualizarFilaAsistencia = function(datos) {
+        var item = document.querySelector('.att-item[onclick*="openDetail(' + datos.id + ')"]');
+        if (!item) return;
+        
+        var st = datos.status || 'absent';
+        var m = window.statusMeta ? window.statusMeta[st] : {label: st, color: '#64748b', bg: '#94a3b8'};
+        
+        item.querySelector('.att-estado').textContent = m.label;
+        item.querySelector('.att-estado').style.color = m.color;
+        item.querySelector('.att-estado i').style.background = m.bg;
+        item.querySelector('.att-meta').innerHTML = '<span><b>' + (datos.date || '-') + '</b></span><span>Entrada <b>' + (datos.time_in || '-') + '</b></span><span>Salida <b>' + (datos.time_out || '-') + '</b></span>';
+    };
     </script>
+
+<!-- Campana de notificaciones (compartida en todas las secciones admin) -->
+<?= view('partials/admin-notif-bell') ?>
+<?= view('partials/pwa-js') ?>
 </body>
+<!-- PWA -->
+    <?= view('partials/pwa-head') ?>
 </html>

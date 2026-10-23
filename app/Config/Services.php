@@ -102,4 +102,22 @@ class Services extends BaseService
 
         return new ClienteValidationService();
     }
+
+    public static function webpush(bool $getShared = true): \App\Services\WebPushService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('webpush');
+        }
+
+        return new \App\Services\WebPushService();
+    }
+
+    public static function pushSubscription(bool $getShared = true): \App\Models\PushSubscriptionModel
+    {
+        if ($getShared) {
+            return static::getSharedInstance('pushSubscription');
+        }
+
+        return new \App\Models\PushSubscriptionModel();
+    }
 }

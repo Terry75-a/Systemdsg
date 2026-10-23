@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Asisten DSG: control de asistencia del personal. Marcación con QR, tardanzas, reportes para planilla y multi-sede.">
+    <meta name="description" content="Asisten DSG: control de asistencia del personal. Marcación con ubicación en tiempo real, tardanzas, reportes para planilla y multi-sede.">
     <title>Asisten DSG · Control de asistencia del personal</title>
+
+    <!-- Tema guardado: se aplica antes del primer pintado para evitar destello -->
+    <script>try{var t=localStorage.getItem('mmTheme');if(t==='dark')document.documentElement.classList.add('tema-oscuro');else if(t==='light')document.documentElement.classList.add('tema-claro');}catch(e){}</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/asisten-landing.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/asisten-landing.css') ?>?v=202610152">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
 </head>
 <body class="mm-landing">
@@ -27,6 +30,9 @@
                 <a href="#faq" class="mm-nav-btn">FAQ</a>
             </div>
             <div class="mm-nav-actions">
+                <button class="mm-nav-btn mm-theme-btn" type="button" data-mm-theme-toggle aria-label="Cambiar entre modo claro y oscuro" title="Modo claro / oscuro">
+                    <span class="material-symbols-rounded">dark_mode</span>
+                </button>
                 <a href="<?= base_url('login-verde') ?>" class="mm-nav-btn">Iniciar sesión</a>
                 <a href="#contacto" class="mm-nav-btn is-outline">Solicitar demo</a>
                 <button class="mm-nav-toggle" id="mmToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
@@ -39,6 +45,10 @@
             <a href="#faq"><span>Preguntas frecuentes</span><span class="material-symbols-rounded">help</span></a>
             <a href="<?= base_url('login-verde') ?>"><span>Iniciar sesión</span><span class="material-symbols-rounded">login</span></a>
             <a href="#contacto"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
+            <button class="mm-nav-btn mm-theme-btn" type="button" data-mm-theme-toggle>
+                <span class="mm-theme-label">Modo oscuro</span>
+                <span class="material-symbols-rounded">dark_mode</span>
+            </button>
         </div>
     </nav>
 </header>
@@ -98,10 +108,19 @@
                     </div>
                     <div class="mock-foot">
                         <div class="mock-meter"><span id="mockMeter"></span></div>
-                        <div class="mock-foot-row">
-                            <p><strong id="mockCount">38</strong>/42 presentes hoy</p>
-                            <button type="button" class="mock-mark" id="mockMark">Marcar asistencia</button>
-                        </div>
+            <div class="mock-foot-row">
+                <p><strong id="mockCount">38</strong>/42 presentes hoy</p>
+            </div>
+            <div class="mock-example" role="note" aria-label="Ejemplo de marcación">
+                <span class="mock-example-tag">Ejemplo de marcación</span>
+                <div class="mock-example-row">
+                    <span class="mock-avatar ma-4">JP</span>
+                    <div class="mock-who"><strong>Jorge Puma</strong><small>Operaciones · Ingreso</small></div>
+                    <span class="mock-time">07:56</span>
+                    <span class="mock-status st-ok">A tiempo</span>
+                </div>
+                <span class="mock-example-geo"><span class="material-symbols-rounded">my_location</span> Ubicación en tiempo real · Sede Pucallpa</span>
+            </div>
                     </div>
                 </div>
                 <span class="chip chip-1"><span class="material-symbols-rounded">bolt</span> Marcación en 5 seg</span>
@@ -171,39 +190,30 @@
 
         <div class="tab-wrapper reveal" data-delay="1">
             <div class="menu-pill-container" role="tablist">
-                <button class="tab-button-pill active" data-tab="0" type="button"><span class="material-symbols-rounded">qr_code_2</span>Marcación QR</button>
+                <button class="tab-button-pill active" data-tab="0" type="button"><span class="material-symbols-rounded">my_location</span>Marcación en vivo</button>
                 <button class="tab-button-pill" data-tab="1" type="button"><span class="material-symbols-rounded">schedule</span>Tardanzas</button>
                 <button class="tab-button-pill" data-tab="2" type="button"><span class="material-symbols-rounded">event</span>Horarios</button>
                 <button class="tab-button-pill" data-tab="3" type="button"><span class="material-symbols-rounded">description</span>Reportes</button>
                 <button class="tab-button-pill" data-tab="4" type="button"><span class="material-symbols-rounded">storefront</span>Multi-sede</button>
             </div>
 
-            <!-- tab 0 · QR -->
+            <!-- tab 0 · Ubicación en tiempo real -->
             <div class="tab-content active" data-panel="0">
                 <div class="feature-content-container">
                     <div class="feature-content-left">
                         <div class="tab-visual">
-                            <div class="qr-box">
-                                <svg width="120" height="120" viewBox="0 0 25 25" fill="currentColor">
-                                    <rect x="1" y="1" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="3" height="3"/>
-                                    <rect x="17" y="1" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="19" y="3" width="3" height="3"/>
-                                    <rect x="1" y="17" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="19" width="3" height="3"/>
-                                    <rect x="10" y="2" width="2" height="2"/><rect x="13" y="4" width="2" height="2"/><rect x="10" y="7" width="2" height="2"/>
-                                    <rect x="2" y="10" width="2" height="2"/><rect x="5" y="12" width="2" height="2"/><rect x="8" y="10" width="2" height="2"/>
-                                    <rect x="11" y="11" width="3" height="3"/><rect x="15" y="10" width="2" height="2"/><rect x="18" y="12" width="2" height="2"/>
-                                    <rect x="21" y="10" width="2" height="2"/><rect x="10" y="15" width="2" height="2"/><rect x="14" y="14" width="2" height="2"/>
-                                    <rect x="17" y="16" width="2" height="2"/><rect x="21" y="15" width="2" height="2"/><rect x="12" y="18" width="2" height="2"/>
-                                    <rect x="15" y="20" width="2" height="2"/><rect x="19" y="19" width="2" height="2"/><rect x="22" y="21" width="2" height="2"/>
-                                    <rect x="10" y="22" width="2" height="2"/><rect x="5" y="15" width="2" height="2"/><rect x="7" y="21" width="2" height="2"/>
-                                </svg>
+                            <div class="geo-box">
+                                <span class="material-symbols-rounded geo-pin">location_on</span>
+                                <span class="geo-live"><span class="geo-dot"></span> Ubicación en tiempo real</span>
+                                <span class="geo-place">Sede Pucallpa · Perú</span>
                             </div>
                         </div>
                     </div>
                     <div class="feature-content-right">
-                        <h3>Marcación con QR</h3>
-                        <p>Tu personal marca ingreso y salida escaneando un código. Sin filas, sin equipos costosos, sin excusas.</p>
+                        <h3>Marcación con ubicación en tiempo real</h3>
+                        <p>Tu personal registra ingreso y salida desde su celular con su ubicación verificada en el momento. Sin filas, sin equipos costosos, sin excusas.</p>
                         <ul class="feature-list">
-                            <li><span class="material-symbols-rounded">qr_code_2</span> Ingreso y salida con un escaneo</li>
+                            <li><span class="material-symbols-rounded">my_location</span> Registro con la ubicación del colaborador</li>
                             <li><span class="material-symbols-rounded">smartphone</span> Desde cualquier celular</li>
                             <li><span class="material-symbols-rounded">download_for_offline</span> Sin apps ni equipos extra</li>
                         </ul>
@@ -350,7 +360,7 @@
             </div>
             <div class="testimonio-card">
                 <span class="material-symbols-rounded testimonio-quote">format_quote</span>
-                <p class="testimonio-text">Marcamos con QR en dos sedes y las tardanzas ya no se discuten: todo queda registrado con hora y minuto.</p>
+                <p class="testimonio-text">Marcamos desde dos sedes con la ubicación de cada colaborador y las tardanzas ya no se discuten: todo queda registrado con hora y minuto.</p>
                 <div class="testimonio-author">
                     <span class="testimonio-name">María Torres</span>
                     <span class="testimonio-role">Farmacia San Martín</span>
@@ -384,7 +394,7 @@
         <div class="faq-list reveal" data-delay="1">
             <details class="faq-item">
                 <summary>¿Cómo marca mi personal?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Cada trabajador escanea un código QR desde su celular para registrar ingreso y salida. No necesita instalar apps ni comprar equipos.</div>
+                <div class="faq-answer">Cada trabajador registra ingreso y salida desde su celular con su ubicación en tiempo real. No necesita instalar apps ni comprar equipos.</div>
             </details>
             <details class="faq-item">
                 <summary>¿Sirve para varias sedes?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
@@ -483,7 +493,7 @@
                 <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
                 <span>Asisten DSG</span>
             </a>
-            <p>Control de asistencia del personal con QR: marcación, tardanzas y reportes de planilla en un solo lugar.</p>
+            <p>Control de asistencia del personal con ubicación en tiempo real: marcación, tardanzas y reportes de planilla en un solo lugar.</p>
             <p class="mm-cookie"><span class="material-symbols-rounded">cookie</span> Usamos cookies técnicas para el funcionamiento de la web y cookies de preferencias si aceptas “Recordarme”.</p>
         </div>
         <div class="mm-footer-col">
@@ -556,33 +566,15 @@
     tick();
     window.setInterval(tick, 1000);
 
-    /* — barra de presentes + demo de marcación — */
+    /* — barra de presentes — */
     var meter = document.getElementById('mockMeter');
     var count = document.getElementById('mockCount');
-    var rows = document.getElementById('mockRows');
-    var mark = document.getElementById('mockMark');
     var total = 42, present = 38;
     function paint() {
         if (meter) meter.style.width = Math.min(100, (present / total) * 100) + '%';
         if (count) count.textContent = present;
     }
     window.setTimeout(paint, 350);
-    if (mark && mark.addEventListener) {
-        mark.addEventListener('click', function () {
-            if (!rows) return;
-            var d = new Date();
-            var p = function (n) { return (n < 10 ? '0' : '') + n; };
-            var row = document.createElement('div');
-            row.className = 'mock-row is-fresh';
-            row.innerHTML = '<span class="mock-avatar ma-4">TÚ</span>' +
-                '<div class="mock-who"><strong>Demostración</strong><small>Marcación manual</small></div>' +
-                '<span class="mock-time">' + p(d.getHours()) + ':' + p(d.getMinutes()) + '</span>' +
-                '<span class="mock-status st-ok">A tiempo</span>';
-            rows.insertBefore(row, rows.firstChild);
-            while (rows.children.length > 5) rows.removeChild(rows.lastChild);
-            if (present < total) { present++; paint(); }
-        });
-    }
 
     /* — video demo: miniatura con play — */
     var vidBox = document.getElementById('mm-video-container');
@@ -614,6 +606,46 @@
     } else {
         els.forEach(function (el) { el.classList.add('in'); });
     }
+})();
+</script>
+
+<script>
+/* — modo claro/oscuro con botón (guarda en localStorage) — */
+(function () {
+    var root = document.documentElement;
+    var KEY = 'mmTheme';
+
+    function current() {
+        if (root.classList.contains('tema-oscuro')) return 'dark';
+        if (root.classList.contains('tema-claro')) return 'light';
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+
+    function paint(mode) {
+        // icono y etiqueta muestran lo que pasa al pulsar (sol cuando está oscuro)
+        var isDark = (mode === 'dark');
+        document.querySelectorAll('[data-mm-theme-toggle]').forEach(function (el) {
+            var icon = el.querySelector('.material-symbols-rounded');
+            if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+            var lbl = el.querySelector('.mm-theme-label');
+            if (lbl) lbl.textContent = isDark ? 'Modo claro' : 'Modo oscuro';
+        });
+    }
+
+    function set(mode) {
+        root.classList.remove('tema-claro', 'tema-oscuro');
+        root.classList.add(mode === 'dark' ? 'tema-oscuro' : 'tema-claro');
+        try { localStorage.setItem(KEY, mode); } catch (e) {}
+        paint(mode);
+    }
+
+    document.querySelectorAll('[data-mm-theme-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            set(current() === 'dark' ? 'light' : 'dark');
+        });
+    });
+
+    paint(current());
 })();
 </script>
 

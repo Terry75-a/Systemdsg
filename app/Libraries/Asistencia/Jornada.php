@@ -12,26 +12,25 @@ class Jornada
         1 => 'lun', 2 => 'mar', 3 => 'mie', 4 => 'jue', 5 => 'vie', 6 => 'sab', 7 => 'dom',
     ];
 
-    /** Horario aplicable a una persona: el asignado o el de su rol. */
+    /** Horario aplicable a una persona: solo de su rol, jamás de otro tipo. */
     public static function elegir(array $schedules, int $scheduleId, string $role): array
     {
         $tipoRole = $role === 'Practicante' ? 'Practicante' : 'Empleado';
 
+        $delTipo = array_values(array_filter(
+            $schedules,
+            fn($s) => ($s['tipo'] ?? 'Empleado') === $tipoRole
+        ));
+
         if ($scheduleId > 0) {
-            foreach ($schedules as $sch) {
+            foreach ($delTipo as $sch) {
                 if ((int) ($sch['id'] ?? 0) === $scheduleId) {
                     return $sch;
                 }
             }
         }
 
-        foreach ($schedules as $sch) {
-            if (($sch['tipo'] ?? '') === $tipoRole) {
-                return $sch;
-            }
-        }
-
-        return $schedules[0] ?? [];
+        return $delTipo[0] ?? [];
     }
 
     /**

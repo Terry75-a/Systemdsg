@@ -167,6 +167,7 @@ class AsistenciaCierre extends BaseCommand
 
                     $this->incidenciaFalta($incidentModel, $user, (int) $attId, $fecha, 'Cierre automático: no marcó entrada');
                     $this->auditar($logModel, (int) $attId, (int) $user['admin_id'], $uid, 'cierre', 'status', null, 'absent');
+                    (new \App\Services\NotificationService())->avisarFalta($user, $fecha);
                     $hechos['absent']++;
                 } else {
                     $att = $item['att'];
@@ -184,6 +185,7 @@ class AsistenciaCierre extends BaseCommand
                         (string) $att['status'],
                         'no_exit'
                     );
+                    (new \App\Services\NotificationService())->avisarSalidaNoRegistrada($user, $fecha);
                     $hechos['no_exit']++;
                 }
 

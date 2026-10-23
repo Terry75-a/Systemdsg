@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260924') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260924') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
     <style>
         /* Sin recuadro azul al hacer clic */
@@ -86,12 +86,14 @@
 
         .in-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
         .in-btn {
-            display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--g-border);
-            background: transparent; color: var(--g-text); font-family: var(--g-font);
-            font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 999px; cursor: pointer; transition: all 160ms;
+            display: inline-flex; align-items: center; gap: 5px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
+            background: var(--g-primary-light); color: var(--g-primary); font-family: var(--g-font);
+            font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 50px; cursor: pointer;
+            transition: none;
         }
         .in-btn .material-symbols-outlined { font-size: 15px; }
-        .in-btn:hover { border-color: var(--g-primary); color: var(--g-primary); background: var(--g-primary-light); }
+        .in-btn:hover { border-color: var(--sb-primary); color: var(--sb-on-primary); background: var(--sb-primary); }
 
         .in-empty { text-align: center; padding: 54px 20px; color: var(--g-text-secondary); font-size: 13.5px; }
         .in-empty .material-symbols-outlined { font-size: 48px; display: block; margin: 0 auto 14px; opacity: 0.3; }
@@ -116,18 +118,163 @@
             .in-sum { padding: 18px; }
             .in-big b { font-size: 34px; }
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           INCIDENCIAS · panel admin de sorteroOS
+
+           Se va la tarjeta resumen con barra de estados (componente
+           propio, lo más "PHP" de la página) y se sustituye por las
+           métricas de sorteroOS (admin/clubes): 4 tarjetas con el icono +
+           label arriba y el número abajo.
+
+           La lista pasa a ser el bloque con hairlines del feed de
+           sorteroOS: título sobre el fondo de página y dentro un
+           rounded-2xl con gap de 1px por el que se ve la línea.
+           ═══════════════════════════════════════════════════════════════ */
+        body { --in-surface: color-mix(in srgb, var(--sb-outline-variant) 55%, var(--sb-surface)); }
+
+        /* Chip del total en la cabecera (MetaChip del PageHeader de sorteroOS) */
+        /* .in-topbar duplica la clase para pasar a (0,3,1) y ganarle al
+           padding que fija next-panel.css sobre .dev-topbar */
+        body:has(.dev-main) .dev-topbar.in-topbar {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; flex-wrap: wrap;
+            padding-right: 78px; /* hueco para la campana fija (right:24px + 42px) */
+        }
+        body:has(.dev-main) .in-total-chip {
+            flex: none;
+            padding: 5px 12px; border-radius: 999px;
+            background: var(--in-surface);
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 40%, transparent);
+            color: var(--sb-on-surface-variant);
+            font-size: 12px; font-weight: 500; white-space: nowrap;
+        }
+
+        /* ── Métricas ── */
+        body:has(.dev-main) .in-metrics-row { display: flex; align-items: stretch; gap: 16px; margin-bottom: 16px; }
+        body:has(.dev-main) .in-metrics {
+            flex: 1 1 auto; min-width: 0;
+            display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;
+        }
+        body:has(.dev-main) .in-metric {
+            background: var(--in-surface);
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 40%, transparent);
+            border-radius: 16px; padding: 16px;
+            display: flex; flex-direction: column; align-items: stretch;
+            transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
+        }
+        body:has(.dev-main) .in-metric:hover { border-color: color-mix(in srgb, var(--sb-outline-variant) 70%, transparent); }
+        body:has(.dev-main) .in-metric-top { display: flex; align-items: center; gap: 8px; color: var(--sb-on-surface-variant); }
+        body:has(.dev-main) .in-metric-top .material-symbols-outlined { font-size: 16px; }
+        body:has(.dev-main) .in-metric-label { font-size: 12px; font-weight: 500; color: var(--sb-on-surface-variant); }
+        body:has(.dev-main) .in-metric b {
+            font-size: 24px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2;
+            color: var(--sb-on-surface); margin-top: 8px; font-variant-numeric: tabular-nums;
+        }
+
+        /* ── Acción primaria ── */
+        body:has(.dev-main) .in-new {
+            flex: none; align-self: center; height: 48px; padding: 0 24px;
+            border: 0; border-radius: 50px; background: var(--sb-primary); color: #fff;
+            cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+            transition: none;
+        }
+        body:has(.dev-main) .in-new:hover { background: color-mix(in srgb, var(--sb-primary) 90%, #000); }
+        body:has(.dev-main) .in-new:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary); }
+        body:has(.dev-main) .in-new .material-symbols-outlined { font-size: 18px; }
+
+        /* ── Filtros en píldora ── */
+        body:has(.dev-main) .in-filters { gap: 8px; margin-bottom: 18px; }
+        body:has(.dev-main) .in-chip {
+            height: 34px; padding: 0 14px;
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 50%, transparent);
+            border-radius: 50px; background: var(--sb-surface);
+            color: var(--sb-on-surface-variant); font-size: 13px; font-weight: 600;
+            transition: none;
+        }
+        body:has(.dev-main) .in-chip:hover { background: var(--sb-surface-container-high); color: var(--sb-on-surface); }
+        body:has(.dev-main) .in-chip.on { background: var(--sb-primary); border-color: var(--sb-primary); color: #fff; }
+        body:has(.dev-main) .in-chip b { font-weight: 700; font-size: 12px; opacity: .6; }
+        body:has(.dev-main) .in-chip.on b { opacity: .9; }
+
+        /* ── Lista: bloque con hairlines ── */
+        body:has(.dev-main) .in-sec-head { margin: 0 0 12px; }
+        body:has(.dev-main) .in-sec-head h2 {
+            margin: 0; font-family: inherit; font-size: 11px; font-weight: 600;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            display: flex; align-items: center; gap: 6px;
+        }
+        body:has(.dev-main) .in-sec-head h2 .material-symbols-outlined { font-size: 15px; color: inherit; }
+        body:has(.dev-main) .in-list {
+            display: flex; flex-direction: column; gap: 1px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent);
+            border-radius: 16px; overflow: hidden;
+        }
+        body:has(.dev-main) .in-item { background: var(--sb-surface); padding: 16px 20px; gap: 14px; }
+        body:has(.dev-main) .in-item + .in-item { border-top: 0; }
+        body:has(.dev-main) .in-item:hover { background: var(--sb-surface-container-low); }
+        body:has(.dev-main) .in-av {
+            width: 32px; height: 32px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            background: var(--sb-surface-container);
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 60%, transparent);
+        }
+        body:has(.dev-main) .in-name strong { font-size: 13.5px; font-weight: 500; font-family: inherit; }
+        body:has(.dev-main) .in-role {
+            font-size: 11.5px; font-weight: 400; text-transform: none; letter-spacing: 0;
+            background: none; padding: 0; color: var(--sb-on-surface-variant);
+        }
+        body:has(.dev-main) .in-tag {
+            font-size: 11.5px; font-weight: 500; background: var(--sb-surface-container);
+            color: var(--sb-on-surface-variant);
+        }
+        body:has(.dev-main) .in-date { font-size: 11.5px; color: color-mix(in srgb, var(--sb-on-surface-variant) 60%, transparent); }
+        body:has(.dev-main) .in-detalle { font-size: 12.5px; color: var(--sb-on-surface-variant); }
+        body:has(.dev-main) .in-just { background: var(--sb-surface-container); border-radius: 10px; }
+        body:has(.dev-main) .in-estado { font-size: 11.5px; font-weight: 500; }
+        body:has(.dev-main) .in-list .in-empty,
+        body:has(.dev-main) .in-list .in-filtered-empty { background: var(--sb-surface); }
+
+        /* ── Acciones de la fila: píldoras planas ── */
+        body:has(.dev-main) .in-btn {
+            height: 32px; padding: 0 12px;
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 50%, transparent);
+            border-radius: 999px; background: var(--sb-surface); color: var(--sb-on-surface-variant);
+            font-size: 12.5px; font-weight: 500;
+            transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+        }
+        body:has(.dev-main) .in-btn:hover {
+            background: var(--sb-surface-container-high); color: var(--sb-on-surface);
+            border-color: transparent; box-shadow: none;
+        }
+        body:has(.dev-main) .in-btn-danger { color: #dc2626; }
+        body:has(.dev-main) .in-btn-danger:hover { background: color-mix(in srgb, #dc2626 10%, transparent); color: #dc2626; }
+
+        /* ── Responsive · al final para ganar por orden ── */
+        @media (max-width: 1100px) {
+            body:has(.dev-main) .in-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 720px) {
+            body:has(.dev-main) .in-metrics-row { flex-wrap: wrap; }
+            body:has(.dev-main) .in-metrics { flex: 1 1 100%; }
+            body:has(.dev-main) .in-new { flex: 1 1 100%; justify-content: center; }
+        }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
 </head>
 <body>
 
 <?= view('partials/admin-sidebar', ['activePage' => 'incidencias']) ?>
 
 <main class="dev-main">
-    <div class="dev-topbar">
-        <h1 class="dev-topbar-title">Incidencias</h1>
-        <p class="dev-topbar-subtitle">Incidencias generadas desde la asistencia y asignadas a tu personal</p>
+    <div class="dev-topbar in-topbar">
+        <div>
+            <h1 class="dev-topbar-title">Incidencias</h1>
+            <p class="dev-topbar-subtitle">Incidencias generadas desde la asistencia y asignadas a tu personal</p>
+        </div>
+        <span class="in-total-chip"><?= count($incidents) ?> incidencias</span>
     </div>
 
     <div class="dev-content">
@@ -149,11 +296,6 @@
             elseif ($e === 'Justificada') $justificadas++;
             elseif ($e === 'Rechazada' || $e === 'Desestimada') $rechazadas++;
         }
-        $resueltas = $justificadas + $rechazadas;
-        $sPend = $totalIncidencias > 0 ? round(($pendientes / $totalIncidencias) * 100) : 0;
-        $sRev  = $totalIncidencias > 0 ? round(($revision  / $totalIncidencias) * 100) : 0;
-        $sRes  = $totalIncidencias > 0 ? round(($resueltas  / $totalIncidencias) * 100) : 0;
-        if (($sPend + $sRev + $sRes) !== 100 && $totalIncidencias > 0) { $sRes += 100 - ($sPend + $sRev + $sRes); }
 
         $roleMap = [];
         foreach (($personal ?? []) as $p) {
@@ -179,27 +321,41 @@
         ];
         ?>
 
-        <!-- Resumen de estados -->
-        <div class="in-sum">
-            <div class="in-sum-top">
-                <div class="in-big">
-                    <b><?= $totalIncidencias ?></b>
-                    <span>incidencias</span>
+        <!-- Métricas + acción primaria (sorteroOS admin/clubes + admin/usuarios) -->
+        <div class="in-metrics-row">
+            <div class="in-metrics">
+                <div class="in-metric">
+                    <div class="in-metric-top">
+                        <span class="material-symbols-outlined">pending_actions</span>
+                        <span class="in-metric-label">Pendientes</span>
+                    </div>
+                    <b><?= $pendientes ?></b>
                 </div>
-                <div class="in-bar">
-                    <div class="in-bar-track">
-                        <div class="in-bar-seg in-bar-pend" style="width:<?= $sPend ?>%;"></div>
-                        <div class="in-bar-seg in-bar-gap"  style="width:<?= $sRev ?>%;"></div>
-                        <div class="in-bar-seg in-bar-res"  style="width:<?= $sRes ?>%;"></div>
+                <div class="in-metric">
+                    <div class="in-metric-top">
+                        <span class="material-symbols-outlined">hourglass_top</span>
+                        <span class="in-metric-label">En revisión</span>
                     </div>
-                    <div class="in-legend">
-                        <span class="lg-p"><i></i> <b><?= $pendientes ?></b> pendiente<?= $pendientes === 1 ? '' : 's' ?></span>
-                        <span class="lg-g"><i></i> <b><?= $revision ?></b> en revisión</span>
-                        <span class="lg-g" style="color:var(--g-error);"><i style="background:var(--g-error);"></i> <b><?= $rechazadas ?></b> rechazada<?= $rechazadas === 1 ? '' : 's' ?></span>
-                        <span class="lg-g"><i></i> <b><?= $justificadas ?></b> justificada<?= $justificadas === 1 ? '' : 's' ?></span>
+                    <b><?= $revision ?></b>
+                </div>
+                <div class="in-metric">
+                    <div class="in-metric-top">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span class="in-metric-label">Justificadas</span>
                     </div>
+                    <b><?= $justificadas ?></b>
+                </div>
+                <div class="in-metric">
+                    <div class="in-metric-top">
+                        <span class="material-symbols-outlined">do_not_disturb_on</span>
+                        <span class="in-metric-label">Rechazadas</span>
+                    </div>
+                    <b><?= $rechazadas ?></b>
                 </div>
             </div>
+            <button type="button" class="in-new" onclick="openCreateModal()">
+                <span class="material-symbols-outlined">add</span> Nueva incidencia
+            </button>
         </div>
 
         <!-- Filtro por estado -->
@@ -212,13 +368,10 @@
         </div>
 
         <!-- Lista -->
-        <div class="in-card">
-            <div class="in-card-head">
-                <h3><span class="material-symbols-outlined">list_alt</span> Lista de incidencias</h3>
-                <button type="button" class="dev-btn dev-btn-primary dev-btn-sm" onclick="openCreateModal()">
-                    <span class="material-symbols-outlined">add</span> Nueva incidencia
-                </button>
-            </div>
+        <div class="in-sec-head">
+            <h2><span class="material-symbols-outlined">list_alt</span> Lista de incidencias</h2>
+        </div>
+        <div class="in-list">
 
             <?php if ($totalIncidencias === 0): ?>
                 <div class="in-empty">
@@ -283,14 +436,9 @@
                                         <span class="material-symbols-outlined">check</span> Justificar
                                     </button>
                                 </form>
-                                <form action="<?= site_url('admin/update-incident') ?>" method="POST">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="inc_id" value="<?= (int) $inc['id'] ?>">
-                                    <input type="hidden" name="inc_estado" value="Rechazada">
-                                    <button type="submit" class="in-btn" onclick="return confirm('¿Rechazar esta incidencia?')">
-                                        <span class="material-symbols-outlined">close</span> Rechazar
-                                    </button>
-                                </form>
+                                <button type="button" class="in-btn in-btn-danger" onclick="openRejectModal(<?= (int) $inc['id'] ?>, '<?= esc($inc['nombre'] ?? '') ?>')">
+                                    <span class="material-symbols-outlined">close</span> Rechazar
+                                </button>
                             <?php endif; ?>
                             <button type="button" class="in-btn" onclick='openEditModal(<?= (int) $inc['id'] ?>, <?= json_encode($e, JSON_HEX_APOS | JSON_HEX_TAG) ?>, <?= json_encode($inc['justificacion'] ?? '', JSON_HEX_APOS | JSON_HEX_TAG) ?>)'>
                                 <span class="material-symbols-outlined">edit</span> Editar
@@ -403,6 +551,37 @@
     </div>
 </div>
 
+<!-- Modal · Rechazar incidencia -->
+<div class="dev-modal-overlay" id="rejectModal">
+    <div class="dev-modal">
+        <div class="dev-modal-head">
+            <h2><span class="material-symbols-outlined">cancel</span> Rechazar incidencia</h2>
+            <button class="dev-btn-icon" onclick="closeRejectModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form action="<?= site_url('admin/update-incident') ?>" method="POST" class="dev-form">
+            <?= csrf_field() ?>
+            <input type="hidden" name="inc_id" id="reject_inc_id">
+            <input type="hidden" name="inc_estado" value="Rechazada">
+            <div class="dev-modal-body">
+                <div class="dev-form-grid">
+                    <div class="dev-field" style="grid-column:1 / -1;">
+                        <label for="reject_motivo">Motivo del rechazo <span style="color:var(--g-error)">*</span></label>
+                        <textarea id="reject_motivo" name="inc_justificacion" rows="4" placeholder="Ingrese el motivo del rechazo..." required></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="dev-modal-footer">
+                <button type="button" class="dev-btn" onclick="closeRejectModal()">Cancelar</button>
+                <button type="submit" class="dev-btn dev-btn-danger">
+                    <span class="material-symbols-outlined">cancel</span> Confirmar rechazo
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function filtrarEstado(estado, btn) {
         document.querySelectorAll('#inFilters .in-chip').forEach(function (c) { c.classList.remove('on'); });
@@ -449,7 +628,29 @@ function closeEditModal() {
 document.getElementById('editModal').addEventListener('click', function(e) {
     if (e.target === this) closeEditModal();
 });
+
+function openRejectModal(id, nombre) {
+    document.getElementById('reject_inc_id').value = id;
+    document.getElementById('reject_motivo').value = '';
+    document.getElementById('rejectModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function() { document.getElementById('reject_motivo').focus(); }, 100);
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRejectModal();
+});
 </script>
 
+<!-- Campana de notificaciones (compartida en todas las secciones admin) -->
+<?= view('partials/admin-notif-bell') ?>
+<?= view('partials/pwa-js') ?>
 </body>
+<!-- PWA -->
+    <?= view('partials/pwa-head') ?>
 </html>

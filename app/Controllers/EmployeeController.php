@@ -8,6 +8,7 @@ use App\Models\ScheduleModel;
 use App\Models\IncidentModel;
 use App\Models\FestivoModel;
 use App\Models\WebAuthnCredentialModel;
+use App\Models\NotificationModel;
 
 class EmployeeController extends BaseController
 {
@@ -231,6 +232,19 @@ class EmployeeController extends BaseController
 
         $role = session()->get('user_role');
         $data = $this->getMyData();
+
+        // Vino de escanear el QR de un horario → abre la marcación (biométrica)
+        $qrScanId = (int) (session()->get('qr_scan') ?? 0);
+        $miSch    = (int) ($data['miInfo']['schedule_id'] ?? 0);
+        $data['qrScan'] = $qrScanId > 0 && $qrScanId === $miSch;
+        if ($qrScanId > 0) {
+            session()->remove('qr_scan');
+            if (!$data['qrScan']) {
+                session()->setFlashdata('msg', 'Ese QR pertenece a otro horario. Escanea el QR de tu horario.');
+                session()->setFlashdata('tipo', 'warning');
+            }
+        }
+
         $data['activePage']  = 'dashboard';
         $data['pageTitle']   = 'Mi Panel · DSG';
         $data['greetingSub'] = $role === 'Practicante'
@@ -299,6 +313,14 @@ class EmployeeController extends BaseController
             return redirect()->to(base_url('mi-panel'));
         }
 
+        // Validación de horario asignado
+        $miHorario = (int) ($user['schedule_id'] ?? 0);
+        if (!$miHorario) {
+            $s->setFlashdata('msg', 'No tienes un horario asignado. Contacta a tu administrador.');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel'));
+        }
+
         // Biometria obligatoria: huella o rostro. Al marcar se pide uno de los dos.
         if (!(int) ($user['huella_registrada'] ?? 0) && !(int) ($user['rostro_registrado'] ?? 0)) {
             $s->setFlashdata('msg', 'Registra tu huella o tu rostro en la seccion Biometria antes de marcar asistencia');
@@ -319,18 +341,34 @@ class EmployeeController extends BaseController
         $adminId = (int) ($user['admin_id'] ?? 0);
         $geo = $this->ubicacionMarcacion();
 
+        // Geolocalización requerida (configurable por el administrador)
+        [$geoOk, $geoValido, $geoMsg] = $this->validarGeo($adminId, $geo['lat'], $geo['lng']);
+        if (! $geoOk) {
+            $s->setFlashdata('msg', $geoMsg);
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel'));
+        }
+        $geo['geo_ok'] = $geoValido;
+
         $att = $this->attendanceModel->findByUserAndDate($userId, $hoy);
 
-        if (!$att) {
+        // Falta automática generada por el cron (sin entrada): si el colaborador
+        // llegó después, se convierte en TARDANZA, no en salida.
+        $faltaAuto = $att
+            && ($att['status'] ?? '') === 'absent'
+            && empty($att['time_in']);
+
+        if (!$att || $faltaAuto) {
             // ENTRADA
             $entrada = date('H:i');
+            $incFaltaOk = false;
             $tolerancia = (int) ($this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '')['tolerancia'] ?? 10);
             $horaBase = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '')['hora_entrada'] ?? '08:00';
 
             $limite = strtotime($horaBase) + $tolerancia * 60;
             $status = strtotime($ahora) <= $limite ? 'present' : 'late';
 
-            $this->attendanceModel->insert([
+            $registro = [
                 'admin_id'   => $adminId ?: null,
                 'user_id'    => $userId,
                 'name'       => $user['name'] ?? '',
@@ -339,15 +377,37 @@ class EmployeeController extends BaseController
                 'time_in'    => $ahora,
                 'time_out'   => null,
                 'status'     => $status,
-                'observacion'=> '',
+                'observacion'=> $faltaAuto ? 'Llegó después de la falta automática' : '',
                 'evidencia'  => $evidencia,
                 'lat'        => $geo['lat'],
                 'lng'        => $geo['lng'],
                 'ip'         => $geo['ip'],
-            ]);
-            $attId = (int) db_connect()->insertID();
+                'geo_ok'     => $geo['geo_ok'] ?? null,
+            ];
 
-            if ($status === 'late') {
+            if ($faltaAuto) {
+                $this->attendanceModel->update((int) $att['id'], $registro);
+                $attId = (int) $att['id'];
+                // La falta automática ya no aplica: ahora es una tardanza
+                $incFalta = $this->incidentModel
+                    ->where('att_id', $attId)
+                    ->where('tipo', 'Falta')
+                    ->first();
+                if ($incFalta) {
+                    // Ya existe la incidencia: se reutiliza como Tardanza (no se duplica)
+                    $this->incidentModel->update((int) $incFalta['id'], [
+                        'tipo'    => 'Tardanza',
+                        'estado'  => 'Pendiente',
+                        'detalle' => "Llegó a las {$entrada} · antes se había marcado falta automática",
+                    ]);
+                    $incFaltaOk = true;
+                }
+            } else {
+                $this->attendanceModel->insert($registro);
+                $attId = (int) db_connect()->insertID();
+            }
+
+            if ($status === 'late' && empty($incFaltaOk)) {
                 $this->incidentModel->insert([
                     'admin_id'      => $adminId ?: null,
                     'att_id'        => $attId,
@@ -359,6 +419,14 @@ class EmployeeController extends BaseController
                     'estado'        => 'Pendiente',
                     'justificacion' => '',
                 ]);
+
+                // Aviso por correo al empleado: debe llegar más temprano
+                (new \App\Services\NotificationService())->avisarTardanza(
+                    $user,
+                    substr($horaBase, 0, 5),
+                    $entrada,
+                    $tolerancia
+                );
             }
 
             $s->setFlashdata('msg', "Entrada registrada a las {$entrada}" . ($status === 'late' ? ' · Tardanza' : ' · Puntual'));
@@ -373,6 +441,7 @@ class EmployeeController extends BaseController
                 'lat'       => $geo['lat'],
                 'lng'       => $geo['lng'],
                 'ip'        => $geo['ip'],
+                'geo_ok'    => $geo['geo_ok'] ?? null,
             ]);
 
             // Salida anticipada: si se retira antes de su hora de salida prevista
@@ -392,6 +461,13 @@ class EmployeeController extends BaseController
                     'estado'        => 'Revisión',
                     'justificacion' => $just !== '' ? $just : 'Sin motivo registrado',
                 ]);
+
+                // Aviso por correo al empleado
+                (new \App\Services\NotificationService())->avisarSalidaAnticipada(
+                    $user,
+                    substr($horaSalidaPrevista, 0, 5),
+                    $salida
+                );
             }
 
             $s->setFlashdata('msg', "Salida registrada a las {$salida}" . ($salidaAnticipada ? ' · salida anticipada JUSTIFICADA, en revisión' : ''));
@@ -426,6 +502,42 @@ class EmployeeController extends BaseController
         }
 
         return $datos;
+    }
+
+    /**
+     * Valida la ubicación contra la zona configurada del administrador.
+     * @return array{0:bool,1:?int,2:string} [permite_marcar, geo_ok, mensaje]
+     */
+    private function validarGeo(int $adminId, ?float $lat, ?float $lng): array
+    {
+        $cfg = (new \App\Models\ConfigModel())->getConfig($adminId ?: null);
+        $requerido = (int) ($cfg['geo_requerido'] ?? 0) === 1;
+        $radio     = (int) ($cfg['geo_radio_m'] ?? 0);
+        $cLat      = isset($cfg['geo_lat']) && $cfg['geo_lat'] !== null ? (float) $cfg['geo_lat'] : null;
+        $cLng      = isset($cfg['geo_lng']) && $cfg['geo_lng'] !== null ? (float) $cfg['geo_lng'] : null;
+
+        if (! $requerido || $radio <= 0 || $cLat === null || $cLng === null) {
+            return [true, null, ''];
+        }
+        if ($lat === null || $lng === null) {
+            return [false, 0, 'Tu ubicación es obligatoria para marcar asistencia. Activa los permisos de ubicación del navegador.'];
+        }
+        $dist = $this->distanciaMetros($cLat, $cLng, $lat, $lng);
+        if ($dist > $radio) {
+            $km = $dist >= 1000 ? round($dist / 1000, 1) . ' km' : round($dist) . ' m';
+            return [false, 0, "Estás a {$km} del área de trabajo (radio permitido: {$radio} m). acércate y vuelve a marcar."];
+        }
+        return [true, 1, ''];
+    }
+
+    /** Distancia en metros entre dos coordenadas (haversine). */
+    private function distanciaMetros(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $r = 6371000;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+        return 2 * $r * asin(sqrt($a));
     }
 
     /** Límites de la imagen biométrica (bytes binarios). */
@@ -464,7 +576,7 @@ class EmployeeController extends BaseController
             return '';
         }
 
-        $dir = FCPATH . 'uploads/' . $subdir;
+        $dir = WRITEPATH . 'uploads/' . $subdir;
         if (! is_dir($dir) && ! @mkdir($dir, 0775, true)) {
             return '';
         }
@@ -504,7 +616,32 @@ class EmployeeController extends BaseController
             'credId'           => $user['huella_cred_id'] ?? '',
             'huellaRegistrada' => (int) ($user['huella_registrada'] ?? 0),
             'rostroRegistrado' => (int) ($user['rostro_registrado'] ?? 0),
-            'rostroPath'       => base_url('uploads/' . ($user['rostro_path'] ?? '')),
+            'rostroPath'       => ($user['rostro_path'] ?? '') !== ''
+                ? base_url('mi-panel/evidencia/rostros/' . basename((string) $user['rostro_path']))
+                : '',
+        ]);
+    }
+
+    // ════════════════════════════════════════════════════════
+    // ESTADO ACTUAL - Para polling (fallback universal, funciona en cPanel)
+    // ═══════════════════════════════════════════════════════
+    public function estadoActual()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $userId = (int) session()->get('user_id');
+        $hoy    = date('Y-m-d');
+
+        $att = $this->attendanceModel
+            ->where('user_id', $userId)
+            ->where('date', $hoy)
+            ->first();
+
+        return $this->response->setJSON([
+            'ok'            => true,
+            'asistencia'    => $att,
+            'server_time'   => time(),
+            'csrfHash'      => csrf_hash(),
         ]);
     }
 
@@ -533,6 +670,34 @@ class EmployeeController extends BaseController
         session()->remove(['wa_challenge', 'wa_challenge_ts']);
 
         return $challenge === '' ? null : $challenge;
+    }
+
+    // ═════════════════════════════════════════════════════════
+    // VERIFICAR QR DEL HORARIO (obligatorio antes de marcar)
+    // ═════════════════════════════════════════════════════════
+    public function verificarQr()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $userId     = (int) session()->get('user_id');
+        $user       = $this->userModel->find($userId);
+        $miHorario  = (int) ($user['schedule_id'] ?? 0);
+        $token      = trim((string) $this->request->getPost('token'));
+
+        if ($token === '' || !preg_match('/^[a-f0-9]{40}$/', $token)) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'QR no válido']);
+        }
+
+        $schedule = $this->scheduleModel->findByQrToken($token);
+        if (!$schedule || (int) $schedule['id'] !== $miHorario) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'Ese QR no es de tu horario']);
+        }
+
+        return $this->response->setJSON([
+            'ok'      => true,
+            'msg'     => 'QR verificado: ' . ($schedule['nombre'] ?? ''),
+            'horario' => $schedule['nombre'] ?? '',
+        ]);
     }
 
     public function guardarHuella()
@@ -649,7 +814,7 @@ class EmployeeController extends BaseController
         } else {
             $file = $this->request->getFile('rostro');
             if ($file && $file->isValid() && $file->getSize() > 0) {
-                $dir = FCPATH . 'uploads/rostros';
+                $dir = WRITEPATH . 'uploads/rostros';
                 if (!is_dir($dir)) {
                     @mkdir($dir, 0775, true);
                 }
@@ -668,21 +833,32 @@ class EmployeeController extends BaseController
             'rostro_fecha'      => date('Y-m-d H:i:s'),
             'rostro_path'       => $path,
         ]);
-        return $this->response->setJSON(['ok' => true, 'msj' => 'Rostro registrado correctamente', 'path' => base_url('uploads/' . $path)]);
+        return $this->response->setJSON(['ok' => true, 'msj' => 'Rostro registrado correctamente', 'path' => base_url('mi-panel/evidencia/rostros/' . basename($path))]);
     }
 
+    /**
+     * Elige el horario de una persona: NUNCA mezcla tipos.
+     * Un Empleado jamás ve un horario Practicante ni viceversa.
+     */
     private function pickSchedule(array $schedules, int $scheduleId, string $role): array
     {
         $tipoRole = $role === 'Practicante' ? 'Practicante' : 'Empleado';
+
+        // Solo horarios cuyo tipo coincide con el rol (getActive ordena id DESC)
+        $delTipo = array_values(array_filter(
+            $schedules,
+            fn($s) => ($s['tipo'] ?? 'Empleado') === $tipoRole
+        ));
+
+        // 1. El asignado, solo si es del tipo correcto
         if ($scheduleId > 0) {
-            foreach ($schedules as $sch) {
+            foreach ($delTipo as $sch) {
                 if ((int) ($sch['id'] ?? 0) === $scheduleId) return $sch;
             }
         }
-        foreach ($schedules as $sch) {
-            if (($sch['tipo'] ?? '') === $tipoRole) return $sch;
-        }
-        return $schedules[0] ?? [];
+
+        // 2. El más reciente del tipo correcto; si no hay, [] (sin horario)
+        return $delTipo[0] ?? [];
     }
 
     private function scheduleScore(int $adminId, int $scheduleId = 0, string $role = ''): array
@@ -724,5 +900,132 @@ class EmployeeController extends BaseController
         $s->setFlashdata('msg', 'Justificacion enviada · queda en revisión');
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('mi-panel/incidencias'));
+    }
+
+    // ══════════════════════════════════════════════════════
+    // CREAR INCIDENCIA (tardanza, falta, etc.)
+    // ══════════════════════════════════════════════════════
+
+    public function crearIncidencia()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $s = session();
+        $userId = (int) $s->get('user_id');
+        $user   = $this->userModel->find($userId);
+
+        $permitidos = ['Tardanza', 'Falta', 'Salida anticipada', 'Sin marcación', 'Otro'];
+        $tipo   = trim((string) $this->request->getPost('tipo'));
+        $fecha  = trim((string) $this->request->getPost('fecha'));
+        $detalle = trim((string) $this->request->getPost('detalle'));
+        $attId  = (int) $this->request->getPost('att_id');
+
+        if (! in_array($tipo, $permitidos, true)) {
+            $s->setFlashdata('msg', 'Tipo de incidencia no válido');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel/incidencias'));
+        }
+        if ($fecha === '' || ! strtotime($fecha)) {
+            $fecha = date('Y-m-d');
+        }
+        if ($detalle === '') {
+            $s->setFlashdata('msg', 'Cuéntanos qué ocurrió para poder revisarlo');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel/incidencias'));
+        }
+
+        $incId = $this->incidentModel->insert([
+            'admin_id' => (int) ($user['admin_id'] ?? 0),
+            'att_id'   => $attId > 0 ? $attId : null,
+            'user_id'  => $userId,
+            'name'     => (string) ($user['name'] ?? ''),
+            'tipo'     => $tipo,
+            'fecha'    => $fecha . ' ' . date('H:i:s'),
+            'detalle'  => $detalle,
+            'estado'   => 'Pendiente',
+        ], true);
+
+        // Avisar al administrador
+        if ($incId) {
+            (new \App\Services\NotificationService())
+                ->incidenciaCreada((int) $incId, (int) ($user['admin_id'] ?? 0));
+        }
+
+        $s->setFlashdata('msg', 'Incidencia enviada · tu administrador la revisará');
+        $s->setFlashdata('tipo', 'success');
+        return redirect()->to(base_url('mi-panel/incidencias'));
+    }
+
+    // ══════════════════════════════════════════════════════
+    // MI PERFIL (datos, notificaciones, apariencia)
+    // ══════════════════════════════════════════════════════
+
+    public function perfil()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $data = $this->getMyData();
+        $data['activePage']  = 'perfil';
+        $data['pageTitle']   = 'Mi Perfil · DSG';
+        $data['greetingSub'] = 'Tu información y preferencias del panel.';
+        $data['slot'] = view('empleado/practicante-perfil', $data);
+        return view('layouts/practicante-panel', $data);
+    }
+
+    // ══════════════════════════════════════════════════════
+    // NOTIFICACIONES DEL EMPLEADO (campana del panel)
+    // ══════════════════════════════════════════════════════
+
+    /**
+     * Lista para el modal de la campana
+     * GET /mi-panel/notificaciones
+     */
+    public function notificaciones()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+        $userId = (int) session()->get('user_id');
+        $model  = new NotificationModel();
+
+        return $this->response->setJSON([
+            'ok'             => true,
+            'no_leidas'      => $model->getUnreadCountForUser($userId),
+            'notificaciones' => $model->getForUser($userId, 30),
+        ]);
+    }
+
+    /**
+     * Marca como leídas: una por id o todas
+     * POST /mi-panel/notificaciones/marcar-leidas
+     */
+    public function marcarLeidas()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+        $userId = (int) session()->get('user_id');
+        $model  = new NotificationModel();
+        $id     = (int) $this->request->getPost('id');
+
+        if ($id > 0) {
+            $model->markAsReadForUser($id, $userId);
+        } else {
+            $model->markAllAsReadForUser($userId);
+        }
+
+        return $this->response->setJSON(['ok' => true, 'no_leidas' => $model->getUnreadCountForUser($userId)]);
+    }
+
+    /**
+     * Contador ligero para el badge (no carga la lista)
+     * GET /mi-panel/notificaciones/badge
+     */
+    public function badgeNotificaciones()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+        $userId = (int) session()->get('user_id');
+        $model  = new NotificationModel();
+
+        return $this->response->setJSON([
+            'ok'        => true,
+            'no_leidas' => $model->getUnreadCountForUser($userId),
+        ]);
     }
 }

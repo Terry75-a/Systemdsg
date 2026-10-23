@@ -6,16 +6,30 @@ use CodeIgniter\Config\BaseConfig;
 
 class Security extends BaseConfig
 {
-    /**
+/**
      * --------------------------------------------------------------------------
-     * CSRF Protection Method
+     * Cross-Site Request Forgery
      * --------------------------------------------------------------------------
      *
-     * Protection Method for Cross Site Request Forgery protection.
+     * Determines whether CSRF protection is enabled for the application.
      *
      * @var string 'cookie' or 'session'
      */
     public string $csrfProtection = 'cookie';
+
+    /**
+     * --------------------------------------------------------------------------
+     * CSRF Trusted Hosts
+     * --------------------------------------------------------------------------
+     *
+     * List of hostnames that are trusted for CSRF protection.
+     * This is useful when using reverse proxies or tunnels like ngrok.
+     *
+     * @var array
+     */
+    public array $csrfTrustedHosts = [
+        'imagines-name-ammonia.ngrok-free.dev',
+    ];
 
     /**
      * --------------------------------------------------------------------------

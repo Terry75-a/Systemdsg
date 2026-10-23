@@ -39,4 +39,9 @@ class Format extends BaseConfig
         'application/xml' => 0,
         'text/xml' => 0,
     ];
+
+    /**
+     * Profundidad máxima del codificador JSON (requerido desde CI 4.7.x).
+     */
+    public int $jsonEncodeDepth = 512;
 }

@@ -5,6 +5,8 @@ use App\Models\UserModel;
 use App\Models\CodeModel;
 use App\Models\AttendanceModel;
 use App\Models\AttendanceLogModel;
+use App\Models\IncidentModel;
+use App\Models\SessionLogModel;
 
 class DevController extends BaseController
 {
@@ -12,6 +14,8 @@ class DevController extends BaseController
     protected CodeModel $codeModel;
     protected AttendanceModel $attendanceModel;
     protected AttendanceLogModel $attendanceLogModel;
+    protected IncidentModel $incidentModel;
+    protected SessionLogModel $sessionLogModel;
 
     public function __construct()
     {
@@ -19,6 +23,8 @@ class DevController extends BaseController
         $this->codeModel          = new CodeModel();
         $this->attendanceModel    = new AttendanceModel();
         $this->attendanceLogModel = new AttendanceLogModel();
+        $this->incidentModel      = new IncidentModel();
+        $this->sessionLogModel    = new SessionLogModel();
     }
 
     // Solo el Dev (dios) entra aquí
@@ -88,6 +94,7 @@ class DevController extends BaseController
         return view('dev-codigos', [
             'codes'     => $this->codeModel->getAll(),
             'admins'    => $this->userModel->getAdmins(),
+            'empleados' => $this->userModel->getEmpleados(),
             'modalData' => $this->getModalData(),
         ]);
     }
@@ -172,6 +179,97 @@ class DevController extends BaseController
             'filas'     => $filas,
             'total'     => count($filas),
             'modalData' => $this->getModalData(),
+        ]);
+    }
+
+    // ════════════════════════════════════════
+    // PAGE: Sesiones (historial de entradas y salidas)
+    // ════════════════════════════════════════
+    public function sesiones()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+
+        $evento = $this->request->getGet('evento');
+        $evento = in_array($evento, ['login', 'logout'], true) ? $evento : '';
+        $q      = trim((string) $this->request->getGet('q'));
+
+        return view('dev-sesiones', [
+            'totales'   => $this->sessionLogModel->contarEventos(),
+            'registros' => $this->sessionLogModel->filtrar($evento, $q),
+            'fEvento'   => $evento,
+            'fQ'        => $q,
+        ]);
+    }
+
+    // ════════════════════════════════════════
+    // PAGE: Base de datos (resumen general de lo acumulado)
+    // ════════════════════════════════════════
+    public function datos()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+
+        $db = \Config\Database::connect();
+
+        $porRol = [];
+        foreach ($this->userModel->select('role, COUNT(*) AS c')->groupBy('role')->findAll() as $r) {
+            $porRol[(string) $r['role']] = (int) $r['c'];
+        }
+
+        $porEstadoAsist = [];
+        foreach ($this->attendanceModel->select('status, COUNT(*) AS c')->groupBy('status')->findAll() as $r) {
+            $porEstadoAsist[(string) $r['status']] = (int) $r['c'];
+        }
+
+        $porEstadoInc = [];
+        foreach ($this->incidentModel->select('estado, COUNT(*) AS c')->groupBy('estado')->findAll() as $r) {
+            $porEstadoInc[(string) $r['estado']] = (int) $r['c'];
+        }
+
+        $porEstadoCode = [];
+        foreach ($this->codeModel->select('status, COUNT(*) AS c')->groupBy('status')->findAll() as $r) {
+            $porEstadoCode[(string) $r['status']] = (int) $r['c'];
+        }
+
+        $totales = [
+            'usuarios'        => (int) $this->userModel->countAllResults(),
+            'asistencia'      => (int) $this->attendanceModel->countAllResults(),
+            'incidencias'     => (int) $this->incidentModel->countAllResults(),
+            'codigos'         => (int) $this->codeModel->countAllResults(),
+            'sesiones'        => (int) $this->sessionLogModel->countAllResults(),
+            'notificaciones'  => (int) $db->table('notifications')->countAllResults(),
+            'passkeys'        => (int) $db->table('webauthn_credentials')->countAllResults(),
+            'push'            => (int) $db->table('push_subscriptions')->countAllResults(),
+        ];
+
+        // Todas las tablas: filas exactas + tamaño
+        $tablas = $db->query(
+            "SELECT table_name AS nombre,
+                    COALESCE(data_length, 0) + COALESCE(index_length, 0) AS bytes
+             FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+             ORDER BY bytes DESC"
+        )->getResultArray();
+
+        $filasTotal   = 0;
+        $bytesTotal   = 0;
+        $tablaDetalle = [];
+        foreach ($tablas as $t) {
+            $filas = (int) $db->table($t['nombre'])->countAllResults();
+            $bytes = (int) $t['bytes'];
+            $filasTotal += $filas;
+            $bytesTotal += $bytes;
+            $tablaDetalle[] = ['nombre' => $t['nombre'], 'filas' => $filas, 'bytes' => $bytes];
+        }
+
+        return view('dev-datos', [
+            'porRol'        => $porRol,
+            'porEstadoAsist' => $porEstadoAsist,
+            'porEstadoInc'  => $porEstadoInc,
+            'porEstadoCode' => $porEstadoCode,
+            'totales'       => $totales,
+            'tablas'        => $tablaDetalle,
+            'filasTotal'    => $filasTotal,
+            'bytesTotal'    => $bytesTotal,
         ]);
     }
 
@@ -439,6 +537,12 @@ class DevController extends BaseController
         $dni     = trim($this->request->getPost('dni'));
         $adminId = (int) $this->request->getPost('admin_id');
 
+        // Selector: "__new__" = persona que aún no tiene cuenta (invitación de registro)
+        $isNew = ($name === '__new__');
+        if ($isNew) {
+            $name = trim($this->request->getPost('name_new'));
+        }
+
         if (empty($name) || empty($dni)) {
             $s->setFlashdata('msg', 'Nombre y DNI son obligatorios');
             $s->setFlashdata('tipo', 'warning');
@@ -450,10 +554,18 @@ class DevController extends BaseController
             return redirect()->to(base_url('dios/codigos'));
         }
 
-        if ($this->userModel->findByDni($dni)) {
-            $s->setFlashdata('msg', 'Este DNI ya está registrado');
+        // Solo las invitaciones de registro exigen DNI sin cuenta:
+        // los códigos para empleados ya creados son para entrar con Código+DNI.
+        if ($isNew && $this->userModel->findByDni($dni)) {
+            $s->setFlashdata('msg', 'Este DNI ya tiene cuenta: elígelo en el selector en vez de crearlo como persona nueva');
             $s->setFlashdata('tipo', 'danger');
             return redirect()->to(base_url('dios/codigos'));
+        }
+
+        // Coherencia: si el DNI pertenece a un usuario creado, el nombre es el suyo
+        if (!$isNew) {
+            $dueno = $this->userModel->findByDni($dni);
+            if ($dueno) $name = $dueno['name'];
         }
 
         if ($this->codeModel->findByDniActive($dni)) {

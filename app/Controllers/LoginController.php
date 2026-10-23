@@ -3,16 +3,19 @@ namespace App\Controllers;
 
 use App\Models\UsuarioModel;
 use App\Models\PermisosModel;
+use App\Models\SessionLogModel;
 
 class LoginController extends BaseController
 {
     protected UsuarioModel $usuarioModel;
     protected PermisosModel $permisosModel;
+    protected SessionLogModel $sessionLogModel;
 
     public function __construct()
     {
-        $this->usuarioModel = new UsuarioModel();
-        $this->permisosModel = new PermisosModel();
+        $this->usuarioModel     = new UsuarioModel();
+        $this->permisosModel    = new PermisosModel();
+        $this->sessionLogModel  = new SessionLogModel();
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -112,6 +115,16 @@ class LoginController extends BaseController
             'permisos' => $permisos_mapa,
         ]);
 
+        // Historial de sesiones: entrada (módulo legacy; sin user_id para no
+        // mezclar con la tabla users)
+        $this->sessionLogModel->registrar(
+            null,
+            $user->nombre . ' ' . $user->apellido_paterno,
+            (string) $user->rol_nombre,
+            'login',
+            $this->request->getIPAddress()
+        );
+
         return redirect()->to(base_url('dashboard'));
     }
 
@@ -120,6 +133,17 @@ class LoginController extends BaseController
     // ══════════════════════════════════════════════════════════════
     public function logout()
     {
+        $s = session();
+        if ($s->get('logged_in')) {
+            // Historial de sesiones: salida (módulo legacy)
+            $this->sessionLogModel->registrar(
+                null,
+                (string) ($s->get('nombre') ?? ''),
+                (string) ($s->get('rol_nombre') ?? ''),
+                'logout',
+                $this->request->getIPAddress()
+            );
+        }
         session()->destroy();
         return redirect()->to(base_url('login'));
     }

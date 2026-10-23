@@ -3,16 +3,19 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\CodeModel;
+use App\Models\SessionLogModel;
 
 class AuthController extends BaseController
 {
     protected UserModel $userModel;
     protected CodeModel $codeModel;
+    protected SessionLogModel $sessionLogModel;
 
     public function __construct()
     {
-        $this->userModel  = new UserModel();
-        $this->codeModel  = new CodeModel();
+        $this->userModel      = new UserModel();
+        $this->codeModel      = new CodeModel();
+        $this->sessionLogModel = new SessionLogModel();
     }
 
     // ════════════════════════════════════════
@@ -116,6 +119,15 @@ class AuthController extends BaseController
             'user_admin_code' => $u['admin_code'] ?? '',
             'user_empresa'   => $u['empresa'] ?? '',
         ]);
+
+        // Historial de sesiones: entrada (dni, email y código pasan por aquí)
+        $this->sessionLogModel->registrar(
+            (int) $u['id'],
+            (string) ($u['name'] ?? ''),
+            (string) ($u['role'] ?? 'Empleado'),
+            'login',
+            $this->request->getIPAddress()
+        );
     }
 
     // ════════════════════════════════════════
@@ -344,6 +356,17 @@ class AuthController extends BaseController
     // ════════════════════════════════════════
     public function logout()
     {
+        $s = session();
+        if ($s->get('logged_in')) {
+            // Historial de sesiones: salida
+            $this->sessionLogModel->registrar(
+                (int) $s->get('user_id'),
+                (string) ($s->get('user_name') ?? ''),
+                (string) ($s->get('user_role') ?? ''),
+                'logout',
+                $this->request->getIPAddress()
+            );
+        }
         session()->destroy();
         return redirect()->to(base_url('login-verde'));
     }

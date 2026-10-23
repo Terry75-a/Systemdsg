@@ -42,6 +42,12 @@ abstract class AdminBaseController extends BaseController
         $this->configModel     = new ConfigModel();
         $this->logModel        = new AttendanceLogModel();
         $this->festivoModel    = new FestivoModel();
+
+        // El panel admin NUNCA se cachea en el navegador: si no, los cambios
+        // de vistas/CSS se "pierden" porque el cliente sigue mostrando copias
+        // viejas del HTML (el SW tampoco las guarda, pero el HTTP cache sí)
+        service('response')->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        service('response')->setHeader('Pragma', 'no-cache');
     }
 
     // Solo un Admin entra aquí (cada uno ve únicamente lo suyo)

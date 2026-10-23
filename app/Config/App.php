@@ -29,7 +29,9 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $allowedHostnames = [];
+    public array $allowedHostnames = [
+    'imagines-name-ammonia.ngrok-free.dev',
+];
 
     /**
      * --------------------------------------------------------------------------

@@ -66,6 +66,89 @@
   }
 }
 
+/* ─── TOKENS M3 · OVERRIDE MANUAL (botón claro/oscuro) ───
+   html.tema-* (0,1,1) gana en especificidad a :root (0,1,0),
+   así la elección del usuario tapa a la del sistema operativo. */
+html.tema-claro {
+  --md-sys-color-background: #fbfdfc;
+  --md-sys-color-on-background: #10231a;
+  --md-sys-color-surface: #fbfdfc;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f4faf7;
+  --md-sys-color-surface-container: #edf5f1;
+  --md-sys-color-surface-container-high: #e7f1eb;
+  --md-sys-color-surface-container-highest: #e1ece7;
+  --md-sys-color-on-surface: #10231a;
+  --md-sys-color-surface-variant: #dcebe2;
+  --md-sys-color-on-surface-variant: #41584d;
+  --md-sys-color-outline: #73877c;
+  --md-sys-color-outline-variant: #c4ddd0;
+  --md-sys-color-primary: #1c5b40;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #e3f1e9;
+  --md-sys-color-on-primary-container: #10231a;
+  --md-sys-color-secondary-container: #e3f1e9;
+  --md-sys-color-on-secondary-container: #16452f;
+  --md-sys-color-tertiary: #2e7d5b;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-shadow: #10231a;
+  --md-sys-color-scrim: #000000;
+  color-scheme: light;
+}
+html.tema-oscuro {
+  --md-sys-color-background: #07110c;
+  --md-sys-color-on-background: #dfece6;
+  --md-sys-color-surface: #07110c;
+  --md-sys-color-surface-container-lowest: #050d09;
+  --md-sys-color-surface-container-low: #0d1a14;
+  --md-sys-color-surface-container: #14241c;
+  --md-sys-color-surface-container-high: #1c3026;
+  --md-sys-color-surface-container-highest: #243b2f;
+  --md-sys-color-on-surface: #dfece6;
+  --md-sys-color-surface-variant: #2a4036;
+  --md-sys-color-on-surface-variant: #adc2b8;
+  --md-sys-color-outline: #7e948a;
+  --md-sys-color-outline-variant: #2a4036;
+  --md-sys-color-primary: #9fd3b8;
+  --md-sys-color-on-primary: #052e1c;
+  --md-sys-color-primary-container: #1c5b40;
+  --md-sys-color-on-primary-container: #e3f1e9;
+  --md-sys-color-secondary-container: #1c3026;
+  --md-sys-color-on-secondary-container: #c4ddd0;
+  --md-sys-color-tertiary: #9fd3b8;
+  --md-sys-color-on-tertiary: #052e1c;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-scrim: #000000;
+  color-scheme: dark;
+}
+
+/* ─── BOTÓN DE TEMA (claro/oscuro) ─── */
+button.mm-theme-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0 12px;
+}
+.mm-nav-mobile button.mm-theme-btn {
+  width: 100%;
+  height: auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-background);
+}
+.mm-nav-mobile button.mm-theme-btn:hover { background: var(--md-sys-color-surface-container-high); }
+
 /* ─── BASE ─── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -541,19 +624,33 @@ body.mm-landing {
 }
 .mock-foot-row p { font-size: 12.5px; color: var(--md-sys-color-on-surface-variant); }
 .mock-foot-row strong { color: var(--md-sys-color-on-surface); }
-.mock-mark {
-  border: none;
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  font-size: 12.5px;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+.mock-example {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 6%, var(--md-sys-color-surface-container-lowest));
 }
-.mock-mark:hover { opacity: 0.9; transform: translateY(-1px); }
-.mock-mark:active { opacity: 0.85; }
+.mock-example-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-primary);
+}
+.mock-example-row { display: flex; align-items: center; gap: 12px; }
+.mock-example-geo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.mock-example-geo .material-symbols-rounded { font-size: 15px; color: var(--md-sys-color-primary); }
 .chip {
   position: absolute;
   display: inline-flex;
@@ -716,17 +813,54 @@ body.mm-landing {
   flex-direction: column;
   gap: 12px;
 }
-.qr-box {
+.geo-box {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 24px;
+  gap: 10px;
+  padding: 34px 24px;
   color: var(--md-sys-color-on-surface);
   background: var(--md-sys-color-surface-container-lowest);
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 20px;
 }
-.qr-box svg { width: 120px; height: 120px; }
+.geo-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-primary);
+  font-size: 38px;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+  animation: mm-geoPulse 2.4s ease-in-out infinite;
+}
+@keyframes mm-geoPulse {
+  0%, 100% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent); }
+  50% { box-shadow: 0 0 0 16px color-mix(in srgb, var(--md-sys-color-primary) 6%, transparent); }
+}
+.geo-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--md-sys-color-primary);
+}
+.geo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  animation: mm-geoBlink 1.6s ease-in-out infinite;
+}
+@keyframes mm-geoBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.75); }
+}
+.geo-place { font-size: 12.5px; color: var(--md-sys-color-outline); }
 .mini-rows { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 .mini-rows > div {
   display: flex;
@@ -1226,5 +1360,5 @@ body.mm-landing {
 /* ─── MOVIMIENTO REDUCIDO ─── */
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .mm-nav, .mm-fab, .chip, .mock-live .dot, .mock-row, .mm-video-play { animation: none !important; transition: none !important; }
+  .mm-nav, .mm-fab, .chip, .mock-live .dot, .mock-row, .mm-video-play, .geo-pin, .geo-dot { animation: none !important; transition: none !important; }
 }

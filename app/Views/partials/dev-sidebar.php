@@ -33,6 +33,14 @@
             <span class="material-symbols-outlined">history</span>
             <span>Auditoría</span>
         </a>
+        <a href="<?= base_url('dios/sesiones') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'sesiones' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">login</span>
+            <span>Sesiones</span>
+        </a>
+        <a href="<?= base_url('dios/datos') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'datos' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">storage</span>
+            <span>Base de datos</span>
+        </a>
         <div class="dev-nav-section">Cuenta</div>
         <a href="<?= base_url('dios/perfil') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'perfil' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">person</span>
@@ -102,6 +110,12 @@
             <a href="<?= base_url('dios/auditoria') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'auditoria' ? 'is-active' : '' ?>">
                 <span class="material-symbols-outlined">history</span> Auditoría
             </a>
+            <a href="<?= base_url('dios/sesiones') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'sesiones' ? 'is-active' : '' ?>">
+                <span class="material-symbols-outlined">login</span> Sesiones
+            </a>
+            <a href="<?= base_url('dios/datos') ?>" class="dev-mobile-modal-link <?= ($activePage ?? '') === 'datos' ? 'is-active' : '' ?>">
+                <span class="material-symbols-outlined">storage</span> Base de datos
+            </a>
         </div>
     </div>
 </div>
@@ -122,14 +136,20 @@
         overlay.classList.add('is-open');
 
         gsap.set(links, { opacity: 0, y: 6 });
+        gsap.set(modal, { width: 220 });
+
+        var contentH = 16;
+        links.forEach(function(l) { contentH += l.offsetHeight; });
+
+        gsap.set(modal, { width: 56, height: 56 });
 
         var tl = gsap.timeline();
 
         tl.to(modal, {
             width: 220,
-            height: 200,
-            borderRadius: 18,
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#ffffff',
+            height: Math.min(contentH, window.innerHeight - 100),
+            borderRadius: '18px',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--g-surface').trim() || '#ffffff',
             duration: 0.35,
             ease: 'back.out(1.1)'
         });
@@ -153,16 +173,30 @@
             stagger: 0.025,
             ease: 'power3.out'
         }, '-=0.15');
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function() {
+                if (!isOpen) return;
+                var h = 16;
+                links.forEach(function(l) { h += l.offsetHeight; });
+                gsap.to(modal, {
+                    height: Math.min(h, window.innerHeight - 100),
+                    duration: 0.25,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            });
+        }
     }
 
     function closeMenu() {
         if (!isOpen) return;
+        isOpen = false;
 
         var tl = gsap.timeline({
             onComplete: function() {
-                isOpen = false;
                 overlay.classList.remove('is-open');
-                gsap.set(modal, { height: 52 });
+                gsap.set(modal, { clearProps: 'width,height,borderRadius,backgroundColor' });
                 gsap.set(section, { opacity: 0 });
             }
         });
@@ -183,10 +217,10 @@
         }, '-=0.05');
 
         tl.to(modal, {
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             borderRadius: '50%',
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#1b7a42',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--g-primary').trim() || '#1b7a42',
             duration: 0.3,
             ease: 'power3.inOut'
         }, '-=0.1');
@@ -204,7 +238,8 @@
     });
 
     links.forEach(function(link) {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function(e) {
+            e.stopPropagation();
             closeMenu();
         });
     });

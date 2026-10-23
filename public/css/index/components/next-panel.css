@@ -527,7 +527,6 @@ body:has(.dev-main) .personal-stats > * {
   box-shadow: none !important;
   transition: background 150ms ease;
 }
-body:has(.dev-main) .stats-row .stat-icon,
 body:has(.dev-main) .stats .stat-icon,
 body:has(.dev-main) .aud-stats .stat-icon,
 body:has(.dev-main) .personal-stats .personal-stat-icon {
@@ -538,7 +537,6 @@ body:has(.dev-main) .personal-stats .personal-stat-icon {
   background: transparent !important;
   color: var(--g-text-disabled) !important;
 }
-body:has(.dev-main) .stats-row .stat-icon .material-symbols-outlined,
 body:has(.dev-main) .stats .stat-icon .material-symbols-outlined,
 body:has(.dev-main) .aud-stats .stat-icon .material-symbols-outlined,
 body:has(.dev-main) .personal-stats .personal-stat-icon .material-symbols-outlined {
@@ -627,20 +625,22 @@ body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 .material-s
   font-size: 16px;
   color: var(--g-text-disabled);
 }
-body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn {
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head .dev-btn {
   font-size: 12px;
   font-weight: 500;
   padding: 6px 8px 6px 10px;
   border-radius: 8px;
   border-color: transparent;
   background: transparent;
-  color: var(--g-text-secondary);
+  color: var(--g-primary);
   gap: 2px;
 }
-body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn:hover {
-  background: var(--sb-surface-container-low);
+body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn:hover,
+body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head .dev-btn:hover {
+  background: var(--g-primary-light);
   border-color: transparent;
-  color: var(--g-text);
+  color: var(--g-primary);
 }
 body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head .dev-btn::after {
   content: "chevron_right";
@@ -988,8 +988,8 @@ html.dark:has(.dev-main) {
   --sb-on-surface-variant: #a1a1aa;
   --sb-outline: #52525b;
   --sb-outline-variant: #262626;
-  --sb-primary: #ededed;
-  --sb-on-primary: #0a0a0a;
+  --sb-primary: #1b7a42;
+  --sb-on-primary: #ffffff;
 
   /* los lee el JS del morph-FAB de los sidebars (gsap) */
   --surface: #171717;
@@ -1115,12 +1115,12 @@ html.dark .search-box input {
 html.dark .dev-btn-outline,
 html.dark .dev-btn-icon {
   background: #111111;
-  border-color: #262626;
-  color: #ededed;
+  border-color: color-mix(in srgb, #1b7a42 55%, #262626);
+  color: #9fd3b8;
 }
 html.dark .dev-btn-primary {
-  background: #fafafa;
-  color: #0a0a0a;
+  background: #1b7a42;
+  color: #ffffff;
 }
 html.dark .dev-modal {
   background: #111111;
@@ -1162,18 +1162,19 @@ html.dark .dev-field textarea:focus {
   border-color: #52525b;
 }
 html.dark .dev-btn-primary:hover {
-  background: #e5e5e5;
+  background: #1f8f56;
 }
-html.dark .dev-btn-outline:hover {
-  background: #1a1a1a;
-  border-color: #3f3f46;
-  color: #ededed;
+html.dark .dev-btn-outline:hover,
+html.dark .dev-btn-icon:hover {
+  background: color-mix(in srgb, #1b7a42 30%, #111111);
+  border-color: color-mix(in srgb, #1b7a42 55%, #262626);
+  color: #9fd3b8;
 }
 html.dark .dev-btn-text {
-  color: #ededed;
+  color: #9fd3b8;
 }
 html.dark .dev-btn-text:hover {
-  background: #1a1a1a;
+  background: color-mix(in srgb, #1b7a42 30%, #111111);
 }
 html.dark .dev-alert-success {
   background: #141414;
@@ -1248,7 +1249,7 @@ html.dark .dev-btn:focus-visible,
 html.dark .dev-btn-icon:focus-visible,
 html.dark .dev-nav-link:focus-visible,
 html.dark .dev-mobile-nav a:focus-visible {
-  outline-color: #52525b;
+  outline-color: #1f8f56;
 }
 
 /* ─────────────────────────────────────────────────────────────

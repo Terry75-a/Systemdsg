@@ -3,6 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Libraries\Asistencia\AsistenciaQuery;
 use App\Libraries\Asistencia\ExportCsv;
+use App\Services\NotificationService;
 
 /**
  * Páginas y acciones del módulo de asistencia:
@@ -10,6 +11,14 @@ use App\Libraries\Asistencia\ExportCsv;
  */
 class AsistenciaAdminController extends AdminBaseController
 {
+    protected NotificationService $notificationService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->notificationService = new NotificationService();
+    }
+
     public function asistencias()
     {
         if ($redirect = $this->guard()) return $redirect;
@@ -187,6 +196,9 @@ class AsistenciaAdminController extends AdminBaseController
                 ]);
             }
         }
+
+        // Notificar a admins sobre asistencia actualizada
+        $this->notificationService->asistenciaMarcada($attId, $adminId);
 
         $s->setFlashdata('msg', 'Asistencia actualizada');
         $s->setFlashdata('tipo', 'success');

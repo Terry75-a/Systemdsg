@@ -12,6 +12,7 @@
     "require": {
         "php": "^8.2",
         "codeigniter4/framework": "^4.0",
+        "endroid/qr-code": "^6.0",
         "phpmailer/phpmailer": "7.0",
         "web-auth/webauthn-lib": "^5.3"
     },

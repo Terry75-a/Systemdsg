@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Controllers\Admin\AdminBaseController;
+use App\Services\NotificationService;
 
 /**
  * Panel /admin — personal, horarios y códigos.
@@ -11,6 +12,14 @@ use App\Controllers\Admin\AdminBaseController;
  */
 class AdminController extends AdminBaseController
 {
+    protected NotificationService $notificationService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->notificationService = new NotificationService();
+    }
+
     public function dashboard()
     {
         if ($redirect = $this->guard()) return $redirect;
@@ -390,7 +399,7 @@ class AdminController extends AdminBaseController
             'sch_dias'          => 'permit_empty|max_length[100]',
             'sch_hora_entrada'  => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
             'sch_hora_salida'   => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
-            'sch_tolerancia'    => 'permit_empty|integer|between[0,120]',
+            'sch_tolerancia'    => 'permit_empty|integer|greater_than_equal_to[0]|less_than_equal_to[120]',
         ], 'admin/horarios')) {
             return $redirect;
         }
@@ -412,8 +421,17 @@ class AdminController extends AdminBaseController
             'tolerancia'    => $tolerancia,
             'estado'        => 'Activo',
         ]);
-        $s->setFlashdata('msg', "Horario {$nombre} creado");
+
+        // QR de asistencia del horario, listo para descargar
+        $schId = (int) db_connect()->insertID();
+        $qrListo = $schId > 0 && $this->scheduleModel->ensureQrToken($schId) !== '';
+
+        // Notificar a admins sobre horario creado
+        $this->notificationService->horarioCreado($schId, $adminId);
+
+        $s->setFlashdata('msg', "Horario {$nombre} creado" . ($qrListo ? ' · QR de asistencia listo para descargar' : ''));
         $s->setFlashdata('tipo', 'success');
+
         return redirect()->to(base_url('admin/horarios'));
     }
 

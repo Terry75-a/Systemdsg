@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
     <style>
         .dev-stats-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
@@ -22,25 +22,164 @@
 
         .dash-section-title { font-size: 14px; font-weight: 600; color: var(--g-text-secondary); margin-bottom: 12px; font-family: var(--g-font-display); }
 
-        .dash-activity-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 12px 0;
+        /* ── Secciones al estilo sorteroOS ─────────────────────────────────
+           sorteroOS NO usa card con borde: el título vive FUERA del bloque,
+           apoyado sobre el fondo de página (11px, mayúsculas, tracking amplio,
+           muy apagado, mb-4) y debajo va el bloque con hairlines —un contenedor
+           rounded-2xl con overflow:hidden cuyo fondo asoma en el gap de 1px—.
+           Por eso estas secciones van sin background, sin borde y sin padding:
+           el "card" lo forma la propia lista, no un marco alrededor. */
+        .dash-sec { background: transparent; border: 0; padding: 0; }
+        .dash-sec-head {
+            display: flex; align-items: baseline; justify-content: space-between;
+            gap: 12px; margin-bottom: 16px;
         }
-        .dash-activity-item + .dash-activity-item { border-top: 1px solid var(--g-border); }
-        .dash-activity-dot {
-            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        .dash-sec-head h2 {
+            margin: 0; font-family: inherit;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            display: flex; align-items: center; gap: 6px;
         }
-        .dash-activity-dot.dot-green { background: var(--g-success); }
-        .dash-activity-dot.dot-amber { background: var(--g-warning); }
-        .dash-activity-dot.dot-red { background: var(--g-error); }
-        .dash-activity-dot.dot-gray { background: var(--g-text-disabled); }
-        .dash-activity-dot.dot-blue  { background: #3b82f6; }
-        .dash-activity-info { flex: 1; min-width: 0; }
-        .dash-activity-name { font-size: 14px; font-weight: 500; }
-        .dash-activity-meta { font-size: 12px; color: var(--g-text-secondary); }
-        .dash-activity-time { font-size: 12px; color: var(--g-text-secondary); white-space: nowrap; }
+        .dash-sec-head h2 .material-symbols-outlined { font-size: 15px; color: inherit; }
+        .dash-sec-link {
+            font-size: 11px; font-weight: 500; text-decoration: none;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 60%, transparent);
+            display: inline-flex; align-items: center; gap: 1px;
+            transition: color 150ms ease;
+        }
+        .dash-sec-link:hover { color: var(--sb-primary); }
+        .dash-sec-link .material-symbols-outlined { font-size: 15px; }
+
+        /* ── Última actividad — réplica del feed "Actividad reciente" de sorteroOS ──
+           Fila: caja de icono 32px/r8 (surface-container) con icono semántico al
+           50% · título 13px/500 · descripción 12px @50% a una línea con elipsis
+           · tiempo 10px @40%. La caja de icono, el hover y el stagger los aporta
+           next-panel.css (que ya es un port de ese patrón); acá sólo se ajusta el
+           fondo hairline, el padding p-4 y las opacidades.
+
+           Los selectores llevan 3 clases a propósito: next-panel.css define estos
+           mismos estilos como `body:has(.dev-main) .clase` (especificidad 0,2,1)
+           y hace falta superarlo sin caer en !important.
+
+           Los tokens --sb-* existen en educonecta.css (light) y se redefinen en
+           next-panel.css para dark, así que ambos modos quedan cubiertos. */
+        .dash-sec.dash-act .dev-recent-list {
+            background: color-mix(in srgb, var(--sb-outline-variant) 10%, transparent);
+            gap: 1px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .dash-sec.dash-act .dev-recent-item {
+            background: var(--sb-surface);
+            padding: 16px;                 /* p-4 */
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .dash-sec.dash-act .dev-recent-item:hover {
+            background: var(--sb-surface-container-low);
+        }
+        /* Icono dentro de la caja: 16px al 50% (su h-4 w-4 /50) */
+        .dash-act-ico {
+            font-size: 16px;
+            line-height: 1;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        /* Descripción: una sola línea con puntos suspensivos */
+        .dash-act-desc {
+            font-size: 12px;
+            line-height: 1.45;
+            margin-top: 2px;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Tiempo: sorteroOS lo deja muy tenue (40%) */
+        .dash-act-when {
+            font-size: 10px;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 40%, transparent);
+            white-space: nowrap;
+        }
+        /* Estado vacío: caja neutra centrada (su emptyState) */
+        .dash-act-empty {
+            background: var(--sb-surface);
+            border-radius: 16px;
+            padding: 32px 16px;
+            text-align: center;
+            font-size: 14px;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
 
         .dash-link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ── Módulos — mismo lenguaje que la rejilla de métricas de sorteroOS:
+           un único contenedor con gap de 1px y fondo tintado (outline-variant
+           al 20%), celdas blancas a ras sin borde ni radio individual. Sobre
+           escribe a next-panel.css por la misma razón de especificidad. */
+        .dash-sec.dash-mods .dash-link-grid {
+            gap: 1px;
+            background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .dash-sec.dash-mods .dash-link {
+            background: var(--sb-surface);
+            border: 0;
+            border-radius: 0;
+            padding: 16px 20px;
+            gap: 12px;
+        }
+        .dash-sec.dash-mods .dash-link:hover {
+            background: var(--sb-surface-container-low);
+        }
+
+        /* ── Módulos — paleta verde/blanco ──
+           Tres intensidades en vez de 5 colores distintos: sólido (verde con
+           icono blanco), suave (verde claro con icono verde) y contorno (blanco
+           con borde verde). Los tonos viven en vars locales para que el dark
+           mode los redefina sin tocar el markup. */
+        .dash-mod-icon {
+            width: 38px; height: 38px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid transparent;
+            transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+        }
+        .dash-mod-icon .material-symbols-outlined { font-size: 19px; }
+        /* Sólido: verde pleno, icono blanco.
+           Usa --sb-primary, no --g-primary: next-panel.css redefine
+           --g-primary a #fafafa en dark mode (el acento oscuro es blanco),
+           lo que dejaba el icono blanco sobre fondo blanco. --sb-primary se
+           mantiene verde (#1b7a42) en ambos modos. */
+        .dash-mod-icon.mi-solid {
+            background: var(--sb-primary); color: var(--sb-on-primary, #fff);
+            border-color: var(--sb-primary);
+        }
+        /* Suave: verde claro, icono verde */
+        .dash-mod-icon.mi-soft { background: var(--g-primary-light); color: var(--g-primary); border-color: transparent; }
+        /* Contorno: blanco, borde e icono verde */
+        .dash-mod-icon.mi-outline {
+            background: var(--g-surface); color: var(--g-primary);
+            border-color: color-mix(in srgb, var(--g-primary) 32%, transparent);
+        }
+        html.dark:has(.dev-main) .dash-mod-icon.mi-outline {
+            background: transparent;
+            border-color: color-mix(in srgb, var(--g-primary) 45%, transparent);
+        }
+        /* El hover de next-panel.css fuerza fondo verde suave con !important;
+           lo respetamos y bajamos el borde para que no compita. */
+        .dash-link:hover .dash-mod-icon { border-color: transparent; }
+
+        /* Contador de incidencias pendientes — --sb-primary para que siga
+           verde en dark mode (ver nota en .mi-solid) */
+        .dash-mod-badge {
+            margin-left: auto;
+            background: var(--sb-primary); color: var(--sb-on-primary, #fff);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.01em;
+            padding: 3px 8px; border-radius: 999px;
+            white-space: nowrap; align-self: center;
+        }
 
         /* ── Primeros pasos (cuenta nueva sin personal) ── */
         .dash-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -82,8 +221,8 @@
             .dash-link-grid { grid-template-columns: 1fr; }
         }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
 </head>
 <body>
 <div class="dev-layout">
@@ -171,93 +310,135 @@
             </section>
 
             <div class="dev-grid-2">
-                <!-- Última actividad -->
-                <div class="dev-card">
-                    <div class="dev-card-head">
+                <!-- Última actividad — sorteroOS: título fuera, bloque con hairlines -->
+                <section class="dash-sec dash-act">
+                    <div class="dash-sec-head">
                         <h2><span class="material-symbols-outlined">history</span> Última actividad</h2>
-                        <a href="<?= base_url('admin/asistencias') ?>" class="dev-btn dev-btn-outline dev-btn-sm">Ver todo</a>
+                        <a href="<?= base_url('admin/asistencias') ?>" class="dash-sec-link">Ver todo<span class="material-symbols-outlined">chevron_right</span></a>
                     </div>
-                    <div style="padding: 4px 16px 12px;">
-                        <?php
-                        $recent = array_values($attendance ?? []);
-                        usort($recent, function ($a, $b) {
-                            $ka = ($a['date'] ?? '') . ' ' . ($a['time_in'] ?? '') . ' ' . str_pad((string) ($a['id'] ?? 0), 10, '0', STR_PAD_LEFT);
-                            $kb = ($b['date'] ?? '') . ' ' . ($b['time_in'] ?? '') . ' ' . str_pad((string) ($b['id'] ?? 0), 10, '0', STR_PAD_LEFT);
-                            return strcmp($kb, $ka);
-                        });
-                        $recent = array_slice($recent, 0, 8);
-                        ?>
-                        <?php if (empty($recent)): ?>
-                            <div style="text-align:center; padding:48px 16px; color:var(--g-text-secondary); font-size:14px;">
-                                <span class="material-symbols-outlined" style="font-size:48px; display:block; margin:0 auto 12px; opacity:0.2; color:var(--g-text-disabled);">inbox</span>
-                                Sin registros de asistencia
+                    <?php
+                    $recent = array_values($attendance ?? []);
+                    usort($recent, function ($a, $b) {
+                        $ka = ($a['date'] ?? '') . ' ' . ($a['time_in'] ?? '') . ' ' . str_pad((string) ($a['id'] ?? 0), 10, '0', STR_PAD_LEFT);
+                        $kb = ($b['date'] ?? '') . ' ' . ($b['time_in'] ?? '') . ' ' . str_pad((string) ($b['id'] ?? 0), 10, '0', STR_PAD_LEFT);
+                        return strcmp($kb, $ka);
+                    });
+                    $recent = array_slice($recent, 0, 8);
+
+                    // timeAgo idéntico al de sorteroOS: "Ahora" · "Hace 5m" ·
+                    // "Hace 3h" · "Hace 2d" · y a partir de 7 días, fecha corta.
+                    $dashRelativo = function (string $fecha, string $hora): string {
+                        $ts = strtotime(trim($fecha . ' ' . $hora));
+                        if (!$ts) return '';
+                        $diff = time() - $ts;
+                        if ($diff < 60)    return 'Ahora';
+                        if ($diff < 3600)  return 'Hace ' . (int) floor($diff / 60) . 'm';
+                        if ($diff < 86400) return 'Hace ' . (int) floor($diff / 3600) . 'h';
+                        $dias = (int) floor($diff / 86400);
+                        if ($dias < 7)     return 'Hace ' . $dias . 'd';
+                        $meses = [1=>'ene','feb','mar','abr','may','jun',
+                                  'jul','ago','sep','oct','nov','dic'];
+                        return (int) date('j', $ts) . ' ' . $meses[(int) date('n', $ts)];
+                    };
+
+                    // El estado lo cargan el icono y la primera palabra de la
+                    // descripción (sorteroOS no usa chips de color).
+                    $dashEstado = [
+                        'present'          => ['Presente',     'check_circle'],
+                        'late'             => ['Tardanza',     'schedule'],
+                        'absent'           => ['Falta',        'close'],
+                        'absent_justified' => ['Justificada',  'verified'],
+                        'no_exit'          => ['Sin salida',   'logout'],
+                    ];
+                    ?>
+                    <?php if (empty($recent)): ?>
+                        <div class="dev-recent-list">
+                            <div class="dash-act-empty">
+                                Sin actividad reciente — las marcaciones de tu equipo aparecerán aquí
                             </div>
-                        <?php else: ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="dev-recent-list">
                             <?php foreach ($recent as $r): ?>
                                 <?php
-                                $st = $r['status'] ?? 'unknown';
-                                $dotClass = match($st) { 'present' => 'dot-green', 'late' => 'dot-amber', 'absent' => 'dot-red', 'no_exit' => 'dot-blue', default => 'dot-gray' };
-                                $label = match($st) {
-                                    'present' => 'Presente',
-                                    'late'    => 'Tardanza',
-                                    'absent'  => 'Falta',
-                                    'no_exit' => 'Sin salida',
-                                    default   => ucfirst(str_replace('_', ' ', (string) $st)),
-                                };
-                                $fechaCorta = !empty($r['date']) ? date('d/m/Y', strtotime($r['date'])) : '';
+                                $st      = (string) ($r['status'] ?? 'unknown');
+                                [$labelSt, $iconoSt] = $dashEstado[$st]
+                                    ?? [ucfirst(str_replace('_', ' ', $st)), 'help'];
+
+                                $fecha   = (string) ($r['date'] ?? '');
+                                $hora    = (string) ($r['time_in'] ?? '');
+                                $salida  = (string) ($r['time_out'] ?? '');
+
+                                // Descripción: identidad + jornada, una sola línea
+                                $parts = [];
+                                if (!empty($r['dni'])) $parts[] = 'DNI ' . $r['dni'];
+                                if ($hora !== '') {
+                                    $jornada = mb_substr($hora, 0, 5);
+                                    if ($salida !== '') $jornada .= ' → ' . mb_substr($salida, 0, 5);
+                                    $parts[] = $jornada;
+                                }
+                                $meta = ($labelSt ?: 'Registro') . ($parts ? ' · ' . implode(' · ', $parts) : '');
                                 ?>
-                                <div class="dash-activity-item">
-                                    <div class="dash-activity-dot <?= $dotClass ?>"></div>
-                                    <div class="dash-activity-info">
-                                        <div class="dash-activity-name"><?= esc($r['name'] ?? 'Empleado') ?></div>
-                                        <div class="dash-activity-meta"><?= esc($label) ?> · <?= esc($fechaCorta) ?></div>
+                                <div class="dev-recent-item">
+                                    <div class="dev-recent-avatar">
+                                        <span class="material-symbols-outlined dash-act-ico"><?= esc($iconoSt) ?></span>
                                     </div>
-                                    <div class="dash-activity-time"><?= esc(mb_substr((string) ($r['time_in'] ?? ''), 0, 5)) ?></div>
+                                    <div class="dev-recent-info">
+                                        <div class="dev-recent-name"><?= esc($r['name'] ?? 'Empleado') ?></div>
+                                        <div class="dash-act-desc"><?= esc($meta) ?></div>
+                                    </div>
+                                    <div class="dev-recent-right">
+                                        <div class="dash-act-when"><?= esc($dashRelativo($fecha, $hora)) ?></div>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                        </div>
+                    <?php endif; ?>
+                </section>
 
-                <!-- Accesos directos -->
-                <div class="dev-card">
-                    <div class="dev-card-head">
+                <!-- Módulos — sorteroOS: título fuera, celdas a ras con hairlines -->
+                <section class="dash-sec dash-mods">
+                    <div class="dash-sec-head">
                         <h2><span class="material-symbols-outlined">apps</span> Módulos</h2>
                     </div>
-                    <div style="padding: 4px 16px 12px;">
-                        <div class="dash-link-grid">
-                            <a href="<?= base_url('admin/personal') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-success-light);color:var(--g-success);"><span class="material-symbols-outlined">people</span></div>
-                                <div class="dash-link-text">Personal<span>Empleados y códigos</span></div>
-                            </a>
-                            <a href="<?= base_url('admin/asistencias') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-warning-light);color:#e37400;"><span class="material-symbols-outlined">fingerprint</span></div>
-                                <div class="dash-link-text">Asistencias<span>Registro diario</span></div>
-                            </a>
-                            <a href="<?= base_url('admin/horarios') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-primary-light);color:var(--g-primary);"><span class="material-symbols-outlined">schedule</span></div>
-                                <div class="dash-link-text">Horarios<span>Jornadas de trabajo</span></div>
-                            </a>
-                            <a href="<?= base_url('admin/incidencias') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-error-light);color:var(--g-error);"><span class="material-symbols-outlined">warning</span></div>
-                                <?php if (($incPendientes ?? 0) > 0): ?><span class="dash-count"><?= (int) $incPendientes ?> pendientes</span><?php endif; ?>
-                                <div class="dash-link-text">Incidencias<span>Casos y justificaciones<?= ($incPendientes ?? 0) > 0 ? ' · ' . (int) $incPendientes . ' pendientes' : '' ?></span></div>
-                            </a>
-                            <a href="<?= base_url('admin/reportes') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-primary-light);color:var(--g-primary);"><span class="material-symbols-outlined">analytics</span></div>
-                                <div class="dash-link-text">Reportes<span>Estadísticas</span></div>
-                            </a>
-                            <a href="<?= base_url('admin/configuracion') ?>" class="dash-link">
-                                <div class="dash-link-icon" style="background:var(--g-surface-variant);color:var(--g-text-secondary);"><span class="material-symbols-outlined">settings</span></div>
-                                <div class="dash-link-text">Configuración<span>Ajustes y festivos</span></div>
-                            </a>
-                        </div>
+                    <div class="dash-link-grid">
+                        <a href="<?= base_url('admin/personal') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-solid"><span class="material-symbols-outlined">people</span></div>
+                            <div class="dash-link-text">Personal<span>Empleados y códigos</span></div>
+                        </a>
+                        <a href="<?= base_url('admin/asistencias') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">fingerprint</span></div>
+                            <div class="dash-link-text">Asistencias<span>Registro diario</span></div>
+                        </a>
+                        <a href="<?= base_url('admin/horarios') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">schedule</span></div>
+                            <div class="dash-link-text">Horarios<span>Jornadas de trabajo</span></div>
+                        </a>
+                        <a href="<?= base_url('admin/incidencias') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-outline"><span class="material-symbols-outlined">warning</span></div>
+                            <?php if (($incPendientes ?? 0) > 0): ?><span class="dash-mod-badge"><?= (int) $incPendientes ?><?= $incPendientes > 1 ? ' pendientes' : ' pendiente' ?></span><?php endif; ?>
+                            <div class="dash-link-text">Incidencias<span>Casos y justificaciones</span></div>
+                        </a>
+                        <a href="<?= base_url('admin/reportes') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">analytics</span></div>
+                            <div class="dash-link-text">Reportes<span>Estadísticas</span></div>
+                        </a>
+                        <a href="<?= base_url('admin/configuracion') ?>" class="dash-link">
+                            <div class="dash-mod-icon mi-outline"><span class="material-symbols-outlined">settings</span></div>
+                            <div class="dash-link-text">Configuración<span>Ajustes y festivos</span></div>
+                        </a>
                     </div>
-                </div>
+                </section>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- Campana de notificaciones (compartida en todas las secciones admin) -->
+<?= view('partials/admin-notif-bell') ?>
+<?= view('partials/pwa-js') ?>
 </body>
 </html>
+<!-- PWA -->
+    <?= view('partials/pwa-head') ?>

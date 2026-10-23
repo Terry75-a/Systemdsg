@@ -171,13 +171,19 @@ $GLOBALS['__pdsg_seg'] = $seg;
         overlay.classList.add('is-open');
 
         gsap.set(links, { opacity: 0, y: 6 });
+        gsap.set(modal, { width: 220 });
+
+        var contentH = 16;
+        links.forEach(function(l) { contentH += l.offsetHeight; });
+
+        gsap.set(modal, { width: 56, height: 56 });
 
         var tl = gsap.timeline();
 
         tl.to(modal, {
             width: 220,
-            height: 240,
-            borderRadius: 18,
+            height: Math.min(contentH, window.innerHeight - 100),
+            borderRadius: '18px',
             backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--g-surface').trim() || '#ffffff',
             duration: 0.35,
             ease: 'back.out(1.1)'
@@ -202,16 +208,30 @@ $GLOBALS['__pdsg_seg'] = $seg;
             stagger: 0.025,
             ease: 'power3.out'
         }, '-=0.15');
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function() {
+                if (!isOpen) return;
+                var h = 16;
+                links.forEach(function(l) { h += l.offsetHeight; });
+                gsap.to(modal, {
+                    height: Math.min(h, window.innerHeight - 100),
+                    duration: 0.25,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            });
+        }
     }
 
     function closeMenu() {
         if (!isOpen) return;
+        isOpen = false;
 
         var tl = gsap.timeline({
             onComplete: function() {
-                isOpen = false;
                 overlay.classList.remove('is-open');
-                gsap.set(modal, { height: 56 });
+                gsap.set(modal, { clearProps: 'width,height,borderRadius,backgroundColor' });
                 gsap.set(section, { opacity: 0 });
             }
         });
@@ -243,7 +263,9 @@ $GLOBALS['__pdsg_seg'] = $seg;
 
     modal.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (!isOpen) { openMenu(); } else { closeMenu(); }
+        if (!isOpen) {
+            openMenu();
+        }
     });
 
     overlay.addEventListener('click', function() {
@@ -251,7 +273,8 @@ $GLOBALS['__pdsg_seg'] = $seg;
     });
 
     links.forEach(function(link) {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function(e) {
+            e.stopPropagation();
             closeMenu();
         });
     });

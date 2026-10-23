@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-table.css?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-table.css?v=' . filemtime(FCPATH . 'css/index/components/dev-table.css')) ?>">
     <style>
         .page-content { max-width: 960px; }
 
@@ -173,8 +173,8 @@
         .confirm-modal-btn-delete:hover { background: #c62828; }
         .confirm-modal-btn .material-symbols-outlined { font-size: 18px; }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
 </head>
 <body>
 <div class="dev-layout">
@@ -235,12 +235,22 @@
                             <?= csrf_field() ?>
                             <div class="form-grid">
                                 <div class="field">
-                                    <label>Nombre del empleado</label>
-                                    <input type="text" name="name" placeholder="Juan Perez" required>
+                                    <label>Empleado (elegir de los creados)</label>
+                                    <select name="name" id="codeEmpSel" required>
+                                        <option value="">Selecciona un empleado</option>
+                                        <?php foreach ($empleados as $emp): ?>
+                                            <option value="<?= esc($emp['name'] ?? '') ?>" data-dni="<?= esc($emp['dni'] ?? '') ?>"><?= esc($emp['name'] ?? '') ?> — DNI <?= esc($emp['dni'] ?? 'sin registro') ?> (<?= esc($emp['role'] ?? '') ?>)</option>
+                                        <?php endforeach; ?>
+                                        <option value="__new__">— Persona nueva (escribir nombre) —</option>
+                                    </select>
+                                </div>
+                                <div class="field" id="codeNewNameWrap" style="display:none;">
+                                    <label>Nombre de la persona nueva</label>
+                                    <input type="text" name="name_new" id="codeNewName" placeholder="Juan Perez">
                                 </div>
                                 <div class="field">
-                                    <label>DNI (8 digitos)</label>
-                                    <input type="text" name="dni" placeholder="12345678" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" required>
+                                    <label>DNI (8 digitos)<span id="codeDniHint" style="opacity:.6;"> — escríbelo y se elige el empleado solo</span></label>
+                                    <input type="text" name="dni" id="codeDniInput" placeholder="12345678" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" required>
                                 </div>
                                 <div class="field">
                                     <label>Asignar a Admin</label>
@@ -347,6 +357,70 @@ function copyCode(btn, code) {
         setTimeout(function() { btn.innerHTML = original; btn.disabled = false; }, 1200);
     });
 }
+
+// Generar codigo: doble via — eliges empleado -> DNI se completa;
+// escribes el DNI (8 digitos) -> el empleado se elige solo y aparece su nombre
+(function () {
+    var sel  = document.getElementById('codeEmpSel');
+    var dni  = document.getElementById('codeDniInput');
+    var hint = document.getElementById('codeDniHint');
+    var wrap = document.getElementById('codeNewNameWrap');
+    var newName = document.getElementById('codeNewName');
+    if (!sel || !dni) return;
+
+    function employeeByDni(v) {
+        for (var i = 0; i < sel.options.length; i++) {
+            var o = sel.options[i];
+            if (o.value && o.value !== '__new__' && (o.getAttribute('data-dni') || '') === v) return o;
+        }
+        return null;
+    }
+
+    function sync(focusName) {
+        var opt = sel.options[sel.selectedIndex];
+        var mode = opt ? opt.value : '';
+        if (mode === '__new__') {
+            wrap.style.display = 'block';
+            newName.required = true;
+            if (focusName) newName.focus();
+        } else {
+            wrap.style.display = 'none';
+            newName.required = false;
+            newName.value = '';
+            if (mode) {
+                var d = opt.getAttribute('data-dni') || '';
+                if (d.length === 8) dni.value = d;
+            }
+        }
+        hint.style.display = (mode && mode !== '__new__') ? 'inline' : 'none';
+    }
+
+    sel.addEventListener('change', function () { sync(true); });
+
+    dni.addEventListener('input', function () {
+        var v = dni.value.replace(/\D/g, '');
+        if (dni.value !== v) dni.value = v;
+        if (v.length === 8) {
+            var opt = employeeByDni(v);
+            if (opt) {
+                sel.value = opt.value;
+            } else if (sel.value !== '__new__') {
+                // si el elegido no tiene DNI registrado, se queda elegido
+                // mientras se tipea el suyo; si tiene otro DNI, pasa a persona nueva
+                var cur = sel.options[sel.selectedIndex];
+                var curDni = cur ? (cur.getAttribute('data-dni') || '') : '';
+                if (!(sel.value && curDni === '')) sel.value = '__new__';
+            }
+            sync(false);
+        } else if (v.length === 0 && sel.value && sel.value !== '__new__') {
+            sel.value = '';
+            sync(false);
+        }
+        // digitos parciales: no se toca el selector todavia
+    });
+
+    sync(false);
+})();
 </script>
 <script src="<?= base_url('js/dev-table.js') ?>"></script>
 <script>

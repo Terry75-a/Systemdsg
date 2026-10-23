@@ -7,10 +7,10 @@ body.pe-frame {
   --pe-line: #e4e4e7;
   --pe-text: #161618;
   --pe-muted: #52525b;
-  --pe-accent: #161618;
-  --pe-accent-soft: #ececee;
+  --pe-accent: #1b7a42;
+  --pe-accent-soft: #e6f4ea;
   --pe-danger: #d93025;
-  --sb-primary: #161618;
+  --sb-primary: #1b7a42;
   --sb-on-primary: #ffffff;
   --sb-surface: #ffffff;
   --sb-surface-container-low: #fbfbfc;
@@ -23,11 +23,11 @@ html.dark body.pe-frame {
   --pe-line: #262626;
   --pe-text: #ededed;
   --pe-muted: #a1a1aa;
-  --pe-accent: #ededed;
+  --pe-accent: #1b7a42;
   --pe-accent-soft: #262626;
   --pe-danger: #f28b82;
-  --sb-primary: #ededed;
-  --sb-on-primary: #0a0a0a;
+  --sb-primary: #1b7a42;
+  --sb-on-primary: #ffffff;
   --sb-surface: #111111;
   --sb-surface-container-low: #141414;
   --sb-surface-container: #0f0f0f;
@@ -46,7 +46,7 @@ html.dark body.pe-frame {
   --sb-on-surface: #161618;
   --sb-on-surface-variant: #52525b;
   --sb-outline-variant: #e4e4e7;
-  --sb-primary: #161618;
+  --sb-primary: #1b7a42;
   --sb-on-primary: #ffffff;
   --pe-surface: var(--sb-surface);
   --pe-soft: var(--sb-surface-container);
@@ -69,8 +69,8 @@ html.dark .pdsg-persona-page {
   --sb-on-surface: #ededed;
   --sb-on-surface-variant: #a1a1aa;
   --sb-outline-variant: #262626;
-  --sb-primary: #ededed;
-  --sb-on-primary: #0a0a0a;
+  --sb-primary: #1b7a42;
+  --sb-on-primary: #ffffff;
   --pe-danger: #f28b82;
   color-scheme: dark;
 }
@@ -196,13 +196,14 @@ html.dark .pdsg-persona-page {
   color: var(--pe-text);
   box-shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 2px 8px -2px rgba(0, 0, 0, .06);
 }
-/* paso activo: el badge numerado se rellena en negro (Google) para que
+/* paso activo: el badge numerado se rellena en verde DSG para que
    la sección actual se distinga de un vistazo */
 .pdsg-persona-page .pe-nav-link[aria-current] .pe-nav-number {
   background: var(--pe-accent);
   border-color: var(--pe-accent);
   color: var(--pe-surface);
 }
+html.dark .pdsg-persona-page .pe-nav-link[aria-current] .pe-nav-number { color: #ffffff; }
 .pdsg-persona-page .pe-nav-link[aria-current] { font-weight: 600; }
 .pdsg-persona-page .pe-sidebar-note {
   margin-top: auto;
@@ -515,6 +516,7 @@ html.dark .pdsg-plan-toast--error .pdsg-plan-toast-bar {
 .dev-main .pdsg-persona-page .pdsg-btn-search:hover { background: var(--pe-accent-soft); color: var(--pe-accent); border-color: var(--pe-line); }
 #alertaDni small, #alertaRuc small { font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
 #alertaDni .text-success, #alertaRuc .text-success { color: var(--pe-accent) !important; }
+html.dark #alertaDni .text-success, html.dark #alertaRuc .text-success { color: #4ade80 !important; }
 #alertaDni .text-danger, #alertaRuc .text-danger { color: var(--pe-danger) !important; }
 
 /* ── Acciones: pills full-width en mobile, row-reverse en desktop ── */
@@ -544,11 +546,11 @@ html.dark .pdsg-plan-toast--error .pdsg-plan-toast-bar {
   transition: background-color 150ms cubic-bezier(.4, 0, .2, 1), color 150ms cubic-bezier(.4, 0, .2, 1);
 }
 .dev-main .pdsg-persona-page .pdsg-btn-save { border: 1px solid var(--pe-accent); background: var(--pe-accent); color: var(--pe-surface); }
-.dev-main .pdsg-persona-page .pdsg-btn-save:hover { background: #000; border-color: #000; }
+.dev-main .pdsg-persona-page .pdsg-btn-save:hover { background: #15633a; border-color: #15633a; color: #ffffff; }
 /* Overrides dark: ganan en especificidad (0,4,1) a las reglas azules/verdes
    de panel-dsg.css (html.dark .dev-main .pdsg-btn-*) que se cargan antes */
-html.dark .dev-main .pdsg-persona-page .pdsg-btn-save { background: var(--pe-accent); border-color: var(--pe-accent); color: var(--pe-surface); }
-html.dark .dev-main .pdsg-persona-page .pdsg-btn-save:hover { background: #e4e4e7; border-color: #e4e4e7; }
+html.dark .dev-main .pdsg-persona-page .pdsg-btn-save { background: var(--pe-accent); border-color: var(--pe-accent); color: #ffffff; }
+html.dark .dev-main .pdsg-persona-page .pdsg-btn-save:hover { background: #1f8f56; border-color: #1f8f56; }
 html.dark .dev-main .pdsg-persona-page .pdsg-btn-search { background: var(--pe-soft); border-color: var(--pe-line); color: var(--pe-text); }
 html.dark .dev-main .pdsg-persona-page .pdsg-btn-search:hover { background: var(--pe-accent-soft); color: var(--pe-accent); }
 .dev-main .pdsg-persona-page .pdsg-btn-cancel { border: 1px solid transparent; background: transparent; color: var(--pe-muted); }

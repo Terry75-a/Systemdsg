@@ -8,31 +8,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=20260922') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-table.css?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/dev-table.css?v=' . filemtime(FCPATH . 'css/index/components/dev-table.css')) ?>">
     <style>
-        .personal-stats {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
-        }
-        .personal-stat {
-            background: var(--g-surface); border: 1px solid var(--g-border); border-radius: 16px; padding: 20px;
-            display: flex; align-items: center; gap: 14px; transition: border-color 200ms;
-        }
-        .personal-stat:hover { border-color: var(--g-primary); }
-        .personal-stat-icon {
-            width: 48px; height: 48px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .personal-stat-icon .material-symbols-outlined { font-size: 24px; }
-        .psi-total { background: var(--g-primary-light); color: var(--g-primary); }
-        .psi-active { background: var(--g-success-light); color: var(--g-success); }
-        .psi-admin { background: var(--g-warning-light); color: #e37400; }
-        .psi-codes { background: #e8f0fe; color: #1a73e8; }
-        .personal-stat-value { font-size: 28px; font-weight: 600; font-family: var(--g-font-display); letter-spacing: -0.04em; }
-        .personal-stat-label { font-size: 12px; color: var(--g-text-secondary); margin-top: 4px; }
+        /* Métricas: mismas tarjetas del dashboard (dev-stats-grid +
+           dev-stat-card, sobreescritas en next-panel.css:420-462).
+           Sólo se añade la variante azul del chip QR, la que ya
+           llevaban los códigos de registro (el resto de si-* están
+           en dev-panel.css). */
+        .dev-stat-icon.si-blue { background: #e8f0fe; color: #1a73e8; }
+        html.dark .dev-stat-icon.si-blue { background: rgba(26,115,232,.16); color: #8ab4f8; }
 
-        .personal-section { margin-bottom: 24px; }
+        .personal-section { margin-bottom: 24px; scroll-margin-top: 84px; } /* salta las tarjetas sin quedar bajo el topbar sticky */
         .personal-section-head {
             display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
             gap: 12px; margin-bottom: 16px;
@@ -65,6 +53,23 @@
         @media (max-width: 768px) {
             .pf-bar { width: 100%; }
             .pf-search, .pf-input { width: 100%; min-width: 0; }
+        }
+
+        /* ── Red de seguridad EduconectaV2 ──
+           Mismas decisiones que educonecta.css (4c píldora · 7 modales
+           r20 flat): si el SW todavía sirve una hoja vieja, la página
+           se ve bien igual porque el <style> llega siempre fresco. */
+        button, [class*="btn"], [class*="-close"], [class*="-chip"] {
+            border-radius: 50px !important;
+        }
+        .dev-modal {
+            border-radius: 20px;
+            border: 1px solid var(--sb-outline-variant);
+            box-shadow: none;
+        }
+        .dev-modal-overlay {
+            background: rgba(0, 0, 0, 0.32);
+            backdrop-filter: none !important;
         }
         .personal-section-title {
             display: flex; align-items: center; gap: 10px;
@@ -150,7 +155,6 @@
         .dev-table-mobile { display: none; }
 
         @media (max-width: 1024px) {
-            .personal-stats { grid-template-columns: repeat(2, 1fr); }
             .personal-table-wrap { display: none; }
             .dev-table-mobile { display: flex !important; flex-direction: column; gap: 12px; }
             .personal-code-item { padding: 16px; flex-wrap: wrap; }
@@ -158,16 +162,11 @@
             .personal-code-right { width: 100%; justify-content: space-between; }
         }
         @media (max-width: 768px) {
-            .personal-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .personal-stat { padding: 14px; gap: 10px; }
-            .personal-stat-icon { width: 36px; height: 36px; border-radius: 10px; }
-            .personal-stat-icon .material-symbols-outlined { font-size: 20px; }
-            .personal-stat-value { font-size: 22px; }
             .m-card-actions { justify-content: flex-end; }
             .m-card-actions .m-card-btn {
                 position: relative;
                 flex: 0 0 auto; width: 42px; height: 42px; min-width: 42px; padding: 0;
-                border-radius: 50%; font-size: 0; justify-content: center;
+                font-size: 0; justify-content: center;
             }
             .m-card-actions .m-card-btn .material-symbols-outlined {
                 position: absolute; inset: 0;
@@ -192,7 +191,7 @@
         .m-card-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
         .m-card-chips .dev-badge {
             display: inline-flex; align-items: center; gap: 4px;
-            font-size: 11px; padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; padding: 4px 10px; border-radius: 50px;
         }
         .m-card-chips .dev-badge .material-symbols-outlined { font-size: 14px; }
         .m-card-details { display: flex; gap: 12px; padding: 0 16px 14px; flex-wrap: wrap; }
@@ -209,49 +208,35 @@
             height: 44px; border: none; border-radius: 12px;
             font-family: var(--g-font); font-size: 14px; font-weight: 500;
             cursor: pointer; transition: background 200ms;
-            background: var(--g-surface-variant); color: var(--g-text-secondary);
+            background: var(--g-primary-light); color: var(--g-primary);
         }
-        .m-card-btn:hover { background: var(--g-border); color: var(--g-text); }
+        .m-card-btn:hover { background: color-mix(in srgb, var(--sb-primary) 22%, var(--g-primary-light)); color: var(--g-primary); }
         .m-card-btn .material-symbols-outlined { font-size: 18px; }
         .m-card-btn-danger { color: var(--g-error); background: var(--g-error-light); }
         .m-card-btn-danger:hover { background: #f8d7da; }
         .personal-table tbody tr { cursor: pointer; }
 
-        /* Detail Modal */
-        .detail-overlay {
-            position: fixed; inset: 0; z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-            opacity: 0; visibility: hidden; transition: opacity 200ms, visibility 200ms;
+        /* Detail Modal — canon EduconectaV2: los dos modales de
+           detalle usan dev-modal-overlay/dev-modal (r20 · hairline ·
+           overlay neutro sin blur · sin elevación · footer con los
+           dev-btn del sistema). Aquí sólo va la fila de identidad
+           (chip de avatar + rol) que va dentro del body. */
+        .detail-who {
+            display: flex; align-items: center; gap: 14px;
+            padding: 4px 0 18px;
         }
-        .detail-overlay.active { opacity: 1; visibility: visible; }
-        .detail-card {
-            background: var(--g-surface); border-radius: 28px; width: 90%; max-width: 480px;
-            max-height: 85vh; overflow-y: auto;
-            transform: scale(0.95); transition: transform 200ms;
-        }
-        .detail-overlay.active .detail-card { transform: scale(1); }
-        .detail-cover {
-            height: 80px; border-radius: 28px 28px 0 0; position: relative;
-        }
-        .detail-avatar-wrap {
-            width: 80px; height: 80px; border-radius: 50%;
-            background: var(--g-surface); padding: 4px;
-            display: flex; align-items: center; justify-content: center;
-            position: absolute; bottom: -40px; left: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+        /* El JS ya no pinta el gradiente, pero si algún día vuelve a
+           hacerlo con estilo inline, Educonecta es flat: se neutraliza */
+        #detailCover, #codeDetailCover { background: transparent !important; }
         .detail-avatar {
-            width: 72px; height: 72px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 14px; flex: none;
             display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: 500; color: white;
+            font-size: 19px; font-weight: 500;
+            background: var(--g-primary-light); color: var(--g-primary);
             font-family: var(--g-font-display);
         }
-        .detail-header { padding: 48px 24px 16px; }
-        .detail-name { font-size: 22px; font-weight: 500; font-family: var(--g-font-display); }
-        .detail-sub { font-size: 14px; color: var(--g-text-secondary); margin-top: 4px; }
-        .detail-body { padding: 0 24px 24px; }
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-sub { font-size: 13px; color: var(--g-text-secondary); min-width: 0; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .detail-field { display: flex; flex-direction: column; gap: 4px; }
         .detail-label {
             font-size: 11px; font-weight: 500; color: var(--g-text-secondary);
@@ -259,26 +244,202 @@
         }
         .detail-value {
             font-size: 14px; font-weight: 500; color: var(--g-text);
-            padding: 10px 14px; background: var(--g-surface-variant); border-radius: 12px;
+            padding: 10px 14px; background: var(--sb-surface-container); border-radius: 12px;
+            overflow-wrap: anywhere;
         }
         .detail-value code { font-family: 'SF Mono', Consolas, monospace; font-size: 13px; }
-        .detail-actions {
-            display: flex; gap: 12px; padding: 0 24px 24px;
+
+        /* ═══════════════════════════════════════════════════════════════
+           PERSONAL · panel admin de sorteroOS
+
+           Mismo patrón que en Horarios y taken del diseño real en
+           ejecución de sorteroOS (/admin/usuarios y /admin/clubes):
+
+             · métricas con la acción principal al lado
+             · buscador y filtros en píldora, no en cajas con borde
+             · tabla con la tipografía de .sb-table (cabecera 10px
+               uppercase al 70%, filas de 48px, hairlines de 1px)
+             · acciones de fila como iconos sueltos, sin recuadro
+
+           La app usa fondo gris (#f4f4f5), así que —igual que en
+           sorteroOS, donde su página es blanca— las superficies se marcan
+           mezclando el outline-variant con la surface.
+           ═══════════════════════════════════════════════════════════════ */
+        body { --pf-surface: color-mix(in srgb, var(--sb-outline-variant) 55%, var(--sb-surface)); }
+
+        /* ── Métricas + acciones ──
+           Las métricas son ahora las MISMAS tarjetas del dashboard:
+           dev-stats-grid + dev-stat-card con sus overrides de
+           next-panel.css:420-462 (bloque pegado con hairline, icono
+           16px neutro arriba, label 10px uppercase, valor bold).
+           Aquí sólo se reserva el ancho dentro de la fila para que
+           los botones queden al lado, igual que en admin/usuarios. */
+        body:has(.dev-main) .personal-stats-row {
+            display: flex; align-items: stretch; gap: 16px; margin-bottom: 18px;
         }
-        .detail-btn {
-            flex: 1; height: 48px; border: none; border-radius: 24px;
-            font-family: var(--g-font); font-size: 14px; font-weight: 500;
-            cursor: pointer; transition: all 200ms;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        body:has(.dev-main) .personal-stats-row .dev-stats-grid {
+            flex: 1 1 auto; min-width: 0; margin-bottom: 0;
         }
-        .detail-btn-edit { background: var(--g-primary); color: white; }
-        .detail-btn-edit:hover { background: var(--g-primary-hover); }
-        .detail-btn-close { background: var(--g-surface-variant); color: var(--g-text-secondary); }
-        .detail-btn-close:hover { background: var(--g-border); }
-        .detail-btn .material-symbols-outlined { font-size: 18px; }
+        /* ── Acciones: botones EduconectaV2 píldora (regla del .lg-submit
+           del login verde) · SIN animaciones: hover plano sin moverse,
+           sin sombra y sin rebote */
+        body:has(.dev-main) .personal-new-actions {
+            display: flex; align-items: center; gap: 12px; flex: none;
+        }
+        body:has(.dev-main) .personal-new-actions .dev-btn {
+            height: 48px; padding: 0 26px; border-radius: 50px !important;
+            font-size: 14px; font-weight: 600; letter-spacing: 0;
+            border: 0; box-shadow: none;
+            transform: none; transition: none; will-change: auto;
+        }
+        body:has(.dev-main) .personal-new-actions .dev-btn .material-symbols-outlined { font-size: 19px; }
+
+        /* ── Buscador y filtros en píldora ──
+           El buscador usa .sb-input (sb-ui/styles.css:497): sin borde,
+           superficie surface-container-high, radio 16. Las píldoras de
+           filtro usan rounded-full border px-3.5 py-1.5 text-[13px]
+           font-medium, con la activa en primary y la inactiva con borde
+           outline-variant/50. */
+        body:has(.dev-main) .pf-bar { gap: 8px; width: 100%; }
+        body:has(.dev-main) .personal-section-head { flex-direction: column; align-items: stretch; gap: 14px; }
+        body:has(.dev-main) .pf-search { flex: 1 1 240px; max-width: 460px; }
+        body:has(.dev-main) .pf-input {
+            width: 100%; min-width: 0; height: 44px; padding: 0 18px 0 42px;
+            border: none; border-radius: 16px; background: var(--sb-surface-container-high);
+            color: var(--sb-on-surface); font-size: 13.5px; font-weight: 400;
+            transition: box-shadow 250ms ease;
+        }
+        body:has(.dev-main) .pf-input::placeholder { color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent); }
+        body:has(.dev-main) .pf-input:focus {
+            box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary);
+        }
+        body:has(.dev-main) .pf-search > .material-symbols-outlined {
+            left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px;
+            color: var(--sb-on-surface-variant);
+        }
+        /* Píldoras de filtro */
+        body:has(.dev-main) .pf-select {
+            height: 36px; padding: 0 36px 0 14px; border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 50%, transparent);
+            border-radius: 50px; background: var(--sb-surface); color: var(--sb-on-surface-variant);
+            font-size: 13px; font-weight: 500; appearance: none; -webkit-appearance: none;
+            cursor: pointer; transition: background 150ms ease, border-color 150ms ease;
+        }
+        body:has(.dev-main) .pf-select:hover { background: var(--sb-surface-container-high); }
+        body:has(.dev-main) .pf-select:focus {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary);
+        }
+        body:has(.dev-main) .pf-select-wrap { position: relative; display: inline-flex; align-items: center; }
+        body:has(.dev-main) .pf-select-wrap > .material-symbols-outlined {
+            position: absolute; right: 12px; font-size: 16px; pointer-events: none;
+            color: var(--sb-on-surface-variant);
+        }
+        /* Píldora con filtro aplicado: la activa de sorteroOS (primary) */
+        body:has(.dev-main) .pf-select-wrap.on .pf-select {
+            background: var(--sb-primary); border-color: var(--sb-primary); color: #fff;
+        }
+        body:has(.dev-main) .pf-select-wrap.on > .material-symbols-outlined { color: #fff; }
+        body:has(.dev-main) .pf-clear {
+            height: 36px; padding: 0 14px; border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 50%, transparent);
+            border-radius: 50px; background: transparent; color: var(--sb-on-surface-variant);
+            font-size: 13px; font-weight: 500;
+            transition: background 150ms ease, color 150ms ease;
+        }
+        body:has(.dev-main) .pf-clear:hover { background: var(--sb-surface-container-high); color: var(--sb-on-surface); }
+
+        /* ── Títulos de sección: el contador va en píldora ── */
+        body:has(.dev-main) .personal-section-title { font-size: 16px; font-weight: 500; }
+        body:has(.dev-main) .personal-section-title .material-symbols-outlined { font-size: 20px; }
+        body:has(.dev-main) .personal-count {
+            margin-left: 2px; padding: 3px 10px; border-radius: 50px;
+            background: var(--pf-surface); color: var(--sb-on-surface-variant);
+            font-size: 11.5px; font-weight: 500; letter-spacing: 0;
+        }
+
+        /* ── Tabla · sb-table ── */
+        body:has(.dev-main) .personal-form-card {
+            background: transparent; border: 0; border-radius: 0; overflow: visible;
+        }
+        body:has(.dev-main) .personal-table-wrap {
+            background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent);
+            border: 0; border-radius: 16px; overflow-x: auto;
+        }
+        body:has(.dev-main) .personal-table-wrap .personal-table thead tr { background: var(--sb-surface-container); }
+        body:has(.dev-main) .personal-table-wrap .personal-table tbody tr { background: var(--sb-surface); }
+        body:has(.dev-main) .personal-table-wrap .personal-table th {
+            height: 36px; padding: 0 12px;
+            font-size: 10px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase;
+            color: var(--sb-on-surface-variant); opacity: .7; vertical-align: middle;
+            background: var(--sb-surface-container);
+            border-bottom: 1px solid var(--sb-outline-variant);
+        }
+        body:has(.dev-main) .personal-table-wrap .personal-table td {
+            height: 48px; padding: 0 12px; font-size: 13px;
+            border-bottom: none; vertical-align: middle; color: var(--sb-on-surface);
+        }
+        body:has(.dev-main) .personal-table-wrap .personal-table tbody tr:hover { background: var(--sb-surface-container-high); }
+        body:has(.dev-main) .personal-table-wrap .personal-table tbody tr:hover td { background: transparent; }
+        body:has(.dev-main) .personal-user-name { font-size: 13.5px; font-weight: 500; }
+        body:has(.dev-main) .personal-avatar { width: 32px; height: 32px; font-size: 12px; }
+        body:has(.dev-main) .personal-mono { font-size: 12.5px; }
+        body:has(.dev-main) .personal-dim { font-size: 12.5px; color: var(--sb-on-surface-variant); }
+        body:has(.dev-main) .personal-role { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 50px; }
+        body:has(.dev-main) .personal-table .dev-code {
+            background: none; border: 0; padding: 0; font-size: 12.5px; font-weight: 600;
+            color: var(--sb-on-surface); border-radius: 0;
+        }
+        body:has(.dev-main) .personal-table .dev-code:hover { background: none; color: var(--sb-primary); }
+
+        /* ── Acciones de fila: iconos sin recuadro ── */
+        body:has(.dev-main) .personal-actions { gap: 2px; }
+        body:has(.dev-main) .personal-actions .dev-btn-icon {
+            width: 32px; height: 32px; border: 0; border-radius: 50px;
+            background: transparent; color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        body:has(.dev-main) .personal-actions .dev-btn-icon .material-symbols-outlined { font-size: 18px; }
+        body:has(.dev-main) .personal-actions .dev-btn-icon:hover { background: var(--sb-surface-container); filter: none; }
+
+        /* ── Códigos de registro: bloque con hairlines ── */
+        body:has(.dev-main) .personal-codes { gap: 1px; }
+        body:has(.dev-main) .personal-code-item {
+            background: var(--sb-surface); border-bottom: none; padding: 12px 16px;
+        }
+        body:has(.dev-main) .personal-code-avatar { width: 32px; height: 32px; font-size: 12px; }
+        body:has(.dev-main) .personal-code-name { font-size: 13.5px; font-weight: 500; }
+        body:has(.dev-main) .personal-code-meta { font-size: 12px; color: var(--sb-on-surface-variant); }
+        /* Acciones del código: iconos sueltos también aquí */
+        body:has(.dev-main) .personal-code-right .dev-btn-icon {
+            width: 32px; height: 32px; border: 0; border-radius: 50px;
+            background: transparent; color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+        }
+        body:has(.dev-main) .personal-code-right .dev-btn-icon .material-symbols-outlined { font-size: 18px; }
+        body:has(.dev-main) .personal-code-right .dev-btn-icon:hover { background: var(--sb-surface-container); filter: none; }
+
+        /* ── Responsive · al final para ganar por orden ──
+           ≤1099: las métricas pasan a 2x2. next-panel reparte su
+           propio grid a ≤1024, pero aquí el bloque comparte la fila
+           con los botones y conviene partir un poco antes. */
+        @media (max-width: 1099px) {
+            body:has(.dev-main) .personal-stats-row .dev-stats-grid {
+                grid-auto-flow: row;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            body:has(.dev-main) .personal-stats-row { flex-wrap: wrap; }
+            body:has(.dev-main) .personal-stats-row .dev-stats-grid { flex: 1 1 100%; }
+            body:has(.dev-main) .personal-new-actions { flex: 1 1 100%; }
+            body:has(.dev-main) .personal-new-actions .dev-btn { flex: 1 1 auto; justify-content: center; }
+            body:has(.dev-main) .pf-bar { width: 100%; }
+            body:has(.dev-main) .pf-search, body:has(.dev-main) .pf-input { width: 100%; min-width: 0; max-width: none; }
+            body:has(.dev-main) .pf-select-wrap { flex: 1 1 auto; }
+            body:has(.dev-main) .pf-select { width: 100%; }
+        }
     </style>
-    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=20261004g') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=1') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
+    <!-- PWA -->
+    <?= view('partials/pwa-head') ?>
 </head>
 <body>
 
@@ -308,47 +469,43 @@
             </div>
         <?php endif; ?>
 
-        <div class="personal-stats">
-            <div class="personal-stat">
-                <div class="personal-stat-icon psi-total"><span class="material-symbols-outlined">group</span></div>
-                <div>
-                    <div class="personal-stat-value"><?= count($empleados) ?></div>
-                    <div class="personal-stat-label">Total equipo</div>
-                </div>
+        <!-- Métricas + acciones: las MISMAS tarjetas del dashboard
+             (dev-stats-grid + dev-stat-card); cada una lleva a su
+             sección de esta misma página, como en el dashboard -->
+        <div class="personal-stats-row">
+            <div class="dev-stats-grid">
+                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
+                    <div class="dev-stat-icon si-accent"><span class="material-symbols-outlined filled">badge</span></div>
+                    <div class="dev-stat-label">Total equipo</div>
+                    <div class="dev-stat-value"><?= count($empleados) ?></div>
+                </a>
+                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
+                    <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">person</span></div>
+                    <div class="dev-stat-label">Empleados</div>
+                    <div class="dev-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Empleado')) ?></div>
+                </a>
+                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
+                    <div class="dev-stat-icon si-amber"><span class="material-symbols-outlined filled">school</span></div>
+                    <div class="dev-stat-label">Practicantes</div>
+                    <div class="dev-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante')) ?></div>
+                </a>
+                <a href="#codigos" class="dev-stat-card" title="Ver códigos de registro">
+                    <div class="dev-stat-icon si-blue"><span class="material-symbols-outlined filled">qr_code</span></div>
+                    <div class="dev-stat-label">Códigos activos</div>
+                    <div class="dev-stat-value"><?= count(array_filter($codes, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
+                </a>
             </div>
-            <div class="personal-stat">
-                <div class="personal-stat-icon psi-active"><span class="material-symbols-outlined">person</span></div>
-                <div>
-                    <div class="personal-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Empleado')) ?></div>
-                    <div class="personal-stat-label">Empleados</div>
-                </div>
-            </div>
-            <div class="personal-stat">
-                <div class="personal-stat-icon psi-admin"><span class="material-symbols-outlined">school</span></div>
-                <div>
-                    <div class="personal-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante')) ?></div>
-                    <div class="personal-stat-label">Practicantes</div>
-                </div>
-            </div>
-            <div class="personal-stat">
-                <div class="personal-stat-icon psi-codes"><span class="material-symbols-outlined">qr_code</span></div>
-                <div>
-                    <div class="personal-stat-value"><?= count(array_filter($codes, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
-                    <div class="personal-stat-label">Códigos activos</div>
-                </div>
+            <div class="personal-new-actions">
+                <button type="button" class="dev-btn dev-btn-primary" onclick="openModal('createEmployeeModal')">
+                    <span class="material-symbols-outlined">person_add</span> Crear empleado
+                </button>
+                <button type="button" class="dev-btn" onclick="openModal('createCodeModal')">
+                    <span class="material-symbols-outlined">vpn_key</span> Generar código
+                </button>
             </div>
         </div>
 
-        <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
-            <button type="button" class="dev-btn dev-btn-primary" onclick="openModal('createEmployeeModal')">
-                <span class="material-symbols-outlined">person_add</span> Crear empleado
-            </button>
-            <button type="button" class="dev-btn dev-btn-primary" onclick="openModal('createCodeModal')">
-                <span class="material-symbols-outlined">vpn_key</span> Generar código
-            </button>
-        </div>
-
-        <div class="personal-section">
+        <div class="personal-section" id="equipo">
             <?php
                 $areasDisponibles = [];
                 foreach ($empleados as $p) {
@@ -363,7 +520,7 @@
                 <h2 class="personal-section-title">
                     <span class="material-symbols-outlined">group</span>
                     Equipo
-                    <span style="font-size:13px; color:var(--g-text-secondary); font-weight:400; margin-left:4px;" id="personCount"><?= $totalPersonas ?> personas</span>
+                    <span class="personal-count" id="personCount"><?= $totalPersonas ?> personas</span>
                 </h2>
 
                 <div class="pf-bar">
@@ -371,26 +528,35 @@
                         <span class="material-symbols-outlined">search</span>
                         <input type="search" class="pf-input" id="personSearch" placeholder="Buscar por nombre, DNI, código, área..." oninput="filtrarPersonas()">
                     </div>
-                    <select class="pf-select" id="personRol" onchange="filtrarPersonas()" aria-label="Filtrar por rol">
-                        <option value="">Rol: todos</option>
-                        <option value="Empleado">Empleado</option>
-                        <option value="Practicante">Practicante</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                    <select class="pf-select" id="personEstado" onchange="filtrarPersonas()" aria-label="Filtrar por estado">
-                        <option value="">Estado: todos</option>
-                        <option value="Activo">Activo</option>
-                        <option value="Inactivo">Inactivo</option>
-                        <option value="Despedido">Despedido</option>
-                        <option value="Retirado">Retirado</option>
-                    </select>
+                    <span class="pf-select-wrap">
+                        <select class="pf-select" id="personRol" onchange="filtrarPersonas()" aria-label="Filtrar por rol">
+                            <option value="">Rol: todos</option>
+                            <option value="Empleado">Empleado</option>
+                            <option value="Practicante">Practicante</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </span>
+                    <span class="pf-select-wrap">
+                        <select class="pf-select" id="personEstado" onchange="filtrarPersonas()" aria-label="Filtrar por estado">
+                            <option value="">Estado: todos</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                            <option value="Despedido">Despedido</option>
+                            <option value="Retirado">Retirado</option>
+                        </select>
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </span>
                     <?php if ($areasDisponibles): ?>
-                    <select class="pf-select" id="personArea" onchange="filtrarPersonas()" aria-label="Filtrar por área">
-                        <option value="">Área: todas</option>
-                        <?php foreach ($areasDisponibles as $a): ?>
-                            <option value="<?= esc($a) ?>"><?= esc($a) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <span class="pf-select-wrap">
+                        <select class="pf-select" id="personArea" onchange="filtrarPersonas()" aria-label="Filtrar por área">
+                            <option value="">Área: todas</option>
+                            <?php foreach ($areasDisponibles as $a): ?>
+                                <option value="<?= esc($a) ?>"><?= esc($a) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </span>
                     <?php endif; ?>
                     <button type="button" class="pf-clear" onclick="limpiarPersonas()" title="Quitar filtros">
                         <span class="material-symbols-outlined">filter_alt_off</span> Limpiar
@@ -569,12 +735,12 @@
             </div>
         </div>
 
-        <div class="personal-section">
+        <div class="personal-section" id="codigos">
             <div class="personal-section-head">
                 <h2 class="personal-section-title">
                     <span class="material-symbols-outlined">vpn_key</span>
                     Códigos de registro
-                    <span style="font-size:13px; color:var(--g-text-secondary); font-weight:400; margin-left:4px;"><?= count($codes) ?> total</span>
+                    <span class="personal-count"><?= count($codes) ?> total</span>
                 </h2>
             </div>
 
@@ -818,14 +984,14 @@
             <div class="dev-modal-body">
                 <div class="dev-field">
                     <label>Empleado</label>
-                    <select name="name" required>
+                    <select name="name" id="codeEmpSelect" required>
                         <option value="">Selecciona un empleado</option>
                         <?php foreach ($empleados as $emp): ?>
-                            <option value="<?= esc($emp['name'] ?? '') ?>"><?= esc($emp['name'] ?? '') ?> — DNI <?= esc($emp['dni'] ?? '') ?></option>
+                            <option value="<?= esc($emp['name'] ?? '') ?>" data-dni="<?= esc($emp['dni'] ?? '') ?>"><?= esc($emp['name'] ?? '') ?> — DNI <?= esc($emp['dni'] ?? 'sin registro') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="dev-field"><label>DNI del empleado</label><input type="text" name="dni" placeholder="8 digitos" pattern="\d{8}" maxlength="8" required></div>
+                <div class="dev-field"><label>DNI del empleado (se completa al elegir)</label><input type="text" id="codeEmpDni" name="dni" placeholder="8 digitos" pattern="\d{8}" maxlength="8" required></div>
             </div>
             <div class="dev-modal-footer">
                 <button type="button" class="dev-btn" onclick="closeModal('createCodeModal')">Cancelar</button>
@@ -840,7 +1006,7 @@
 <?php if ($creds): ?>
 <div class="dev-modal-overlay active one-shot" id="credsModal">
     <div class="dev-modal">
-        <div class="dev-modal-head" style="background:var(--g-success-light);">
+        <div class="dev-modal-head">
             <h3><span class="material-symbols-outlined" style="color:var(--g-success);">verified_user</span> Credenciales generadas</h3>
             <button type="button" class="dev-btn-icon" onclick="closeModal('credsModal')"><span class="material-symbols-outlined">close</span></button>
         </div>
@@ -868,7 +1034,7 @@
 <?php if ($reset): ?>
 <div class="dev-modal-overlay active one-shot" id="credsModal">
     <div class="dev-modal">
-        <div class="dev-modal-head" style="background:var(--g-success-light);">
+        <div class="dev-modal-head">
             <h3><span class="material-symbols-outlined" style="color:var(--g-success);">password</span> Contrasena regenerada</h3>
             <button type="button" class="dev-btn-icon" onclick="closeModal('credsModal')"><span class="material-symbols-outlined">close</span></button>
         </div>
@@ -1021,25 +1187,24 @@
             <p style="font-size:14px;color:var(--g-text-secondary);margin-bottom:8px;">Esta accion no se puede deshacer.</p>
             <div id="confirmName" style="font-size:16px;font-weight:600;padding:12px 16px;background:var(--g-surface-variant);border-radius:12px;margin-bottom:20px;">-</div>
             <div style="display:flex;gap:12px;">
-                <button type="button" class="dev-btn" style="flex:1;height:48px;border-radius:24px;" onclick="closeModal('confirmDeleteModal')"><span class="material-symbols-outlined">close</span> Cancelar</button>
-                <button type="button" class="dev-btn dev-btn-danger" style="flex:1;height:48px;border-radius:24px;" id="confirmBtn" onclick="submitConfirmDelete()">                <span class="material-symbols-outlined">delete</span> Eliminar</button>
+                <button type="button" class="dev-btn" style="flex:1;" onclick="closeModal('confirmDeleteModal')"><span class="material-symbols-outlined">close</span> Cancelar</button>
+                <button type="button" class="dev-btn dev-btn-danger" style="flex:1;" id="confirmBtn" onclick="submitConfirmDelete()">                <span class="material-symbols-outlined">delete</span> Eliminar</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetailModal()">
-    <div class="detail-card">
-        <div class="detail-cover" id="detailCover">
-            <div class="detail-avatar-wrap">
+<div class="dev-modal-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetailModal()">
+    <div class="dev-modal" style="max-width:500px;">
+        <div class="dev-modal-head">
+            <h3><span class="material-symbols-outlined">badge</span> <span id="detailName">-</span></h3>
+            <button type="button" class="dev-btn-icon" onclick="closeDetailModal()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="dev-modal-body">
+            <div class="detail-who" id="detailCover">
                 <div class="detail-avatar" id="detailAvatar"></div>
+                <div class="detail-sub" id="detailRole">-</div>
             </div>
-        </div>
-        <div class="detail-header">
-            <div class="detail-name" id="detailName">-</div>
-            <div class="detail-sub" id="detailRole">-</div>
-        </div>
-        <div class="detail-body">
             <div class="detail-grid">
                 <div class="detail-field">
                     <div class="detail-label">DNI</div>
@@ -1091,32 +1256,31 @@
                 </div>
             </div>
         </div>
-        <div class="detail-actions">
-            <button type="button" class="detail-btn detail-btn-close" onclick="closeDetailModal()">
+        <div class="dev-modal-footer">
+            <button type="button" class="dev-btn" onclick="closeDetailModal()">
                 <span class="material-symbols-outlined">close</span> Cerrar
             </button>
-            <button type="button" class="detail-btn" id="detailFireBtn" style="background:#fef3c7;color:#b45309;">
+            <button type="button" class="dev-btn dev-btn-danger" id="detailFireBtn">
                 <span class="material-symbols-outlined">person_remove</span> Despedir
             </button>
-            <button type="button" class="detail-btn detail-btn-edit" id="detailEditBtn">
+            <button type="button" class="dev-btn dev-btn-primary" id="detailEditBtn">
                 <span class="material-symbols-outlined">edit</span> Editar
             </button>
         </div>
     </div>
 </div>
 
-<div class="detail-overlay" id="codeDetailOverlay" onclick="if(event.target===this)closeDetailModal()">
-    <div class="detail-card">
-        <div class="detail-cover" id="codeDetailCover" style="background:linear-gradient(135deg,#e8f0fe22,#e8f0fe44);">
-            <div class="detail-avatar-wrap">
-                <div class="detail-avatar" id="codeDetailAvatar" style="background:#1a73e8;"></div>
+<div class="dev-modal-overlay" id="codeDetailOverlay" onclick="if(event.target===this)closeDetailModal()">
+    <div class="dev-modal" style="max-width:440px;">
+        <div class="dev-modal-head">
+            <h3><span class="material-symbols-outlined">vpn_key</span> <span id="codeDetailName">-</span></h3>
+            <button type="button" class="dev-btn-icon" onclick="closeDetailModal()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="dev-modal-body">
+            <div class="detail-who" id="codeDetailCover">
+                <div class="detail-avatar" id="codeDetailAvatar"></div>
+                <div class="detail-sub" id="codeDetailSub">-</div>
             </div>
-        </div>
-        <div class="detail-header">
-            <div class="detail-name" id="codeDetailName">-</div>
-            <div class="detail-sub" id="codeDetailSub">-</div>
-        </div>
-        <div class="detail-body">
             <div class="detail-grid">
                 <div class="detail-field">
                     <div class="detail-label">DNI</div>
@@ -1140,11 +1304,11 @@
                 </div>
             </div>
         </div>
-        <div class="detail-actions">
-            <button type="button" class="detail-btn detail-btn-close" onclick="closeDetailModal()">
+        <div class="dev-modal-footer">
+            <button type="button" class="dev-btn" onclick="closeDetailModal()">
                 <span class="material-symbols-outlined">close</span> Cerrar
             </button>
-            <button type="button" class="detail-btn detail-btn-edit" onclick="copyCodeDetail()" style="background:var(--g-success);color:white;">
+            <button type="button" class="dev-btn dev-btn-primary detail-btn-edit" onclick="copyCodeDetail()">
                 <span class="material-symbols-outlined">content_copy</span> Copiar codigo
             </button>
         </div>
@@ -1188,7 +1352,23 @@
             var ar = document.getElementById('personArea');
             if (ar) ar.value = '';
             filtrarPersonas();
+            marcarFiltros();
         };
+
+        /* Un filtro con valor se pinta como la píldora activa de sorteroOS */
+        window.marcarFiltros = function () {
+            ['personRol', 'personEstado', 'personArea'].forEach(function (id) {
+                var s = document.getElementById(id);
+                if (!s) return;
+                var wrap = s.closest('.pf-select-wrap');
+                if (wrap) wrap.classList.toggle('on', s.value !== '');
+            });
+        };
+        ['personRol', 'personEstado', 'personArea'].forEach(function (id) {
+            var s = document.getElementById(id);
+            if (s) s.addEventListener('change', marcarFiltros);
+        });
+        marcarFiltros();
     })();
 </script>
 
@@ -1205,6 +1385,23 @@ function closeModal(id) {
     document.getElementById(id).classList.remove('active');
     document.body.style.overflow = '';
 }
+
+// Generar código: al elegir el empleado del selector, el DNI se completa solo
+(function () {
+    var sel = document.getElementById('codeEmpSelect');
+    var dni = document.getElementById('codeEmpDni');
+    if (!sel || !dni) return;
+    function fillDni() {
+        var opt = sel.options[sel.selectedIndex];
+        var val = opt ? (opt.getAttribute('data-dni') || '') : '';
+        dni.value = val;
+        dni.readOnly = val.length === 8;
+        dni.required = !dni.readOnly;
+        if (!dni.readOnly && !dni.value) dni.focus();
+    }
+    sel.addEventListener('change', fillDni);
+    fillDni();
+})();
 
 function toggleCreatePracticante(role) {
     var box = document.getElementById('create_practica_fields');
@@ -1515,8 +1712,8 @@ function openDetailModal(emp) {
     var coverColor = roleColor[role] || roleColor.default;
     var avatarBg = {Dev:'#9334e6',Admin:'var(--g-primary)',Practicante:'#b45309',default:'#1a73e8'};
 
-    document.getElementById('detailCover').style.background = 'linear-gradient(135deg, ' + coverColor + '22, ' + coverColor + '44)';
     document.getElementById('detailAvatar').style.background = avatarBg[role] || avatarBg.default;
+    document.getElementById('detailAvatar').style.color = '#fff';
     document.getElementById('detailAvatar').textContent = initial;
     document.getElementById('detailName').textContent = name;
     document.getElementById('detailRole').textContent = role + (emp.area ? ' - ' + emp.area : '');
@@ -1598,7 +1795,6 @@ function openCodeDetail(code) {
     var statusColor = status === 'active' ? 'var(--g-success)' : 'var(--g-text-secondary)';
     var statusText = status === 'active' ? 'Activo' : 'Usado';
 
-    document.getElementById('codeDetailCover').style.background = 'linear-gradient(135deg, #e8f0fe22, #e8f0fe44)';
     document.getElementById('codeDetailAvatar').textContent = initial;
     document.getElementById('codeDetailName').textContent = name;
     document.getElementById('codeDetailSub').textContent = 'Codigo de registro';
@@ -1737,5 +1933,8 @@ if (autoDelete) {
 }
 </script>
 
+<!-- Campana de notificaciones (compartida en todas las secciones admin) -->
+<?= view('partials/admin-notif-bell') ?>
+<?= view('partials/pwa-js') ?>
 </body>
 </html>

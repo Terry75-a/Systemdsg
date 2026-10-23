@@ -2,12 +2,21 @@
 namespace App\Controllers\Admin;
 
 use App\Models\IncidentModel;
+use App\Services\NotificationService;
 
 /**
  * Incidencias del equipo: alta, resolución y aviso por correo.
  */
 class IncidenciaAdminController extends AdminBaseController
 {
+    protected NotificationService $notificationService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->notificationService = new NotificationService();
+    }
+
     public function incidencias()
     {
         if ($redirect = $this->guard()) return $redirect;
@@ -55,6 +64,10 @@ class IncidenciaAdminController extends AdminBaseController
             'justificacion' => '',
         ]);
 
+        // Notificar a admins sobre incidencia creada
+        $incId = (int) db_connect()->insertID();
+        $this->notificationService->incidenciaCreada($incId, $adminId);
+
         $s->setFlashdata('msg', 'Incidencia registrada y asignada a ' . ($u['name'] ?? 'la persona'));
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('admin/incidencias'));
@@ -93,6 +106,19 @@ class IncidenciaAdminController extends AdminBaseController
         }
 
         $this->incidentModel->update($incId, $data);
+
+        // Falta justificada → la asistencia deja de contar como falta
+        if (($inc['tipo'] ?? '') === 'Falta' && !empty($inc['att_id'])) {
+            if ($estado === 'Justificada') {
+                $this->attendanceModel->update((int) $inc['att_id'], ['status' => 'absent_justified']);
+            } elseif (($inc['estado'] ?? '') === 'Justificada') {
+                // Se revirtió de Justificada: vuelve a contar como falta
+                $this->attendanceModel->update((int) $inc['att_id'], ['status' => 'absent']);
+            }
+        }
+
+        // Notificar a admins sobre incidencia actualizada
+        $this->notificationService->incidenciaActualizada($incId, $adminId, $estado);
 
         $s->setFlashdata('msg', "Incidencia actualizada a «{$estado}»");
         $s->setFlashdata('tipo', 'success');

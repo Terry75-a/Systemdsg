@@ -49,12 +49,13 @@
         .mi-act { flex-shrink: 0; }
         .mi-btn {
             display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600;
-            color: var(--g-text); background: transparent; border: 1px solid var(--g-border);
+            color: var(--g-primary); background: var(--g-primary-light);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
             border-radius: 999px; padding: 7px 14px; cursor: pointer; transition: all 160ms;
             font-family: var(--g-font);
         }
         .mi-btn .material-symbols-outlined { font-size: 16px; }
-        .mi-btn:hover { border-color: var(--g-primary); color: var(--g-primary); background: var(--g-primary-light); }
+        .mi-btn:hover { border-color: var(--sb-primary); color: var(--sb-on-primary); background: var(--sb-primary); }
         .mi-empty { text-align: center; padding: 48px 20px; color: var(--g-text-secondary); font-size: 13px; }
         .mi-empty .material-symbols-outlined { font-size: 40px; display: block; margin: 0 auto 12px; opacity: 0.35; }
 
@@ -128,7 +129,64 @@
         <h2>Mis Incidencias</h2>
     </div>
     <p class="page-sub">Tardanzas, faltas y otras situaciones registradas sobre tu asistencia.</p>
+    <button type="button" class="dev-btn dev-btn-primary" style="margin-top:12px;" onclick="openCreate()">
+        <span class="material-symbols-outlined">add_task</span> Registrar incidencia
+    </button>
 </div>
+
+<?php
+    // ── Situaciones del mes sin incidencia reportada ──
+    $incPorAtt = [];
+    $incPorFecha = [];
+    foreach ($misIncidencias ?? [] as $ix) {
+        if (! empty($ix['att_id'])) $incPorAtt[(int) $ix['att_id']] = true;
+        $incPorFecha[date('Y-m-d', strtotime($ix['fecha'] ?? 'now'))] = true;
+    }
+    $est2tipo = [
+        'late'     => ['Tardanza',          'schedule', 'Llegaste tarde'],
+            'absent'   => ['Falta',             'cancel',   'No registraste asistencia'],
+            'absent_justified' => ['Falta justificada', 'verified', 'Falta justificada por el administrador'],
+        'no_exit'  => ['Salida anticipada', 'logout',   'Sin marcación de salida'],
+    ];
+    $sitPend = [];
+    foreach ($misRegistros ?? [] as $r) {
+        $st = (string) ($r['status'] ?? '');
+        if (! isset($est2tipo[$st])) continue;
+        $rid = (int) ($r['id'] ?? 0);
+        $rdate = date('Y-m-d', strtotime($r['date'] ?? 'now'));
+        if (($incPorAtt[$rid] ?? false) || ($incPorFecha[$rdate] ?? false)) continue;
+        $sitPend[] = ['att' => $r, 'tipo' => $est2tipo[$st][0], 'ico' => $est2tipo[$st][1], 'txt' => $est2tipo[$st][2]];
+    }
+    $sitPend = array_slice($sitPend, 0, 6);
+?>
+<?php if (count($sitPend) > 0): ?>
+<!-- Situaciones sin reportar -->
+<div class="mi-card" style="margin-bottom:18px; border-color: rgba(245,158,11,.45);">
+    <div class="mi-card-head" style="display:flex;align-items:center;gap:8px;">
+        <span class="material-symbols-outlined" style="color:#f59e0b;font-size:18px;">lightbulb</span>
+        <h3>Situaciones sin reportar · puedes justificarlas</h3>
+    </div>
+    <div>
+        <?php foreach ($sitPend as $sp): ?>
+            <div class="mi-item">
+                <div class="mi-ic" style="background:rgba(245,158,11,.12);color:#d97706;"><span class="material-symbols-outlined"><?= $sp['ico'] ?></span></div>
+                <div class="mi-main">
+                    <div class="mi-top">
+                        <span class="mi-tipo"><?= esc($sp['tipo']) ?></span>
+                    </div>
+                    <div class="mi-fecha"><?= esc(date('d/m/Y', strtotime($sp['att']['date'] ?? 'now'))) ?></div>
+                    <div class="mi-detalle"><?= esc($sp['txt']) ?><?= ! empty($sp['att']['time_in']) ? ' · Entrada ' . esc($sp['att']['time_in']) : '' ?></div>
+                </div>
+                <div class="mi-act">
+                    <button type="button" class="mi-btn" onclick="openCreate('<?= esc($sp['tipo']) ?>', '<?= esc(date('Y-m-d', strtotime($sp['att']['date'] ?? 'now'))) ?>', <?= (int) ($sp['att']['id'] ?? 0) ?>)">
+                        <span class="material-symbols-outlined">edit_note</span> Reportar
+                    </button>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Resumen -->
 <div class="mi-sum">
@@ -239,6 +297,41 @@
     </div>
 </div>
 
+<!-- Modal crear incidencia -->
+<div class="in-modal-overlay" id="createModal">
+    <div class="in-modal">
+        <div class="in-modal-head">
+            <h3><span class="material-symbols-outlined">add_task</span> Registrar incidencia</h3>
+            <button class="in-modal-close" onclick="closeCreate()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form method="post" action="<?= site_url('mi-panel/crear-incidencia') ?>" id="createForm">
+            <?= csrf_field() ?>
+            <input type="hidden" name="att_id" id="createAttId" value="">
+            <div class="in-modal-body">
+                <p style="font-size:13px;color:var(--g-text-secondary);margin:0 0 12px;">Reporta una tardanza, falta u otra situación. Tu administrador la revisará y podrás ver la respuesta aquí.</p>
+                <label style="display:block;font-size:12px;font-weight:600;color:var(--g-text);margin-bottom:6px;">Tipo</label>
+                <select name="tipo" id="createTipo" required style="width:100%;border:1px solid var(--g-border);border-radius:12px;padding:11px 12px;font-size:14px;font-family:var(--g-font);color:var(--g-text);background:var(--g-surface);box-sizing:border-box;margin-bottom:12px;">
+                    <option value="Tardanza">Tardanza</option>
+                    <option value="Falta">Falta</option>
+                    <option value="Salida anticipada">Salida anticipada</option>
+                    <option value="Sin marcación">Sin marcación</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <label style="display:block;font-size:12px;font-weight:600;color:var(--g-text);margin-bottom:6px;">Fecha</label>
+                <input type="date" name="fecha" id="createFecha" required max="<?= date('Y-m-d') ?>" style="width:100%;border:1px solid var(--g-border);border-radius:12px;padding:11px 12px;font-size:14px;font-family:var(--g-font);color:var(--g-text);background:var(--g-surface);box-sizing:border-box;margin-bottom:12px;">
+                <label style="display:block;font-size:12px;font-weight:600;color:var(--g-text);margin-bottom:6px;">¿Qué ocurrió?</label>
+                <textarea name="detalle" id="createDetalle" placeholder="Ej: Llegué tarde porque el metro se detuvo 20 minutos por una falla..." required style="width:100%;border:1px solid var(--g-border);border-radius:12px;padding:12px 14px;font-size:14px;font-family:var(--g-font);color:var(--g-text);background:var(--g-surface);resize:vertical;min-height:90px;box-sizing:border-box;"></textarea>
+            </div>
+            <div class="in-modal-foot">
+                <button type="button" class="dev-btn" onclick="closeCreate()">Cancelar</button>
+                <button type="submit" class="dev-btn dev-btn-primary">
+                    <span class="material-symbols-outlined">send</span> Enviar incidencia
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 function openJustify(id) {
     document.getElementById('justifyIncId').value = id;
@@ -251,6 +344,21 @@ function closeJustify() {
 document.getElementById('justifyModal').addEventListener('click', function(e) {
     if (e.target === this) closeJustify();
 });
+
+function openCreate(tipo, fecha, attId) {
+    document.getElementById('createTipo').value = tipo || 'Tardanza';
+    document.getElementById('createFecha').value = fecha || '<?= date('Y-m-d') ?>';
+    document.getElementById('createAttId').value = attId || '';
+    document.getElementById('createDetalle').value = '';
+    document.getElementById('createModal').classList.add('is-open');
+}
+function closeCreate() {
+    document.getElementById('createModal').classList.remove('is-open');
+}
+document.getElementById('createModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCreate();
+});
+
 // Mantener fresco el token CSRF antes de enviar
 (function() {
     function freshCsrf() {
@@ -259,13 +367,16 @@ document.getElementById('justifyModal').addEventListener('click', function(e) {
             .then(function(d) { return (d && d.csrfHash) ? d.csrfHash : null; })
             .catch(function() { return null; });
     }
-    var f = document.getElementById('justifyForm');
-    f.addEventListener('submit', function(e) {
-        e.preventDefault();
-        freshCsrf().then(function(tok) {
-            var i = f.querySelector('input[name=csrf_test_name]');
-            if (i && tok) i.value = tok;
-            f.submit();
+    ['justifyForm', 'createForm'].forEach(function(id) {
+        var f = document.getElementById(id);
+        if (!f) return;
+        f.addEventListener('submit', function(e) {
+            e.preventDefault();
+            freshCsrf().then(function(tok) {
+                var i = f.querySelector('input[name=csrf_test_name]');
+                if (i && tok) i.value = tok;
+                f.submit();
+            });
         });
     });
 })();

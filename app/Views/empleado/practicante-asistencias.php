@@ -308,9 +308,9 @@
         <?php else: ?>
             <?php foreach ($misRegistros as $r):
                 $st = $r['status'] ?? 'absent';
-                $ic = match($st) { 'present' => 'check_circle', 'late' => 'schedule', 'absent' => 'cancel', 'no_exit' => 'logout', default => 'help' };
-                $stCls = match($st) { 'present' => 'ok', 'late' => 'warn', 'absent' => 'err', default => 'warn' };
-                $label = match($st) { 'present' => 'Puntual', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida', default => ucfirst($st) };
+                $ic = match($st) { 'present' => 'check_circle', 'late' => 'schedule', 'absent' => 'cancel', 'absent_justified' => 'verified', 'no_exit' => 'logout', default => 'help' };
+                $stCls = match($st) { 'present' => 'ok', 'late' => 'warn', 'absent' => 'err', 'absent_justified' => 'ok', default => 'warn' };
+                $label = match($st) { 'present' => 'Puntual', 'late' => 'Tardanza', 'absent' => 'Falta', 'absent_justified' => 'Falta justificada', 'no_exit' => 'Sin salida', default => ucfirst($st) };
                 $ts = strtotime($r['date'] ?? 'now');
                 $isToday = ($r['date'] ?? '') === $hoy;
             ?>
@@ -381,7 +381,9 @@
         late:    { icon: 'schedule',      cls: 'ic-late',    label: 'Tardanza',     badge: 'dev-badge-amber',
                    txt: 'Marcaste después del rango permitido.' },
         absent:  { icon: 'cancel',        cls: 'ic-absent',  label: 'Falta',        badge: 'dev-badge-red',
-                   txt: 'No registraste asistencia este día.' }
+                   txt: 'No registraste asistencia este día.' },
+        absent_justified: { icon: 'verified', cls: 'ic-present', label: 'Falta justificada', badge: 'dev-badge-green',
+                   txt: 'Tu falta fue justificada y aprobada.' }
     };
 
     function esc(s) {

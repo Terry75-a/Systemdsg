@@ -111,10 +111,10 @@
     $hoy = $hoyRegistro ?? null;
     $hEnt  = $hoy['time_in']  ?? null;
     $hSal  = $hoy['time_out'] ?? null;
-    $horaEntrada = $miHorario['hora_entrada'] ?? '08:00';
-    $horaSalida  = $miHorario['hora_salida']  ?? '17:00';
-    $diasHorario = $miHorario['dias'] ?? 'Lun - Vie';
     $sinHorario  = empty($miHorario);
+    $horaEntrada = $miHorario['hora_entrada'] ?? null;
+    $horaSalida  = $miHorario['hora_salida']  ?? null;
+    $diasHorario = $miHorario['dias'] ?? null;
 ?>
 
 <!-- Marcar asistencia hoy -->
@@ -135,20 +135,24 @@
             <?php endif; ?>
         </p>
         <div class="pra-marcar-times">
-            <div><span>Entrada</span><strong><?= esc($hEnt ?: substr($horaEntrada, 0, 5)) ?></strong></div>
-            <div><span>Salida</span><strong><?= esc($hSal ?: substr($horaSalida, 0, 5)) ?></strong></div>
-            <div><span>Jornada</span><strong><?= esc($diasHorario) ?></strong></div>
+            <div><span>Entrada</span><strong><?= esc($hEnt ?: ($horaEntrada ? substr($horaEntrada, 0, 5) : '—')) ?></strong></div>
+            <div><span>Salida</span><strong><?= esc($hSal ?: ($horaSalida ? substr($horaSalida, 0, 5) : '—')) ?></strong></div>
+            <div><span>Jornada</span><strong><?= esc($diasHorario ?: '—') ?></strong></div>
         </div>
         <?php
             $now = (int) date('Hi');
-            $hIn = (int) str_replace(':', '', $horaEntrada);
-            $hOut = (int) str_replace(':', '', $horaSalida);
+            $hIn = (int) str_replace(':', '', (string) $horaEntrada);
+            $hOut = (int) str_replace(':', '', (string) $horaSalida);
             $enHorario = !$sinHorario && $now >= $hIn && $now <= $hOut;
         ?>
         <div style="margin-top:12px;">
             <span class="pra-status-pill <?= $enHorario ? '' : 'off' ?>">
-                <span class="material-symbols-outlined filled"><?= $enHorario ? 'work' : 'bedtime' ?></span>
-                <?= $enHorario ? 'En tu horario de practica' : 'Fuera de tu horario' ?>
+                <span class="material-symbols-outlined filled"><?= $enHorario ? 'work' : ($sinHorario ? 'schedule' : 'bedtime') ?></span>
+                <?php if ($sinHorario): ?>
+                    Sin horario configurado
+                <?php else: ?>
+                    <?= $enHorario ? 'En tu horario de practica' : 'Fuera de tu horario' ?>
+                <?php endif; ?>
             </span>
         </div>
     </div>
@@ -166,7 +170,15 @@
     </div>
 </section>
 
-<?= view('partials/biometric_panel', ['bioMark' => ['exit' => (bool) ($hEnt && !$hSal), 'hora_salida' => $sinHorario ? '' : substr($horaSalida, 0, 5)]]) ?>
+<?= view('partials/biometric_panel', ['bioMark' => ['exit' => (bool) ($hEnt && !$hSal), 'hora_salida' => $sinHorario ? '' : substr($horaSalida, 0, 5)], 'userScheduleId' => (int) ($miInfo['schedule_id'] ?? 0)]) ?>
+
+<?php if (!empty($qrScan) && !($hEnt && $hSal)): ?>
+<script>
+window.addEventListener('load', function () {
+    setTimeout(function () { if (typeof openBioCheck === 'function') openBioCheck(); }, 350);
+});
+</script>
+<?php endif; ?>
 
 <!-- Stats · atajos a cada pagina -->
 <section class="dev-stats-grid">
@@ -341,3 +353,49 @@
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+    // ════════════════════════════════════════════
+    // TIEMPO REAL - Helpers para SSE (Empleado/Practicante)
+    // ════════════════════════════════════════════
+    window.actualizarUIAsistencia = function(asistencia) {
+        var btn = document.querySelector('.pra-marcar-cta .dev-btn');
+        if (!btn) return;
+        
+        var st = asistencia.status || 'absent';
+        var hEnt = asistencia.time_in || null;
+        var hSal = asistencia.time_out || null;
+        
+        if (hEnt && !hSal) {
+            btn.innerHTML = '<span class="material-symbols-outlined">logout</span> Registrar salida';
+            btn.className = 'dev-btn dev-btn-primary';
+        } else if (hEnt && hSal) {
+            btn.innerHTML = '<span class="material-symbols-outlined filled" style="font-size:18px;vertical-align:-4px;">check_circle</span> Completado hoy';
+            btn.className = 'dev-btn dev-btn-green';
+            btn.onclick = null;
+        } else {
+            btn.innerHTML = '<span class="material-symbols-outlined">login</span> Registrar entrada';
+            btn.className = 'dev-btn';
+        }
+        
+        var statusEl = document.querySelector('.pra-status-pill');
+        if (statusEl) {
+            var enHorario = !statusEl.classList.contains('off');
+            statusEl.className = 'pra-status-pill ' + (enHorario ? '' : 'off');
+            statusEl.innerHTML = '<span class="material-symbols-outlined filled">' + (enHorario ? 'work' : 'bedtime') + '</span> ' + (enHorario ? 'En tu horario' : 'Fuera de tu horario');
+        }
+    };
+
+    window.mostrarAlerta = function(datos) {
+        if (!datos || !Array.isArray(datos)) return;
+        datos.forEach(function(a) {
+            var msg = a.mensaje || 'Alerta';
+            var tipo = a.tipo === 'tardanza' ? 'warning' : 'danger';
+            var toast = document.createElement('div');
+            toast.className = 'dev-toast dev-toast-' + tipo;
+            toast.innerHTML = '<span class="material-symbols-outlined">' + (a.tipo === 'tardanza' ? 'schedule' : 'warning') + '</span> ' + (a.mensaje || 'Alerta');
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 5000);
+        });
+    };
+</script>
