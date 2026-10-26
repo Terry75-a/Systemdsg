@@ -25,6 +25,11 @@ class DevController extends BaseController
         $this->attendanceLogModel = new AttendanceLogModel();
         $this->incidentModel      = new IncidentModel();
         $this->sessionLogModel    = new SessionLogModel();
+
+        // Igual que el panel admin: el navegador nunca guarda copia del HTML,
+        // así los cambios de vistas/CSS se ven al recargar.
+        service('response')->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        service('response')->setHeader('Pragma', 'no-cache');
     }
 
     // Solo el Dev (dios) entra aquí
@@ -60,7 +65,11 @@ class DevController extends BaseController
         $codes        = $this->codeModel->getAll();
         $activeCodes  = $this->codeModel->getActive();
 
+        // Consola Dev (réplica de la página /dev de System-Trackin)
+        $consola = \App\Libraries\Asistencia\DevConsole::build();
+
         return view('dev-panel', [
+            'consola'       => $consola,
             'admins'        => $admins,
             'adminsWithStats' => $adminsWithStats,
             'empleados'     => $empleados,

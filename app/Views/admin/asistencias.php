@@ -481,6 +481,7 @@
             backdrop-filter: none !important;
         }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>

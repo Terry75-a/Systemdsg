@@ -23,7 +23,11 @@ class AdminController extends AdminBaseController
     public function dashboard()
     {
         if ($redirect = $this->guard()) return $redirect;
-        return view('admin/dashboard', $this->viewData(['activePage' => 'dashboard']));
+        $data = $this->viewData(['activePage' => 'dashboard']);
+        $data['tk'] = \App\Libraries\Asistencia\DashboardStats::build(
+            $data['attendance'], $data['personal'], $data['incidents'], $this->request->getGet() ?? []
+        );
+        return view('admin/dashboard', $data);
     }
 
     public function personal()

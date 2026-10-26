@@ -224,221 +224,23 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
 <div class="dev-layout">
     <?= view('partials/admin-sidebar', ['activePage' => $activePage ?? 'dashboard']) ?>
 
     <div class="dev-main">
-        <header class="dev-topbar">
-            <div class="dev-topbar-row">
-                <div class="dash-greeting">
-                    <h1>Hola, <strong><?= esc(session()->get('user_name') ?? 'Admin') ?></strong></h1>
-                    <p>Resumen del sistema de asistencia.</p>
-                    <div class="dash-date">
-                        <span class="material-symbols-outlined">calendar_today</span>
-                        <?= date('d/m/Y') ?>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="dev-content">
-            <?php $flashMsg = session()->getFlashdata('msg'); ?>
-            <?php $flashTipo = session()->getFlashdata('tipo') ?? 'success'; ?>
-            <?php if (!empty($flashMsg)): ?>
-                <div class="dev-alert dev-alert-<?= esc($flashTipo) ?>">
-                    <span class="material-symbols-outlined filled"><?= $flashTipo === 'success' ? 'check_circle' : ($flashTipo === 'warning' ? 'warning' : 'error') ?></span>
-                    <span><?= esc($flashMsg) ?></span>
-                </div>
-            <?php endif; ?>
-
-            <?php if ((int) ($totalEmpleados ?? 0) === 0): ?>
-                <!-- Cuenta nueva: qué hacer primero -->
-                <section class="dev-card" style="margin-bottom:24px;">
-                    <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">rocket_launch</span> Primeros pasos</h2>
-                    </div>
-                    <div style="padding:18px 20px;">
-                        <div class="dash-steps">
-                            <a href="<?= base_url('admin/personal') ?>" class="dash-step">
-                                <span class="dash-step-n">1</span>
-                                <span class="dash-step-t">Crea tu personal</span>
-                                <span class="dash-step-d">Registra empleados y practicantes con su DNI y horario.</span>
-                            </a>
-                            <a href="<?= base_url('admin/horarios') ?>" class="dash-step">
-                                <span class="dash-step-n">2</span>
-                                <span class="dash-step-t">Define los horarios</span>
-                                <span class="dash-step-d">Establece jornadas, días laborables y festivos.</span>
-                            </a>
-                            <a href="<?= base_url('admin/asistencias') ?>" class="dash-step">
-                                <span class="dash-step-n">3</span>
-                                <span class="dash-step-t">Revisa asistencias</span>
-                                <span class="dash-step-d">Aquí aparecerán las marcaciones y sus incidencias.</span>
-                            </a>
-                        </div>
-                    </div>
-                </section>
-            <?php endif; ?>
-
-            <!-- Stats -->
-            <section class="dev-stats-grid">
-                <a href="<?= base_url('admin/personal') ?>" class="dev-stat-card" title="Ver personal">
-                    <div class="dev-stat-icon si-accent"><span class="material-symbols-outlined filled">badge</span></div>
-                    <div class="dev-stat-label">Personal</div>
-                    <div class="dev-stat-value"><?= $totalEmpleados ?? 0 ?></div>
-                </a>
-                <a href="<?= base_url('admin/asistencias') ?>?fecha_inicio=<?= date('Y-m-d') ?>&amp;fecha_fin=<?= date('Y-m-d') ?>&amp;estado=present" class="dev-stat-card" title="Ver presentes de hoy">
-                    <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">check_circle</span></div>
-                    <div class="dev-stat-label">Presentes hoy</div>
-                    <div class="dev-stat-value"><?= $hoyPresentes ?? 0 ?></div>
-                </a>
-                <a href="<?= base_url('admin/asistencias') ?>?fecha_inicio=<?= date('Y-m-d') ?>&amp;fecha_fin=<?= date('Y-m-d') ?>&amp;estado=late" class="dev-stat-card" title="Ver tardanzas de hoy">
-                    <div class="dev-stat-icon si-amber"><span class="material-symbols-outlined filled">schedule</span></div>
-                    <div class="dev-stat-label">Tardanzas hoy</div>
-                    <div class="dev-stat-value"><?= $hoyTardanzas ?? 0 ?></div>
-                </a>
-                <a href="<?= base_url('admin/asistencias') ?>?fecha_inicio=<?= date('Y-m-d') ?>&amp;fecha_fin=<?= date('Y-m-d') ?>" class="dev-stat-card" title="Ver el día de hoy">
-                    <div class="dev-stat-icon si-red"><span class="material-symbols-outlined filled">person_off</span></div>
-                    <div class="dev-stat-label">Sin marcar hoy</div>
-                    <div class="dev-stat-value"><?= $hoyFaltas ?? 0 ?></div>
-                </a>
-                <a href="<?= base_url('admin/incidencias') ?>" class="dev-stat-card" title="Ver incidencias pendientes">
-                    <div class="dev-stat-icon si-amber"><span class="material-symbols-outlined filled">warning</span></div>
-                    <div class="dev-stat-label">Incidencias pendientes</div>
-                    <div class="dev-stat-value"><?= $incPendientes ?? 0 ?></div>
-                </a>
-            </section>
-
-            <div class="dev-grid-2">
-                <!-- Última actividad — sorteroOS: título fuera, bloque con hairlines -->
-                <section class="dash-sec dash-act">
-                    <div class="dash-sec-head">
-                        <h2><span class="material-symbols-outlined">history</span> Última actividad</h2>
-                        <a href="<?= base_url('admin/asistencias') ?>" class="dash-sec-link">Ver todo<span class="material-symbols-outlined">chevron_right</span></a>
-                    </div>
-                    <?php
-                    $recent = array_values($attendance ?? []);
-                    usort($recent, function ($a, $b) {
-                        $ka = ($a['date'] ?? '') . ' ' . ($a['time_in'] ?? '') . ' ' . str_pad((string) ($a['id'] ?? 0), 10, '0', STR_PAD_LEFT);
-                        $kb = ($b['date'] ?? '') . ' ' . ($b['time_in'] ?? '') . ' ' . str_pad((string) ($b['id'] ?? 0), 10, '0', STR_PAD_LEFT);
-                        return strcmp($kb, $ka);
-                    });
-                    $recent = array_slice($recent, 0, 8);
-
-                    // timeAgo idéntico al de sorteroOS: "Ahora" · "Hace 5m" ·
-                    // "Hace 3h" · "Hace 2d" · y a partir de 7 días, fecha corta.
-                    $dashRelativo = function (string $fecha, string $hora): string {
-                        $ts = strtotime(trim($fecha . ' ' . $hora));
-                        if (!$ts) return '';
-                        $diff = time() - $ts;
-                        if ($diff < 60)    return 'Ahora';
-                        if ($diff < 3600)  return 'Hace ' . (int) floor($diff / 60) . 'm';
-                        if ($diff < 86400) return 'Hace ' . (int) floor($diff / 3600) . 'h';
-                        $dias = (int) floor($diff / 86400);
-                        if ($dias < 7)     return 'Hace ' . $dias . 'd';
-                        $meses = [1=>'ene','feb','mar','abr','may','jun',
-                                  'jul','ago','sep','oct','nov','dic'];
-                        return (int) date('j', $ts) . ' ' . $meses[(int) date('n', $ts)];
-                    };
-
-                    // El estado lo cargan el icono y la primera palabra de la
-                    // descripción (sorteroOS no usa chips de color).
-                    $dashEstado = [
-                        'present'          => ['Presente',     'check_circle'],
-                        'late'             => ['Tardanza',     'schedule'],
-                        'absent'           => ['Falta',        'close'],
-                        'absent_justified' => ['Justificada',  'verified'],
-                        'no_exit'          => ['Sin salida',   'logout'],
-                    ];
-                    ?>
-                    <?php if (empty($recent)): ?>
-                        <div class="dev-recent-list">
-                            <div class="dash-act-empty">
-                                Sin actividad reciente — las marcaciones de tu equipo aparecerán aquí
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="dev-recent-list">
-                            <?php foreach ($recent as $r): ?>
-                                <?php
-                                $st      = (string) ($r['status'] ?? 'unknown');
-                                [$labelSt, $iconoSt] = $dashEstado[$st]
-                                    ?? [ucfirst(str_replace('_', ' ', $st)), 'help'];
-
-                                $fecha   = (string) ($r['date'] ?? '');
-                                $hora    = (string) ($r['time_in'] ?? '');
-                                $salida  = (string) ($r['time_out'] ?? '');
-
-                                // Descripción: identidad + jornada, una sola línea
-                                $parts = [];
-                                if (!empty($r['dni'])) $parts[] = 'DNI ' . $r['dni'];
-                                if ($hora !== '') {
-                                    $jornada = mb_substr($hora, 0, 5);
-                                    if ($salida !== '') $jornada .= ' → ' . mb_substr($salida, 0, 5);
-                                    $parts[] = $jornada;
-                                }
-                                $meta = ($labelSt ?: 'Registro') . ($parts ? ' · ' . implode(' · ', $parts) : '');
-                                ?>
-                                <div class="dev-recent-item">
-                                    <div class="dev-recent-avatar">
-                                        <span class="material-symbols-outlined dash-act-ico"><?= esc($iconoSt) ?></span>
-                                    </div>
-                                    <div class="dev-recent-info">
-                                        <div class="dev-recent-name"><?= esc($r['name'] ?? 'Empleado') ?></div>
-                                        <div class="dash-act-desc"><?= esc($meta) ?></div>
-                                    </div>
-                                    <div class="dev-recent-right">
-                                        <div class="dash-act-when"><?= esc($dashRelativo($fecha, $hora)) ?></div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </section>
-
-                <!-- Módulos — sorteroOS: título fuera, celdas a ras con hairlines -->
-                <section class="dash-sec dash-mods">
-                    <div class="dash-sec-head">
-                        <h2><span class="material-symbols-outlined">apps</span> Módulos</h2>
-                    </div>
-                    <div class="dash-link-grid">
-                        <a href="<?= base_url('admin/personal') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-solid"><span class="material-symbols-outlined">people</span></div>
-                            <div class="dash-link-text">Personal<span>Empleados y códigos</span></div>
-                        </a>
-                        <a href="<?= base_url('admin/asistencias') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">fingerprint</span></div>
-                            <div class="dash-link-text">Asistencias<span>Registro diario</span></div>
-                        </a>
-                        <a href="<?= base_url('admin/horarios') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">schedule</span></div>
-                            <div class="dash-link-text">Horarios<span>Jornadas de trabajo</span></div>
-                        </a>
-                        <a href="<?= base_url('admin/incidencias') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-outline"><span class="material-symbols-outlined">warning</span></div>
-                            <?php if (($incPendientes ?? 0) > 0): ?><span class="dash-mod-badge"><?= (int) $incPendientes ?><?= $incPendientes > 1 ? ' pendientes' : ' pendiente' ?></span><?php endif; ?>
-                            <div class="dash-link-text">Incidencias<span>Casos y justificaciones</span></div>
-                        </a>
-                        <a href="<?= base_url('admin/reportes') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-soft"><span class="material-symbols-outlined">analytics</span></div>
-                            <div class="dash-link-text">Reportes<span>Estadísticas</span></div>
-                        </a>
-                        <a href="<?= base_url('admin/configuracion') ?>" class="dash-link">
-                            <div class="dash-mod-icon mi-outline"><span class="material-symbols-outlined">settings</span></div>
-                            <div class="dash-link-text">Configuración<span>Ajustes y festivos</span></div>
-                        </a>
-                    </div>
-                </section>
-            </div>
-
-        </div>
+<?= view('partials/tk-dashboard', get_defined_vars()) ?>
     </div>
 </div>
 
 <!-- Campana de notificaciones (compartida en todas las secciones admin) -->
 <?= view('partials/admin-notif-bell') ?>
 <?= view('partials/pwa-js') ?>
+<script src="<?= base_url('js/tk-dashboard.js?v=' . filemtime(FCPATH . 'js/tk-dashboard.js')) ?>" defer></script>
 </body>
 </html>
 <!-- PWA -->

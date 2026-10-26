@@ -1,0 +1,600 @@
+/* ══════════════════════════════════════════════════════════════
+   TRACKIN · diseño de System-Trackin para los paneles Admin y Dev
+
+   Última hoja de la cascada (después de next-panel / tablas-botones),
+   así que gana los empates. Replica las clases de Tailwind de
+   System-Trackin (AppShell, PageTitle, StatGrid, Card, Table,
+   sbf-chip, sbf-search, botones HeroUI redondos) sobre las clases
+   que ya usan las vistas PHP. El verde es el de DSG.
+   ══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+:root {
+  --tk-page-bg: #f4f6f1;
+  --tk-ontime: #2a78d6;
+  --tk-late: #e34948;
+  --tk-ontime-soft: color-mix(in oklab, #2a78d6 12%, transparent);
+  --tk-late-soft: color-mix(in oklab, #e34948 12%, transparent);
+  --tk-l40: color-mix(in srgb, var(--sb-outline-variant) 40%, transparent);
+  --tk-l25: color-mix(in srgb, var(--sb-outline-variant) 25%, transparent);
+  --tk-l60: color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+  --tk-v50: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent);
+  --tk-v70: color-mix(in srgb, var(--sb-on-surface-variant) 70%, transparent);
+  --tk-ring: 0 0 0 4px color-mix(in srgb, var(--sb-primary) 12%, transparent);
+  --tk-font: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --tk-breathe: padding 400ms cubic-bezier(0.38, 0.49, 0, 2), background-color 125ms, color 125ms,
+    border-color 125ms, opacity 125ms, transform 125ms;
+}
+html.dark {
+  --tk-page-bg: #000000;
+  --tk-ontime: #3987e5;
+  --tk-late: #e66767;
+  --tk-ontime-soft: color-mix(in oklab, #3987e5 18%, transparent);
+  --tk-late-soft: color-mix(in oklab, #e66767 18%, transparent);
+}
+
+/* ── 1 · Base ──────────────────────────────────────────────── */
+body:has(.dev-main) {
+  background: var(--tk-page-bg) !important;
+}
+body:has(.dev-main),
+body:has(.dev-main) input,
+body:has(.dev-main) select,
+body:has(.dev-main) textarea,
+body:has(.dev-main) button {
+  font-family: var(--tk-font) !important;
+}
+body:has(.dev-main) .dev-main { background: transparent; }
+
+/* ── 2 · Menú lateral (AppShell) ───────────────────────────── */
+body:has(.dev-main) .dev-sidebar {
+  width: 240px;
+  background: var(--sb-surface);
+  border-right: 0;
+  box-shadow: none;
+}
+body:has(.dev-main) .dev-sidebar-head {
+  height: 56px; padding: 0 16px; display: flex; align-items: center;
+  border-bottom: 0;
+}
+body:has(.dev-main) .dev-logo { gap: 10px; }
+body:has(.dev-main) .dev-logo-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--sb-primary);
+}
+body:has(.dev-main) .dev-logo-mark img { width: 18px; height: 18px; }
+body:has(.dev-main) .dev-logo-text strong { font-size: 13px; font-weight: 600; letter-spacing: -0.02em; }
+body:has(.dev-main) .dev-logo-text small { font-size: 10px; font-weight: 500; color: var(--sb-primary); }
+
+body:has(.dev-main) .dev-nav { padding: 12px 8px; gap: 0; }
+body:has(.dev-main) .dev-nav-section {
+  padding: 16px 10px 4px; margin: 0;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--tk-v50);
+}
+body:has(.dev-main) .dev-nav-section:first-child { padding-top: 0; }
+body:has(.dev-main) .dev-nav-link {
+  height: 32px; padding: 0 10px; margin-bottom: 1px; gap: 10px;
+  border-radius: 9999px;
+  font-size: 13px; font-weight: 400;
+  color: var(--tk-v70);
+  background: transparent;
+  transition: color 300ms ease-out, background-color 300ms ease-out;
+}
+body:has(.dev-main) .dev-nav-link .material-symbols-outlined {
+  font-size: 16px; opacity: 0.7;
+  transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
+}
+body:has(.dev-main) .dev-nav-link:hover {
+  background: transparent; color: var(--sb-on-surface);
+}
+/* el texto se desliza y se abre un poco al pasar el mouse */
+body:has(.dev-main) .dev-nav-link:hover .material-symbols-outlined { transform: none; }
+body:has(.dev-main) .dev-nav-link > span:not(.material-symbols-outlined):not(.dev-nav-badge) {
+  transition: transform 300ms ease-out, letter-spacing 300ms ease-out;
+}
+body:has(.dev-main) .dev-nav-link:hover > span:not(.material-symbols-outlined):not(.dev-nav-badge) {
+  transform: translateX(4px); letter-spacing: 0.02em;
+}
+body:has(.dev-main) .dev-nav-link.is-active {
+  background: var(--sb-primary); color: var(--sb-on-primary); font-weight: 500;
+}
+body:has(.dev-main) .dev-nav-link.is-active .material-symbols-outlined { opacity: 1; transform: scale(1.1); }
+body:has(.dev-main) .dev-nav-link.is-active .dev-nav-badge {
+  background: color-mix(in srgb, var(--sb-on-primary) 22%, transparent); color: var(--sb-on-primary);
+}
+body:has(.dev-main) .dev-nav-badge { border-radius: 9999px; }
+
+body:has(.dev-main) .dark-toggle-wrap {
+  margin: 12px 0 0; padding: 0 10px; height: 32px; border: 0; border-radius: 9999px;
+  display: flex; align-items: center; justify-content: space-between;
+  color: var(--tk-v70);
+}
+body:has(.dev-main) .dark-toggle-wrap:hover { background: var(--sb-surface-container); color: var(--sb-on-surface); }
+body:has(.dev-main) .dark-toggle { font-size: 13px; color: inherit; gap: 10px; }
+body:has(.dev-main) .dark-toggle .material-symbols-outlined { font-size: 16px; }
+
+body:has(.dev-main) .dev-sidebar-footer {
+  padding: 8px; border-top: 1px solid var(--tk-l60);
+}
+body:has(.dev-main) .dev-sidebar-user { border-radius: 9999px; padding: 6px 10px; }
+body:has(.dev-main) .dev-sidebar-user:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) .dev-sidebar-avatar {
+  width: 24px; height: 24px; font-size: 9px; font-weight: 600;
+  background: var(--sb-surface-container-highest) !important; color: var(--sb-on-surface) !important;
+}
+body:has(.dev-main) .dev-sidebar-user-name { font-size: 12px; font-weight: 500; }
+body:has(.dev-main) .dev-sidebar-user-role { font-size: 10px; font-weight: 500; text-transform: uppercase; color: var(--sb-on-surface-variant); }
+
+/* ── 3 · Cabecera de página (PageTitle) ────────────────────── */
+@media (min-width: 769px) {
+  body:has(.dev-main) .dev-topbar {
+    position: static;
+    background: transparent;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+}
+body:has(.dev-main) .dev-topbar {
+  padding: 24px 72px 0 24px; /* a la derecha queda la campana fija */
+  border-bottom: 0;
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px;
+  box-shadow: none;
+}
+body:has(.dev-main) .dev-topbar-row {
+  width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px;
+}
+body:has(.dev-main) .dev-topbar h1,
+body:has(.dev-main) .dev-topbar .dev-topbar-title {
+  margin: 0;
+  font-size: 20px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.3;
+  color: var(--sb-on-surface);
+}
+body:has(.dev-main) .dev-topbar h1 strong { font-weight: 600; }
+body:has(.dev-main) .dev-topbar p,
+body:has(.dev-main) .dev-topbar .dev-topbar-subtitle {
+  margin: 2px 0 0; font-size: 12px; font-weight: 400; color: var(--tk-v70);
+}
+/* el título ocupa su línea y el subtítulo va debajo aunque vengan sueltos */
+body:has(.dev-main) .dev-topbar > h1,
+body:has(.dev-main) .dev-topbar > p { flex-basis: 100%; }
+body:has(.dev-main) .dev-topbar > p { margin-top: -10px; }
+body:has(.dev-main) .dev-topbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+body:has(.dev-main) .dash-date {
+  margin-top: 8px; font-size: 11px; color: var(--sb-on-surface-variant);
+}
+@media (max-width: 768px) {
+  body:has(.dev-main) .dev-topbar { padding: 16px 64px 0 16px; }
+}
+
+/* ── 4 · Contenido ─────────────────────────────────────────── */
+body:has(.dev-main) .dev-content {
+  padding: 16px 24px 24px;
+}
+@media (max-width: 768px) {
+  body:has(.dev-main) .dev-content { padding: 16px 16px 112px; }
+}
+
+/* ── 5 · Tarjetas (Card) ───────────────────────────────────── */
+body:has(.dev-main) :is(.dev-card, .dev-table-wrap, .personal-table-wrap, .dtable-wrap, .in-card,
+  .ad-block, .rp-bars, .cfg-card, .cfg-sec, .att-card, .perm-table-wrap, .mobile-card,
+  .personal-form-card, .dev-table-card) {
+  border: 1px solid var(--tk-l40) !important;
+  border-radius: 16px !important;
+  background: var(--sb-surface) !important;
+  box-shadow: none !important;
+}
+body:has(.dev-main) .dev-card-head {
+  padding: 12px 16px; border-bottom: 1px solid var(--tk-l40); border-radius: 16px 16px 0 0;
+  background: transparent;
+}
+body:has(.dev-main) .dev-card-head h2,
+body:has(.dev-main) .dev-card-head h3 {
+  font-size: 14px; font-weight: 600; letter-spacing: 0; text-transform: none;
+  color: var(--sb-on-surface);
+}
+body:has(.dev-main) .dev-card-head h2 .material-symbols-outlined { font-size: 16px; color: var(--tk-v50); }
+body:has(.dev-main) .dev-card,
+body:has(.dev-main) .dev-table-wrap,
+body:has(.dev-main) .dtable-wrap,
+body:has(.dev-main) .personal-table-wrap,
+body:has(.dev-main) .in-card {
+  animation: tk-item-in 500ms cubic-bezier(0.1, 0.8, 0, 1) both;
+}
+@keyframes tk-item-in {
+  from { opacity: 0; filter: blur(16px); transform: translateY(-20px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+/* ── 6 · KPIs (StatGrid) ───────────────────────────────────── */
+body:has(.dev-main) :is(.dev-stats-grid, .stats-row, .stats, .aud-stats, .personal-stats) {
+  gap: 1px !important;
+  border-radius: 16px !important;
+  border: 0 !important;
+  background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent) !important;
+}
+body:has(.dev-main) :is(.dev-stats-grid, .stats-row, .stats, .aud-stats, .personal-stats) > * {
+  background: var(--sb-surface) !important;
+  padding: 20px !important;
+}
+body:has(.dev-main) :is(.dev-stat-label, .stat-label, .personal-stat-label) {
+  font-size: 10px !important; font-weight: 500 !important; letter-spacing: 0.05em !important;
+  text-transform: uppercase !important; color: var(--tk-v50) !important;
+}
+body:has(.dev-main) :is(.dev-stat-value, .stat-value, .personal-stat-value) {
+  font-size: 20px !important; font-weight: 700 !important; letter-spacing: -0.025em !important;
+  color: var(--sb-on-surface) !important; font-variant-numeric: tabular-nums;
+}
+body:has(.dev-main) :is(.dev-stat-icon, .stat-icon, .personal-stat-icon) {
+  color: var(--tk-v50) !important; background: transparent !important;
+  transition: color 150ms ease;
+}
+body:has(.dev-main) :is(.dev-stats-grid, .stats-row, .stats, .aud-stats, .personal-stats) > *:hover :is(.dev-stat-icon, .stat-icon, .personal-stat-icon) {
+  color: var(--sb-primary) !important;
+}
+
+/* KPIs propios de Horarios, Incidencias y Reportes → misma grilla unida */
+body:has(.dev-main) :is(.hr-metrics, .in-metrics, .rp-sum) {
+  gap: 1px !important; overflow: hidden; border-radius: 16px;
+  background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent) !important;
+}
+body:has(.dev-main) :is(.hr-metric, .in-metric, .rp-tile) {
+  display: flex !important; flex-direction: column; justify-content: flex-start; gap: 0 !important;
+  padding: 20px !important; min-height: 0 !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+  background: var(--sb-surface) !important;
+  animation: tk-fade 400ms ease both;
+}
+body:has(.dev-main) :is(.hr-metric-top, .in-metric-top, .rp-tile-top) {
+  display: flex !important; flex-direction: column; align-items: flex-start !important; gap: 12px !important;
+}
+body:has(.dev-main) :is(.hr-metric-top, .in-metric-top, .rp-tile-top) .material-symbols-outlined {
+  font-size: 16px !important; color: var(--tk-v50) !important; transition: color 150ms ease;
+}
+body:has(.dev-main) :is(.hr-metric, .in-metric, .rp-tile):hover :is(.hr-metric-top, .in-metric-top, .rp-tile-top) .material-symbols-outlined {
+  color: var(--sb-primary) !important;
+}
+body:has(.dev-main) :is(.hr-metric-label, .in-metric-label, .rp-tile-lbl) {
+  font-size: 10px !important; font-weight: 500 !important; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--tk-v50) !important;
+}
+body:has(.dev-main) :is(.hr-metric b, .in-metric b, .rp-tile-num) {
+  margin-top: 2px !important; font-size: 20px !important; font-weight: 700 !important; line-height: 1.3 !important;
+  letter-spacing: -0.025em; color: var(--sb-on-surface) !important; font-variant-numeric: tabular-nums;
+}
+body:has(.dev-main) :is(.hr-metrics-row, .in-metrics-row) { align-items: center !important; }
+/* Configuración · Información del sistema (valor y etiqueta → etiqueta arriba) */
+body:has(.dev-main) .cfg-tiles {
+  gap: 1px !important; padding: 0 !important; overflow: hidden; border-radius: 16px;
+  background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent) !important;
+}
+body:has(.dev-main) .cfg-tile {
+  display: flex !important; flex-direction: column-reverse; justify-content: flex-end;
+  padding: 20px !important; border: 0 !important; border-radius: 0 !important;
+  background: var(--sb-surface) !important; box-shadow: none !important;
+}
+body:has(.dev-main) .cfg-tile span {
+  margin: 0 !important; font-size: 10px !important; font-weight: 500 !important;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--tk-v50) !important;
+}
+body:has(.dev-main) .cfg-tile b {
+  margin-top: 2px; font-size: 20px !important; font-weight: 700 !important; letter-spacing: -0.025em;
+  line-height: 1.3 !important; color: var(--sb-on-surface) !important;
+}
+@keyframes tk-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── 7 · Tablas (Table · Th · Tr · Td) ─────────────────────── */
+body:has(.dev-main) :is(.dev-table-wrap, .personal-table-wrap, .dtable-wrap, .perm-table-wrap) { overflow: hidden; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  font-size: 12px !important;
+  background: transparent !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) thead tr {
+  background: transparent !important;
+  border-bottom: 1px solid var(--tk-l40);
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) th {
+  height: auto !important;
+  padding: 10px 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-size: 10px !important; font-weight: 600 !important;
+  letter-spacing: 0.05em !important; text-transform: uppercase !important;
+  color: var(--tk-v50) !important; opacity: 1 !important;
+  white-space: nowrap;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr {
+  background: transparent !important;
+  border-bottom: 1px solid var(--tk-l25);
+  transition: background-color 150ms ease;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:last-child { border-bottom: 0; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) td {
+  height: auto !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-size: 12px !important;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--sb-on-surface) 80%, transparent) !important;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(th, td):first-child { padding-left: 16px !important; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(th, td):last-child { padding-right: 16px !important; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) td:first-child {
+  font-weight: 500; color: var(--sb-on-surface) !important;
+}
+/* hover: fila entera en surface-container-low (sin verde ni gris fuerte) */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:hover,
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:hover > td {
+  background: var(--sb-surface-container-low) !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:active > td {
+  background: var(--sb-surface-container) !important;
+}
+
+/* píldoras dentro de tablas (Pill / Chip soft) */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(.dev-badge, .personal-role, .badge) {
+  height: auto !important;
+  padding: 2px 10px !important;
+  border-radius: 9999px !important;
+  font-size: 10px !important; font-weight: 500 !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) .dev-code {
+  border-radius: 6px; border: 1px solid color-mix(in srgb, var(--sb-primary) 35%, transparent);
+  background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important;
+  color: var(--sb-primary); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 2px 8px;
+}
+/* acciones: iconos redondos tenues (MoreHorizontal / p-2 hover) */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon {
+  width: 32px !important; height: 32px !important; border: 0 !important;
+  border-radius: 9999px !important; background: transparent !important;
+  color: var(--tk-v70) !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon:hover {
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important;
+}
+
+/* pie de tabla y paginación */
+body:has(.dev-main) .dtable-footer {
+  padding: 10px 16px; border-top: 1px solid var(--tk-l40);
+  font-size: 11px; color: var(--sb-on-surface-variant); background: transparent;
+}
+body:has(.dev-main) :is(.dtable-page, .dtable-page-nav, .att-page) {
+  min-width: 32px; height: 32px !important; min-height: 32px; padding: 0 10px;
+  border: 0 !important; border-radius: 9999px !important; background: transparent;
+  color: var(--sb-on-surface-variant); font-size: 11px; font-weight: 500;
+}
+body:has(.dev-main) :is(.dtable-page, .dtable-page-nav, .att-page):hover { background: var(--sb-surface-container); }
+body:has(.dev-main) :is(.dtable-page.is-active, .att-page.on) {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; font-weight: 600;
+}
+
+/* listas tipo fila (asistencias / incidencias) */
+body:has(.dev-main) .att-item {
+  border: 0 !important; border-bottom: 1px solid var(--tk-l25) !important;
+  border-radius: 0 !important; background: transparent !important; padding: 10px 16px !important;
+}
+body:has(.dev-main) .att-item:hover { background: var(--sb-surface-container-low) !important; }
+body:has(.dev-main) .att-list { gap: 0 !important; padding: 0 !important; }
+body:has(.dev-main) .att-av,
+body:has(.dev-main) .in-av { width: 32px !important; height: 32px !important; border-radius: 9999px !important; font-size: 11px !important; }
+body:has(.dev-main) .att-name,
+body:has(.dev-main) .in-name { font-size: 13px; }
+body:has(.dev-main) .att-meta,
+body:has(.dev-main) .in-detalle { font-size: 11px; }
+body:has(.dev-main) .in-item + .in-item { border-top: 1px solid var(--tk-l25) !important; }
+body:has(.dev-main) .in-item:hover { background: var(--sb-surface-container-low); }
+
+/* ── 8 · Chips y filtros (sbf-chip) ────────────────────────── */
+body:has(.dev-main) :is(.att-seg-btn, .hr-seg-btn, .hr-pill, .rp-chip, .in-chip, .cfg-chip) {
+  height: 32px !important; padding: 0 14px !important;
+  border-radius: 9999px !important;
+  border: 1.5px solid var(--sb-outline-variant) !important;
+  background: transparent !important;
+  color: var(--sb-on-surface-variant) !important;
+  font-size: 12px !important; font-weight: 500 !important; white-space: nowrap;
+  box-shadow: none;
+  transition: var(--tk-breathe) !important;
+}
+body:has(.dev-main) :is(.att-seg-btn, .hr-seg-btn, .hr-pill, .rp-chip, .in-chip, .cfg-chip):hover {
+  background: var(--sb-surface-container) !important;
+  border-color: var(--sb-on-surface-variant) !important;
+  padding: 0 16px !important;
+}
+body:has(.dev-main) :is(.att-seg-btn, .hr-seg-btn, .hr-pill, .rp-chip, .in-chip, .cfg-chip):active { transform: scale(0.97); }
+body:has(.dev-main) :is(.att-seg-btn.on, .hr-seg-btn.on, .hr-seg-btn.is-active, .hr-pill.on, .rp-chip.on, .in-chip.on, .cfg-chip.on) {
+  background: var(--sb-primary) !important;
+  color: var(--sb-on-primary) !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--sb-primary) 45%, transparent);
+}
+body:has(.dev-main) :is(.att-seg-count, .hr-pill b) { opacity: 0.6; }
+body:has(.dev-main) .att-seg { gap: 6px !important; }
+body:has(.dev-main) .in-total-chip {
+  display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 9999px;
+  border: 1.5px solid var(--sb-outline-variant); background: transparent;
+  color: var(--sb-on-surface-variant); font-size: 12px; font-weight: 500;
+}
+
+/* ── 9 · Buscador (sbf-search) ─────────────────────────────── */
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search) {
+  display: flex !important; align-items: center; gap: 8px;
+  height: 48px !important; padding: 0 16px !important;
+  background: var(--sb-surface) !important;
+  border-radius: 24px !important;
+  border: 1.5px solid transparent !important;
+  box-shadow: none;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search):hover { box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.08); }
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search):focus-within {
+  border-color: var(--sb-primary) !important;
+  box-shadow: var(--tk-ring), 0 8px 32px -8px color-mix(in srgb, var(--sb-primary) 18%, transparent);
+}
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search) > .material-symbols-outlined {
+  position: static !important; transform: none !important;
+  font-size: 16px; opacity: 0.4; color: var(--sb-on-surface);
+}
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search) input {
+  flex: 1; min-width: 0; height: 100% !important; padding: 0 !important;
+  background: transparent !important; border: 0 !important; outline: 0 !important; box-shadow: none !important;
+  font-size: 14px !important; color: var(--sb-on-surface);
+}
+body:has(.dev-main) :is(.search-box, .pf-search, .hr-search) input::placeholder { color: var(--sb-on-surface-variant); opacity: 0.4; }
+
+/* ── 10 · Campos y selects (HeroUI variant secondary) ──────── */
+body:has(.dev-main) :is(.att-input, .rp-input, .pf-select, .dev-field input, .dev-field select, .dev-field textarea,
+  .field input, .field select, .field textarea, .cfg-field input, .cfg-field select) {
+  min-height: 40px;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  background: var(--sb-surface-container) !important;
+  color: var(--sb-on-surface);
+  font-size: 13px !important;
+  box-shadow: none !important;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+body:has(.dev-main) :is(.att-input, .rp-input, .pf-select, .dev-field input, .dev-field select, .dev-field textarea,
+  .field input, .field select, .field textarea, .cfg-field input, .cfg-field select):hover {
+  background: var(--sb-surface-container-high) !important;
+}
+body:has(.dev-main) :is(.att-input, .rp-input, .pf-select, .dev-field input, .dev-field select, .dev-field textarea,
+  .field input, .field select, .field textarea, .cfg-field input, .cfg-field select):focus {
+  outline: none !important;
+  border-color: var(--sb-primary) !important;
+  box-shadow: var(--tk-ring) !important;
+  background: var(--sb-surface) !important;
+}
+body:has(.dev-main) :is(.dev-field, .field, .cfg-field) label,
+body:has(.dev-main) :is(.att-tb-label, .rp-bar-cap) {
+  font-size: 11px; font-weight: 500; color: var(--sb-on-surface-variant);
+}
+
+/* ── 11 · Botones (HeroUI redondos con «respiración») ──────── */
+body:has(.dev-main) :is(.dev-btn, .att-go, .rp-go, .rp-export, .hr-new, .in-new, .cfg-btn, .cfg-btn-ghost, .in-btn, .m-card-btn,
+  .confirm-modal-btn, .confirm-modal-btn-delete, .confirm-modal-btn-cancel, .hr-btn-ghost) {
+  height: 36px !important; min-height: 36px !important;
+  padding: 0 16px !important;
+  border-radius: 9999px !important;
+  font-size: 13px !important; font-weight: 500 !important;
+  gap: 6px;
+  box-shadow: none !important;
+  transform: none;
+  filter: none !important;
+  transition: var(--tk-breathe) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+body:has(.dev-main) :is(.dev-btn, .att-go, .rp-go, .rp-export, .hr-new, .in-new, .cfg-btn, .cfg-btn-ghost, .in-btn, .m-card-btn,
+  .confirm-modal-btn, .confirm-modal-btn-delete, .confirm-modal-btn-cancel, .hr-btn-ghost):not(:disabled):hover {
+  padding: 0 18px !important;
+}
+body:has(.dev-main) :is(.dev-btn, .att-go, .rp-go, .rp-export, .hr-new, .in-new, .cfg-btn, .cfg-btn-ghost, .in-btn, .m-card-btn,
+  .confirm-modal-btn, .confirm-modal-btn-delete, .confirm-modal-btn-cancel, .hr-btn-ghost):not(:disabled):active {
+  transform: scale(0.97) !important;
+}
+body:has(.dev-main) :is(.dev-btn, .att-go, .rp-go, .rp-export, .hr-new, .cfg-btn, .in-btn) .material-symbols-outlined { font-size: 15px !important; }
+body:has(.dev-main) .dev-btn-sm {
+  height: 32px !important; min-height: 32px !important; padding: 0 12px !important; font-size: 12px !important;
+}
+body:has(.dev-main) .dev-btn-sm:not(:disabled):hover { padding: 0 14px !important; }
+
+/* primario */
+body:has(.dev-main) :is(.dev-btn-primary, .att-go:not(.att-go-ghost), .rp-go, .hr-new, .in-new, .cfg-btn:not(.cfg-btn-soft), .confirm-modal-btn) {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important;
+  border: 0 !important;
+}
+body:has(.dev-main) :is(.dev-btn-primary, .att-go:not(.att-go-ghost), .rp-go, .hr-new, .in-new, .cfg-btn:not(.cfg-btn-soft), .confirm-modal-btn):hover {
+  background: color-mix(in srgb, var(--sb-primary) 90%, #000) !important; opacity: 1;
+}
+/* secundario (gris) */
+body:has(.dev-main) :is(.dev-btn:not(.dev-btn-primary):not(.dev-btn-danger):not(.dev-btn-outline):not(.dev-btn-text),
+  .att-go-ghost, .rp-export, .cfg-btn-soft, .cfg-btn-ghost, .m-card-btn, .confirm-modal-btn-cancel, .hr-btn-ghost, .in-btn) {
+  background: var(--sb-surface-container-high) !important;
+  color: var(--sb-on-surface) !important;
+  border: 0 !important;
+}
+body:has(.dev-main) :is(.dev-btn:not(.dev-btn-primary):not(.dev-btn-danger):not(.dev-btn-outline):not(.dev-btn-text),
+  .att-go-ghost, .rp-export, .cfg-btn-soft, .cfg-btn-ghost, .m-card-btn, .confirm-modal-btn-cancel, .hr-btn-ghost, .in-btn):hover {
+  background: var(--sb-surface-container-highest) !important;
+}
+/* contorno y texto */
+body:has(.dev-main) .dev-btn-outline {
+  background: transparent !important; color: var(--sb-on-surface) !important;
+  border: 1.5px solid var(--sb-outline-variant) !important;
+}
+body:has(.dev-main) .dev-btn-outline:hover { background: var(--sb-surface-container) !important; }
+body:has(.dev-main) .dev-btn-text { background: transparent !important; color: var(--sb-on-surface-variant) !important; border: 0 !important; }
+body:has(.dev-main) .dev-btn-text:hover { background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; }
+/* peligro */
+body:has(.dev-main) :is(.dev-btn-danger:not(.dev-btn-icon), .confirm-modal-btn-delete, .in-btn-danger, .m-card-btn-danger) {
+  background: var(--tk-late) !important; color: #fff !important; border: 0 !important;
+}
+body:has(.dev-main) :is(.dev-btn-danger:not(.dev-btn-icon), .confirm-modal-btn-delete, .in-btn-danger, .m-card-btn-danger):hover {
+  background: color-mix(in srgb, var(--tk-late) 88%, #000) !important;
+}
+body:has(.dev-main) :is(.dev-btn, .att-go, .rp-go, .hr-new, .cfg-btn, .in-btn):disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* botón de solo icono (fuera de tablas) */
+body:has(.dev-main) .dev-btn-icon {
+  width: 36px; height: 36px; border-radius: 9999px !important;
+  border: 0 !important; background: var(--sb-surface-container-high) !important;
+  color: var(--sb-on-surface) !important;
+  transition: background-color 125ms, transform 125ms;
+}
+body:has(.dev-main) .dev-btn-icon:hover { background: var(--sb-surface-container-highest) !important; }
+body:has(.dev-main) .dev-btn-icon:active { transform: scale(0.92); }
+
+body:has(.dev-main) :is(.dev-btn, .dev-btn-icon, .att-go, .rp-go, .hr-new, .cfg-btn, .in-btn, .tk-chip):focus-visible {
+  outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary) !important;
+}
+
+/* botones chicos propios del panel Dev: mismo press de Trackin */
+body:has(.dev-main) :is(.creds-copy, .modal-close, .dev-modal-close, .field-pass-toggle, .dev-mobile-dark-btn, .dtable-page, .dtable-page-nav) {
+  transition: background-color 125ms, color 125ms, transform 125ms !important;
+  -webkit-tap-highlight-color: transparent;
+}
+body:has(.dev-main) :is(.creds-copy, .modal-close, .dev-modal-close, .field-pass-toggle, .dev-mobile-dark-btn, .dtable-page, .dtable-page-nav):hover {
+  background: var(--sb-surface-container) !important;
+}
+body:has(.dev-main) :is(.creds-copy, .modal-close, .dev-modal-close, .field-pass-toggle, .dev-mobile-dark-btn, .dtable-page, .dtable-page-nav, .dev-btn-icon):not(:disabled):active {
+  transform: scale(0.92) !important;
+}
+
+/* ── 12 · Badges y alertas ─────────────────────────────────── */
+body:has(.dev-main) .dev-badge { border-radius: 9999px !important; font-size: 10px; font-weight: 500; }
+body:has(.dev-main) .dev-alert {
+  border-radius: 16px; border: 0; padding: 12px 16px; font-size: 13px;
+  background: var(--sb-surface-container); color: var(--sb-on-surface);
+}
+body:has(.dev-main) .dev-alert-success { background: var(--sb-primary); color: var(--sb-on-primary); }
+body:has(.dev-main) .dev-alert-success .material-symbols-outlined { color: inherit; }
+body:has(.dev-main) :is(.dev-alert-danger, .dev-alert-error) { background: var(--tk-late-soft); color: var(--tk-late); }
+
+/* ── 13 · Modales (HeroUI) ─────────────────────────────────── */
+body:has(.dev-main) :is(.dev-modal, .modal, .confirm-modal) {
+  border-radius: 24px !important;
+  border: 0 !important;
+  background: var(--sb-surface) !important;
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.35) !important;
+}
+body:has(.dev-main) :is(.dev-modal-overlay, .modal-overlay) {
+  background: rgba(0, 0, 0, 0.45) !important;
+  -webkit-backdrop-filter: blur(2px) !important; backdrop-filter: blur(2px) !important;
+}
+body:has(.dev-main) .dev-modal-head { border-bottom: 0; padding-bottom: 4px; }
+body:has(.dev-main) :is(.dev-modal-head h2, .dev-modal-head h3) { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+body:has(.dev-main) .dev-modal-footer { border-top: 0; }
+
+/* ── 14 · Navegación móvil ─────────────────────────────────── */
+body:has(.dev-main) .dev-mobile-nav { border-radius: 50px !important; bottom: 16px; }
+body:has(.dev-main) .dev-mobile-nav a { border-radius: 9999px !important; }
+body:has(.dev-main) .dev-mobile-nav a.is-active { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+
+/* ── 15 · Menos movimiento ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  body:has(.dev-main) * { transition: none !important; animation: none !important; }
+}

@@ -441,6 +441,7 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
     <!-- PWA -->
     <?= view('partials/pwa-head') ?>
+    <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
 
