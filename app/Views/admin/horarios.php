@@ -140,19 +140,20 @@
             color: var(--sb-on-surface); font-variant-numeric: tabular-nums;
         }
 
-        /* ── CTA Nuevo horario — píldora EduconectaV2 con radio 50px,
-           alto 48px y sin animaciones ── */
+        /* ── CTA Nuevo horario — píldora réplica del botón "Añadir" de
+           personas (.pdsg-add-btn): alto 40px, padding 0 20px, radio 999px,
+           tipografía 13px/500 y verde sólido. Sin animaciones ── */
         .hr-new {
             flex: none; align-self: center;
-            height: 48px; padding: 0 26px; border: 0; border-radius: 50px; cursor: pointer;
+            height: 40px; padding: 0 20px; border: 0; border-radius: 999px; cursor: pointer;
             background: var(--sb-primary); color: #fff;
-            font-family: inherit; font-size: 14px; font-weight: 600;
-            display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+            font-family: inherit; font-size: 13px; font-weight: 500; letter-spacing: .02em; line-height: 1;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
             transition: none;
         }
         .hr-new:hover { background: color-mix(in srgb, var(--sb-primary) 90%, #000); }
         .hr-new:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary); }
-        .hr-new .material-symbols-outlined { font-size: 19px; }
+        .hr-new .material-symbols-outlined { font-size: 17px; }
 
         /* ── Buscador + filtros (admin/usuarios) ── */
         .hr-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
@@ -285,12 +286,11 @@
         body:has(.dev-main) .hr-modal .dev-field select:focus {
             box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary);
         }
-        /* En el pie del modal, el submit del alta vuelve a la píldora del
-           pie canon (40px) para emparejar con "Cancelar" — la píldora de
-           48px es sólo para el CTA de la barra de la página */
+        /* En el pie del modal, el submit del alta usa la misma píldora de
+           40px que el CTA para emparejar con "Cancelar" */
         body:has(.dev-main) .hr-modal .dev-modal-footer .hr-new {
-            height: 40px; padding: 0 22px;
-            font-size: 13.5px; font-weight: 500;
+            height: 40px; padding: 0 20px;
+            font-size: 13px; font-weight: 500;
         }
         .hr-req { color: #dc2626; }
         body:has(.dev-main) .hr-modal .dev-modal-footer {
@@ -457,6 +457,7 @@
 
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
 </head>
 <body>
 

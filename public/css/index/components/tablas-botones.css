@@ -1,0 +1,416 @@
+/* ══════════════════════════════════════════════════════════════
+   TABLAS Y BOTONES · capa final del panel Admin (/admin)
+
+   · Se carga DESPUÉS de next-panel.css → gana los empates.
+   · Sólo toca el contenido de las tablas y los botones.
+   · Botones: píldora (radio 999px), alto 40px, verde DSG.
+   · Tablas: receta de Horarios (cabecera gris, filas blancas
+     separadas por un filete de 1px, acciones como iconos tenues).
+   · Todo con tokens --sb-* / --g-*, así el modo oscuro se adapta.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --tb-hover: color-mix(in srgb, var(--g-primary) 4%, var(--sb-surface));
+  --tb-muted: color-mix(in srgb, var(--sb-on-surface-variant) 55%, transparent);
+  --tb-ring: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1 · FORMA — píldora en todo botón
+   (mismo selector + !important que next-panel, hoja posterior)
+   ───────────────────────────────────────────────────────────── */
+button,
+[class*="btn"],
+[class*="-close"],
+[class*="-chip"],
+input[type="button"],
+input[type="submit"],
+.dtable-page,
+.dtable-page-nav,
+.att-page {
+  border-radius: 999px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2 · BOTÓN BASE (.dev-btn y variantes)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-btn {
+  min-height: 40px;
+  padding: 0 18px;
+  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: none;
+  transition: background-color 150ms ease, color 150ms ease,
+    border-color 150ms ease, box-shadow 150ms ease;
+}
+body:has(.dev-main) .dev-btn:active { transform: none; }
+body:has(.dev-main) .dev-btn .material-symbols-outlined { font-size: 18px; }
+
+body:has(.dev-main) .dev-btn-sm {
+  min-height: 32px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+body:has(.dev-main) .dev-btn-sm .material-symbols-outlined { font-size: 16px; }
+
+/* primario — verde sólido, hover un poco más oscuro */
+body:has(.dev-main) .dev-btn-primary {
+  background: var(--sb-primary);
+  color: var(--sb-on-primary);
+  border: 1px solid var(--sb-primary);
+}
+body:has(.dev-main) .dev-btn-primary:hover {
+  background: color-mix(in srgb, var(--sb-primary) 88%, #000);
+  border-color: color-mix(in srgb, var(--sb-primary) 88%, #000);
+  opacity: 1;
+}
+
+/* contorno — borde gris, el verde aparece en hover */
+body:has(.dev-main) .dev-btn-outline {
+  background: var(--sb-surface);
+  color: var(--sb-on-surface);
+  border: 1px solid var(--sb-outline-variant);
+}
+body:has(.dev-main) .dev-btn-outline:hover {
+  background: var(--g-primary-light);
+  border-color: color-mix(in srgb, var(--g-primary) 40%, transparent);
+  color: var(--g-primary);
+}
+
+/* texto — sin caja hasta el hover */
+body:has(.dev-main) .dev-btn-text {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--sb-on-surface-variant);
+}
+body:has(.dev-main) .dev-btn-text:hover {
+  background: var(--sb-surface-container);
+  color: var(--sb-on-surface);
+}
+
+/* peligro — tinte rojo suave, sólido en hover */
+body:has(.dev-main) .dev-btn-danger:not(.dev-btn-icon) {
+  background: color-mix(in srgb, var(--g-error) 10%, transparent);
+  color: var(--g-error);
+  border: 1px solid transparent;
+}
+body:has(.dev-main) .dev-btn-danger:not(.dev-btn-icon):hover {
+  background: var(--g-error);
+  color: #fff;
+}
+
+/* foco y deshabilitado comunes */
+body:has(.dev-main) .dev-btn:focus-visible,
+body:has(.dev-main) .dev-btn-icon:focus-visible {
+  outline: none;
+  box-shadow: var(--tb-ring);
+}
+body:has(.dev-main) .dev-btn:disabled,
+body:has(.dev-main) .dev-btn[aria-disabled="true"],
+body:has(.dev-main) .dev-btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3 · BOTÓN DE ICONO fuera de tablas — círculo 36px
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border: 1px solid var(--sb-outline-variant);
+  background: var(--sb-surface);
+  color: var(--sb-on-surface-variant);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+body:has(.dev-main) .dev-btn-icon .material-symbols-outlined { font-size: 18px; }
+body:has(.dev-main) .dev-btn-icon:hover {
+  background: var(--g-primary-light);
+  border-color: color-mix(in srgb, var(--g-primary) 35%, transparent);
+  color: var(--g-primary);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4 · CTAs propios de cada vista → misma píldora de 40px
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .att-go,
+body:has(.dev-main) .rp-go,
+body:has(.dev-main) .rp-export,
+body:has(.dev-main) .hr-new,
+body:has(.dev-main) .cfg-btn,
+body:has(.dev-main) .cfg-btn-ghost {
+  height: 40px;
+  min-height: 40px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  gap: 8px;
+  transform: none;
+  filter: none;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+body:has(.dev-main) .att-go .material-symbols-outlined,
+body:has(.dev-main) .rp-go .material-symbols-outlined,
+body:has(.dev-main) .rp-export .material-symbols-outlined,
+body:has(.dev-main) .hr-new .material-symbols-outlined { font-size: 17px; }
+body:has(.dev-main) .rp-go:hover {
+  background: color-mix(in srgb, var(--sb-primary) 88%, #000);
+  filter: none;
+}
+body:has(.dev-main) .rp-go:active { transform: none; }
+
+/* segmentados (Hoy / Semana / Mes, estados, chips de reportes) */
+body:has(.dev-main) .att-seg-btn,
+body:has(.dev-main) .hr-seg-btn,
+body:has(.dev-main) .rp-chip {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* botones de acción en la lista de incidencias */
+body:has(.dev-main) .in-btn {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+body:has(.dev-main) .in-btn:active { transform: none; }
+
+/* ─────────────────────────────────────────────────────────────
+   5 · TABLAS — receta de Horarios para todas
+   .dev-table (horarios) · .personal-table (personal)
+   .dtable (listas JS) · .ad-log (auditoría)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .dev-table-wrap,
+body:has(.dev-main) .personal-table-wrap,
+body:has(.dev-main) .dtable-wrap,
+body:has(.dev-main) div:has(> table.ad-log) {
+  background: color-mix(in srgb, var(--sb-outline-variant) 35%, transparent);
+  border: 1px solid var(--sb-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* cabecera */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) thead tr {
+  background: var(--sb-surface-container);
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) th {
+  height: 40px;
+  padding: 0 14px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sb-on-surface-variant);
+  opacity: 0.8;
+  white-space: nowrap;
+  vertical-align: middle;
+  background: transparent;
+  border-bottom: 0;
+}
+
+/* filas */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) tbody tr {
+  background: var(--sb-surface);
+  transition: background-color 150ms ease;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) td {
+  height: 52px;
+  padding: 0 14px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--sb-on-surface);
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+/* aire a los lados: primera y última columna */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) :is(th, td):first-child { padding-left: 20px; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) :is(th, td):last-child { padding-right: 16px; }
+
+/* columna principal en negrita suave */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) td:first-child {
+  font-weight: 500;
+}
+
+/* hover — tinte verde muy suave en la fila entera
+   (el !important vence al hover gris de educonecta §10) */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) tbody tr:hover,
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) tbody tr:hover > td {
+  background: var(--tb-hover) !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) tbody tr:active > td {
+  background: color-mix(in srgb, var(--g-primary) 8%, var(--sb-surface)) !important;
+}
+
+/* texto secundario dentro de celdas */
+body:has(.dev-main) .personal-dim,
+body:has(.dev-main) .personal-mono {
+  color: var(--sb-on-surface-variant);
+  font-size: 12.5px;
+}
+body:has(.dev-main) .personal-mono { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+
+/* nombre + avatar */
+body:has(.dev-main) .personal-user { display: flex; align-items: center; gap: 10px; }
+body:has(.dev-main) .personal-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  flex: none;
+}
+body:has(.dev-main) .personal-user-name { font-weight: 500; color: var(--sb-on-surface); }
+
+/* código del empleado */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) .dev-code {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+}
+
+/* badges en celdas: píldora tintada con el color de su texto */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log) :is(.dev-badge, .personal-role) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  white-space: nowrap;
+  background: color-mix(in srgb, currentColor 11%, transparent) !important;
+}
+
+/* acciones: iconos tenues sin caja, círculo gris en hover */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .dev-table-card) .dev-btn-icon {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--tb-muted) !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .dev-table-card) .dev-btn-icon:hover {
+  background: var(--sb-surface-container);
+  color: var(--sb-primary) !important;
+}
+/* acciones destructivas: rojo / ámbar sólo al pasar el mouse */
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon:is(.dev-btn-danger, [style*="g-error"], [title^="Eliminar"]):hover {
+  background: color-mix(in srgb, var(--g-error) 10%, transparent);
+  color: var(--g-error) !important;
+}
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon:is([style*="e37400"], [style*="b45309"]):hover {
+  background: color-mix(in srgb, var(--g-warning) 12%, transparent);
+  color: var(--g-warning) !important;
+}
+body:has(.dev-main) .personal-actions,
+body:has(.dev-main) :is(.dev-table, .dtable) td:last-child:has(.dev-btn-icon) {
+  white-space: nowrap;
+}
+body:has(.dev-main) .personal-actions { display: inline-flex; align-items: center; gap: 2px; }
+
+/* ─────────────────────────────────────────────────────────────
+   6 · LISTA DE ASISTENCIAS (tarjetas-fila .att-item)
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .att-list { gap: 8px; }
+body:has(.dev-main) .att-item {
+  padding: 12px 16px;
+  border: 1px solid var(--sb-outline-variant);
+  border-radius: 14px;
+  background: var(--sb-surface);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+body:has(.dev-main) .att-item:hover {
+  background: var(--tb-hover);
+  border-color: color-mix(in srgb, var(--g-primary) 30%, var(--sb-outline-variant));
+}
+body:has(.dev-main) .att-av {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+body:has(.dev-main) .att-meta b { font-variant-numeric: tabular-nums; }
+body:has(.dev-main) .att-estado {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-size: 11.5px;
+}
+body:has(.dev-main) .att-edit {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--tb-muted);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+body:has(.dev-main) .att-edit:hover {
+  background: var(--sb-surface-container);
+  color: var(--sb-primary);
+}
+body:has(.dev-main) .att-edit:focus-visible { outline: none; box-shadow: var(--tb-ring); }
+
+/* ─────────────────────────────────────────────────────────────
+   7 · PAGINACIÓN — círculos 34px, activo en verde
+   ───────────────────────────────────────────────────────────── */
+body:has(.dev-main) .att-page,
+body:has(.dev-main) .dtable-page,
+body:has(.dev-main) .dtable-page-nav {
+  min-width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--sb-on-surface-variant);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+body:has(.dev-main) .att-page:hover,
+body:has(.dev-main) .dtable-page:hover,
+body:has(.dev-main) .dtable-page-nav:hover {
+  background: var(--sb-surface-container);
+  color: var(--sb-on-surface);
+}
+body:has(.dev-main) .att-page.on,
+body:has(.dev-main) .dtable-page.is-active {
+  background: var(--sb-primary);
+  border-color: var(--sb-primary);
+  color: var(--sb-on-primary);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8 · MENOS MOVIMIENTO
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  body:has(.dev-main) :is(.dev-btn, .dev-btn-icon, .att-item, .att-edit) { transition: none; }
+}
