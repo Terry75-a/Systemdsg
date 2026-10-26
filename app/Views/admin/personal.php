@@ -750,34 +750,48 @@
                 <?php if (empty($codes)): ?>
                     <div class="empty-state"><span class="material-symbols-outlined">qr_code_2</span><p>No hay codigos generados.</p></div>
                 <?php else: ?>
-                    <div class="personal-codes">
+                    <div class="tk-tbl-wrap">
+                    <table class="tk-tbl tk-tbl-click">
+                        <thead>
+                            <tr>
+                                <th>Persona</th>
+                                <th>Código</th>
+                                <th>Estado</th>
+                                <th class="tk-r">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         <?php foreach ($codes as $code):
                             $codeStatus = $code['status'] ?? '';
                             $codeName = $code['name'] ?? 'Sin nombre';
                             $codeInitial = strtoupper(mb_substr($codeName, 0, 1, 'UTF-8'));
                         ?>
-                            <div class="personal-code-item" style="cursor:pointer;" onclick="openCodeDetail(<?= htmlspecialchars(json_encode(array_merge($code, ['_name' => $codeName, '_initial' => $codeInitial, '_status' => $codeStatus])), ENT_QUOTES, 'UTF-8') ?>)">
-                                <div class="personal-code-left">
-                                    <div class="personal-code-avatar"><?= $codeInitial ?></div>
-                                    <div>
-                                        <div class="personal-code-name"><?= esc($codeName) ?></div>
-                                        <div class="personal-code-meta">DNI <?= esc($code['dni'] ?? '---') ?></div>
+                            <tr onclick="openCodeDetail(<?= htmlspecialchars(json_encode(array_merge($code, ['_name' => $codeName, '_initial' => $codeInitial, '_status' => $codeStatus])), ENT_QUOTES, 'UTF-8') ?>)">
+                                <td>
+                                    <div class="tk-cell-user">
+                                        <span class="tk-cell-av"><?= $codeInitial ?></span>
+                                        <span>
+                                            <span class="tk-cell-main"><?= esc($codeName) ?></span><br>
+                                            <span class="tk-cell-sub tk-cell-mono">DNI <?= esc($code['dni'] ?? '---') ?></span>
+                                        </span>
                                     </div>
-                                </div>
-                                <div class="personal-code-right" onclick="event.stopPropagation()">
-                                    <code class="dev-code" id="code-<?= $code['id'] ?>"><?= esc($code['code'] ?? '') ?></code>
-                                    <button type="button" class="dev-btn-icon" title="Copiar" onclick="copyCode('code-<?= $code['id'] ?>', this)">
-                                        <span class="material-symbols-outlined">content_copy</span>
-                                    </button>
-                                    <span class="personal-role code-status-<?= $codeStatus === 'active' ? 'active' : 'inactive' ?>">
-                                        <?= $codeStatus === 'active' ? 'Activo' : 'Usado' ?>
+                                </td>
+                                <td><code class="dev-code" id="code-<?= $code['id'] ?>"><?= esc($code['code'] ?? '') ?></code></td>
+                                <td><span class="tk-state <?= $codeStatus === 'active' ? 'is-on' : 'is-off' ?>"><i></i><?= $codeStatus === 'active' ? 'Activo' : 'Usado' ?></span></td>
+                                <td class="tk-r" onclick="event.stopPropagation()">
+                                    <span class="tk-actions">
+                                        <button type="button" class="dev-btn-icon" title="Copiar" onclick="copyCode('code-<?= $code['id'] ?>', this)">
+                                            <span class="material-symbols-outlined">content_copy</span>
+                                        </button>
+                                        <button type="button" class="dev-btn-icon" title="Eliminar" onclick="openConfirmDelete(<?= $code['id'] ?>, '<?= addslashes(esc($codeName)) ?>', 'code')">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
                                     </span>
-                                    <button type="button" class="dev-btn-icon" title="Eliminar" onclick="openConfirmDelete(<?= $code['id'] ?>, '<?= addslashes(esc($codeName)) ?>', 'code')">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </div>
-                            </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
+                        </tbody>
+                    </table>
                     </div>
                 <?php endif; ?>
             </div>

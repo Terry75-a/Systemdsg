@@ -387,6 +387,19 @@
                     </div>
                 </div>
             <?php else: ?>
+                <div class="tk-tbl-wrap">
+                <table class="tk-tbl">
+                    <thead>
+                        <tr>
+                            <th>Persona</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Detalle</th>
+                            <th>Estado</th>
+                            <th class="tk-r">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                 <?php foreach ($incidents as $inc):
                     $t = $inc['tipo'] ?? 'Otro';
                     $ti = $tipoInfo[$t] ?? $tipoInfo['Otro'];
@@ -399,20 +412,23 @@
                     $jb = $e === 'Rechazada' ? 'do_not_disturb_on' : ($e === 'Revisión' ? 'hourglass_top' : ($e === 'Pendiente' ? 'description' : 'verified'));
                     $jMsg = $e === 'Rechazada' ? 'Rechazada por el administrador' : ($e === 'Revisión' ? 'Justificación en revisión' : ($e === 'Pendiente' ? 'Justificación enviada' : 'Justificación aceptada'));
                 ?>
-                    <div class="in-item" data-estado="<?= esc($e) ?>">
-                        <div class="in-av"><?= esc($ini) ?></div>
-                        <div class="in-main">
-                            <div class="in-name">
-                                <strong><?= esc($uName) ?></strong>
-                                <span class="in-role"><?= esc($uRole) ?></span>
-                                <span class="in-estado <?= $eb ?>"><i></i> <?= esc($e) ?></span>
+                    <tr class="in-item" data-estado="<?= esc($e) ?>">
+                        <td>
+                            <div class="tk-cell-user">
+                                <span class="tk-cell-av"><?= esc($ini) ?></span>
+                                <span>
+                                    <span class="tk-cell-main"><?= esc($uName) ?></span><br>
+                                    <span class="tk-cell-sub"><?= esc($uRole) ?></span>
+                                </span>
                             </div>
-                            <div class="in-meta">
-                                <span class="in-tag"><span class="material-symbols-outlined"><?= $ti['icon'] ?></span> <?= esc($ti['label']) ?></span>
-                                <span class="in-date"><?= esc(date('d/m/Y H:i', strtotime($inc['fecha'] ?? 'now'))) ?></span>
-                            </div>
+                        </td>
+                        <td><span class="in-tag"><span class="material-symbols-outlined"><?= $ti['icon'] ?></span> <?= esc($ti['label']) ?></span></td>
+                        <td class="tk-cell-mono"><?= esc(date('d/m/Y H:i', strtotime($inc['fecha'] ?? 'now'))) ?></td>
+                        <td class="tk-wrap">
                             <?php if (!empty($inc['detalle'])): ?>
-                                <div class="in-detalle"><?= esc($inc['detalle']) ?></div>
+                                <div><?= esc($inc['detalle']) ?></div>
+                            <?php else: ?>
+                                <span class="tk-cell-muted">—</span>
                             <?php endif; ?>
                             <?php if ($hasJust): ?>
                                 <div class="in-just">
@@ -421,33 +437,37 @@
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($inc['resuelta_en'])): ?>
-                                <div class="in-detalle" style="font-size:11.5px;color:var(--g-text-secondary);">
-                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">verified_user</span>
-                                    Cerrada por <b><?= esc($inc['resuelta_por'] ?? '—') ?></b>
-                                    · <?= esc(date('d/m/Y H:i', strtotime($inc['resuelta_en']))) ?>
+                                <div class="tk-cell-sub" style="margin-top:4px;">
+                                    Cerrada por <b><?= esc($inc['resuelta_por'] ?? '—') ?></b> · <?= esc(date('d/m/Y H:i', strtotime($inc['resuelta_en']))) ?>
                                 </div>
                             <?php endif; ?>
-                        </div>
-                        <div class="in-actions">
-                            <?php if ($e === 'Pendiente' || $e === 'Revisión'): ?>
-                                <form action="<?= site_url('admin/update-incident') ?>" method="POST">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="inc_id" value="<?= (int) $inc['id'] ?>">
-                                    <input type="hidden" name="inc_estado" value="Justificada">
-                                    <button type="submit" class="in-btn" onclick="return confirm('¿Marcar como justificada?')">
-                                        <span class="material-symbols-outlined">check</span> Justificar
+                        </td>
+                        <td><span class="in-estado <?= $eb ?>"><i></i> <?= esc($e) ?></span></td>
+                        <td class="tk-r">
+                            <span class="tk-actions">
+                                <?php if ($e === 'Pendiente' || $e === 'Revisión'): ?>
+                                    <form action="<?= site_url('admin/update-incident') ?>" method="POST">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="inc_id" value="<?= (int) $inc['id'] ?>">
+                                        <input type="hidden" name="inc_estado" value="Justificada">
+                                        <button type="submit" class="in-btn" onclick="return confirm('¿Marcar como justificada?')">
+                                            <span class="material-symbols-outlined">check</span> Justificar
+                                        </button>
+                                    </form>
+                                    <button type="button" class="in-btn in-btn-danger" onclick="openRejectModal(<?= (int) $inc['id'] ?>, '<?= esc($inc['nombre'] ?? '') ?>')">
+                                        <span class="material-symbols-outlined">close</span> Rechazar
                                     </button>
-                                </form>
-                                <button type="button" class="in-btn in-btn-danger" onclick="openRejectModal(<?= (int) $inc['id'] ?>, '<?= esc($inc['nombre'] ?? '') ?>')">
-                                    <span class="material-symbols-outlined">close</span> Rechazar
+                                <?php endif; ?>
+                                <button type="button" class="dev-btn-icon" title="Editar" onclick='openEditModal(<?= (int) $inc['id'] ?>, <?= json_encode($e, JSON_HEX_APOS | JSON_HEX_TAG) ?>, <?= json_encode($inc['justificacion'] ?? '', JSON_HEX_APOS | JSON_HEX_TAG) ?>)'>
+                                    <span class="material-symbols-outlined">edit</span>
                                 </button>
-                            <?php endif; ?>
-                            <button type="button" class="in-btn" onclick='openEditModal(<?= (int) $inc['id'] ?>, <?= json_encode($e, JSON_HEX_APOS | JSON_HEX_TAG) ?>, <?= json_encode($inc['justificacion'] ?? '', JSON_HEX_APOS | JSON_HEX_TAG) ?>)'>
-                                <span class="material-symbols-outlined">edit</span> Editar
-                            </button>
-                        </div>
-                    </div>
+                            </span>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
+                    </tbody>
+                </table>
+                </div>
                 <div class="in-filtered-empty" id="inFilteredEmpty">
                     <span class="material-symbols-outlined" style="font-size:40px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">filter_alt_off</span>
                     Ninguna incidencia con este estado.

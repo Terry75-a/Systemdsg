@@ -653,35 +653,54 @@
                             </p>
                         </div>
                     <?php else: ?>
-                        <div class="att-list">
+                        <div class="tk-tbl-wrap">
+                        <table class="tk-tbl tk-tbl-click">
+                            <thead>
+                                <tr>
+                                    <th>Empleado</th>
+                                    <th>Fecha</th>
+                                    <th>Entrada</th>
+                                    <th>Salida</th>
+                                    <th>Estado</th>
+                                    <th class="tk-r">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             <?php foreach ($attendance as $r):
                                 $st     = $r['status'] ?? 'absent';
                                 $estado = match($st) { 'present' => 'present', 'late' => 'late', 'absent' => 'absent', 'no_exit' => 'no_exit', default => 'absent' };
-                                $label  = match($st) { 'present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida', default => ucfirst($st) };
+                                $label  = match($st) { 'present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida', 'absent_justified' => 'Falta justificada', default => ucfirst($st) };
                                 $nombre = $r['name'] ?? 'Empleado';
+                                $fechaTxt = !empty($r['date']) ? date('d/m/Y', strtotime($r['date'])) : '—';
                             ?>
-                            <div class="att-item" onclick="openDetail('<?= (int) $r['id'] ?>')">
-                                <div class="att-av"><?= strtoupper(mb_substr($nombre, 0, 1, 'UTF-8')) ?></div>
-                                <div class="att-main">
-                                    <div class="att-name">
-                                        <?= esc($nombre) ?>
-                                        <span class="att-dni"><?= esc($r['dni'] ?? '') ?></span>
-                                    </div>
-                                    <div class="att-meta">
-                                        <span><b><?= esc($r['date'] ?? '') ?></b></span>
-                                        <span>Entrada <b><?= esc($r['time_in'] ?? '-') ?></b></span>
-                                        <span>Salida <b><?= esc($r['time_out'] ?? '-') ?></b></span>
-                                    </div>
-                                </div>
-                                <span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span>
-                                <a class="att-edit" style="margin-right:8px;text-decoration:none;" href="<?= site_url('admin/auditoria/' . (int) $r['id']) ?>" title="Auditoría" onclick="event.stopPropagation();">
-                                    <span class="material-symbols-outlined">manage_search</span>
-                                </a>
-                                <button type="button" class="att-edit" onclick="event.stopPropagation(); openEdit(<?= (int) $r['id'] ?>)" title="Editar">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </button>
-                            </div>
+                                <tr class="att-row" data-id="<?= (int) $r['id'] ?>" onclick="openDetail('<?= (int) $r['id'] ?>')">
+                                    <td>
+                                        <div class="tk-cell-user">
+                                            <span class="tk-cell-av"><?= strtoupper(mb_substr($nombre, 0, 1, 'UTF-8')) ?></span>
+                                            <span>
+                                                <span class="tk-cell-main"><?= esc($nombre) ?></span><br>
+                                                <span class="tk-cell-sub tk-cell-mono">DNI <?= esc($r['dni'] ?? '—') ?></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="tk-cell-mono"><?= esc($fechaTxt) ?></td>
+                                    <td class="tk-cell-mono"><?= !empty($r['time_in']) ? esc(substr($r['time_in'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                    <td class="tk-cell-mono"><?= !empty($r['time_out']) ? esc(substr($r['time_out'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                    <td><span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span></td>
+                                    <td class="tk-r" onclick="event.stopPropagation()">
+                                        <span class="tk-actions">
+                                            <a class="dev-btn-icon" href="<?= site_url('admin/auditoria/' . (int) $r['id']) ?>" title="Auditoría">
+                                                <span class="material-symbols-outlined">manage_search</span>
+                                            </a>
+                                            <button type="button" class="dev-btn-icon" onclick="openEdit(<?= (int) $r['id'] ?>)" title="Editar">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                        </span>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
+                            </tbody>
+                        </table>
                         </div>
                     <?php endif; ?>
 
@@ -990,40 +1009,51 @@
     // ════════════════════════════════════════════
     // TIEMPO REAL - Helpers para SSE
     // ════════════════════════════════════════════
+    // Celdas de la tabla (mismo HTML que la fila del servidor)
+    function attEsc(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+            return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+        });
+    }
+    function attHora(v) { return v ? attEsc(String(v).slice(0, 5)) : '<span class="tk-cell-muted">—</span>'; }
+    function attFecha(v) {
+        if (!v) return '—';
+        var p = String(v).split('-');
+        return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : attEsc(v);
+    }
+    function attCeldas(datos) {
+        var st = datos.status || 'absent';
+        var m = window.statusMeta ? window.statusMeta[st] : null;
+        var label = m ? m.label : st;
+        var nombre = datos.name || 'Empleado';
+        return '<td><div class="tk-cell-user"><span class="tk-cell-av">' + attEsc(nombre.charAt(0).toUpperCase()) + '</span>' +
+                '<span><span class="tk-cell-main">' + attEsc(nombre) + '</span><br><span class="tk-cell-sub tk-cell-mono">DNI ' + attEsc(datos.dni || '—') + '</span></span></div></td>' +
+            '<td class="tk-cell-mono">' + attFecha(datos.date) + '</td>' +
+            '<td class="tk-cell-mono">' + attHora(datos.time_in) + '</td>' +
+            '<td class="tk-cell-mono">' + attHora(datos.time_out) + '</td>' +
+            '<td><span class="att-estado ' + attEsc(st) + '"><i></i>' + attEsc(label) + '</span></td>' +
+            '<td class="tk-r" onclick="event.stopPropagation()"><span class="tk-actions">' +
+                '<a class="dev-btn-icon" href="' + window.location.origin + '/admin/auditoria/' + parseInt(datos.id, 10) + '" title="Auditoría"><span class="material-symbols-outlined">manage_search</span></a>' +
+                '<button type="button" class="dev-btn-icon" onclick="openEdit(' + parseInt(datos.id, 10) + ')" title="Editar"><span class="material-symbols-outlined">edit</span></button>' +
+            '</span></td>';
+    }
+
     window.agregarFilaAsistencia = function(datos) {
         // Insertar nueva fila al principio de la tabla
-        var tbody = document.querySelector('.att-list');
+        var tbody = document.querySelector('.tk-tbl tbody');
         if (!tbody) return;
-        
-        var st = datos.status || 'absent';
-        var m = window.statusMeta ? window.statusMeta[st] : {label: st, color: '#64748b', bg: '#94a3b8'};
-        
-        var div = document.createElement('div');
-        div.className = 'att-item';
-        div.onclick = function() { openDetail(datos.id); };
-        div.innerHTML = '<div class="att-av">' + (datos.name || 'E').charAt(0).toUpperCase() + '</div>' +
-            '<div class="att-main">' +
-                '<div class="att-name"><b>' + (datos.name || 'Empleado') + '</b><span class="att-dni">' + (datos.dni || '—') + '</span></div>' +
-                '<div class="att-meta"><span><b>' + (datos.date || '-') + '</b></span><span>Entrada <b>' + (datos.time_in || '-') + '</b></span><span>Salida <b>' + (datos.time_out || '-') + '</b></span></div>' +
-            '</div>' +
-            '<span class="att-estado ' + st + '" style="color:' + m.color + '"><i style="background:' + m.bg + '"></i>' + m.label + '</span>' +
-            '<a class="att-edit" href="' + window.location.origin + '/admin/auditoria/' + datos.id + '" onclick="event.stopPropagation();" title="Auditoría"><span class="material-symbols-outlined">manage_search</span></a>' +
-            '<button type="button" class="att-edit" onclick="event.stopPropagation(); openEdit(' + datos.id + ')" title="Editar"><span class="material-symbols-outlined">edit</span></button>';
-        
-        tbody.insertBefore(div, tbody.firstChild);
+        var tr = document.createElement('tr');
+        tr.className = 'att-row';
+        tr.setAttribute('data-id', parseInt(datos.id, 10));
+        tr.onclick = function() { openDetail(datos.id); };
+        tr.innerHTML = attCeldas(datos);
+        tbody.insertBefore(tr, tbody.firstChild);
     };
 
     window.actualizarFilaAsistencia = function(datos) {
-        var item = document.querySelector('.att-item[onclick*="openDetail(' + datos.id + ')"]');
-        if (!item) return;
-        
-        var st = datos.status || 'absent';
-        var m = window.statusMeta ? window.statusMeta[st] : {label: st, color: '#64748b', bg: '#94a3b8'};
-        
-        item.querySelector('.att-estado').textContent = m.label;
-        item.querySelector('.att-estado').style.color = m.color;
-        item.querySelector('.att-estado i').style.background = m.bg;
-        item.querySelector('.att-meta').innerHTML = '<span><b>' + (datos.date || '-') + '</b></span><span>Entrada <b>' + (datos.time_in || '-') + '</b></span><span>Salida <b>' + (datos.time_out || '-') + '</b></span>';
+        var tr = document.querySelector('.att-row[data-id="' + parseInt(datos.id, 10) + '"]');
+        if (!tr) return;
+        tr.innerHTML = attCeldas(datos);
     };
     </script>
 

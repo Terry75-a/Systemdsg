@@ -277,20 +277,25 @@
                     <?php if (empty($codes)): ?>
                         <div class="empty"><span class="material-symbols-outlined">vpn_key</span><span>No hay codigos</span></div>
                     <?php else: ?>
-                        <?php foreach (array_reverse(array_slice($codes, -5)) as $c): ?>
-                        <div class="recent-item">
-                            <code class="recent-code"><?= esc($c['code']) ?></code>
-                            <div class="recent-info">
-                                <div class="recent-name"><?= esc($c['name']) ?></div>
-                                <div class="recent-meta">DNI <?= esc($c['dni']) ?></div>
-                            </div>
-                            <?php if ($c['status'] === 'active'): ?>
-                                <span class="status status-active"><span class="material-symbols-outlined filled">circle</span> Activo</span>
-                            <?php else: ?>
-                                <span class="status status-used"><span class="material-symbols-outlined">circle</span> Usado</span>
-                            <?php endif; ?>
+                        <div class="tk-tbl-wrap">
+                        <table class="tk-tbl">
+                            <thead>
+                                <tr><th>Código</th><th>Persona</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach (array_reverse(array_slice($codes, -5)) as $c): ?>
+                                <tr>
+                                    <td><code class="dev-code recent-code"><?= esc($c['code']) ?></code></td>
+                                    <td>
+                                        <span class="tk-cell-main"><?= esc($c['name']) ?></span><br>
+                                        <span class="tk-cell-sub tk-cell-mono">DNI <?= esc($c['dni']) ?></span>
+                                    </td>
+                                    <td><span class="tk-state <?= $c['status'] === 'active' ? 'is-on' : 'is-off' ?>"><i></i><?= $c['status'] === 'active' ? 'Activo' : 'Usado' ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
                         </div>
-                        <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
             </div>

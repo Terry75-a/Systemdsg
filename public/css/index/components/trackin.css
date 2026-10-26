@@ -284,17 +284,17 @@ body:has(.dev-main) .cfg-tile b {
 
 /* ── 7 · Tablas (Table · Th · Tr · Td) ─────────────────────── */
 body:has(.dev-main) :is(.dev-table-wrap, .personal-table-wrap, .dtable-wrap, .perm-table-wrap) { overflow: hidden; }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) {
   border-collapse: collapse !important;
   border-spacing: 0 !important;
   font-size: 12px !important;
   background: transparent !important;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) thead tr {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) thead tr {
   background: transparent !important;
   border-bottom: 1px solid var(--tk-l40);
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) th {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) th {
   height: auto !important;
   padding: 10px 12px !important;
   background: transparent !important;
@@ -305,13 +305,13 @@ body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-tab
   color: var(--tk-v50) !important; opacity: 1 !important;
   white-space: nowrap;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) tbody tr {
   background: transparent !important;
   border-bottom: 1px solid var(--tk-l25);
   transition: background-color 150ms ease;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:last-child { border-bottom: 0; }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) td {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) tbody tr:last-child { border-bottom: 0; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) td {
   height: auto !important;
   padding: 10px 12px !important;
   border: 0 !important;
@@ -322,41 +322,93 @@ body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-tab
   white-space: nowrap;
   vertical-align: middle;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(th, td):first-child { padding-left: 16px !important; }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(th, td):last-child { padding-right: 16px !important; }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) td:first-child {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) :is(th, td):first-child { padding-left: 16px !important; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) :is(th, td):last-child { padding-right: 16px !important; }
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .tk-tbl) td:first-child {
   font-weight: 500; color: var(--sb-on-surface) !important;
 }
 /* hover: fila entera en surface-container-low (sin verde ni gris fuerte) */
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:hover,
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:hover > td {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) tbody tr:hover,
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) tbody tr:hover > td {
   background: var(--sb-surface-container-low) !important;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) tbody tr:active > td {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) tbody tr:active > td {
   background: var(--sb-surface-container) !important;
 }
 
 /* píldoras dentro de tablas (Pill / Chip soft) */
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table) :is(.dev-badge, .personal-role, .badge) {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-table, .tk-tbl) :is(.dev-badge, .personal-role, .badge) {
   height: auto !important;
   padding: 2px 10px !important;
   border-radius: 9999px !important;
   font-size: 10px !important; font-weight: 500 !important;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable) .dev-code {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .tk-tbl) .dev-code {
   border-radius: 6px; border: 1px solid color-mix(in srgb, var(--sb-primary) 35%, transparent);
   background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important;
   color: var(--sb-primary); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 2px 8px;
 }
 /* acciones: iconos redondos tenues (MoreHorizontal / p-2 hover) */
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card, .tk-tbl) .dev-btn-icon {
   width: 32px !important; height: 32px !important; border: 0 !important;
   border-radius: 9999px !important; background: transparent !important;
   color: var(--tk-v70) !important;
 }
-body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card) .dev-btn-icon:hover {
+body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card, .tk-tbl) .dev-btn-icon:hover {
   background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important;
 }
+
+/* tabla Trackin para las listas convertidas (asistencias, incidencias, códigos) */
+body:has(.dev-main) .tk-tbl-wrap { overflow-x: auto; }
+body:has(.dev-main) a:is(.dev-btn, .dev-btn-icon) { text-decoration: none !important; }
+body:has(.dev-main) .tk-tbl { width: 100%; text-align: left; }
+body:has(.dev-main) .tk-tbl.tk-tbl-click tbody tr { cursor: pointer; }
+/* las filas conservan .in-item (lo usa el filtro); vuelven a ser filas de tabla */
+body:has(.dev-main) .tk-tbl tbody tr.in-item { display: table-row; padding: 0; gap: 0; border-top: 0 !important; }
+body:has(.dev-main) .tk-tbl td.tk-wrap { white-space: normal; min-width: 220px; max-width: 420px; }
+body:has(.dev-main) .tk-tbl .tk-r { text-align: right; }
+body:has(.dev-main) .tk-tbl .tk-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; }
+body:has(.dev-main) .tk-tbl .tk-actions form { margin: 0; }
+body:has(.dev-main) .tk-tbl .tk-actions :is(.in-btn) { height: 28px !important; min-height: 28px !important; padding: 0 10px !important; font-size: 11px !important; }
+body:has(.dev-main) .tk-tbl .tk-actions :is(.in-btn):not(:disabled):hover { padding: 0 12px !important; }
+body:has(.dev-main) .tk-cell-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+body:has(.dev-main) .tk-cell-av {
+  display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 9999px;
+  background: var(--sb-surface-container-highest) !important; color: var(--sb-on-surface) !important;
+  font-size: 11px; font-weight: 600;
+}
+body:has(.dev-main) .tk-cell-main { font-size: 12px; font-weight: 500; color: var(--sb-on-surface); line-height: 1.3; }
+body:has(.dev-main) .tk-cell-sub { font-size: 10px; color: var(--sb-on-surface-variant); line-height: 1.35; }
+body:has(.dev-main) .tk-cell-mono { font-variant-numeric: tabular-nums; }
+body:has(.dev-main) .tk-cell-muted { color: var(--sb-on-surface-variant) !important; }
+/* estado: píldora tintada con un punto */
+body:has(.dev-main) .tk-tbl :is(.att-estado, .in-estado, .tk-state) {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  padding: 2px 10px; border-radius: 9999px;
+  font-size: 10px; font-weight: 600;
+  background: color-mix(in srgb, currentColor 11%, transparent) !important;
+}
+body:has(.dev-main) .tk-tbl :is(.att-estado, .in-estado, .tk-state) i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+body:has(.dev-main) .tk-tbl .in-estado.dot-pendiente { color: var(--g-warning); }
+body:has(.dev-main) .tk-tbl .in-estado.dot-revision { color: var(--sb-on-surface-variant); }
+body:has(.dev-main) .tk-tbl .in-estado.dot-justificada { color: var(--g-success); }
+body:has(.dev-main) .tk-tbl .in-estado:is(.dot-rechazada, .dot-desest) { color: var(--tk-late); }
+body:has(.dev-main) .tk-tbl .tk-state.is-on { color: var(--g-success); }
+body:has(.dev-main) .tk-tbl .tk-state.is-off { color: var(--sb-on-surface-variant); }
+body:has(.dev-main) .tk-tbl .in-tag {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 9999px;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+  font-size: 10px; font-weight: 500; border: 0 !important;
+}
+body:has(.dev-main) .tk-tbl .in-tag .material-symbols-outlined { font-size: 12px; }
+body:has(.dev-main) .tk-tbl .in-just {
+  display: flex; gap: 6px; margin-top: 4px; padding: 6px 8px; border-radius: 8px;
+  background: var(--sb-surface-container-low) !important; border: 0 !important;
+  font-size: 11px; color: var(--sb-on-surface-variant);
+}
+body:has(.dev-main) .tk-tbl .in-just .material-symbols-outlined { font-size: 14px; }
+body:has(.dev-main) .tk-tbl .in-just p { margin: 0; }
+body:has(.dev-main) .tk-tbl .in-just small { display: block; font-weight: 600; color: var(--sb-on-surface); }
 
 /* pie de tabla y paginación */
 body:has(.dev-main) .dtable-footer {
