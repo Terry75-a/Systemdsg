@@ -15,7 +15,9 @@ class EvidenciaController extends BaseController
     public function ver(string $tipo, string $nombre): ResponseInterface
     {
         $userId = (int) session('user_id');
-        $rol    = (string) session('role');
+        // La app guarda el rol en 'user_role' (Dev, Admin, Empleado, Practicante);
+        // 'role' no existe y dejaba a los admins sin acceso a las evidencias.
+        $rol    = (string) (session('user_role') ?? '');
         if (! $userId) {
             return $this->response->setStatusCode(401)->setBody('No autorizado');
         }
@@ -31,8 +33,8 @@ class EvidenciaController extends BaseController
             return $this->response->setStatusCode(404)->setBody('No encontrado');
         }
 
-        // Empleado: sólo sus propios archivos. Admin: cualquiera.
-        $esAdmin = in_array($rol, ['Admin', 'admin'], true);
+        // Empleado: sólo sus propios archivos. Admin/Dev: cualquiera.
+        $esAdmin = in_array($rol, ['Admin', 'Dev'], true);
         if (! $esAdmin) {
             $own = 'user_' . $userId . '_';
             $mine = str_starts_with($nombre, $own);

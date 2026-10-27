@@ -136,7 +136,7 @@
                         <div class="ad-kv"><div class="k">Observación</div><div class="v <?= empty($att['observacion']) ? 'muted' : '' ?>"><?= esc($att['observacion'] ?? '—') ?></div></div>
                         <div class="ad-kv"><div class="k">Geolocalización</div><div class="v <?= empty($att['lat']) ? 'muted' : '' ?>"><?= ! empty($att['lat']) ? esc($att['lat'] . ', ' . $att['lng']) : '—' ?></div></div>
                         <div class="ad-kv"><div class="k">IP de origen</div><div class="v <?= empty($att['ip']) ? 'muted' : '' ?>"><?= esc($att['ip'] ?? '—') ?></div></div>
-                        <div class="ad-kv"><div class="k">Evidencia</div><div class="v <?= empty($att['evidencia']) ? 'muted' : '' ?>"><?= ! empty($att['evidencia']) ? '<a href="' . base_url('uploads/' . esc($att['evidencia'])) . '" target="_blank" rel="noopener">Ver selfie</a>' : '—' ?></div></div>
+                        <div class="ad-kv"><div class="k">Evidencia</div><div class="v <?= empty($att['evidencia']) ? 'muted' : '' ?>"><?= ! empty($att['evidencia']) ? '<a href="' . base_url('admin/evidencia/' . esc($att['evidencia'])) . '" target="_blank" rel="noopener">Ver selfie</a>' : '—' ?></div></div>
                     </div>
 
                     <!-- Mapa de ubicación -->

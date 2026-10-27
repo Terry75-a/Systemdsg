@@ -105,7 +105,7 @@
                 <span>Rostro (facial)</span>
             </div>
             <?php if ($bRostro): ?>
-                <?php if ($bRostroPath): ?><img src="<?= esc($bRostroPath) ?>" alt="rostro" class="bio-thumb"><?php endif; ?>
+                <?php if ($bRostroPath): ?><img src="<?= esc(base_url('mi-panel/evidencia/' . $bRostroPath)) ?>" alt="rostro" class="bio-thumb"><?php endif; ?>
                 <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="bioEnrollRostro()"><span class="material-symbols-outlined">refresh</span> Actualizar foto</button>
             <?php else: ?>
                 <div class="bio-item-hint">Activa la camara, pon el rostro frente a ella y captura la foto.</div>
@@ -219,7 +219,7 @@
     </div>
     <form id="bioCheckForm" method="post" action="<?= site_url('mi-panel/registrar') ?>" style="display:none;">
         <?= csrf_field() ?>
-        <input type="hidden" name="bio_ok" value="1">
+        <input type="hidden" name="bio_token" id="bioToken" value="">
         <input type="hidden" name="bio_metodo" id="bioCheckMetodo" value="">
         <input type="hidden" name="evidencia" id="bioCheckEvi" value="">
         <input type="hidden" name="justificacion" id="bioCheckJustVal" value="">
@@ -232,6 +232,7 @@
 (function () {
     window.__bioState = {
         humino_huellaOk: false,
+        bioToken: '',
         humino_selfie: '',
         stream: null,
         checkStream: null,
@@ -449,6 +450,7 @@
         }
         B.humino_huellaOk = false;
         B.facialOk = false;
+        B.bioToken = '';
         B.selfie = '';
         B.method = tH ? 'huella' : 'facial';
         $('bioCheckModal').classList.add('c-open');
@@ -493,6 +495,7 @@
         }
         B.humino_huellaOk = false;
         B.facialOk = false;
+        B.bioToken = '';
         B.selfie = '';
         B.myScheduleId = myScheduleId;
 
@@ -586,7 +589,19 @@
         $('bioCheckHuellaBtn').disabled = true;
         var credId = '<?= esc($bCredId) ?>';
         if (!window.PublicKeyCredential || credId === '' || credId.indexOf('sim-') === 0) {
-            return bioHuellaDone();
+            // Sin lector real: el servidor aprueba (y emite el token) si hay
+            // biometría registrada. Ya no basta con un flag en el HTML.
+            var fdSim = new FormData();
+            fdSim.set('metodo', 'sim');
+            fetchPost('<?= site_url('mi-panel/aprobar-bio') ?>', fdSim).then(function (res) {
+                if (res.ok) return bioHuellaDone(res.bio_token || '');
+                $('bioCheckHuellaBtn').disabled = false;
+                msg('bioCheckMsg', res.msj || 'No se pudo verificar. Intenta con el rostro.', false);
+            }).catch(function () {
+                $('bioCheckHuellaBtn').disabled = false;
+                msg('bioCheckMsg', 'No se pudo verificar. Intenta con el rostro.', false);
+            });
+            return;
         }
         fetch('<?= site_url('mi-panel/bio-session') ?>?fresh=1', { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
@@ -612,7 +627,7 @@
                         return u8ToB64(uh instanceof Uint8Array ? uh : new Uint8Array(uh));
                     })(resp.userHandle));
                     fetchPost('<?= site_url('mi-panel/verify-huella') ?>', body).then(function (res) {
-                        if (res.ok) return bioHuellaDone();
+                        if (res.ok) return bioHuellaDone(res.bio_token || '');
                         $('bioCheckHuellaBtn').disabled = false;
                         msg('bioCheckMsg', res.msj || 'Huella no reconocida. Reintenta o usa "verificar con rostro".', false);
                     }).catch(function () {
@@ -628,7 +643,10 @@
                 msg('bioCheckMsg', 'No se pudo verificar la huella. Usa "verificar con rostro".', false);
             });
     };
-    function bioHuellaDone() {
+    // El token lo emite el servidor al verificar; se guarda para el POST final.
+    function setBioToken(tok) { B.bioToken = tok || ''; }
+    function bioHuellaDone(tok) {
+        setBioToken(tok);
         $('bioHuellaDot').textContent = '✓';
         $('bioHuellaDot').classList.add('done');
         $('bioCheckHuellaBtn').disabled = true;
@@ -662,7 +680,7 @@
         return F_LOADING;
     }
     function verificarFacial(selfieUrl) {
-        var refUrl = '<?= base_url('uploads/' . $bRostroPath) ?>';
+        var refUrl = '<?= base_url('mi-panel/evidencia/' . $bRostroPath) ?>';
         return faceReady().then(function () {
             return Promise.all([faceapi.fetchImage(refUrl), faceapi.fetchImage(selfieUrl)]);
         }).then(function (ims) {
@@ -690,13 +708,30 @@
         $('bioCheckConfirm').disabled = true;
         verificarFacial(B.selfie).then(function (res) {
             if (res.ok) {
-                B.facialOk = true;
-                msg('bioCheckMsg', res.msg, true);
+                // El cotejo facial pasó: pide el token al servidor.
+                var fdFace = new FormData();
+                fdFace.set('metodo', 'facial');
+                fdFace.set('selfie', B.selfie || '');
+                fetchPost('<?= site_url('mi-panel/aprobar-bio') ?>', fdFace).then(function (r2) {
+                    if (r2.ok) {
+                        B.facialOk = true;
+                        setBioToken(r2.bio_token || '');
+                        msg('bioCheckMsg', res.msg, true);
+                    } else {
+                        B.facialOk = false;
+                        msg('bioCheckMsg', r2.msj || 'No se pudo validar la verificacion.', false);
+                    }
+                    bioTryEnable();
+                }).catch(function () {
+                    B.facialOk = false;
+                    msg('bioCheckMsg', 'Error de red al validar. Reintenta.', false);
+                    bioTryEnable();
+                });
             } else {
                 B.facialOk = false;
                 msg('bioCheckMsg', res.msg, false);
+                bioTryEnable();
             }
-            bioTryEnable();
         });
     };
     function bioTryEnable() {
@@ -717,6 +752,8 @@
         }
         $('bioCheckEvi').value = B.selfie;
         $('bioCheckMetodo').value = B.method;
+        // Token emitido por el servidor tras verificar (uso único, TTL 5 min)
+        $('bioToken').value = B.bioToken || '';
         // Usar la ubicación ya obtenida al abrir el modal
         if (B.geo) {
             $('bioLat').value = B.geo.lat;

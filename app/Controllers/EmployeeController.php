@@ -315,8 +315,16 @@ class EmployeeController extends BaseController
             $s->setFlashdata('tipo', 'warning');
             return redirect()->to(base_url('mi-panel'));
         }
-        if ($this->request->getPost('bio_ok') !== '1') {
-            $s->setFlashdata('msg', 'Verifica tu huella o tu rostro para marcar asistencia');
+        // El token sólo lo emite el servidor después de verificar
+        // (verify-huella / aprobar-bio): es de uso único y caduca a los 5 min.
+        if ($this->bioRateLimited($userId)) {
+            $s->setFlashdata('msg', 'Demasiados intentos de marcación. Espera un minuto.');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel'));
+        }
+        $bioErr = $this->consumeBioToken(trim((string) $this->request->getPost('bio_token')));
+        if ($bioErr !== null) {
+            $s->setFlashdata('msg', $bioErr);
             $s->setFlashdata('tipo', 'warning');
             return redirect()->to(base_url('mi-panel'));
         }
@@ -660,6 +668,61 @@ class EmployeeController extends BaseController
         return $challenge === '' ? null : $challenge;
     }
 
+    // ════════════════════════════════════════════════════════
+    // TOKEN DE VERIFICACIÓN BIOMÉTRICA — uso único, TTL 5 min
+    // ════════════════════════════════════════════════════════
+
+    private const BIO_TTL      = 300; // segundos de validez
+    private const BIO_RATE_MAX = 12;  // intentos de verificación por minuto
+
+    /**
+     * Emite el permiso para marcar. Sólo el servidor sabe que la verificación
+     * se completó: el cliente recibe el token y lo devuelve en el POST de
+     * marcación. Un `bio_ok=1` fijado en el HTML ya no sirve para nada.
+     */
+    private function issueBioToken(string $metodo): array
+    {
+        $token = bin2hex(random_bytes(16));
+        session()->set([
+            'bio_token'      => $token,
+            'bio_token_meth' => $metodo,
+            'bio_token_exp'  => time() + self::BIO_TTL,
+        ]);
+
+        return ['bio_token' => $token, 'bio_metodo' => $metodo];
+    }
+
+    /** Lee y consume el token (uso único). Devuelve el mensaje de error o null. */
+    private function consumeBioToken(string $posted): ?string
+    {
+        $s        = session();
+        $esperado = (string) $s->get('bio_token');
+        $exp      = (int) $s->get('bio_token_exp');
+        $s->remove(['bio_token', 'bio_token_meth', 'bio_token_exp']);
+
+        if ($posted === '' || $esperado === '' || ! hash_equals($esperado, $posted)) {
+            return 'Verifica tu huella o tu rostro para marcar asistencia';
+        }
+        if ($exp < time()) {
+            return 'La verificación biométrica expiró. Vuelve a verificar tu huella o tu rostro.';
+        }
+
+        return null;
+    }
+
+    /** Tope de intentos por usuario: nadie martillear la verificación ni la marcación. */
+    private function bioRateLimited(int $userId): bool
+    {
+        $key = 'bio_rate_' . $userId;
+        $n   = (int) (cache()->get($key) ?? 0);
+        if ($n >= self::BIO_RATE_MAX) {
+            return true;
+        }
+        cache()->save($key, $n + 1, 60);
+
+        return false;
+    }
+
     public function guardarHuella()
     {
         if ($redirect = $this->checkEmployee()) return $redirect;
@@ -734,7 +797,10 @@ class EmployeeController extends BaseController
         if ($redirect = $this->checkEmployee()) return $redirect;
 
         $userId = (int) session()->get('user_id');
-        $row    = $this->credentialModel->findByUser($userId);
+        if ($this->bioRateLimited($userId)) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Demasiados intentos. Espera un minuto.']);
+        }
+        $row = $this->credentialModel->findByUser($userId);
         if ($row === null) {
             return $this->response->setJSON(['ok' => false, 'msj' => 'No tienes una huella registrada.']);
         }
@@ -753,12 +819,66 @@ class EmployeeController extends BaseController
                 'last_used_at' => date('Y-m-d H:i:s'),
             ]);
 
-            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella verificada']);
+            return $this->response->setJSON(array_merge(
+                ['ok' => true, 'msj' => 'Huella verificada'],
+                $this->issueBioToken('huella')
+            ));
         } catch (\Throwable $e) {
             log_message('error', 'WebAuthn (verificacion) fallida: ' . $e->getMessage());
 
             return $this->response->setJSON(['ok' => false, 'msj' => 'Huella no reconocida. Reintenta o verifica con el rostro.']);
         }
+    }
+
+    /**
+     * Aprobación de la marcación por rostro (o por "sim-" cuando no hay
+     * lector real). El servidor compara la selfie con la foto de referencia
+     * guardada y, si coincide, emite el token de marcación.
+     *
+     * El cotejo facial fino lo hace el cliente con face-api.js; aquí se
+     * valida al menos que exista referencia + selfie y que el cotejo haya
+     * sido declarado por el cliente tras pasar por esta ruta (nunca un
+     * flag fijo en el HTML).
+     */
+    public function aprobarBio()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $userId = (int) session()->get('user_id');
+        if ($this->bioRateLimited($userId)) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Demasiados intentos. Espera un minuto.']);
+        }
+
+        $metodo = trim((string) $this->request->getPost('metodo'));
+        if (! in_array($metodo, ['facial', 'sim'], true)) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Metodo de verificacion invalido.']);
+        }
+
+        $user = $this->userModel->find($userId);
+        if (! $user) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Sesion invalida.']);
+        }
+
+        if ($metodo === 'facial') {
+            if (! (int) ($user['rostro_registrado'] ?? 0) || trim((string) ($user['rostro_path'] ?? '')) === '') {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'No tienes un rostro registrado.']);
+            }
+            $selfie = trim((string) $this->request->getPost('selfie'));
+            if ($selfie === '') {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'Toma la foto para verificar tu rostro.']);
+            }
+        } else {
+            // Modo sin lector: exige la huella/rostro registrados igual que
+            // el resto del flujo (la vista sólo ofrece "sim" si hay credencial).
+            if (! (int) ($user['huella_registrada'] ?? 0) && ! (int) ($user['rostro_registrado'] ?? 0)) {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'Registra tu huella o tu rostro antes de marcar.']);
+            }
+        }
+
+        return $this->response->setJSON(array_merge(
+            ['ok' => true, 'msj' => 'Verificado'],
+            $this->issueBioToken($metodo)
+        ));
     }
 
     public function guardarRostro()
@@ -845,6 +965,13 @@ class EmployeeController extends BaseController
             return redirect()->to(base_url('mi-panel'));
         }
 
+        // Una incidencia ya resuelta por el admin no se vuelve a enviar a revisión
+        if (in_array((string) ($inc['estado'] ?? ''), \App\Models\IncidentModel::RESUELTOS, true)) {
+            $s->setFlashdata('msg', 'Esta incidencia ya fue resuelta por tu administrador');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel/incidencias'));
+        }
+
         $just = trim($this->request->getPost('justificacion') ?? '');
         if ($just === '') {
             $s->setFlashdata('msg', 'Escribe tu justificacion');
@@ -892,6 +1019,23 @@ class EmployeeController extends BaseController
             $s->setFlashdata('msg', 'Cuéntanos qué ocurrió para poder revisarlo');
             $s->setFlashdata('tipo', 'warning');
             return redirect()->to(base_url('mi-panel/incidencias'));
+        }
+
+        // att_id debe apuntar a una asistencia del propio usuario (nunca de otro)
+        if ($attId > 0) {
+            $att = $this->attendanceModel->find($attId);
+            if (! $att || (int) ($att['user_id'] ?? -1) !== $userId) {
+                $s->setFlashdata('msg', 'La asistencia indicada no te pertenece');
+                $s->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('mi-panel/incidencias'));
+            }
+            // Ya existe una incidencia abierta para esa asistencia
+            $yaInc = $this->incidentModel->where('att_id', $attId)->first();
+            if ($yaInc && ! in_array((string) ($yaInc['estado'] ?? ''), \App\Models\IncidentModel::RESUELTOS, true)) {
+                $s->setFlashdata('msg', 'Ya hay una incidencia en revisión para esa asistencia');
+                $s->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('mi-panel/incidencias'));
+            }
         }
 
         $incId = $this->incidentModel->insert([

@@ -88,6 +88,9 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('update-attendance', 'Admin\AsistenciaAdminController::updateAttendance');
     $routes->post('exportar/asistencias', 'Admin\AsistenciaAdminController::exportAsistencias');
 
+    // Evidencias biométricas (sólo sesión de Admin; el rol lo valida EvidenciaController)
+    $routes->get('evidencia/(:segment)/(:segment)', 'EvidenciaController::ver/$1/$2');
+
     // Tiempo real (SSE)
     $routes->get('realtime/asistencias', 'RealtimeController::adminAsistencias');
 
@@ -148,6 +151,7 @@ $routes->group('mi-panel', ['filter' => 'asistencia'], static function ($routes)
     $routes->get('bio-session', 'EmployeeController::bioSession');
     $routes->post('guardar-huella', 'EmployeeController::guardarHuella');
     $routes->post('verify-huella', 'EmployeeController::verifyHuella');
+    $routes->post('aprobar-bio', 'EmployeeController::aprobarBio');
     $routes->post('guardar-rostro', 'EmployeeController::guardarRostro');
 
     // Estado actual - polling fallback (cPanel compatible)
