@@ -487,9 +487,24 @@
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>
 
     <main class="dev-main">
+        <?php
+            $fmtD = static fn ($d) => $d ? date('d/m/Y', strtotime($d)) : '';
+            $rangoTxt = (!empty($fecha_inicio) && !empty($fecha_fin))
+                ? ($fecha_inicio === $fecha_fin ? $fmtD($fecha_inicio) : $fmtD($fecha_inicio) . ' → ' . $fmtD($fecha_fin))
+                : 'Todo el histórico';
+        ?>
         <div class="dev-topbar">
-            <h1 class="dev-topbar-title">Asistencias</h1>
-            <p class="dev-topbar-subtitle">Registro de asistencia del equipo</p>
+            <div class="dev-topbar-row">
+                <div>
+                    <h1 class="dev-topbar-title">Asistencias</h1>
+                    <p class="dev-topbar-subtitle">Registro de asistencia del equipo · <?= esc($rangoTxt) ?></p>
+                </div>
+                <div class="dev-topbar-actions">
+                    <button type="submit" form="csv-form" class="dev-btn" title="Descargar el rango filtrado en CSV">
+                        <span class="material-symbols-outlined">download</span> Descargar CSV
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="dev-content">
@@ -523,134 +538,76 @@
                         $qs = $est === '' ? array_diff_key($qsBase, ['estado' => 1]) : array_merge($qsBase, ['estado' => $est]);
                         return '?' . http_build_query($qs);
                     };
+                    $etiquetas = ['present' => 'Presentes', 'late' => 'Tardanzas', 'absent' => 'Faltas', 'no_exit' => 'Sin salida'];
                 ?>
 
-                <!-- Barra de filtros · una sola barra con todo el control,
-                     en lugar de tres tarjetas de alturas desiguales -->
-                <div class="att-toolbar">
-                    <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-tb-main">
-                        <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
-
-                        <div class="att-tb-row">
-                            <div class="att-tb-group">
-                                <span class="att-tb-label" id="lbl-rango">Rango de fechas</span>
-                                <div class="att-dates" role="group" aria-labelledby="lbl-rango">
-                                    <input type="date" class="att-input" id="fecha_inicio" name="fecha_inicio"
-                                           value="<?= esc($fecha_inicio ?? '') ?>" aria-label="Desde">
-                                    <span class="att-dates-sep" aria-hidden="true">→</span>
-                                    <input type="date" class="att-input" id="fecha_fin" name="fecha_fin"
-                                           value="<?= esc($fecha_fin ?? '') ?>" aria-label="Hasta">
-                                </div>
-                            </div>
-
-                            <span class="att-tb-div" aria-hidden="true"></span>
-
-                            <div class="att-tb-group">
-                                <span class="att-tb-label" id="lbl-periodo">Periodo</span>
-                                <div class="att-seg" role="group" aria-labelledby="lbl-periodo">
-                                    <button type="button" class="att-seg-btn <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
-                                    <button type="button" class="att-seg-btn <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Semana</button>
-                                    <button type="button" class="att-seg-btn <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Mes</button>
-                                    <button type="button" class="att-seg-btn <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="att-tb-row">
-                            <div class="att-tb-group att-tb-group--grow">
-                                <span class="att-tb-label" id="lbl-estado">Estado</span>
-                                <div class="att-seg" role="group" aria-labelledby="lbl-estado">
-                                    <?php
-                                        // Los conteos sólo tienen sentido sin filtro de estado (con filtro, el resto queda en 0)
-                                        $conteos = $filtroEstado === '' ? [
-                                            ''         => $totalRegistros,
-                                            'present'  => $totalPresentes,
-                                            'late'     => $totalTardanzas,
-                                            'absent'   => $totalFaltas,
-                                            'no_exit'  => $totalSinSalida,
-                                        ] : [];
-                                        $estados = [
-                                            ''         => 'Todos',
-                                            'present'  => 'Presentes',
-                                            'late'     => 'Tardanzas',
-                                            'absent'   => 'Faltas',
-                                            'no_exit'  => 'Sin salida',
-                                        ];
-                                        foreach ($estados as $val => $txt): ?>
-                                            <button type="button" class="att-seg-btn <?= $filtroEstado === $val ? 'on' : '' ?>" onclick="estado('<?= $val ?>')">
-                                                <?= $txt ?><?= isset($conteos[$val]) ? '<span class="att-seg-count">' . $conteos[$val] . '</span>' : '' ?>
-                                            </button>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                    <!-- Filtrar y CSV juntos y alineados: Filtrar dispara el
-                         form GET y CSV el form POST vía el atributo form=""
-                         (los <form> no se pueden anidar) -->
-                    <div class="att-tb-actions">
-                        <button type="submit" form="filtro-form" class="att-go">
-                            <span class="material-symbols-outlined">search</span> Filtrar
-                        </button>
-                        <button type="submit" form="csv-form" class="att-go att-go-ghost" title="Descargar el rango filtrado en CSV">
-                            <span class="material-symbols-outlined">download</span> CSV
-                        </button>
-                    </div>
-
-                    <!-- El CSV en su propio form, oculto: sólo aporta los
-                         campos (fechas + estado) que envía el botón de arriba -->
-                    <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" id="csv-form" hidden>
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
-                        <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
-                        <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
-                    </form>
-                </div>
-
-                <!-- KPIs · rejilla de métricas sorteroOS (también filtran por estado) -->
+                <!-- KPIs · cada celda filtra por su estado (StatGrid de Trackin) -->
                 <div class="dev-stats-grid att-kpis">
                     <?php
                         $kpis = [
-                            [''        , 'summarize'   , 'Total registros', $totalRegistros, 'si-accent'],
-                            ['present' , 'check_circle', 'Presentes'      , $totalPresentes, 'si-green'],
-                            ['late'    , 'schedule'    , 'Tardanzas'      , $totalTardanzas, 'si-amber'],
-                            ['absent'  , 'cancel'      , 'Faltas'         , $totalFaltas   , 'si-red'],
-                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida, 'si-blue'],
+                            [''        , 'summarize'   , 'Total registros', $totalRegistros],
+                            ['present' , 'check_circle', 'Presentes'      , $totalPresentes],
+                            ['late'    , 'schedule'    , 'Tardanzas'      , $totalTardanzas],
+                            ['absent'  , 'cancel'      , 'Faltas'         , $totalFaltas   ],
+                            ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida],
                         ];
-                        foreach ($kpis as [$est, $ico, $lbl, $num, $cls]): ?>
+                        foreach ($kpis as [$est, $ico, $lbl, $num]): ?>
                             <a class="dev-stat-card att-stat <?= $filtroEstado === $est ? 'on' : '' ?>"
-                               href="<?= $kpiLink($est) ?>" title="Filtrar por <?= $lbl ?>">
-                                <div class="dev-stat-icon <?= $cls ?>"><span class="material-symbols-outlined filled"><?= $ico ?></span></div>
+                               href="<?= $kpiLink($est) ?>" title="<?= $est === '' ? 'Ver todos los estados' : 'Filtrar por ' . $lbl ?>">
+                                <div class="dev-stat-icon"><span class="material-symbols-outlined"><?= $ico ?></span></div>
                                 <div class="dev-stat-label"><?= $lbl ?></div>
-                                <div class="dev-stat-value"><?= $num ?></div>
+                                <div class="dev-stat-value"><?= number_format((int) $num) ?></div>
                             </a>
                         <?php endforeach; ?>
                 </div>
 
-                <div class="dev-card">
-                    <div class="dev-card-head">
-                        <h2><span class="material-symbols-outlined">history</span> Registros</h2>
+                <!-- Filtros en una fila (como el listado de Unidades de Trackin) -->
+                <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-filters">
+                    <input type="hidden" name="estado" id="estado" value="<?= esc($filtroEstado) ?>">
+                    <label class="att-range" title="Rango de fechas">
+                        <span class="material-symbols-outlined">calendar_month</span>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>" aria-label="Desde">
+                        <span class="att-range-sep" aria-hidden="true">→</span>
+                        <input type="date" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>" aria-label="Hasta">
+                    </label>
+                    <div class="att-chips" role="group" aria-label="Periodo">
+                        <button type="button" class="att-seg-btn <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
+                        <button type="button" class="att-seg-btn <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Esta semana</button>
+                        <button type="button" class="att-seg-btn <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Este mes</button>
+                        <button type="button" class="att-seg-btn <?= $mode === 'todo' ? 'on' : '' ?>" onclick="rango('todo')">Todo</button>
+                    </div>
+                    <button type="submit" class="dev-btn dev-btn-primary att-apply">
+                        <span class="material-symbols-outlined">filter_alt</span> Aplicar
+                    </button>
+                    <?php if ($filtroEstado !== ''): ?>
+                        <a class="att-seg-btn att-clear" href="<?= $kpiLink('') ?>">Quitar estado «<?= esc($etiquetas[$filtroEstado] ?? $filtroEstado) ?>» ✕</a>
+                    <?php endif; ?>
+                </form>
+
+                <!-- CSV: form propio y oculto, lo dispara el botón de la cabecera -->
+                <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" id="csv-form" hidden>
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                    <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                    <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
+                </form>
+
+                <div class="dev-card att-table-card">
+                    <div class="dev-card-head att-table-head">
+                        <h2>Registros <span class="att-count"><?= number_format((int) ($totalFilas ?? $totalRegistros)) ?></span></h2>
+                        <span class="att-head-range">
+                            <?= esc($rangoTxt) ?><?= $filtroEstado !== '' ? ' · ' . esc($etiquetas[$filtroEstado] ?? $filtroEstado) : '' ?>
+                        </span>
                     </div>
 
                     <?php if (empty($attendance)): ?>
-                        <div class="dev-empty">
-                            <span class="material-symbols-outlined">event_busy</span>
-                            <p>
-                                <strong>Sin marcaciones en el rango elegido.</strong><br>
-                                <?php
-                                    // El mensaje dice la verdad de ambos filtros:
-                                    // si hay rango lo nombra, y si hay filtro de estado lo señala
-                                    $etiquetaEstado = ['present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida'][$estado] ?? '';
-                                    if ($fecha_inicio && $fecha_fin) {
-                                        echo 'Buscando entre el ', date('d/m/Y', strtotime($fecha_inicio)), ' y el ', date('d/m/Y', strtotime($fecha_fin));
-                                    } else {
-                                        echo 'Buscando todo el histórico';
-                                    }
-                                    echo $etiquetaEstado !== '' ? ' con estado «' . esc($etiquetaEstado) . '»' : '';
-                                ?>.
-                                Elige «Todo» para ver el listado completo, o cambia el periodo.
-                            </p>
+                        <div class="att-empty">
+                            <span class="att-empty-ico"><span class="material-symbols-outlined">event_busy</span></span>
+                            <p class="att-empty-t">Sin marcaciones <?= $filtroEstado !== '' ? 'con estado «' . esc($etiquetas[$filtroEstado] ?? $filtroEstado) . '» ' : '' ?>en <?= $rangoTxt === 'Todo el histórico' ? 'todo el histórico' : esc($rangoTxt) ?></p>
+                            <p class="att-empty-d">Cambia el periodo o mira el listado completo.</p>
+                            <?php if ($mode !== 'todo' || $filtroEstado !== ''): ?>
+                                <a class="att-seg-btn" href="?todo=1">Ver todo el histórico</a>
+                            <?php endif; ?>
                         </div>
                     <?php else: ?>
                         <div class="tk-tbl-wrap">
@@ -704,35 +661,29 @@
                         </div>
                     <?php endif; ?>
 
-                    <?php if (($paginas ?? 1) > 1): ?>
-                        <div class="att-pager">
-                            <?php if ($pagina > 1): ?>
-                                <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $pagina - 1]))) ?>">&laquo;</a>
-                            <?php endif; ?>
-                            <?php
-                                $desde = max(1, $pagina - 3);
-                                $hastaPag = min($paginas, $pagina + 3);
-                                if ($desde > 1): ?>
-                                    <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => 1]))) ?>">1</a>
-                                    <?php if ($desde > 2): ?><span class="att-page-info">…</span><?php endif; ?>
-                                <?php endif;
-                                for ($n = $desde; $n <= $hastaPag; $n++): ?>
-                                    <?php if ($n === $pagina): ?>
-                                        <span class="att-page on"><?= $n ?></span>
-                                    <?php else: ?>
-                                        <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $n]))) ?>"><?= $n ?></a>
-                                    <?php endif; ?>
-                                <?php endfor;
-                                if ($hastaPag < $paginas): ?>
-                                    <?php if ($hastaPag < $paginas - 1): ?><span class="att-page-info">…</span><?php endif; ?>
-                                    <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $paginas]))) ?>"><?= $paginas ?></a>
+                    <?php if (!empty($attendance)):
+                        $pp     = max(1, (int) ($pagina ?? 1));
+                        $ppT    = max(1, (int) ($paginas ?? 1));
+                        $tot    = (int) ($totalFilas ?? count($attendance));
+                        $desdeN = $tot ? ($pp - 1) * 50 + 1 : 0;
+                        $hastaN = min($tot, $desdeN + count($attendance) - 1);
+                        $pgUrl  = static fn ($n) => '?' . esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $n])));
+                    ?>
+                        <div class="att-foot">
+                            <span><?= number_format($desdeN) ?>–<?= number_format($hastaN) ?> de <?= number_format($tot) ?> registros</span>
+                            <div class="att-foot-nav">
+                                <?php if ($pp > 1): ?>
+                                    <a class="att-nav" href="<?= $pgUrl($pp - 1) ?>" aria-label="Página anterior"><span class="material-symbols-outlined">chevron_left</span></a>
+                                <?php else: ?>
+                                    <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_left</span></span>
                                 <?php endif; ?>
-                            <?php if ($pagina < $paginas): ?>
-                                <a class="att-page" href="?<?= esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $pagina + 1]))) ?>">&raquo;</a>
-                            <?php endif; ?>
-                            <span class="att-page-info">
-                                Página <?= $pagina ?> de <?= $paginas ?> · <?= number_format((int) ($totalFilas ?? 0)) ?> registros
-                            </span>
+                                <span class="att-foot-page"><?= $pp ?> / <?= $ppT ?></span>
+                                <?php if ($pp < $ppT): ?>
+                                    <a class="att-nav" href="<?= $pgUrl($pp + 1) ?>" aria-label="Página siguiente"><span class="material-symbols-outlined">chevron_right</span></a>
+                                <?php else: ?>
+                                    <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_right</span></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>

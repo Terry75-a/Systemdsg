@@ -233,18 +233,6 @@ class EmployeeController extends BaseController
         $role = session()->get('user_role');
         $data = $this->getMyData();
 
-        // Vino de escanear el QR de un horario → abre la marcación (biométrica)
-        $qrScanId = (int) (session()->get('qr_scan') ?? 0);
-        $miSch    = (int) ($data['miInfo']['schedule_id'] ?? 0);
-        $data['qrScan'] = $qrScanId > 0 && $qrScanId === $miSch;
-        if ($qrScanId > 0) {
-            session()->remove('qr_scan');
-            if (!$data['qrScan']) {
-                session()->setFlashdata('msg', 'Ese QR pertenece a otro horario. Escanea el QR de tu horario.');
-                session()->setFlashdata('tipo', 'warning');
-            }
-        }
-
         $data['activePage']  = 'dashboard';
         $data['pageTitle']   = 'Mi Panel · DSG';
         $data['greetingSub'] = $role === 'Practicante'
@@ -670,34 +658,6 @@ class EmployeeController extends BaseController
         session()->remove(['wa_challenge', 'wa_challenge_ts']);
 
         return $challenge === '' ? null : $challenge;
-    }
-
-    // ═════════════════════════════════════════════════════════
-    // VERIFICAR QR DEL HORARIO (obligatorio antes de marcar)
-    // ═════════════════════════════════════════════════════════
-    public function verificarQr()
-    {
-        if ($redirect = $this->checkEmployee()) return $redirect;
-
-        $userId     = (int) session()->get('user_id');
-        $user       = $this->userModel->find($userId);
-        $miHorario  = (int) ($user['schedule_id'] ?? 0);
-        $token      = trim((string) $this->request->getPost('token'));
-
-        if ($token === '' || !preg_match('/^[a-f0-9]{40}$/', $token)) {
-            return $this->response->setJSON(['ok' => false, 'msg' => 'QR no válido']);
-        }
-
-        $schedule = $this->scheduleModel->findByQrToken($token);
-        if (!$schedule || (int) $schedule['id'] !== $miHorario) {
-            return $this->response->setJSON(['ok' => false, 'msg' => 'Ese QR no es de tu horario']);
-        }
-
-        return $this->response->setJSON([
-            'ok'      => true,
-            'msg'     => 'QR verificado: ' . ($schedule['nombre'] ?? ''),
-            'horario' => $schedule['nombre'] ?? '',
-        ]);
     }
 
     public function guardarHuella()

@@ -616,6 +616,94 @@ body:has(.dev-main) :is(.creds-copy, .modal-close, .dev-modal-close, .field-pass
   transform: scale(0.92) !important;
 }
 
+/* ── 11b · Página Asistencias (listado tipo Unidades de Trackin) ── */
+body:has(.dev-main) .att-wrap { display: flex; flex-direction: column; gap: 16px; }
+
+/* KPIs que filtran: la celda elegida queda marcada */
+body:has(.dev-main) .att-kpis .att-stat { cursor: pointer; text-decoration: none; }
+body:has(.dev-main) .att-kpis .att-stat:hover { background: var(--sb-surface-container-low) !important; }
+body:has(.dev-main) .att-kpis .att-stat.on { background: var(--sb-surface-container) !important; box-shadow: inset 0 -2px 0 var(--sb-primary) !important; }
+body:has(.dev-main) .att-kpis .att-stat.on .dev-stat-icon { color: var(--sb-primary) !important; }
+body:has(.dev-main) .att-kpis .dev-stat-icon .material-symbols-outlined { font-variation-settings: 'FILL' 0; }
+
+/* fila de filtros */
+body:has(.dev-main) .att-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0; }
+body:has(.dev-main) .att-range {
+  display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 16px;
+  background: var(--sb-surface); border: 1.5px solid transparent; border-radius: 24px; cursor: text;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+body:has(.dev-main) .att-range:hover { box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.08); }
+body:has(.dev-main) .att-range:focus-within {
+  border-color: var(--sb-primary);
+  box-shadow: var(--tk-ring), 0 8px 32px -8px color-mix(in srgb, var(--sb-primary) 18%, transparent);
+}
+body:has(.dev-main) .att-range > .material-symbols-outlined { font-size: 16px; opacity: 0.4; }
+body:has(.dev-main) .att-range input {
+  width: 128px; height: 100%; padding: 0; border: 0; outline: 0; background: transparent;
+  color: var(--sb-on-surface); font-size: 13px; font-variant-numeric: tabular-nums;
+}
+html.dark body:has(.dev-main) .att-range input { color-scheme: dark; }
+body:has(.dev-main) .att-range-sep { color: var(--tk-v50); font-size: 12px; }
+body:has(.dev-main) .att-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+body:has(.dev-main) .att-filters .att-apply { margin-left: auto; }
+body:has(.dev-main) a.att-seg-btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* tarjeta de la tabla */
+body:has(.dev-main) .att-wrap .dev-card.att-table-card { overflow: hidden; }
+body:has(.dev-main) .att-wrap .dev-card.att-table-card > .dev-card-head.att-table-head {
+  padding: 12px 16px !important; border-bottom: 1px solid var(--tk-l40) !important;
+  align-items: center !important; background: transparent;
+}
+body:has(.dev-main) .att-wrap .dev-card.att-table-card > .att-table-head h2 {
+  font-size: 14px !important; font-weight: 600 !important; letter-spacing: 0 !important;
+  text-transform: none !important; color: var(--sb-on-surface) !important;
+}
+body:has(.dev-main) .att-table-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+body:has(.dev-main) .att-table-head h2 { display: flex; align-items: center; gap: 8px; margin: 0; }
+body:has(.dev-main) .att-count {
+  display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px;
+  background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant);
+  font-size: 10px; font-weight: 500;
+}
+body:has(.dev-main) .att-head-range { font-size: 11px; color: var(--sb-on-surface-variant); }
+
+/* estado vacío */
+body:has(.dev-main) .att-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 48px 16px; text-align: center;
+}
+body:has(.dev-main) .att-empty-ico {
+  display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 6px; border-radius: 50%;
+  background: var(--sb-surface-container); color: var(--sb-on-surface-variant);
+}
+body:has(.dev-main) .att-empty-ico .material-symbols-outlined { font-size: 22px; }
+body:has(.dev-main) .att-empty-t { margin: 0; font-size: 13px; font-weight: 600; color: var(--sb-on-surface); }
+body:has(.dev-main) .att-empty-d { margin: 0 0 8px; font-size: 12px; color: color-mix(in srgb, var(--sb-on-surface-variant) 70%, transparent); }
+
+/* pie: «1–13 de 13 registros» + ‹ 1 / 1 › */
+body:has(.dev-main) .att-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 16px; border-top: 1px solid var(--tk-l40);
+  font-size: 11px; color: var(--sb-on-surface-variant);
+}
+body:has(.dev-main) .att-foot-nav { display: flex; align-items: center; gap: 4px; }
+body:has(.dev-main) .att-foot-page { min-width: 80px; text-align: center; font-weight: 500; color: var(--sb-on-surface); }
+body:has(.dev-main) .att-nav {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9999px;
+  color: var(--sb-on-surface); text-decoration: none; transition: background-color 125ms, transform 125ms;
+}
+body:has(.dev-main) a.att-nav:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) a.att-nav:active { transform: scale(0.92); }
+body:has(.dev-main) .att-nav.is-off { opacity: 0.3; }
+body:has(.dev-main) .att-nav .material-symbols-outlined { font-size: 16px; }
+
+@media (max-width: 768px) {
+  body:has(.dev-main) .att-range { width: 100%; }
+  body:has(.dev-main) .att-range input { flex: 1; width: auto; min-width: 0; }
+  body:has(.dev-main) .att-chips { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; padding-bottom: 2px; }
+  body:has(.dev-main) .att-filters .att-apply { margin-left: 0; width: 100%; justify-content: center; }
+}
+
 /* ── 12 · Badges y alertas ─────────────────────────────────── */
 body:has(.dev-main) .dev-badge { border-radius: 9999px !important; font-size: 10px; font-weight: 500; }
 body:has(.dev-main) .dev-alert {

@@ -100,7 +100,7 @@
             <p class="login-right-desc">Con tu código de invitación puedes crear tu cuenta y acceder al sistema de control de asistencia.</p>
 
             <ul class="login-right-list">
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marca tu asistencia con código QR</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marca tu asistencia con huella o rostro</li>
                 <li><i class="fa-solid fa-check" aria-hidden="true"></i> Consulta tus horarios y turnos</li>
                 <li><i class="fa-solid fa-check" aria-hidden="true"></i> Revisa tu historial de asistencia</li>
             </ul>

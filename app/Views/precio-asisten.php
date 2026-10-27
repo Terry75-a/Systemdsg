@@ -70,7 +70,7 @@
                     </div>
                     <ul class="precio-asisten-list">
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Hasta 10 empleados</li>
-                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con código QR</li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con huella o rostro</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Control de tardanzas</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reporte mensual básico</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> 1 sede</li>
@@ -93,7 +93,7 @@
                     </div>
                     <ul class="precio-asisten-list">
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Hasta 30 empleados</li>
-                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con código QR</li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con huella o rostro</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Control de tardanzas y faltas</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Horarios y turnos fijos</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reportes para planilla</li>
@@ -115,7 +115,7 @@
                     </div>
                     <ul class="precio-asisten-list">
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Empleados ilimitados</li>
-                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con código QR</li>
+                        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marcación con huella o rostro</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Turnos rotativos avanzados</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Sedes ilimitadas</li>
                         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Exportación a planilla</li>

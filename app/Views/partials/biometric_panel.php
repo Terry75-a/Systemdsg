@@ -9,10 +9,9 @@
     // y cual es la hora de salida esperada (para detectar salida anticipada)
     $bioMarkExit      = (bool) (($bioMark['exit'] ?? false) === true);
     $bioMarkHoraSalida = (string) ($bioMark['hora_salida'] ?? '');
-    // ID del horario del usuario (para validar QR)
+    // ID del horario del usuario
     $userScheduleId   = (int) ($userScheduleId ?? 0);
 ?>
-<script src="<?= base_url('js/vendor/jsQR.js') ?>"></script>
 <style>
 .bio-card {
     background: var(--g-surface, #1b2430); border: 1px solid var(--g-border, #26323f);
@@ -120,38 +119,6 @@
 </div>
 
 <!-- Modal: capturar rostro (camara) -->
-<!-- Modal: escanear QR del horario (primer paso obligatorio) -->
-<div class="bio-modal" id="bioQrModal">
-    <div class="bio-dialog" style="max-width: 380px;">
-        <div class="bio-dialog-head">
-            <h3><span class="material-symbols-outlined">qr_code_scanner</span> Escanear QR del horario</h3>
-            <button class="bio-x" onclick="bioCloseQr()"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="bio-dialog-body">
-            <div class="bio-cam-wrap" id="bioQrCamWrap">
-                <video id="bioQrCam" autoplay playsinline muted></video>
-                <button type="button" class="bio-cam-flip" id="bioQrCamFlip" onclick="bioFlipCam('bioQrCam')" title="Voltear cámara">
-                    <span class="material-symbols-outlined">flip_camera_ios</span>
-                </button>
-                <div class="bio-cam-err" id="bioQrCamErr" style="display:none;">
-                    No se pudo abrir la cámara. Concede permiso o usa otro dispositivo.
-                </div>
-            </div>
-            <div style="margin-top:12px; font-size:12.5px; color:var(--g-text-secondary,#a9b6c8); text-align:center; line-height:1.6;">
-                Apunta la cámara al <strong>QR de tu horario</strong> que está impreso.<br>
-                Se validará automáticamente.
-            </div>
-            <div class="bio-state-msg" id="bioQrMsg"></div>
-        </div>
-        <div class="bio-dialog-foot">
-            <button type="button" class="dev-btn dev-btn-outline" onclick="bioCloseQr()">Cancelar</button>
-            <button type="button" class="dev-btn dev-btn-primary" id="bioQrManualBtn" onclick="bioQrManualInput()">
-                <span class="material-symbols-outlined">keyboard</span> Ingresar código manual
-            </button>
-        </div>
-    </div>
-</div>
-
 <div class="bio-modal" id="bioRostroModal">
     <div class="bio-dialog">
         <div class="bio-dialog-head">
@@ -268,11 +235,7 @@
         humino_selfie: '',
         stream: null,
         checkStream: null,
-        pendingEvidencia: '',
-        qrStream: null,
-        qrLastDecode: 0,
-        qrDecoder: null,
-        qrScanning: false
+        pendingEvidencia: ''
     };
     function $(id) { return document.getElementById(id); }
     function csrfToken() {
@@ -476,118 +439,7 @@
         if (window.__bioState.stream) { window.__bioState.stream.getTracks().forEach(function (t) { t.stop(); }); window.__bioState.stream = null; }
     };
 
-    // ═════════════════════════════════════════════════════════
-    // ESCANER QR DEL HORARIO (primer paso obligatorio)
-    // ═════════════════════════════════════════════════════════
-
-    async function bioQrInitDecoder() {
-        if (window.__bioState.qrDecoder) return window.__bioState.qrDecoder;
-        if (window.jsQR) {
-            window.__bioState.qrDecoder = window.jsQR;
-            return window.__bioState.qrDecoder;
-        }
-        throw new Error('jsQR no cargado');
-    }
-
-    function bioStartQrScanner() {
-        var video = $('bioQrCam');
-        var errEl = $('bioQrCamErr');
-        var msgEl = $('bioQrMsg');
-        var B = window.__bioState;
-        if (B.qrStream) return;
-        B.qrScanning = true;
-        msgEl.className = 'bio-state-msg show';
-        msgEl.textContent = 'Iniciando cámara…';
-        startCam(video, errEl).then(function () {
-            msgEl.className = 'bio-state-msg';
-            bioQrLoop();
-        }).catch(function () {
-            B.qrScanning = false;
-        });
-    }
-
-    function bioQrLoop() {
-        var B = window.__bioState;
-        if (!B.qrScanning) return;
-        var video = $('bioQrCam');
-        if (!B.qrDecoder) {
-            bioQrInitDecoder().then(function () { if (B.qrScanning) requestAnimationFrame(bioQrLoop); });
-            return;
-        }
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            var w = video.videoWidth, h = video.videoHeight;
-            if (w > 0 && h > 0) {
-                var canvas = document.createElement('canvas');
-                canvas.width = w; canvas.height = h;
-                var ctx = canvas.getContext('2d', { willReadFrequently: true });
-                ctx.drawImage(video, 0, 0, w, h);
-                var imgData = ctx.getImageData(0, 0, w, h);
-                var code = window.__bioState.qrDecoder(imgData.data, w, h);
-                if (code && code.data) {
-                    var now = Date.now();
-                    if (now - B.qrLastDecode > 1500) {
-                        B.qrLastDecode = now;
-                        bioProcessQr(code.data);
-                        return; // stop loop, will restart after processing
-                    }
-                }
-            }
-        }
-        if (B.qrScanning) requestAnimationFrame(bioQrLoop);
-    }
-
-    function bioProcessQr(data) {
-        var B = window.__bioState;
-        B.qrScanning = false;
-        // extraer token de URL tipo .../escanear?token=XXXX
-        var m = data.match(/[?&]token=([a-f0-9]{40})/i);
-        if (!m) {
-            msg('bioQrMsg', 'QR no reconocido. Apunta al QR de tu horario.', false);
-            setTimeout(function () { if (B.qrScanning === false) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
-            return;
-        }
-        var token = m[1];
-        var msgEl = $('bioQrMsg');
-        msgEl.className = 'bio-state-msg show bio-msg-ok';
-        msgEl.textContent = 'QR detectado, verificando…';
-        var fd = new FormData();
-        fd.set('token', token);
-        fetch('<?= site_url('mi-panel/verificar-qr') ?>', {
-            method: 'POST', body: fd, credentials: 'same-origin'
-        }).then(function (r) { return r.json(); })
-        .then(function (res) {
-            if (res.ok) {
-                msgEl.className = 'bio-state-msg show bio-msg-ok';
-                msgEl.textContent = res.msg || 'QR verificado ✓';
-                stopQrStream();
-                setTimeout(function () {
-                    bioCloseQr();
-                    openBioCheckModal();
-                }, 600);
-            } else {
-                msg('bioQrMsg', res.msg || 'QR no válido', false);
-                setTimeout(function () { if (!B.qrScanning) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
-            }
-        }).catch(function () {
-            msg('bioQrMsg', 'Error de red. Reintenta.', false);
-            setTimeout(function () { if (!B.qrScanning) { B.qrScanning = true; bioStartQrScanner(); } }, 1500);
-        });
-    }
-
-    function stopQrStream() {
-        var B = window.__bioState;
-        B.qrScanning = false;
-        if (B.qrStream) { B.qrStream.getTracks().forEach(function (t) { t.stop(); }); B.qrStream = null; }
-    }
-
-    window.bioCloseQr = function () {
-        var B = window.__bioState;
-        B.qrScanning = false;
-        $('bioQrModal').classList.remove('c-open');
-        stopQrStream();
-    };
-
-    // Abre el modal biométrico (huella/rostro) DESPUÉS de QR verificado
+    // Abre el modal biométrico (huella/rostro) al marcar asistencia
     window.openBioCheckModal = function () {
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
@@ -624,13 +476,6 @@
             m = (m === 'huella' && !tH) || (m === 'facial' && !tR) ? (tH ? 'huella' : 'facial') : m;
             showMethod(m);
         });
-    };
-
-    window.bioQrManualInput = function () {
-        var token = prompt('Ingresa el código del QR (40 caracteres):');
-        if (token && token.length === 40 && /^[a-f0-9]{40}$/i.test(token)) {
-            bioProcessQr('https://x.escanear?token=' + token);
-        }
     };
 
     window.openBioCheck = function () {

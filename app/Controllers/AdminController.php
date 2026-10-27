@@ -426,14 +426,11 @@ class AdminController extends AdminBaseController
             'estado'        => 'Activo',
         ]);
 
-        // QR de asistencia del horario, listo para descargar
-        $schId = (int) db_connect()->insertID();
-        $qrListo = $schId > 0 && $this->scheduleModel->ensureQrToken($schId) !== '';
-
         // Notificar a admins sobre horario creado
+        $schId = (int) db_connect()->insertID();
         $this->notificationService->horarioCreado($schId, $adminId);
 
-        $s->setFlashdata('msg', "Horario {$nombre} creado" . ($qrListo ? ' · QR de asistencia listo para descargar' : ''));
+        $s->setFlashdata('msg', "Horario {$nombre} creado");
         $s->setFlashdata('tipo', 'success');
 
         return redirect()->to(base_url('admin/horarios'));

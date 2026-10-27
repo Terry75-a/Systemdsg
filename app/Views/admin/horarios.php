@@ -631,12 +631,6 @@
                                     </td>
                                     <td><span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span></td>
                                     <td class="dev-table-actions" onclick="event.stopPropagation()">
-                                        <a class="dev-btn-icon" title="Descargar QR del horario" href="<?= base_url('admin/qr/' . (int) $s['id']) ?>" target="_blank" rel="noopener">
-                                            <span class="material-symbols-outlined">qr_code_2</span>
-                                        </a>
-                                        <a class="dev-btn-icon" title="Ver QR para imprimir" href="<?= base_url('admin/qr-imprimir/' . (int) $s['id']) ?>" target="_blank" rel="noopener">
-                                            <span class="material-symbols-outlined">print</span>
-                                        </a>
                                         <button class="dev-btn-icon" title="Editar" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
@@ -697,9 +691,6 @@
                                 </p>
                             </div>
                             <div class="dev-table-card-actions">
-                                <a class="dev-btn-icon" title="Descargar QR del horario" href="<?= base_url('admin/qr/' . (int) $s['id']) ?>" target="_blank" rel="noopener">
-                                    <span class="material-symbols-outlined">qr_code_2</span>
-                                </a>
                                 <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
@@ -882,12 +873,6 @@
         <div class="dev-modal-head">
             <h2><span class="material-symbols-outlined">group</span> Integrantes</h2>
             <div style="display:flex; gap:6px; align-items:center;">
-                <a class="dev-btn-icon" id="intQrBtn" title="Descargar QR del horario" href="<?= base_url('admin/qr/0') ?>" target="_blank" rel="noopener">
-                    <span class="material-symbols-outlined">qr_code_2</span>
-                </a>
-                <a class="dev-btn-icon" id="intQrPrint" title="Ver QR para imprimir" href="<?= base_url('admin/qr-imprimir/0') ?>" target="_blank" rel="noopener">
-                    <span class="material-symbols-outlined">print</span>
-                </a>
                 <button class="dev-btn-icon" onclick="closeIntegrantes()">
                     <span class="material-symbols-outlined">close</span>
                 </button>
@@ -968,8 +953,6 @@
 
 <script>
 var SCHEDULES = JSON.parse('<?= $intJson ?>');
-var QR_URL = '<?= base_url('admin/qr/') ?>';
-var QR_PRINT_URL = '<?= base_url('admin/qr-imprimir/') ?>';
 
 // ── Selector de tipo (crear) ──
 (function() {
@@ -1128,8 +1111,6 @@ function openIntegrantes(id) {
     var sch = SCHEDULES.find(function(s) { return s.id === id; });
     if (!sch) return;
     document.getElementById('int_sch_id').value = id;
-    document.getElementById('intQrBtn').href = QR_URL + id;
-    document.getElementById('intQrPrint').href = QR_PRINT_URL + id;
     document.getElementById('intTitle').textContent = sch.nombre;
     var tag = document.getElementById('intTag');
     var isPract = sch.tipo === 'Practicante';

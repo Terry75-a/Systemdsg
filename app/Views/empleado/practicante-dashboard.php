@@ -172,14 +172,6 @@
 
 <?= view('partials/biometric_panel', ['bioMark' => ['exit' => (bool) ($hEnt && !$hSal), 'hora_salida' => $sinHorario ? '' : substr($horaSalida, 0, 5)], 'userScheduleId' => (int) ($miInfo['schedule_id'] ?? 0)]) ?>
 
-<?php if (!empty($qrScan) && !($hEnt && $hSal)): ?>
-<script>
-window.addEventListener('load', function () {
-    setTimeout(function () { if (typeof openBioCheck === 'function') openBioCheck(); }, 350);
-});
-</script>
-<?php endif; ?>
-
 <!-- Stats · atajos a cada pagina -->
 <section class="dev-stats-grid">
     <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">

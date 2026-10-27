@@ -27,9 +27,6 @@ $routes->get('asisten-dsg', 'Home::asistencia');
 $routes->get('precio-asisten', 'Home::precioAsisten');
 $routes->get('terminos', 'Home::terminos');
 
-// QR de asistencia — se abre al escanear el QR descargable (pública)
-$routes->get('escanear', 'QrController::escanear');
-
 // Sitemap dinámico (usa el baseURL configurado)
 $routes->get('sitemap.xml', function () {
     $base = rtrim(base_url(), '/');
