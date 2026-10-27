@@ -139,6 +139,68 @@
                 <?php endforeach; ?>
             </section>
 
+            <!-- Consolidado global (todas las empresas) -->
+            <?php
+                $g         = $consola['global'];
+                $gEstados  = $g['porEstado'];
+                $gTotalEst = max(1, array_sum($gEstados));
+                $EST_ICO   = [
+                    'present'          => 'check_circle',
+                    'late'             => 'schedule',
+                    'absent'           => 'cancel',
+                    'absent_justified' => 'event_available',
+                    'no_exit'          => 'logout',
+                ];
+            ?>
+            <div class="tk-grid-2">
+                <section class="tk-card tk-p5 tk-anim-item">
+                    <h3 class="tk-h3 tk-mb3">Consolidado global</h3>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">fact_check</span>
+                        <span class="tk-grow">Marcaciones del mes</span>
+                        <b><?= $num($g['marcMes']) ?></b>
+                    </div>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">warning</span>
+                        <span class="tk-grow">Incidencias</span>
+                        <b><?= $num($g['incTotal']) ?> · <?= $num($g['incAbiertas']) ?> abiertas</b>
+                    </div>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">notifications</span>
+                        <span class="tk-grow">Notificaciones</span>
+                        <b><?= $num($g['notifs']) ?> · <?= $num($g['notifsSinLeer']) ?> sin leer</b>
+                    </div>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">notifications_active</span>
+                        <span class="tk-grow">Suscripciones push</span>
+                        <b><?= $num($g['push']) ?></b>
+                    </div>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">login</span>
+                        <span class="tk-grow">Sesiones de hoy</span>
+                        <b><?= $num($g['loginsHoy']) ?> logins · <?= $num($g['eventosHoy']) ?> eventos</b>
+                    </div>
+                    <div class="tk-row">
+                        <span class="material-symbols-outlined tk-row-ico">photo_camera</span>
+                        <span class="tk-grow">Evidencias en disco</span>
+                        <b><?= $num($g['fotos']) ?> fotos · <?= esc($g['fotosMb']) ?> MB</b>
+                    </div>
+                </section>
+
+                <section class="tk-card tk-p5 tk-anim-item">
+                    <h3 class="tk-h3 tk-mb3">Asistencia por estado (histórico)</h3>
+                    <?php foreach ($gEstados as $est => $n): ?>
+                        <div class="tk-row">
+                            <span class="material-symbols-outlined tk-row-ico"><?= $EST_ICO[$est] ?? 'help' ?></span>
+                            <span class="tk-grow"><?= esc(\App\Libraries\Asistencia\DevConsole::ESTADOS[$est]) ?></span>
+                            <span class="tk-muted tk-none"><?= $n > 0 ? (int) round($n / $gTotalEst * 100) : 0 ?> %</span>
+                            <b><?= $num($n) ?></b>
+                        </div>
+                    <?php endforeach; ?>
+                    <p class="tk-sub11 tk-mt3">Histórico completo de las <?= $num($c['empresas']) ?> empresas · <?= $num($c['marcaciones']) ?> marcaciones en total.</p>
+                </section>
+            </div>
+
             <!-- Accesos -->
             <div class="tk-grid-3">
                 <?php foreach ($LINKS as $i => [$titulo, $ico, $items]): ?>

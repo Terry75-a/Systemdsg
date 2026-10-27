@@ -102,6 +102,47 @@ class DevConsole
         $schema = $db->query('SELECT COUNT(*) AS t, ROUND(SUM(data_length + index_length) / 1048576, 2) AS mb
             FROM information_schema.tables WHERE table_schema = DATABASE()')->getRowArray();
 
+        // ── Consolidado global: la operación completa de la plataforma ──
+        $mesIni = date('Y-m-01');
+
+        // Asistencia por estado (histórico de todas las empresas)
+        $porEstado = array_fill_keys(array_keys(self::ESTADOS), 0);
+        foreach ($db->table('attendance')->select('status, COUNT(*) AS n')->groupBy('status')->get()->getResultArray() as $r) {
+            if (isset($porEstado[$r['status']])) {
+                $porEstado[$r['status']] = (int) $r['n'];
+            }
+        }
+        $incTotal = (int) $db->table('incidents')->countAllResults();
+        $marcMes  = (int) $db->table('attendance')->where('date >=', $mesIni)->countAllResults();
+
+        // Notificaciones in-app y suscripciones a push
+        $notifs = $sinLeer = $push = 0;
+        if ($db->tableExists('notifications')) {
+            $notifs   = (int) $db->table('notifications')->countAllResults();
+            $sinLeer  = (int) $db->table('notifications')->where('leida', 0)->countAllResults();
+        }
+        if ($db->tableExists('push_subscriptions')) {
+            $push = (int) $db->table('push_subscriptions')->countAllResults();
+        }
+
+        // Sesiones de hoy (logueos y eventos) desde la auditoría
+        $loginsHoy = $eventosHoy = 0;
+        if ($db->tableExists('session_log')) {
+            $hoyIni   = $hoy . ' 00:00:00';
+            $loginsHoy  = (int) $db->table('session_log')->where('evento', 'login')->where('creado >=', $hoyIni)->countAllResults();
+            $eventosHoy = (int) $db->table('session_log')->where('creado >=', $hoyIni)->countAllResults();
+        }
+
+        // Evidencias biométricas en disco (rostros + evidencias)
+        $fotosN = 0;
+        $fotosMb = 0.0;
+        foreach (['rostros', 'evidencias'] as $dir) {
+            foreach (glob(WRITEPATH . 'uploads/' . $dir . '/*.{jpg,jpeg,png,webp}', GLOB_BRACE) ?: [] as $f) {
+                $fotosN++;
+                $fotosMb += (float) filesize($f) / 1048576;
+            }
+        }
+
         return [
             'counts' => [
                 'empresas'     => count($empresas),
@@ -112,6 +153,19 @@ class DevConsole
                 'marcHoy'      => $marcHoy,
                 'incPend'      => $incPend,
                 'codigos'      => $codigos,
+            ],
+            'global' => [
+                'marcMes'       => $marcMes,
+                'porEstado'     => $porEstado,
+                'incTotal'      => $incTotal,
+                'incAbiertas'   => $incPend,
+                'notifs'        => $notifs,
+                'notifsSinLeer' => $sinLeer,
+                'push'          => $push,
+                'loginsHoy'     => $loginsHoy,
+                'eventosHoy'    => $eventosHoy,
+                'fotos'         => $fotosN,
+                'fotosMb'       => round($fotosMb, 1),
             ],
             'roles'       => $roles,
             'empresas'    => $empresas,

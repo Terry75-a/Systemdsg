@@ -51,6 +51,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'auth'    => \App\Filters\Auth::class, // <-- este
         'asistencia' => \App\Filters\Asistencia::class, // módulo de asistencia (admin / mi-panel)
+        'dev'     => \App\Filters\DevGuard::class, // panel Dev: rol Dev + rate limit
     ];
 
     /**

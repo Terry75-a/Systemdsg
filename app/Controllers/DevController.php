@@ -635,7 +635,12 @@ class DevController extends BaseController
     // ════════════════════════════════════════
     // REGISTRO EMPLEADO CON CÓDIGO
     // ════════════════════════════════════════
-    public function registerForm() { return view('registro-empleado'); }
+    public function registerForm()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+
+        return view('registro-empleado');
+    }
 
     public function registerEmployee()
     {

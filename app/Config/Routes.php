@@ -53,25 +53,29 @@ $routes->get('dashboard-verde', 'AuthController::dashboard');
 
 // ══════════════════════════════════════════════════════════════
 // DEV — Panel de desarrollador (superpoder)
+// El filtro 'dev' exige rol Dev + rate limit ANTES de llegar al
+// controlador (que además sigue llamando a guardDev()).
 // ══════════════════════════════════════════════════════════════
-$routes->get('dios', 'DevController::index');
-$routes->get('dios/admins', 'DevController::admins');
-$routes->get('dios/codigos', 'DevController::codigos');
-$routes->get('dios/empleados', 'DevController::empleados');
-$routes->get('dios/estructura', 'DevController::estructura');
-$routes->get('dios/auditoria', 'DevController::auditoria');
-$routes->get('dios/sesiones', 'DevController::sesiones');
-$routes->get('dios/datos', 'DevController::datos');
-$routes->get('dios/perfil', 'DevController::perfil');
-$routes->post('dios/update-password', 'DevController::updatePassword');
-$routes->post('dios/create-admin', 'DevController::createAdmin');
-$routes->post('dios/update-admin', 'DevController::updateAdmin');
-$routes->post('dios/delete-admin', 'DevController::deleteAdmin');
-$routes->post('dios/create-code', 'DevController::createCode');
-$routes->post('dios/delete-code', 'DevController::deleteCode');
-$routes->post('dios/delete-user', 'DevController::deleteUser');
-$routes->get('registro-empleado', 'DevController::registerForm');
-$routes->post('dios/register-employee', 'DevController::registerEmployee');
+$routes->group('dios', ['filter' => 'dev'], static function ($routes) {
+    $routes->get('', 'DevController::index');
+    $routes->get('admins', 'DevController::admins');
+    $routes->get('codigos', 'DevController::codigos');
+    $routes->get('empleados', 'DevController::empleados');
+    $routes->get('estructura', 'DevController::estructura');
+    $routes->get('auditoria', 'DevController::auditoria');
+    $routes->get('sesiones', 'DevController::sesiones');
+    $routes->get('datos', 'DevController::datos');
+    $routes->get('perfil', 'DevController::perfil');
+    $routes->post('update-password', 'DevController::updatePassword');
+    $routes->post('create-admin', 'DevController::createAdmin');
+    $routes->post('update-admin', 'DevController::updateAdmin');
+    $routes->post('delete-admin', 'DevController::deleteAdmin');
+    $routes->post('create-code', 'DevController::createCode');
+    $routes->post('delete-code', 'DevController::deleteCode');
+    $routes->post('delete-user', 'DevController::deleteUser');
+    $routes->post('register-employee', 'DevController::registerEmployee');
+});
+$routes->get('registro-empleado', 'DevController::registerForm', ['filter' => 'dev']);
 
 // ══════════════════════════════════════════════════════════════
 // ADMIN — Panel de administrador (sesión + rol Admin)
