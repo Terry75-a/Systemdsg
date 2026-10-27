@@ -570,6 +570,12 @@
                         <span class="att-range-sep" aria-hidden="true">→</span>
                         <input type="date" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>" aria-label="Hasta">
                     </label>
+                    <label class="att-range att-search" title="Buscar por nombre o DNI">
+                        <span class="material-symbols-outlined">person_search</span>
+                        <input type="search" id="persona" name="persona" value="<?= esc($persona ?? '') ?>"
+                               placeholder="Nombre o DNI" aria-label="Filtrar por persona"
+                               autocomplete="off">
+                    </label>
                     <div class="att-chips" role="group" aria-label="Periodo">
                         <button type="button" class="att-seg-btn <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
                         <button type="button" class="att-seg-btn <?= $mode === 'semana' ? 'on' : '' ?>" onclick="rango('semana')">Esta semana</button>
@@ -590,6 +596,8 @@
                     <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
                     <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
                     <input type="hidden" name="estado" value="<?= esc($filtroEstado) ?>">
+                    <input type="hidden" name="persona" value="<?= esc($persona ?? '') ?>">
+                    <?php if ($mode === 'todo'): ?><input type="hidden" name="todo" value="1"><?php endif; ?>
                 </form>
 
                 <div class="dev-card att-table-card">

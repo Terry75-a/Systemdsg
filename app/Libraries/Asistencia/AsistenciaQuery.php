@@ -14,8 +14,8 @@ class AsistenciaQuery
     }
 
     /**
-     * Aplica los filtros de la barra (?fecha_inicio, ?fecha_fin, ?todo)
-     * y devuelve las filas junto con el rango realmente usado.
+     * Aplica los filtros de la barra (?fecha_inicio, ?fecha_fin, ?todo,
+     * ?estado, ?persona) y devuelve las filas junto con el rango usado.
      *
      * @return array{filas: array, fecha_inicio: ?string, fecha_fin: ?string}
      */
@@ -30,10 +30,33 @@ class AsistenciaQuery
         }
 
         return [
-            'filas'        => self::porEstado($filas, (string) ($params['estado'] ?? '')),
+            'filas'        => self::porEstado(self::porPersona($filas, (string) ($params['persona'] ?? '')), (string) ($params['estado'] ?? '')),
             'fecha_inicio' => $fi,
             'fecha_fin'    => $ff,
         ];
+    }
+
+    /**
+     * Deja sólo las filas de una persona concreta: casa por DNI exacto o
+     * por nombre parcial (sin distinguir mayúsculas). Vacío = sin filtrar.
+     */
+    public static function porPersona(array $filas, string $persona): array
+    {
+        $q = mb_strtolower(trim($persona));
+        if ($q === '') {
+            return $filas;
+        }
+
+        return array_values(array_filter($filas, function ($f) use ($q) {
+            $dni  = mb_strtolower(trim((string) ($f['dni'] ?? '')));
+            $name = mb_strtolower(trim((string) ($f['name'] ?? '')));
+
+            if ($dni !== '' && $dni === $q) {
+                return true;
+            }
+
+            return $name !== '' && mb_strpos($name, $q) !== false;
+        }));
     }
 
     /** Deja sólo las filas con el estado pedido. Vacío / 'todos' = sin filtrar. */
@@ -53,6 +76,12 @@ class AsistenciaQuery
         return ($fi === $ff)
             ? $this->attendance->getByDate($fi, $adminId)
             : $this->attendance->getByRange($fi, $ff, $adminId);
+    }
+
+    /** Todo el histórico del admin (para exportar sin rango). */
+    public function getAllFilas(int $adminId): array
+    {
+        return $this->attendance->getAll($adminId);
     }
 
     /**

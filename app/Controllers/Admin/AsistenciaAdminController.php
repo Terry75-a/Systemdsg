@@ -38,6 +38,7 @@ class AsistenciaAdminController extends AdminBaseController
             'fecha_inicio' => $resultado['fecha_inicio'],
             'fecha_fin'    => $resultado['fecha_fin'],
             'estado'       => trim((string) $this->request->getGet('estado')),
+            'persona'      => trim((string) $this->request->getGet('persona')),
             'resumen'      => $resumen,
         ]), $paginacion));
     }
@@ -61,6 +62,7 @@ class AsistenciaAdminController extends AdminBaseController
             'fecha_inicio' => $resultado['fecha_inicio'],
             'fecha_fin'    => $resultado['fecha_fin'],
             'estado'       => trim((string) $this->request->getGet('estado')),
+            'persona'      => trim((string) $this->request->getGet('persona')),
             'resumen'      => $resumen,
         ]), $paginacion));
     }
@@ -100,8 +102,12 @@ class AsistenciaAdminController extends AdminBaseController
         [$fi, $ff] = AsistenciaQuery::rango($this->request->getPost());
 
         $consulta = new AsistenciaQuery($this->attendanceModel);
-        $filas    = AsistenciaQuery::porEstado(
-            $consulta->porRango($fi, $ff, $this->adminId()),
+        // 'todo' = fechas vacías: exporta el histórico completo, no sólo hoy.
+        $filas = (! empty($this->request->getPost('todo')))
+            ? $consulta->getAllFilas($this->adminId())
+            : $consulta->porRango($fi, $ff, $this->adminId());
+        $filas = AsistenciaQuery::porEstado(
+            AsistenciaQuery::porPersona($filas, (string) $this->request->getPost('persona')),
             (string) $this->request->getPost('estado')
         );
 

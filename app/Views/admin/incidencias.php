@@ -110,6 +110,8 @@
         .in-chip:hover { background: var(--g-surface-variant); color: var(--g-text); }
         .in-chip.on { background: var(--g-primary); border-color: var(--g-primary); color: #fff; }
         .in-chip b { font-weight: 700; font-size: .75rem; opacity: .85; }
+        /* Los chips son enlaces (navegan con paginador): sin subrayado */
+        a.in-chip { text-decoration: none; }
         .in-filtered-empty { display: none; text-align: center; padding: 34px 16px; color: var(--g-text-secondary); font-size: 13.5px; }
 
         @media (max-width: 720px) {
@@ -360,14 +362,51 @@
             </button>
         </div>
 
-        <!-- Filtro por estado -->
+        <!-- Filtros por estado (server-side: conviven con el paginador) -->
         <div class="in-filters" id="inFilters">
-            <button type="button" class="in-chip on" onclick="filtrarEstado('', this)">Todas <b><?= $totalIncidencias ?></b></button>
-            <button type="button" class="in-chip" onclick="filtrarEstado('Pendiente', this)">Pendientes <b><?= $pendientes ?></b></button>
-            <button type="button" class="in-chip" onclick="filtrarEstado('Revisión', this)">En revisión <b><?= $revision ?></b></button>
-            <button type="button" class="in-chip" onclick="filtrarEstado('Justificada', this)">Justificadas <b><?= $justificadas ?></b></button>
-            <button type="button" class="in-chip" onclick="filtrarEstado('Rechazada', this)">Rechazadas <b><?= $rechazadas ?></b></button>
+            <?php
+                $qsChip = static function (string $est) use ($fecha_inicio, $fecha_fin, $persona): string {
+                    $qs = array_filter([
+                        'fecha_inicio' => $fecha_inicio,
+                        'fecha_fin'    => $fecha_fin,
+                        'persona'      => $persona,
+                        'estado'       => $est,
+                    ], fn ($v) => $v !== '');
+                    return '?' . http_build_query($qs);
+                };
+                $chips = [
+                    ''            => ['Todas',          $totalIncidencias],
+                    'Pendiente'   => ['Pendientes',     $pendientes],
+                    'Revisión'    => ['En revisión',    $revision],
+                    'Justificada' => ['Justificadas',   $justificadas],
+                    'Rechazada'   => ['Rechazadas',     $rechazadas],
+                ];
+                foreach ($chips as $est => [$lbl, $n]):
+            ?>
+                <a class="in-chip <?= $incEstado === $est ? 'on' : '' ?>" href="<?= esc($qsChip($est)) ?>"><?= $lbl ?> <b><?= $n ?></b></a>
+            <?php endforeach; ?>
         </div>
+
+        <!-- Filtros de fecha y persona (se conservan al paginar) -->
+        <form method="get" action="<?= base_url('admin/incidencias') ?>" class="att-filters" style="margin-bottom:16px;">
+            <label class="att-range" title="Rango de fechas">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <input type="date" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>" aria-label="Desde">
+                <span class="att-range-sep" aria-hidden="true">→</span>
+                <input type="date" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>" aria-label="Hasta">
+            </label>
+            <label class="att-range att-search" title="Buscar por nombre o DNI">
+                <span class="material-symbols-outlined">person_search</span>
+                <input type="search" name="persona" value="<?= esc($persona ?? '') ?>" placeholder="Nombre o DNI" aria-label="Filtrar por persona" autocomplete="off">
+            </label>
+            <?php if ($incEstado !== ''): ?><input type="hidden" name="estado" value="<?= esc($incEstado) ?>"><?php endif; ?>
+            <button type="submit" class="dev-btn dev-btn-primary">
+                <span class="material-symbols-outlined">filter_alt</span> Aplicar
+            </button>
+            <?php if (($fecha_inicio ?? '') !== '' || ($fecha_fin ?? '') !== '' || ($persona ?? '') !== ''): ?>
+                <a class="in-chip" href="?<?= $incEstado !== '' ? 'estado=' . rawurlencode($incEstado) : '' ?>">Limpiar ✕</a>
+            <?php endif; ?>
+        </form>
 
         <!-- Lista -->
         <div class="in-sec-head">
@@ -375,15 +414,19 @@
         </div>
         <div class="in-list">
 
-            <?php if ($totalIncidencias === 0): ?>
+            <?php if (empty($incidentsPage)): ?>
                 <div class="in-empty">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <p style="margin:0 0 2px;">No hay incidencias registradas</p>
-                    <p style="font-size:12.5px;max-width:320px;margin:0 auto;">Registra una incidencia y asígnala a una persona de tu personal.</p>
+                    <span class="material-symbols-outlined"><?= $totalIncidencias === 0 ? 'check_circle' : 'filter_alt_off' ?></span>
+                    <p style="margin:0 0 2px;"><?= $totalIncidencias === 0 ? 'No hay incidencias registradas' : 'Ninguna incidencia con este filtro' ?></p>
+                    <p style="font-size:12.5px;max-width:320px;margin:0 auto;"><?= $totalIncidencias === 0 ? 'Registra una incidencia y asígnala a una persona de tu personal.' : 'Cambia el estado, el rango de fechas o la persona.' ?></p>
                     <div class="in-empty-act">
-                        <button type="button" class="dev-btn dev-btn-primary" onclick="openCreateModal()">
-                            <span class="material-symbols-outlined">add</span> Registrar y asignar
-                        </button>
+                        <?php if ($totalIncidencias === 0): ?>
+                            <button type="button" class="dev-btn dev-btn-primary" onclick="openCreateModal()">
+                                <span class="material-symbols-outlined">add</span> Registrar y asignar
+                            </button>
+                        <?php else: ?>
+                            <a class="dev-btn dev-btn-primary" href="?">Ver todas</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php else: ?>
@@ -400,7 +443,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                <?php foreach ($incidents as $inc):
+                <?php foreach ($incidentsPage as $inc):
                     $t = $inc['tipo'] ?? 'Otro';
                     $ti = $tipoInfo[$t] ?? $tipoInfo['Otro'];
                     $e  = $inc['estado'] ?? 'Pendiente';
@@ -468,10 +511,32 @@
                     </tbody>
                 </table>
                 </div>
-                <div class="in-filtered-empty" id="inFilteredEmpty">
-                    <span class="material-symbols-outlined" style="font-size:40px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">filter_alt_off</span>
-                    Ninguna incidencia con este estado.
+
+                <?php
+                    $pp     = max(1, (int) ($pagina ?? 1));
+                    $ppT    = max(1, (int) ($paginas ?? 1));
+                    $tot    = (int) ($totalFilas ?? count($incidentsPage));
+                    $desdeN = $tot ? ($pp - 1) * 50 + 1 : 0;
+                    $hastaN = min($tot, $desdeN + count($incidentsPage) - 1);
+                    $pgUrl  = static fn ($n) => '?' . esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $n])));
+                ?>
+                <div class="att-foot">
+                    <span><?= number_format($desdeN) ?>–<?= number_format($hastaN) ?> de <?= number_format($tot) ?> incidencias</span>
+                    <div class="att-foot-nav">
+                        <?php if ($pp > 1): ?>
+                            <a class="att-nav" href="<?= $pgUrl($pp - 1) ?>" aria-label="Página anterior"><span class="material-symbols-outlined">chevron_left</span></a>
+                        <?php else: ?>
+                            <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_left</span></span>
+                        <?php endif; ?>
+                        <span class="att-foot-page"><?= $pp ?> / <?= $ppT ?></span>
+                        <?php if ($pp < $ppT): ?>
+                            <a class="att-nav" href="<?= $pgUrl($pp + 1) ?>" aria-label="Página siguiente"><span class="material-symbols-outlined">chevron_right</span></a>
+                        <?php else: ?>
+                            <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_right</span></span>
+                        <?php endif; ?>
+                    </div>
                 </div>
+
             <?php endif; ?>
         </div>
 
@@ -605,23 +670,8 @@
 </div>
 
 <script>
-    function filtrarEstado(estado, btn) {
-        document.querySelectorAll('#inFilters .in-chip').forEach(function (c) { c.classList.remove('on'); });
-        btn.classList.add('on');
-
-        var visibles = 0;
-        document.querySelectorAll('.in-item[data-estado]').forEach(function (el) {
-            var e = el.getAttribute('data-estado');
-            var ok = estado === '' || (estado === 'Rechazada'
-                ? (e === 'Rechazada' || e === 'Desestimada')
-                : e === estado);
-            el.style.display = ok ? '' : 'none';
-            if (ok) visibles++;
-        });
-
-        var vacio = document.getElementById('inFilteredEmpty');
-        if (vacio) vacio.style.display = visibles === 0 ? 'block' : 'none';
-    }
+    // El filtrado por estado es server-side (los chips son enlaces),
+    // así que coexiste con el paginador: nada que ocultar en el cliente.
 </script>
 
 <script>

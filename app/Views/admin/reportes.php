@@ -220,6 +220,11 @@
                     <input type="date" class="rp-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
                 </div>
                 <div class="rp-bar-group rp-bar-group--grow">
+                    <span class="rp-bar-cap">Persona</span>
+                    <input type="search" class="rp-input" id="persona" name="persona" value="<?= esc($persona ?? '') ?>"
+                           placeholder="Nombre o DNI" autocomplete="off" style="min-width:190px;">
+                </div>
+                <div class="rp-bar-group rp-bar-group--grow">
                     <span class="rp-bar-cap">Periodo</span>
                     <div class="rp-chips">
                         <button type="button" class="rp-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
@@ -308,9 +313,18 @@
 
             <div class="rp-sec-head rp-sec-head--split">
                 <h2><span class="material-symbols-outlined">table_chart</span> Detalle de asistencia</h2>
-                <button type="button" class="rp-export" onclick="exportarCSV()">
-                    <span class="material-symbols-outlined">download</span> Exportar CSV
-                </button>
+                <!-- CSV server-side: exporta TODAS las filas del filtro, no sólo la página visible -->
+                <form method="post" action="<?= site_url('admin/exportar/asistencias') ?>" id="csv-form">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio ?? '') ?>">
+                    <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin ?? '') ?>">
+                    <input type="hidden" name="estado" value="<?= esc($estado ?? '') ?>">
+                    <input type="hidden" name="persona" value="<?= esc($persona ?? '') ?>">
+                    <?php if (($mode ?? '') === 'todo'): ?><input type="hidden" name="todo" value="1"><?php endif; ?>
+                    <button type="submit" class="rp-export">
+                        <span class="material-symbols-outlined">download</span> Exportar CSV
+                    </button>
+                </form>
             </div>
 
                 <?php if (!empty($attendance)): ?>
@@ -337,6 +351,31 @@
                             <span class="rp-estado <?= $estado ?>"><i></i><?= $label ?></span>
                         </div>
                         <?php endforeach; ?>
+                    </div>
+
+                    <?php
+                        $pp     = max(1, (int) ($pagina ?? 1));
+                        $ppT    = max(1, (int) ($paginas ?? 1));
+                        $tot    = (int) ($totalFilas ?? count($attendance));
+                        $desdeN = $tot ? ($pp - 1) * 50 + 1 : 0;
+                        $hastaN = min($tot, $desdeN + count($attendance) - 1);
+                        $pgUrl  = static fn ($n) => '?' . esc(http_build_query(array_merge($pag_qs ?? [], ['page' => $n])));
+                    ?>
+                    <div class="att-foot">
+                        <span><?= number_format($desdeN) ?>–<?= number_format($hastaN) ?> de <?= number_format($tot) ?> registros</span>
+                        <div class="att-foot-nav">
+                            <?php if ($pp > 1): ?>
+                                <a class="att-nav" href="<?= $pgUrl($pp - 1) ?>" aria-label="Página anterior"><span class="material-symbols-outlined">chevron_left</span></a>
+                            <?php else: ?>
+                                <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_left</span></span>
+                            <?php endif; ?>
+                            <span class="att-foot-page"><?= $pp ?> / <?= $ppT ?></span>
+                            <?php if ($pp < $ppT): ?>
+                                <a class="att-nav" href="<?= $pgUrl($pp + 1) ?>" aria-label="Página siguiente"><span class="material-symbols-outlined">chevron_right</span></a>
+                            <?php else: ?>
+                                <span class="att-nav is-off" aria-hidden="true"><span class="material-symbols-outlined">chevron_right</span></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php else: ?>
                     <div class="dev-empty">
@@ -376,24 +415,6 @@
             ff.value = fmt(d);
         } else { fi.value = ''; ff.value = ''; }
         form.submit();
-    }
-    function exportarCSV() {
-        const items = document.querySelectorAll('.rp-item');
-        if (!items.length) return;
-        const filas = [['Empleado', 'DNI', 'Fecha', 'Hora entrada', 'Hora salida', 'Estado']];
-        items.forEach(function(item) {
-            filas.push([item.dataset.nombre, item.dataset.dni, item.dataset.fecha, item.dataset.entrada, item.dataset.salida, item.dataset.estado]);
-        });
-        const csv = filas.map(function(fila) { return fila.map(function(c) { return '"' + (c || '').replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
-        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'reporte_asistencia_' + new Date().toISOString().slice(0, 10) + '.csv';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
     }
     </script>
 

@@ -20,7 +20,76 @@ class IncidenciaAdminController extends AdminBaseController
     public function incidencias()
     {
         if ($redirect = $this->guard()) return $redirect;
-        return view('admin/incidencias', $this->viewData(['activePage' => 'incidencias']));
+
+        $params  = $this->request->getGet();
+        $adminId = $this->adminId();
+
+        // Filtrado por fecha y persona: es lo que alimenta métricas y chips
+        $todas     = $this->incidentModel->getAll($adminId);
+        $filtradas = $this->porFecha($todas, $params);
+
+        // La tabla además aplica estado y pagina (antes: todo de golpe, sin paginar)
+        $paraTabla = $this->porEstado($filtradas, (string) ($params['estado'] ?? ''));
+        $paginado  = $this->paginar(
+            $paraTabla,
+            (int) ($params['page'] ?? 1),
+            $params
+        );
+        $pagina = $paginado['filas'];
+        unset($paginado['filas']);
+
+        return view('admin/incidencias', array_merge($this->viewData([
+            'activePage'    => 'incidencias',
+            'incidents'     => $filtradas,
+            'incidentsPage' => $pagina,
+            'persona'       => trim((string) ($params['persona'] ?? '')),
+            'incEstado'     => trim((string) ($params['estado'] ?? '')),
+            'fecha_inicio'  => trim((string) ($params['fecha_inicio'] ?? '')),
+            'fecha_fin'     => trim((string) ($params['fecha_fin'] ?? '')),
+        ]), $paginado));
+    }
+
+    /** Deja sólo las incidencias de un rango de fechas (vacío = todas). */
+    private function porFecha(array $incs, array $params): array
+    {
+        $fi = is_string($params['fecha_inicio'] ?? null) ? trim($params['fecha_inicio']) : '';
+        $ff = is_string($params['fecha_fin'] ?? null) ? trim($params['fecha_fin']) : '';
+        if ($fi === '' && $ff === '') {
+            return $incs;
+        }
+        if ($fi !== '' && $ff !== '' && $fi > $ff) {
+            [$fi, $ff] = [$ff, $fi];
+        }
+
+        return array_values(array_filter($incs, function ($i) use ($fi, $ff) {
+            $d = substr((string) ($i['fecha'] ?? ''), 0, 10);
+            if ($d === '') {
+                return false;
+            }
+            if ($fi !== '' && $d < $fi) {
+                return false;
+            }
+
+            return ! ($ff !== '' && $d > $ff);
+        }));
+    }
+
+    /** Deja sólo las incidencias con el estado pedido. Vacío = todas. */
+    private function porEstado(array $incs, string $estado): array
+    {
+        $estado = trim($estado);
+        if ($estado === '' || $estado === 'todas') {
+            return $incs;
+        }
+
+        return array_values(array_filter($incs, function ($i) use ($estado) {
+            $e = (string) ($i['estado'] ?? '');
+            if ($estado === 'Rechazada') {
+                return in_array($e, ['Rechazada', 'Desestimada'], true);
+            }
+
+            return $e === $estado;
+        }));
     }
 
     public function createIncident()
