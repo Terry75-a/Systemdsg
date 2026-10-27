@@ -109,7 +109,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   justify-content: center;
   flex-shrink: 0;
 }
-.dev-logo-mark img { width: 18px; height: 18px; object-fit: contain; filter: brightness(10); }
+.dev-logo-mark img { width: 26px; height: auto; object-fit: contain; filter: brightness(10); }
 .dev-logo-text strong {
   font-size: 14px;
   font-weight: 600;

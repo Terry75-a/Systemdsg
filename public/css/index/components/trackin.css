@@ -62,7 +62,7 @@ body:has(.dev-main) .dev-logo-mark {
   width: 32px; height: 32px; border-radius: 8px;
   background: var(--sb-primary);
 }
-body:has(.dev-main) .dev-logo-mark img { width: 18px; height: 18px; }
+body:has(.dev-main) .dev-logo-mark img { width: 26px; height: auto; }
 body:has(.dev-main) .dev-logo-text strong { font-size: 13px; font-weight: 600; letter-spacing: -0.02em; }
 body:has(.dev-main) .dev-logo-text small { font-size: 10px; font-weight: 500; color: var(--sb-primary); }
 

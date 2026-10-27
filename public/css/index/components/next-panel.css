@@ -224,8 +224,8 @@ input[type="submit"] {
   border-radius: 7px;
 }
 .dev-logo-mark img {
-  width: 15px;
-  height: 15px;
+  width: 21px;
+  height: auto;
 }
 .dev-logo-text strong {
   font-size: 13px;

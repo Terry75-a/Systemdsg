@@ -2,7 +2,7 @@
 <aside class="dev-sidebar" id="devSidebar">
     <div class="dev-sidebar-head">
         <a href="<?= base_url('mi-panel') ?>" class="dev-logo">
-            <span class="dev-logo-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG"></span>
+            <span class="dev-logo-mark"><img src="<?= base_url('images/dsg-logo.svg') ?>" alt="DSG"></span>
             <span class="dev-logo-text"><strong>Mi Panel</strong><small><?= session()->get('user_role') === 'Practicante' ? 'Practicante' : 'Colaborador' ?> · <?= esc(session()->get('user_code') ?: 'DSG Perú') ?></small></span>
         </a>
     </div>
