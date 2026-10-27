@@ -37,6 +37,10 @@
             <span class="material-symbols-outlined">assessment</span>
             <span>Reportes</span>
         </a>
+        <a href="<?= base_url('admin/horas') . $navVer ?>" class="dev-nav-link <?= ($activePage ?? '') === 'horas' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">hourglass_bottom</span>
+            <span>Horas</span>
+        </a>
         <a href="<?= base_url('admin/configuracion') . $navVer ?>" class="dev-nav-link <?= ($activePage ?? '') === 'configuracion' ? 'is-active' : '' ?>">
             <span class="material-symbols-outlined">settings</span>
             <span>Configuración</span>

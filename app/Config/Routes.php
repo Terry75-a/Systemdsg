@@ -91,6 +91,10 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     // Evidencias biométricas (sólo sesión de Admin; el rol lo valida EvidenciaController)
     $routes->get('evidencia/(:segment)/(:segment)', 'EvidenciaController::ver/$1/$2');
 
+    // Horas por persona (resumen + export)
+    $routes->get('horas', 'Admin\HorasAdminController::index');
+    $routes->post('exportar/horas', 'Admin\HorasAdminController::exportar');
+
     // Tiempo real (SSE)
     $routes->get('realtime/asistencias', 'RealtimeController::adminAsistencias');
 
