@@ -12,7 +12,7 @@ class IncidentModel extends Model
 
     protected $allowedFields = [
         'admin_id', 'att_id', 'user_id', 'name', 'tipo', 'fecha',
-        'detalle', 'estado', 'justificacion', 'resuelta_por', 'resuelta_en',
+        'detalle', 'estado', 'justificacion', 'evidencia', 'resuelta_por', 'resuelta_en',
     ];
 
     public const ESTADOS = ['Pendiente', 'Revisión', 'Justificada', 'Rechazada', 'Desestimada'];

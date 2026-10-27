@@ -109,7 +109,18 @@ class HorasQuery
             // Entrada sin salida: se estima hasta la salida del horario
             $sinSalida++;
             if ($salidaPlan !== '') {
+                $entTs = strtotime('2000-01-01 ' . $tin);
+                $plnTs = strtotime('2000-01-01 ' . $salidaPlan);
+                // Sólo un turno que cruza la medianoche (salida < entrada)
+                // justifica el envoltorio: quien entró después de la salida
+                // prevista (18:01 en jornada 08–13) no suma horas imaginarias.
+                $noche = $entTs !== false && $plnTs !== false
+                    && $plnTs < strtotime('2000-01-01 ' . (string) ($horario['hora_entrada'] ?? '00:00:00'));
+
                 $min = $this->diferenciaMinutos($tin, $salidaPlan);
+                if (! $noche && $entTs !== false && $plnTs !== false && $plnTs <= $entTs) {
+                    $min = 0;
+                }
                 if ($min > 0 && $min <= 24 * 60) {
                     $horasTrab += $min;
                     $estimadas++;

@@ -259,6 +259,16 @@
                                 <p><small>Resuelta</small>Tu administrador la marcó como resuelta.</p>
                             </div>
                         <?php endif; ?>
+                        <?php if (!empty($inc['evidencia'])): ?>
+                            <div class="mi-just">
+                                <span class="material-symbols-outlined">photo_camera</span>
+                                <p><small>Foto adjunta</small>
+                                    <a href="<?= esc(base_url('mi-panel/evidencia/evidencias/' . $inc['evidencia'])) ?>"
+                                       target="_blank" rel="noopener"
+                                       style="color:var(--g-primary);font-weight:600;">Ver foto de la justificación ↗</a>
+                                </p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <?php if ($iest === 'Pendiente'): ?>
                         <div class="mi-act">
@@ -280,12 +290,18 @@
             <h3><span class="material-symbols-outlined">edit_note</span> Justificar incidencia</h3>
             <button class="in-modal-close" onclick="closeJustify()"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <form method="post" action="<?= site_url('mi-panel/justificar-incidencia') ?>" id="justifyForm">
+        <form method="post" action="<?= site_url('mi-panel/justificar-incidencia') ?>" id="justifyForm" enctype="multipart/form-data">
             <?= csrf_field() ?>
             <input type="hidden" name="inc_id" id="justifyIncId" value="">
             <div class="in-modal-body">
                 <p style="font-size:13px;color:var(--g-text-secondary);margin:0 0 10px;">Cuenta qué pasó. Quedará en <strong>revisión</strong> para tu administrador.</p>
                 <textarea name="justificacion" id="justifyText" placeholder="Ej: El bus se demoró por el tráfico..." required></textarea>
+                <label style="display:block;font-size:12px;font-weight:600;color:var(--g-text);margin:14px 0 6px;">
+                    Foto de respaldo <span style="font-weight:400;color:var(--g-text-secondary);">(opcional · JPG, PNG o WEBP · máx. 4 MB)</span>
+                </label>
+                <input type="file" name="evidencia" id="justifyFoto" accept="image/jpeg,image/png,image/webp"
+                       style="width:100%;border:1px dashed var(--g-border);border-radius:12px;padding:10px 12px;font-size:13px;font-family:var(--g-font);color:var(--g-text-secondary);background:var(--g-surface);box-sizing:border-box;">
+                <img id="justifyFotoPreview" alt="" style="display:none;max-width:100%;max-height:150px;border-radius:10px;margin-top:10px;border:1px solid var(--g-border);">
             </div>
             <div class="in-modal-foot">
                 <button type="button" class="dev-btn" onclick="closeJustify()">Cancelar</button>
@@ -336,8 +352,31 @@
 function openJustify(id) {
     document.getElementById('justifyIncId').value = id;
     document.getElementById('justifyText').value = '';
+    // Limpia la foto elegida en una sesión anterior
+    var f = document.getElementById('justifyFoto');
+    var pv = document.getElementById('justifyFotoPreview');
+    if (f) f.value = '';
+    if (pv) { pv.src = ''; pv.style.display = 'none'; }
     document.getElementById('justifyModal').classList.add('is-open');
 }
+// Vista previa de la foto de justificación
+(function () {
+    var input = document.getElementById('justifyFoto');
+    var pv = document.getElementById('justifyFotoPreview');
+    if (!input || !pv) return;
+    input.addEventListener('change', function () {
+        var file = this.files && this.files[0];
+        if (!file) { pv.style.display = 'none'; return; }
+        if (file.size > 4 * 1024 * 1024) {
+            alert('La foto supera el máximo de 4 MB.');
+            this.value = '';
+            pv.style.display = 'none';
+            return;
+        }
+        pv.src = URL.createObjectURL(file);
+        pv.style.display = 'block';
+    });
+})();
 function closeJustify() {
     document.getElementById('justifyModal').classList.remove('is-open');
 }

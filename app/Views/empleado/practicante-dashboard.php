@@ -198,6 +198,16 @@
         <div class="dev-stat-label">Incidencias pendientes</div>
         <div class="dev-stat-value"><?= $incPendientes ?? 0 ?></div>
     </a>
+    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">
+        <span class="material-symbols-outlined stat-go">arrow_forward</span>
+        <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">balance</span></div>
+        <div class="dev-stat-label">Horas del mes</div>
+        <div class="dev-stat-value"><?= esc($horasMesReales ?? '0.00') ?> h</div>
+        <div style="font-size:11.5px;margin-top:2px;color:<?= ($saldoMesMin ?? 0) > 0 ? '#16a34a' : (($saldoMesMin ?? 0) < 0 ? '#dc2626' : 'inherit') ?>;font-weight:600;">
+            Saldo <?= esc($saldoMesTxt ?? '—') ?>
+            <span style="color:var(--sb-on-surface-variant);font-weight:500;">· prog. <?= esc($horasMesProg ?? '0.00') ?> h</span>
+        </div>
+    </a>
 </section>
 
 <?php

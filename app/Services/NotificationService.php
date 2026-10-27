@@ -58,16 +58,76 @@ class NotificationService
         $att = (new \App\Models\AttendanceModel())->find($attendanceId);
         if (!$att) return;
 
-        $admins = $this->getAdminsToNotify($adminId, $att['admin_id']);
+        $admins = $this->getAdminsToNotify($adminId, (int) ($att['admin_id'] ?? $adminId));
         $tipo = $att['status'] === 'late' ? 'tardanza' : ($att['time_out'] ? 'salida' : 'entrada');
+
+        // Tardanza y entrada se leen de time_in (una entrada tardía aún no
+        // tiene salida: antes se leía time_out = null y salía "a las ").
+        $campo = in_array($tipo, ['entrada', 'tardanza'], true) ? 'time_in' : 'time_out';
+        $hora  = substr((string) ($att[$campo] ?? ''), 0, 5);
 
         foreach ($admins as $admin) {
             $this->createNotification([
                 'admin_id' => $admin['id'],
                 'tipo'     => 'asistencia_' . $tipo,
                 'titulo'   => $this->getTituloAsistencia($tipo),
-                'mensaje'  => "{$att['name']} ({$att['dni']}) marcó {$tipo} a las " . substr($att[$tipo === 'entrada' ? 'time_in' : 'time_out'], 0, 5),
+                'mensaje'  => "{$att['name']} ({$att['dni']}) marcó {$tipo} a las {$hora}",
                 'datos'    => ['attendance_id' => $attendanceId, 'tipo' => $tipo, 'link' => 'admin/asistencias'],
+            ]);
+        }
+    }
+
+    /**
+     * Confirmación al propio colaborador cuando marca asistencia:
+     * notificación in-app + Web Push con la hora registrada, para que vea
+     * el resultado aunque cierre la pestaña.
+     */
+    public function marcacionRegistrada(int $attendanceId, int $adminId): void
+    {
+        $att = $this->attendanceModel->find($attendanceId);
+        if (! $att) return;
+
+        $esSalida = ! empty($att['time_out']);
+        $campo    = $esSalida ? 'time_out' : 'time_in';
+        $hora     = substr((string) ($att[$campo] ?? ''), 0, 5);
+        $estado   = (string) ($att['status'] ?? '');
+
+        $titulo = $esSalida ? 'Salida registrada' : 'Entrada registrada';
+        $extra  = '';
+        if (! $esSalida) {
+            $extra = match ($estado) {
+                'late' => ' · Tardanza registrada',
+                default => ' · Puntual',
+            };
+        }
+
+        $this->notifyEmpleado(
+            ['id' => (int) ($att['user_id'] ?? 0)],
+            $esSalida ? 'marcacion_salida' : 'marcacion_entrada',
+            $titulo,
+            "{$titulo} a las {$hora}{$extra}.",
+            'mi-panel'
+        );
+    }
+
+    /**
+     * El colaborador envió la justificación de una incidencia: avisa a los
+     * admins (in-app + Web Push) para que la revisen.
+     */
+    public function incidenciaEnRevision(int $incidentId, int $adminId): void
+    {
+        $inc = $this->incidentModel->find($incidentId);
+        if (! $inc) return;
+
+        $admins = $this->getAdminsToNotify($adminId, (int) ($inc['admin_id'] ?? $adminId));
+        foreach ($admins as $admin) {
+            $this->createNotification([
+                'admin_id' => (int) $admin['id'],
+                'tipo'     => 'incidencia_justificada',
+                'titulo'   => 'Justificación enviada: ' . $inc['tipo'],
+                'mensaje'  => ($inc['name'] ?? 'Un colaborador')
+                    . ' envió una justificación y espera tu revisión.',
+                'datos'    => ['incident_id' => $incidentId, 'link' => 'admin/incidencias'],
             ]);
         }
     }

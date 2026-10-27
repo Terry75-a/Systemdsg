@@ -479,6 +479,15 @@
                                     <p><small><?= $jMsg ?></small><?= esc($inc['justificacion']) ?></p>
                                 </div>
                             <?php endif; ?>
+                            <?php if (!empty($inc['evidencia'])): ?>
+                                <div class="tk-cell-sub" style="margin-top:4px;">
+                                    <a href="<?= esc(base_url('admin/evidencia/evidencias/' . $inc['evidencia'])) ?>"
+                                       target="_blank" rel="noopener"
+                                       style="display:inline-flex;align-items:center;gap:4px;color:var(--sb-primary);font-weight:600;">
+                                        <span class="material-symbols-outlined" style="font-size:14px;">photo_camera</span> Ver foto adjunta
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                             <?php if (!empty($inc['resuelta_en'])): ?>
                                 <div class="tk-cell-sub" style="margin-top:4px;">
                                     Cerrada por <b><?= esc($inc['resuelta_por'] ?? '—') ?></b> · <?= esc(date('d/m/Y H:i', strtotime($inc['resuelta_en']))) ?>

@@ -136,6 +136,24 @@ class EmployeeController extends BaseController
         $horasSemanaEsp  = round($horasDia * $diasSemana, 1);
         $horasMesEsp     = round($horasDia * $this->diasProgramadosEn(date('Y-m-01'), $hoy, $diasSemana), 1);
 
+        // ── Saldo del mes con la misma librería que /admin/horas:
+        //    horas reales vs las programadas en el horario ──
+        $mesIni   = date('Y-m-01');
+        $saldoMes = null;
+        try {
+            $resumen = (new \App\Libraries\Asistencia\HorasQuery())->porEmpleado(
+                $misRegistros,
+                [$user],
+                $miHorario ? [(int) $miHorario['id'] => $miHorario] : [],
+                $this->festivoModel->fechasEnRango($mesIni, $hoy, $adminId > 0 ? $adminId : null),
+                $mesIni,
+                $hoy
+            );
+            $saldoMes = $resumen['filas'][0] ?? null;
+        } catch (\Throwable $e) {
+            log_message('error', 'Saldo de horas en el panel del empleado: ' . $e->getMessage());
+        }
+
         // ── Progreso de la práctica (alta → fin del semestre) ──
         $inicioPrac = !empty($user['created']) ? substr((string) $user['created'], 0, 10) : $hoy;
         $finPrac    = (string) ($user['contract_end'] ?? '');
@@ -151,6 +169,17 @@ class EmployeeController extends BaseController
             'horasSemanaEsp'  => $horasSemanaEsp,
             'horasMes'        => $horasMes,
             'horasMesEsp'     => $horasMesEsp,
+            // Saldo de horas del mes (HorasQuery: reales − programadas)
+            'saldoMesMin'     => $saldoMes ? (int) $saldoMes['saldo_min'] : 0,
+            'saldoMesTxt'     => $saldoMes
+                ? \App\Libraries\Asistencia\HorasQuery::formatoMinutos((int) $saldoMes['saldo_min'])
+                : '—',
+            'horasMesReales'  => $saldoMes
+                ? \App\Libraries\Asistencia\HorasQuery::horasDecimales((int) $saldoMes['horas_reales'])
+                : '0.00',
+            'horasMesProg'    => $saldoMes
+                ? \App\Libraries\Asistencia\HorasQuery::horasDecimales((int) $saldoMes['horas_programadas'])
+                : '0.00',
             'diasHorarioSem'  => $diasSemana,
             'inicioPractica'  => $inicioPrac,
             'finPractica'     => $finPrac,
@@ -425,6 +454,11 @@ class EmployeeController extends BaseController
                 );
             }
 
+            // Push al colaborador (confirmación) y al admin (su equipo marcó)
+            $svc = new \App\Services\NotificationService();
+            $svc->marcacionRegistrada($attId, $adminId);
+            $svc->asistenciaMarcada($attId, $adminId);
+
             $s->setFlashdata('msg', "Entrada registrada a las {$entrada}" . ($status === 'late' ? ' · Tardanza' : ' · Puntual'));
             $s->setFlashdata('tipo', $status === 'late' ? 'warning' : 'success');
 
@@ -465,6 +499,11 @@ class EmployeeController extends BaseController
                     $salida
                 );
             }
+
+            // Push al colaborador (confirmación de salida) y al admin
+            $svc = new \App\Services\NotificationService();
+            $svc->marcacionRegistrada((int) $att['id'], $adminId);
+            $svc->asistenciaMarcada((int) $att['id'], $adminId);
 
             $s->setFlashdata('msg', "Salida registrada a las {$salida}" . ($salidaAnticipada ? ' · salida anticipada JUSTIFICADA, en revisión' : ''));
             $s->setFlashdata('tipo', 'success');
@@ -979,14 +1018,84 @@ class EmployeeController extends BaseController
             return redirect()->to(base_url('mi-panel'));
         }
 
-        $this->incidentModel->update($incId, [
+        // Foto opcional de respaldo (jpg/png/webp ≤ 4 MB)
+        $fotoErr = null;
+        $foto    = $this->guardarFotoJustificacion($userId, $fotoErr);
+        if ($fotoErr !== null) {
+            $s->setFlashdata('msg', $fotoErr);
+            $s->setFlashdata('tipo', 'danger');
+            return redirect()->to(base_url('mi-panel/incidencias'));
+        }
+
+        $data = [
             'estado'        => 'Revisión',
             'justificacion' => $just,
-        ]);
+        ];
+        if ($foto !== null) {
+            $data['evidencia'] = $foto;
+        }
+        $this->incidentModel->update($incId, $data);
 
-        $s->setFlashdata('msg', 'Justificacion enviada · queda en revisión');
+        // Aviso al admin (in-app + push): hay una justificación por revisar
+        (new \App\Services\NotificationService())
+            ->incidenciaEnRevision($incId, (int) ($inc['admin_id'] ?? 0));
+
+        $s->setFlashdata('msg', 'Justificacion enviada · queda en revisión'
+            . ($foto !== null ? ' · con foto adjunta' : ''));
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('mi-panel/incidencias'));
+    }
+
+    /**
+     * Guarda la foto opcional de una justificación en
+     * writable/uploads/evidencias con el nombre plano que ya sirve
+     * EvidenciaController (user_{id}_{fecha}_{hex}.{jpg|png|webp}).
+     * Devuelve el nombre, o null si no envió foto; $error si es inválida.
+     */
+    private function guardarFotoJustificacion(int $userId, ?string &$error): ?string
+    {
+        $error = null;
+        $file  = $this->request->getFile('evidencia');
+        if ($file === null || $file->getError() === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+        if (! $file->isValid()) {
+            $error = 'La foto no se pudo subir. Intenta de nuevo.';
+            return null;
+        }
+
+        $mime = (string) $file->getMimeType();
+        $ext  = match ($mime) {
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+            default      => '',
+        };
+        if ($ext === '') {
+            $error = 'Formato de foto no permitido (usa JPG, PNG o WEBP)';
+            return null;
+        }
+        if ($file->getSize() > 4 * 1024 * 1024) {
+            $error = 'La foto supera el máximo de 4 MB';
+            return null;
+        }
+
+        $dir = WRITEPATH . 'uploads/evidencias';
+        if (! is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+        $nombre = 'user_' . $userId . '_' . date('YmdHis')
+            . '_' . bin2hex(random_bytes(5)) . '.' . $ext;
+
+        try {
+            $file->move($dir, $nombre);
+        } catch (\Throwable $e) {
+            log_message('error', 'Foto de justificación no guardada: ' . $e->getMessage());
+            $error = 'No se pudo guardar la foto. Reintenta.';
+            return null;
+        }
+
+        return $nombre;
     }
 
     // ══════════════════════════════════════════════════════
