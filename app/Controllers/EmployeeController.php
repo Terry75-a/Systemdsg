@@ -296,7 +296,7 @@ class EmployeeController extends BaseController
         $data = $this->getMyData();
         $data['activePage']  = 'horario';
         $data['pageTitle']   = 'Mi Horario · DSG';
-        $data['greetingSub'] = 'Tu jornada de práctica configurada.';
+        $data['greetingSub'] = 'Tu jornada configurada por tu administrador.';
         $data['slot'] = view('empleado/practicante-horario', $data);
         return view('layouts/practicante-panel', $data);
     }

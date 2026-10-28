@@ -35,85 +35,72 @@
     .pf-set-state { font-size: 11.5px; font-weight: 600; color: var(--g-text-secondary); min-width: 28px; text-align: right; }
 </style>
 
-<div class="page-head">
-    <a class="page-back" href="<?= base_url('mi-panel') ?>">
-        <span class="material-symbols-outlined">arrow_back</span> Volver a Mi Panel
-    </a>
-    <div class="page-title">
-        <span class="material-symbols-outlined">person</span>
-        <h2>Mi Perfil</h2>
-    </div>
-    <p class="page-sub">Tu información personal y preferencias del panel.</p>
-</div>
+<?php
+    $iniciales = mb_strtoupper(implode('', array_map(static fn ($p) => mb_substr($p, 0, 1), array_slice(preg_split('/\s+/', trim((string) ($u['name'] ?? 'U'))), 0, 2))));
+?>
 
-<div class="pf-grid">
-    <!-- Mis datos -->
-    <div class="pf-card">
-        <div class="pf-card-head"><h2><span class="material-symbols-outlined">badge</span> Mis datos</h2></div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">person</span></div>
-            <div><div class="pf-lab">Nombre</div><div class="pf-val"><?= esc($u['name'] ?? '') ?></div></div>
-        </div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">credit_card</span></div>
-            <div><div class="pf-lab">DNI</div><div class="pf-val mono"><?= esc($u['dni'] ?? '—') ?></div></div>
-        </div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">mail</span></div>
-            <div><div class="pf-lab">Correo</div><div class="pf-val"><?= esc($u['email'] ?? '—') ?></div></div>
-        </div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">badge</span></div>
-            <div><div class="pf-lab">Cargo</div><div class="pf-val"><?= esc(($u['cargo'] ?? '') ?: ($esPrac ? 'Practicante' : 'Colaborador')) ?></div></div>
-        </div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">schedule</span></div>
-            <div>
-                <div class="pf-lab">Horario</div>
-                <div class="pf-val mono"><?= $sinHorario ? 'Sin horario asignado' : esc(($horaEntrada ? substr($horaEntrada, 0, 5) : '?') . ' - ' . ($horaSalida ? substr($horaSalida, 0, 5) : '?') . ($diasHorario ? ' · ' . $diasHorario : '')) ?></div>
-            </div>
-        </div>
-        <div class="pf-row">
-            <div class="pf-ic"><span class="material-symbols-outlined">fingerprint</span></div>
-            <div>
-                <div class="pf-lab">Biometría</div>
-                <div class="pf-val">Huella: <?= !empty($u['huella_registrada']) ? 'sí' : 'no' ?> · Rostro: <?= !empty($u['rostro_registrado']) ? 'sí' : 'no' ?></div>
-            </div>
+<!-- Identidad -->
+<section class="tk-card tk-pf-id tk-anim-item">
+    <div class="tk-pf-avatar"><?= esc($iniciales) ?></div>
+    <div class="tk-pf-who">
+        <h3><?= esc($u['name'] ?? '') ?></h3>
+        <p><?= esc($u['email'] ?? '—') ?></p>
+        <div class="tk-pf-pills">
+            <span class="tk-pill-state tk-st-ok"><?= $esPrac ? 'Practicante' : 'Colaborador' ?></span>
+            <?php if (!empty($u['personal_code'])): ?><span class="tk-code"><?= esc($u['personal_code']) ?></span><?php endif; ?>
+            <?php if (!empty($u['cargo'])): ?><span class="tk-pill-state tk-st-neutral"><?= esc($u['cargo']) ?></span><?php endif; ?>
         </div>
     </div>
+</section>
+
+<div class="tk-grid-2">
+    <!-- Mis datos -->
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head"><div><h3>Mis datos</h3><p>Los cambia tu administrador desde Personal.</p></div></div>
+        <div class="tk-kv">
+            <div class="tk-kv-row"><span>Nombre</span><span><?= esc($u['name'] ?? '') ?></span></div>
+            <div class="tk-kv-row"><span>DNI</span><span class="tk-mono"><?= esc($u['dni'] ?? '—') ?></span></div>
+            <div class="tk-kv-row"><span>Correo</span><span><?= esc($u['email'] ?? '—') ?></span></div>
+            <div class="tk-kv-row"><span>Cargo</span><span><?= esc(($u['cargo'] ?? '') ?: ($esPrac ? 'Practicante' : 'Colaborador')) ?></span></div>
+            <div class="tk-kv-row"><span>Horario</span><span class="tk-mono"><?= $sinHorario ? 'Sin horario asignado' : esc(($horaEntrada ? substr($horaEntrada, 0, 5) : '?') . ' - ' . ($horaSalida ? substr($horaSalida, 0, 5) : '?') . ($diasHorario ? ' · ' . $diasHorario : '')) ?></span></div>
+            <div class="tk-kv-row"><span>Biometría</span><span>
+                <span class="tk-st <?= !empty($u['huella_registrada']) ? 'tk-st-present' : 'tk-st-justified' ?>">Huella <?= !empty($u['huella_registrada']) ? 'sí' : 'no' ?></span>
+                <span class="tk-st <?= !empty($u['rostro_registrado']) ? 'tk-st-present' : 'tk-st-justified' ?>">Rostro <?= !empty($u['rostro_registrado']) ? 'sí' : 'no' ?></span>
+            </span></div>
+        </div>
+    </section>
 
     <!-- Preferencias -->
-    <div class="pf-card">
-        <div class="pf-card-head"><h2><span class="material-symbols-outlined">tune</span> Preferencias</h2></div>
-
-        <div class="pf-set">
-            <div class="pf-set-info">
-                <div class="pf-set-title"><span class="material-symbols-outlined">dark_mode</span> Modo oscuro</div>
-                <div class="pf-set-desc">Cambia la apariencia del panel a colores oscuros.</div>
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head"><div><h3>Preferencias</h3><p>Ajustes de este navegador.</p></div></div>
+        <div class="tk-kv">
+            <div class="tk-set">
+                <div class="tk-set-info">
+                    <strong>Modo oscuro</strong>
+                    <span>Cambia la apariencia del panel a colores oscuros.</span>
+                </div>
+                <span class="tk-set-state" id="pfDarkState">—</span>
+                <button type="button" class="pf-toggle" id="pfDarkToggle" aria-label="Modo oscuro"></button>
             </div>
-            <span class="pf-set-state" id="pfDarkState">—</span>
-            <button type="button" class="pf-toggle" id="pfDarkToggle" aria-label="Modo oscuro"></button>
-        </div>
-
-        <div class="pf-set">
-            <div class="pf-set-info">
-                <div class="pf-set-title"><span class="material-symbols-outlined">notifications_active</span> Notificaciones</div>
-                <div class="pf-set-desc">Recibe avisos cuando tu administrador resuelva tus incidencias. Actívalo para permitir notificaciones del navegador.</div>
+            <div class="tk-set">
+                <div class="tk-set-info">
+                    <strong>Notificaciones</strong>
+                    <span>Avisos cuando tu administrador resuelva tus incidencias.</span>
+                </div>
+                <span class="tk-set-state" id="pfNotifState">—</span>
+                <button type="button" class="pf-toggle" id="pfNotifToggle" aria-label="Notificaciones"></button>
             </div>
-            <span class="pf-set-state" id="pfNotifState">—</span>
-            <button type="button" class="pf-toggle" id="pfNotifToggle" aria-label="Notificaciones"></button>
-        </div>
-
-        <div class="pf-set">
-            <div class="pf-set-info">
-                <div class="pf-set-title"><span class="material-symbols-outlined">account_circle</span> Cuenta</div>
-                <div class="pf-set-desc">Sesión iniciada como <strong><?= esc($u['email'] ?? session()->get('user_email') ?? '') ?></strong>.</div>
+            <div class="tk-set">
+                <div class="tk-set-info">
+                    <strong>Cuenta</strong>
+                    <span>Sesión iniciada como <?= esc($u['email'] ?? session()->get('user_email') ?? '') ?>.</span>
+                </div>
+                <a href="<?= base_url('logout') ?>" class="dev-btn dev-btn-outline dev-btn-sm">
+                    <span class="material-symbols-outlined">logout</span> Cerrar sesión
+                </a>
             </div>
-            <a href="<?= base_url('logout') ?>" class="mi-btn" style="text-decoration:none;">
-                <span class="material-symbols-outlined">logout</span> Cerrar sesión
-            </a>
         </div>
-    </div>
+    </section>
 </div>
 
 <script>

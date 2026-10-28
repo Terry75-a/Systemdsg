@@ -209,44 +209,38 @@
     $asPctClass = $pct >= 80 ? 'good' : ($pct >= 60 ? 'mid' : 'bad');
 ?>
 
-<div class="page-head">
-    <a class="page-back" href="<?= base_url('mi-panel') ?>">
-        <span class="material-symbols-outlined">arrow_back</span> Volver a Mi Panel
-    </a>
-    <div class="page-title">
-        <span class="material-symbols-outlined">fact_check</span>
-        <h2>Mi Asistencia</h2>
-    </div>
-    <p class="page-sub">Historial de marcas de <?= esc($mesesEs[$month]) ?> de <?= $year ?> (<?= date('Y-m') ?>).</p>
-</div>
+<?php
+    $nTard  = (int) ($misTardanzas ?? 0);
+    $nFalta = (int) ($misFaltas ?? 0);
+    $nPunt  = (int) ($misAsistencias ?? 0);
+    $pctOn  = $total > 0 ? round($nPunt / $total * 100, 1) : 0;
+?>
 
-<!-- Resumen de puntualidad -->
-<div class="as-summary">
-    <div class="as-pct <?= $asPctClass ?>">
-        <b><?= $pct ?>%</b>
-        <span>puntualidad</span>
-    </div>
-    <div class="as-bar">
-        <div class="as-bar-track"><div class="as-bar-fill <?= $asPctClass === 'bad' ? 'bad' : '' ?>" style="width:<?= $pct ?>%;"></div></div>
-        <div class="as-bar-meta">
-            <span><?= $misAsistencias ?? 0 ?> puntual · <?= $misTardanzas ?? 0 ?> tardanza<?= ($misTardanzas ?? 0) === 1 ? '' : 's' ?></span>
-            <span><?= $misFaltas ?? 0 ?> falta<?= ($misFaltas ?? 0) === 1 ? '' : 's' ?></span>
-        </div>
-    </div>
-    <div class="as-legend">
-        <span><i></i> Puntual</span>
-        <span class="lg-late"><i></i> Tardanza</span>
-        <span class="lg-absent"><i></i> Falta</span>
-        <span class="lg-none"><i></i> Sin marcar</span>
-        <span class="lg-fest"><i></i> Festivo</span>
-    </div>
-</div>
+<!-- KPIs del mes -->
+<section class="tk-stats tk-stats-4">
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">percent</span><div><p class="tk-stat-lbl">Puntualidad</p><p class="tk-stat-val"><?= $pct ?>%</p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">check_circle</span><div><p class="tk-stat-lbl">Puntual</p><p class="tk-stat-val"><?= $nPunt ?></p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">timer</span><div><p class="tk-stat-lbl">Tardanzas</p><p class="tk-stat-val"><?= $nTard ?></p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">event_busy</span><div><p class="tk-stat-lbl">Faltas</p><p class="tk-stat-val"><?= $nFalta ?></p></div></div>
+</section>
 
 <!-- Calendario del mes -->
-<div class="as-cal-card">
-    <div class="as-cal-head">
-        <h3><span class="material-symbols-outlined">calendar_month</span> <?= esc(ucfirst($mesesEs[$month])) ?> <?= $year ?></h3>
-        <span class="as-hoy">Hoy · <?= date('d/m') ?></span>
+<section class="tk-card tk-ovh tk-anim-item">
+    <div class="tk-card-head">
+        <div><h3><?= esc(ucfirst($mesesEs[$month])) ?> <?= $year ?></h3><p>Toca un día para ver su detalle.</p></div>
+        <span class="tk-pill-state tk-st-neutral">Hoy · <?= date('d/m') ?></span>
+    </div>
+    <div class="tk-split tk-asum" style="padding:12px 16px 0;">
+        <div class="tk-split-track">
+            <?php if ($total > 0): ?>
+                <div class="tk-split-on" style="--w: <?= $pctOn ?>%"></div>
+                <?php if ($nTard + $nFalta > 0): ?><div class="tk-split-late"></div><?php endif; ?>
+            <?php endif; ?>
+        </div>
+        <div class="tk-split-lbl">
+            <span><i class="tk-dot tk-dot-on"></i><?= $nPunt ?> puntual</span>
+            <span><i class="tk-dot tk-dot-late"></i><?= $nTard + $nFalta ?> con tardanza o falta</span>
+        </div>
     </div>
     <div class="as-cal">
         <?php foreach ($dowEs as $i => $d): ?>
@@ -260,7 +254,7 @@
             $rec = $dayInfo[$date] ?? null;
             $st = $rec ? $rec['st'] : null;
             $festivo = $festivosMes[$date] ?? null;
-            $cls = $st ? ' ' . ($st === 'present' ? 'present' : ($st === 'late' ? 'late' : 'absent')) : '';
+            $cls = $st ? ' ' . ($st === 'present' || $st === 'absent_justified' ? 'present' : ($st === 'late' ? 'late' : 'absent')) : '';
             $cls .= $festivo !== null ? ' festivo' : '';
             $isToday = $date === $hoy;
         ?>
@@ -274,76 +268,66 @@
                 data-inc="<?= isset($dayInc[$date]) ? 1 : 0 ?>"
                 data-fest="<?= $festivo !== null ? esc($festivo) : '' ?>"
                 aria-label="<?= $date ?><?= $festivo !== null ? ' · ' . esc($festivo) : '' ?>">
-                <?= $d ?>
+                <span class="as-num"><?= $d ?></span>
+                <?php if ($rec && $rec['in'] !== ''): ?><span class="as-in"><?= esc($rec['in']) ?></span><?php endif; ?>
                 <?php if ($festivo !== null): ?><span class="as-fest-badge" title="<?= esc($festivo) ?>"></span><?php endif; ?>
-                <?php if ($st): ?><span class="as-st-dot"></span><?php endif; ?>
             </button>
         <?php endfor; ?>
     </div>
-
+    <div class="tk-pivot-legend" style="padding:0 16px 14px;">
+        <span><i class="tk-dot tk-dot-on"></i>Puntual</span>
+        <span><i class="tk-dot" style="background:#d97706"></i>Tardanza</span>
+        <span><i class="tk-dot tk-dot-late"></i>Falta</span>
+        <span><i class="tk-dot" style="background:#8b5cf6"></i>Festivo</span>
+        <span><i class="tk-dot" style="background:var(--sb-surface-container-high)"></i>Sin marcar</span>
+    </div>
     <?php if (! empty($festivosProximos)): ?>
-        <div class="as-fest-list">
-            <?php foreach ($festivosProximos as $fFecha => $fNombre): ?>
-                <span class="as-fest-chip">
-                    <span class="material-symbols-outlined">celebration</span>
-                    <?= esc(date('d/m', strtotime($fFecha))) ?> · <?= esc($fNombre) ?>
-                </span>
-            <?php endforeach; ?>
-        </div>
+        <p class="tk-card-foot">
+            Próximos festivos:
+            <?php $sep = ''; foreach ($festivosProximos as $fFecha => $fNombre): ?><?= $sep ?><strong><?= esc(date('d/m', strtotime($fFecha))) ?></strong> <?= esc($fNombre) ?><?php $sep = ' · '; endforeach; ?>
+        </p>
     <?php endif; ?>
-</div>
+</section>
 
 <!-- Historial -->
-<div class="as-list-card">
-    <div class="as-list-head">
-        <span class="material-symbols-outlined">history</span>
-        <h3>Historial del mes</h3>
+<section class="tk-card tk-ovh tk-anim-item">
+    <div class="tk-card-head">
+        <div><h3>Historial del mes</h3><p><?= $total ?> <?= $total === 1 ? 'marcación' : 'marcaciones' ?> en <?= esc($mesesEs[$month]) ?>.</p></div>
     </div>
-    <div>
-        <?php if (empty($misRegistros ?? [])): ?>
-            <div class="as-empty">
-                <span class="material-symbols-outlined">inbox</span>
-                Aún no hay registros este mes. Marca tu asistencia desde Mi Panel.
-            </div>
-        <?php else: ?>
-            <?php foreach ($misRegistros as $r):
-                $st = $r['status'] ?? 'absent';
-                $ic = match($st) { 'present' => 'check_circle', 'late' => 'schedule', 'absent' => 'cancel', 'absent_justified' => 'verified', 'no_exit' => 'logout', default => 'help' };
-                $stCls = match($st) { 'present' => 'ok', 'late' => 'warn', 'absent' => 'err', 'absent_justified' => 'ok', default => 'warn' };
-                $label = match($st) { 'present' => 'Puntual', 'late' => 'Tardanza', 'absent' => 'Falta', 'absent_justified' => 'Falta justificada', 'no_exit' => 'Sin salida', default => ucfirst($st) };
-                $ts = strtotime($r['date'] ?? 'now');
-                $isToday = ($r['date'] ?? '') === $hoy;
-            ?>
-                <div class="as-row">
-                    <div class="as-datebox <?= $isToday ? 'todaybox' : '' ?>">
-                        <b><?= date('d', $ts) ?></b>
-                        <span><?= esc($mesShort[$month]) ?></span>
-                    </div>
-                    <div class="as-main">
-                        <div class="as-status <?= $stCls ?>">
-                            <span class="material-symbols-outlined"><?= $ic ?></span>
-                            <span class="st-tag"><?= $label ?></span>
-                            <?php if ($isToday): ?><span class="as-hoy">Hoy</span><?php endif; ?>
-                        </div>
-                        <div class="as-meta">
-                            <span><?= esc(ucfirst($dowLargo[(int) date('N', $ts)])) ?>, <?= (int) date('d', $ts) ?></span>
-                            <?php if (!empty($r['evidencia'])): ?>
-                                <span class="bio-ic"><span class="material-symbols-outlined" title="Verificación biométrica">fingerprint</span> biometría</span>
-                            <?php endif; ?>
-                            <?php if (!empty($r['observacion'])): ?>
-                                <span>· <?= esc($r['observacion']) ?></span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="as-times">
-                        <?php if (!empty($r['time_in'])): ?><span class="as-time"><?= esc(substr($r['time_in'], 0, 5)) ?></span><span class="as-arrow">→</span><?php endif; ?>
-                        <span class="as-time out"><?= esc(!empty($r['time_out']) ? substr($r['time_out'], 0, 5) : '--:--') ?></span>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-</div>
+    <?php if (empty($misRegistros ?? [])): ?>
+        <div class="tk-void">
+            <span class="material-symbols-outlined">inbox</span>
+            Aún no hay registros este mes. Marca tu asistencia desde Mi Panel.
+        </div>
+    <?php else: ?>
+        <div class="tk-scroll">
+            <table class="tk-table tk-table-hover" style="min-width:560px;">
+                <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Verificación</th><th>Observación</th><th class="tk-r">Estado</th></tr></thead>
+                <tbody>
+                <?php foreach ($misRegistros as $i => $r):
+                    $st    = $r['status'] ?? 'absent';
+                    $cls   = match ($st) { 'present' => 'tk-st-present', 'late' => 'tk-st-late', 'absent_justified', 'no_exit' => 'tk-st-justified', default => 'tk-st-absent' };
+                    $label = match ($st) { 'present' => 'Puntual', 'late' => 'Tardanza', 'absent' => 'Falta', 'absent_justified' => 'Falta justificada', 'no_exit' => 'Sin salida', default => ucfirst($st) };
+                    $ts    = strtotime($r['date'] ?? 'now');
+                    $isToday = ($r['date'] ?? '') === $hoy;
+                ?>
+                    <tr style="animation-delay: <?= min($i, 12) * 40 ?>ms">
+                        <td class="tk-medium">
+                            <?= date('d', $ts) ?> <?= esc($mesShort[(int) date('n', $ts)]) ?>
+                            <span class="tk-sub2"><?= esc(ucfirst($dowLargo[(int) date('N', $ts)])) ?><?= $isToday ? ' · hoy' : '' ?></span>
+                        </td>
+                        <td class="tk-mono"><?= esc(!empty($r['time_in']) ? substr($r['time_in'], 0, 5) : '—') ?></td>
+                        <td class="tk-mono"><?= esc(!empty($r['time_out']) ? substr($r['time_out'], 0, 5) : '—') ?></td>
+                        <td class="tk-muted"><?php if (!empty($r['evidencia'])): ?><span class="tk-bio"><span class="material-symbols-outlined">fingerprint</span>Biometría</span><?php else: ?>—<?php endif; ?></td>
+                        <td class="tk-muted" style="white-space:normal;max-width:260px;"><?= esc(($r['observacion'] ?? '') ?: '—') ?></td>
+                        <td class="tk-r"><span class="tk-st <?= $cls ?>"><?= $label ?></span></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</section>
 
 <!-- Modal · detalle del día -->
 <div class="dm-overlay" id="dayModal">
@@ -473,5 +457,6 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.classList.contains('is-open')) cerrar();
     });
+    requestAnimationFrame(function () { document.querySelectorAll('.tk-asum').forEach(function (el) { el.classList.add('tk-ready'); }); });
 })();
 </script>

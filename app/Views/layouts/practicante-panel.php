@@ -14,30 +14,38 @@
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-panel.css?v=' . filemtime(FCPATH . 'css/index/components/tk-panel.css')) ?>">
 </head>
 <body>
 <div class="dev-layout">
     <?= view('partials/practicante-sidebar', ['activePage' => $activePage ?? 'dashboard']) ?>
 
     <div class="dev-main">
-        <header class="dev-topbar">
-            <?php $diasEs = ['', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']; ?>
-    <div class="dev-topbar-row">
-                <div class="pra-greeting">
-                    <h1>Hola, <strong><?= esc(session()->get('user_name') ?? 'Colaborador') ?></strong></h1>
+        <?php
+            $diasEs  = ['', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+            $nombre  = (string) (session()->get('user_name') ?? 'Colaborador');
+            $tkTitle = ($activePage ?? 'dashboard') === 'dashboard'
+                ? 'Hola, ' . (explode(' ', trim($nombre))[0] ?: $nombre)
+                : trim(str_replace('· DSG', '', (string) ($pageTitle ?? 'Mi Panel')));
+        ?>
+        <div class="dev-content tk-dash tk-mp">
+            <div class="tk-title">
+                <div>
+                    <h1><?= esc($tkTitle) ?></h1>
                     <p><?= esc($greetingSub ?? 'Bienvenido a tu panel.') ?></p>
-                    <div class="pra-page-meta">
-                        <div class="pra-date">
-                            <span class="material-symbols-outlined">calendar_today</span>
-                            <?= esc(ucfirst($diasEs[(int) date('N')])) ?>, <?= date('d/m/Y') ?>
-                        </div>
-                        <div class="pra-clock-pill" id="praClockTrack">--:--</div>
-                    </div>
+                </div>
+                <div class="tk-title-actions">
+                    <span class="tk-mp-chip">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <?= esc(ucfirst($diasEs[(int) date('N')])) ?>, <?= date('d/m/Y') ?>
+                    </span>
+                    <span class="tk-mp-chip tk-mp-num" id="praClockTrack">--:--</span>
                 </div>
             </div>
-        </header>
-
-        <div class="dev-content">
             <?php $flashMsg = session()->getFlashdata('msg'); ?>
             <?php $flashTipo = session()->getFlashdata('tipo') ?? 'success'; ?>
             <?php if (!empty($flashMsg)): ?>

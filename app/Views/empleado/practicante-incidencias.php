@@ -120,20 +120,6 @@
     if (($sPend + $sRes) > 100 && $totalInc > 0) { $sRes = 100 - $sPend; }
 ?>
 
-<div class="page-head">
-    <a class="page-back" href="<?= base_url('mi-panel') ?>">
-        <span class="material-symbols-outlined">arrow_back</span> Volver a Mi Panel
-    </a>
-    <div class="page-title">
-        <span class="material-symbols-outlined">warning</span>
-        <h2>Mis Incidencias</h2>
-    </div>
-    <p class="page-sub">Tardanzas, faltas y otras situaciones registradas sobre tu asistencia.</p>
-    <button type="button" class="dev-btn dev-btn-primary" style="margin-top:12px;" onclick="openCreate()">
-        <span class="material-symbols-outlined">add_task</span> Registrar incidencia
-    </button>
-</div>
-
 <?php
     // ── Situaciones del mes sin incidencia reportada ──
     $incPorAtt = [];
@@ -143,10 +129,10 @@
         $incPorFecha[date('Y-m-d', strtotime($ix['fecha'] ?? 'now'))] = true;
     }
     $est2tipo = [
-        'late'     => ['Tardanza',          'schedule', 'Llegaste tarde'],
-            'absent'   => ['Falta',             'cancel',   'No registraste asistencia'],
-            'absent_justified' => ['Falta justificada', 'verified', 'Falta justificada por el administrador'],
-        'no_exit'  => ['Salida anticipada', 'logout',   'Sin marcación de salida'],
+        'late'             => ['Tardanza',          'Llegaste tarde'],
+        'absent'           => ['Falta',             'No registraste asistencia'],
+        'absent_justified' => ['Falta justificada', 'Falta justificada por el administrador'],
+        'no_exit'          => ['Salida anticipada', 'Sin marcación de salida'],
     ];
     $sitPend = [];
     foreach ($misRegistros ?? [] as $r) {
@@ -155,133 +141,119 @@
         $rid = (int) ($r['id'] ?? 0);
         $rdate = date('Y-m-d', strtotime($r['date'] ?? 'now'));
         if (($incPorAtt[$rid] ?? false) || ($incPorFecha[$rdate] ?? false)) continue;
-        $sitPend[] = ['att' => $r, 'tipo' => $est2tipo[$st][0], 'ico' => $est2tipo[$st][1], 'txt' => $est2tipo[$st][2]];
+        $sitPend[] = ['att' => $r, 'tipo' => $est2tipo[$st][0], 'txt' => $est2tipo[$st][1]];
     }
     $sitPend = array_slice($sitPend, 0, 6);
+    $estCls = static fn (string $e) => match ($e) {
+        'Resuelta', 'Justificada', 'Aprobada' => 'tk-st-ok2',
+        'Rechazada', 'Desestimada'            => 'tk-st-bad',
+        'Revisión'                            => 'tk-st-wait',
+        default                               => 'tk-st-late',
+    };
 ?>
+
+<!-- KPIs -->
+<section class="tk-stats tk-stats-4">
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">list_alt</span><div><p class="tk-stat-lbl">Incidencias</p><p class="tk-stat-val"><?= $totalInc ?></p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">pending</span><div><p class="tk-stat-lbl">Pendientes</p><p class="tk-stat-val"><?= $pendientes ?></p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">hourglass_top</span><div><p class="tk-stat-lbl">En revisión</p><p class="tk-stat-val"><?= $revision ?></p></div></div>
+    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">task_alt</span><div><p class="tk-stat-lbl">Resueltas</p><p class="tk-stat-val"><?= $resueltas + $desest ?></p></div></div>
+</section>
+
 <?php if (count($sitPend) > 0): ?>
 <!-- Situaciones sin reportar -->
-<div class="mi-card" style="margin-bottom:18px; border-color: rgba(245,158,11,.45);">
-    <div class="mi-card-head" style="display:flex;align-items:center;gap:8px;">
-        <span class="material-symbols-outlined" style="color:#f59e0b;font-size:18px;">lightbulb</span>
-        <h3>Situaciones sin reportar · puedes justificarlas</h3>
+<section class="tk-card tk-ovh tk-anim-item">
+    <div class="tk-card-head">
+        <div><h3>Situaciones sin reportar</h3><p>Tardanzas o faltas de este mes que aún puedes justificar.</p></div>
+        <span class="tk-pill-state tk-st-late"><?= count($sitPend) ?> por reportar</span>
     </div>
-    <div>
-        <?php foreach ($sitPend as $sp): ?>
-            <div class="mi-item">
-                <div class="mi-ic" style="background:rgba(245,158,11,.12);color:#d97706;"><span class="material-symbols-outlined"><?= $sp['ico'] ?></span></div>
-                <div class="mi-main">
-                    <div class="mi-top">
-                        <span class="mi-tipo"><?= esc($sp['tipo']) ?></span>
-                    </div>
-                    <div class="mi-fecha"><?= esc(date('d/m/Y', strtotime($sp['att']['date'] ?? 'now'))) ?></div>
-                    <div class="mi-detalle"><?= esc($sp['txt']) ?><?= ! empty($sp['att']['time_in']) ? ' · Entrada ' . esc($sp['att']['time_in']) : '' ?></div>
-                </div>
-                <div class="mi-act">
-                    <button type="button" class="mi-btn" onclick="openCreate('<?= esc($sp['tipo']) ?>', '<?= esc(date('Y-m-d', strtotime($sp['att']['date'] ?? 'now'))) ?>', <?= (int) ($sp['att']['id'] ?? 0) ?>)">
-                        <span class="material-symbols-outlined">edit_note</span> Reportar
-                    </button>
-                </div>
-            </div>
-        <?php endforeach; ?>
+    <div class="tk-scroll">
+        <table class="tk-table tk-table-hover" style="min-width:520px;">
+            <thead><tr><th>Tipo</th><th>Fecha</th><th>Detalle</th><th class="tk-r">Acción</th></tr></thead>
+            <tbody>
+            <?php foreach ($sitPend as $i => $sp): $f = date('Y-m-d', strtotime($sp['att']['date'] ?? 'now')); ?>
+                <tr style="animation-delay: <?= $i * 50 ?>ms">
+                    <td class="tk-medium"><?= esc($sp['tipo']) ?></td>
+                    <td class="tk-mono"><?= esc(date('d/m/Y', strtotime($f))) ?></td>
+                    <td class="tk-muted"><?= esc($sp['txt']) ?><?= ! empty($sp['att']['time_in']) ? ' · entrada ' . esc(substr($sp['att']['time_in'], 0, 5)) : '' ?></td>
+                    <td class="tk-r">
+                        <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="openCreate('<?= esc($sp['tipo']) ?>', '<?= esc($f) ?>', <?= (int) ($sp['att']['id'] ?? 0) ?>)">
+                            <span class="material-symbols-outlined">edit_note</span> Reportar
+                        </button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
-</div>
+</section>
 <?php endif; ?>
 
-<!-- Resumen -->
-<div class="mi-sum">
-    <div class="mi-stat"><b><?= $totalInc ?></b><span><?= $totalInc === 1 ? 'incidencia' : 'incidencias' ?></span></div>
-    <div class="mi-stat"><b><i style="background:#f59e0b;"></i><?= $pendientes ?></b><span><?= $pendientes === 1 ? 'pendiente' : 'pendientes' ?></span></div>
-    <div class="mi-stat"><b><i style="background:#3b82f6;"></i><?= $revision ?></b><span><?= $revision === 1 ? 'en revisión' : 'en revisión' ?></span></div>
-    <div class="mi-stat"><b><i style="background:#22c55e;"></i><?= $resueltas + $desest ?></b><span><?= ($resueltas + $desest) === 1 ? 'resuelta' : 'resueltas' ?></span></div>
-    <div class="mi-track">
-        <i style="width:<?= $sPend ?>%; background:#f59e0b;"></i>
-        <i style="width:<?= max(0, $totalInc > 0 ? ($revision / $totalInc) * 100 : 0) ?>%; background:#3b82f6;"></i>
-        <i style="width:<?= $sRes ?>%; background:#22c55e;"></i>
-    </div>
-</div>
-
 <!-- Lista -->
-<div class="mi-card">
-    <div class="mi-card-head">
-        <h3>Todas mis incidencias</h3>
+<section class="tk-card tk-ovh tk-anim-item">
+    <div class="tk-card-head">
+        <div><h3>Todas mis incidencias</h3><p>Lo que reportaste y la respuesta de tu administrador.</p></div>
+        <button type="button" class="dev-btn dev-btn-primary dev-btn-sm" onclick="openCreate()">
+            <span class="material-symbols-outlined">add</span> Registrar incidencia
+        </button>
     </div>
-    <div>
-        <?php if ($totalInc === 0): ?>
-            <div class="mi-empty">
-                <span class="material-symbols-outlined">sentiment_satisfied</span>
-                No tienes incidencias registradas. Bien hecho.
-            </div>
-        <?php else: ?>
-            <?php foreach ($misIncidencias as $inc):
-                $iest = $inc['estado'] ?? 'Pendiente';
-                $tipo = $inc['tipo'] ?? 'Otro';
-                $ico  = $tInfo[$tipo]['icon'] ?? 'help';
-                $dot  = $eDot[$iest] ?? 'dot-pendiente';
-                $hasJust = !empty($inc['justificacion']);
-                $justMsg = match($iest) {
-                    'Resuelta', 'Justificada' => 'Justificación aceptada',
-                    'Revisión' => 'Justificación en revisión',
-                    'Desestimada' => 'Desestimada por el administrador',
-                    'Rechazada' => 'Rechazada por el administrador',
-                    default => 'Justificación enviada',
-                };
-                $justIco = match($iest) {
-                    'Revisión' => 'hourglass_top',
-                    'Desestimada', 'Rechazada' => 'do_not_disturb_on',
-                    default => 'verified',
-                };
-            ?>
-                <div class="mi-item">
-                    <div class="mi-ic"><span class="material-symbols-outlined"><?= esc($ico) ?></span></div>
-                    <div class="mi-main">
-                        <div class="mi-top">
-                            <span class="mi-tipo"><?= esc($tipo) ?></span>
-                            <span class="mi-estado <?= $dot ?>"><i></i> <?= esc($iest) ?></span>
-                        </div>
-                        <div class="mi-fecha"><?= esc(date('d/m/Y H:i', strtotime($inc['fecha'] ?? 'now'))) ?></div>
-                        <?php if (!empty($inc['detalle'])): ?>
-                            <div class="mi-detalle"><?= esc($inc['detalle']) ?></div>
-                        <?php endif; ?>
-                        <?php if ($hasJust): ?>
-                            <div class="mi-just">
-                                <span class="material-symbols-outlined"><?= $justIco ?></span>
-                                <p><small><?= $justMsg ?></small><?= esc($inc['justificacion']) ?></p>
-                            </div>
-                        <?php elseif ($iest === 'Revisión' && !$hasJust): ?>
-                            <div class="mi-just">
-                                <span class="material-symbols-outlined">hourglass_top</span>
-                                <p><small>En revisión</small>Tu administrador está revisando esta incidencia.</p>
-                            </div>
-                        <?php elseif (($iest === 'Resuelta' || $iest === 'Justificada') && !$hasJust): ?>
-                            <div class="mi-just">
-                                <span class="material-symbols-outlined">verified</span>
-                                <p><small>Resuelta</small>Tu administrador la marcó como resuelta.</p>
-                            </div>
-                        <?php endif; ?>
-                        <?php if (!empty($inc['evidencia'])): ?>
-                            <div class="mi-just">
-                                <span class="material-symbols-outlined">photo_camera</span>
-                                <p><small>Foto adjunta</small>
-                                    <a href="<?= esc(base_url('mi-panel/evidencia/evidencias/' . $inc['evidencia'])) ?>"
-                                       target="_blank" rel="noopener"
-                                       style="color:var(--g-primary);font-weight:600;">Ver foto de la justificación ↗</a>
-                                </p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <?php if ($iest === 'Pendiente'): ?>
-                        <div class="mi-act">
-                            <button type="button" class="mi-btn" onclick="openJustify(<?= (int) $inc['id'] ?>)">
-                                <span class="material-symbols-outlined">edit_note</span> Justificar
-                            </button>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-</div>
+    <?php if ($totalInc === 0): ?>
+        <div class="tk-void">
+            <span class="material-symbols-outlined">sentiment_satisfied</span>
+            No tienes incidencias registradas. Bien hecho.
+        </div>
+    <?php else: ?>
+        <div class="tk-scroll">
+            <table class="tk-table tk-table-hover" style="min-width:640px;">
+                <thead><tr><th>Tipo</th><th>Fecha</th><th>Detalle y respuesta</th><th>Estado</th><th class="tk-r">Acción</th></tr></thead>
+                <tbody>
+                <?php foreach ($misIncidencias as $i => $inc):
+                    $iest = (string) ($inc['estado'] ?? 'Pendiente');
+                    $hasJust = !empty($inc['justificacion']);
+                    $justMsg = match ($iest) {
+                        'Resuelta', 'Justificada' => 'Justificación aceptada',
+                        'Revisión'                => 'Justificación en revisión',
+                        'Desestimada'             => 'Desestimada por el administrador',
+                        'Rechazada'               => 'Rechazada por el administrador',
+                        default                   => 'Justificación enviada',
+                    };
+                ?>
+                    <tr style="animation-delay: <?= min($i, 12) * 40 ?>ms">
+                        <td class="tk-medium"><?= esc($inc['tipo'] ?? 'Otro') ?></td>
+                        <td class="tk-mono">
+                            <?= esc(date('d/m/Y', strtotime($inc['fecha'] ?? 'now'))) ?>
+                            <span class="tk-sub2"><?= esc(date('H:i', strtotime($inc['fecha'] ?? 'now'))) ?></span>
+                        </td>
+                        <td class="tk-inc-det">
+                            <?= !empty($inc['detalle']) ? esc($inc['detalle']) : '<span class="tk-muted">—</span>' ?>
+                            <?php if ($hasJust): ?>
+                                <span class="tk-sub2"><b><?= $justMsg ?>:</b> <?= esc($inc['justificacion']) ?></span>
+                            <?php elseif ($iest === 'Revisión'): ?>
+                                <span class="tk-sub2">Tu administrador está revisando esta incidencia.</span>
+                            <?php elseif ($iest === 'Resuelta' || $iest === 'Justificada'): ?>
+                                <span class="tk-sub2">Tu administrador la marcó como resuelta.</span>
+                            <?php endif; ?>
+                            <?php if (!empty($inc['evidencia'])): ?>
+                                <a class="tk-link" href="<?= esc(base_url('mi-panel/evidencia/evidencias/' . $inc['evidencia'])) ?>" target="_blank" rel="noopener">Ver foto adjunta ↗</a>
+                            <?php endif; ?>
+                        </td>
+                        <td><span class="tk-st <?= $estCls($iest) ?>"><?= esc($iest) ?></span></td>
+                        <td class="tk-r">
+                            <?php if ($iest === 'Pendiente'): ?>
+                                <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="openJustify(<?= (int) $inc['id'] ?>)">
+                                    <span class="material-symbols-outlined">edit_note</span> Justificar
+                                </button>
+                            <?php else: ?>
+                                <span class="tk-muted">—</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</section>
 
 <!-- Modal justificar incidencia -->
 <div class="in-modal-overlay" id="justifyModal">

@@ -1,0 +1,279 @@
+/* ══════════════════════════════════════════════════════════════
+   TK-PANEL · contenido de "Mi Panel" (Empleado y Practicante)
+   con el estilo de System-Trackin: PageTitle, Card r16 con borde
+   outline-variant/40, KPIs unidos por 1px, filas Row (etiqueta
+   en mayúsculas tenue + valor), tablas 12px y pastillas redondas.
+   Se carga después de tk-dashboard.css y trackin.css.
+   ══════════════════════════════════════════════════════════════ */
+
+/* la cabecera vieja (saludo grande) ya no se usa: el título va en .tk-title */
+.tk-mp .dev-topbar { display: none; }
+.tk-mp > .dev-alert { margin: 0; }
+
+/* chips de fecha y hora a la derecha del título */
+.tk-mp-chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px;
+  border-radius: 9999px; background: var(--sb-surface); border: 1px solid var(--tk-line);
+  font-size: 12px; font-weight: 500; color: var(--tk-muted); white-space: nowrap;
+}
+.tk-mp-chip .material-symbols-outlined { font-size: 15px; }
+.tk-mp-num { font-variant-numeric: tabular-nums; color: var(--sb-on-surface); font-weight: 600; }
+
+/* ── Tarjeta de marcación ─────────────────────────────────── */
+.tk-mark {
+  display: grid; gap: 20px; padding: 20px;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) { .tk-mark { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; } }
+.tk-mark-clock { display: flex; flex-direction: column; gap: 2px; padding-right: 20px; }
+@media (min-width: 900px) { .tk-mark-clock { border-right: 1px solid var(--tk-line); } }
+.tk-mark-time {
+  font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums; color: var(--sb-on-surface);
+}
+.tk-mark-sec { font-size: 12px; color: var(--tk-muted); font-variant-numeric: tabular-nums; }
+.tk-mark-info h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.tk-mark-info > p { margin: 2px 0 0; font-size: 12px; color: var(--tk-muted); }
+.tk-mark-info > p strong { color: var(--sb-on-surface); font-weight: 600; }
+.tk-mark-cells {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: 14px;
+  overflow: hidden; border-radius: 12px; max-width: 460px;
+  background: color-mix(in srgb, var(--sb-outline-variant) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 30%, transparent);
+}
+.tk-mark-cells > div { background: var(--sb-surface-container-low); padding: 8px 12px; }
+.tk-mark-cells span {
+  display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--sb-on-surface-variant) 60%, transparent);
+}
+.tk-mark-cells strong { display: block; margin-top: 2px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tk-mark-state { margin-top: 12px; }
+.tk-mark-cta { display: flex; }
+.tk-mark-cta .dev-btn { height: 44px !important; padding: 0 24px !important; font-size: 14px !important; }
+@media (max-width: 899px) { .tk-mark-cta, .tk-mark-cta > * { width: 100%; justify-content: center; } }
+
+/* pastilla de estado (reusa .tk-pill-state y le da el verde DSG) */
+.tk-st-ok { background: var(--sb-primary-soft, color-mix(in oklab, var(--sb-primary) 12%, transparent)); color: var(--sb-primary); }
+.tk-mp .pra-status-pill { /* clase que actualiza el tiempo real */
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px;
+  font-size: 11px; font-weight: 600;
+  background: color-mix(in oklab, var(--sb-primary) 12%, transparent); color: var(--sb-primary);
+}
+.tk-mp .pra-status-pill.off { background: var(--sb-surface-container-high); color: var(--tk-muted); }
+.tk-mp .pra-status-pill .material-symbols-outlined { font-size: 13px; }
+
+/* ── KPIs como enlaces ────────────────────────────────────── */
+.tk-mp .tk-stats { animation: tk-item-in 500ms cubic-bezier(0.1, 0.8, 0, 1) both; }
+/* 4 y 5 KPIs: siempre filas completas (sin huecos grises) */
+.tk-mp .tk-stats-4, .tk-mp .tk-stats-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tk-mp .tk-stats-5 > :last-child { grid-column: 1 / -1; }
+@media (min-width: 768px) { .tk-mp .tk-stats-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .tk-mp .tk-stats-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .tk-mp .tk-stats-5 > :last-child { grid-column: auto; }
+}
+.tk-mp a.tk-stat { color: inherit; text-decoration: none; transition: background-color 150ms ease; }
+.tk-mp a.tk-stat:hover { background: var(--sb-surface-container-low); }
+.tk-stat-top { display: flex; align-items: center; justify-content: space-between; }
+.tk-stat-go { font-size: 16px !important; opacity: 0; transform: translateX(-4px); transition: all 150ms ease; color: var(--sb-primary); }
+.tk-mp a.tk-stat:hover .tk-stat-go { opacity: 1; transform: none; }
+.tk-stat-note { margin: 2px 0 0; font-size: 11px; color: var(--tk-muted); }
+.tk-pos { color: var(--sb-primary) !important; font-weight: 600; }
+.tk-neg { color: var(--tk-late) !important; font-weight: 600; }
+
+/* ── Card head con acción ─────────────────────────────────── */
+.tk-mp .tk-card-head .dev-btn-sm { height: 30px !important; }
+.tk-mp a.tk-link { font-size: 12px; font-weight: 500; color: var(--sb-primary); text-decoration: none; }
+.tk-mp a.tk-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Filas etiqueta / valor (Row de Trackin) ──────────────── */
+.tk-kv { padding: 4px 16px 8px; }
+.tk-kv-row {
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 0;
+  border-bottom: 1px solid var(--tk-line-soft);
+}
+.tk-kv-row:last-child { border-bottom: 0; }
+@media (min-width: 640px) { .tk-kv-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; } }
+.tk-kv-row > span:first-child {
+  font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--sb-on-surface-variant) 60%, transparent);
+}
+.tk-kv-row > span:last-child { font-size: 14px; color: var(--sb-on-surface); text-align: right; }
+.tk-mono { font-variant-numeric: tabular-nums; }
+.tk-code {
+  display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px;
+  border: 1px solid color-mix(in oklab, var(--sb-primary) 35%, transparent);
+  background: color-mix(in oklab, var(--sb-primary) 10%, transparent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--sb-primary);
+}
+
+/* ── Progreso ─────────────────────────────────────────────── */
+.tk-prog { display: flex; flex-direction: column; gap: 14px; padding: 16px; }
+.tk-prog-big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.tk-prog-big b { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.tk-prog-big span { font-size: 12px; color: var(--tk-muted); }
+.tk-prog-big span strong { color: var(--sb-on-surface); }
+.tk-bar { height: 8px; border-radius: 9999px; background: var(--sb-surface-container-high); overflow: hidden; }
+.tk-bar > i {
+  display: block; height: 100%; border-radius: 9999px; background: var(--sb-primary);
+  width: 0; transition: width 0.8s var(--tk-ease, ease);
+}
+.tk-bar.tk-bar-blue > i { background: var(--tk-ontime); }
+.tk-ready .tk-bar > i { width: var(--w); }
+.tk-prog-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 11px; color: var(--tk-muted); }
+.tk-prog-meta strong { color: var(--sb-on-surface); font-weight: 600; }
+.tk-minis {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; overflow: hidden; border-radius: 12px;
+  background: color-mix(in srgb, var(--sb-outline-variant) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 30%, transparent);
+}
+.tk-minis > div { background: var(--sb-surface-container-low); padding: 10px 12px; }
+.tk-minis span { display: block; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tk-faint); }
+.tk-minis strong { display: block; margin-top: 2px; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tk-hours { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; padding: 16px; }
+.tk-hours-n b { display: block; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.tk-hours-n span { display: block; margin-top: 4px; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tk-faint); }
+.tk-hours-n.is-muted b { color: var(--tk-muted); }
+.tk-hours-sep { font-size: 22px; color: var(--tk-faint); }
+.tk-hours-bar { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ── Estado vacío ─────────────────────────────────────────── */
+.tk-mp .tk-void {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 32px 16px; text-align: center; font-size: 12px; color: var(--tk-faint);
+}
+.tk-mp .tk-void .material-symbols-outlined { font-size: 22px; }
+
+/* ── Tablas de Mi Panel ───────────────────────────────────── */
+.tk-mp .tk-table th:first-child, .tk-mp .tk-table td:first-child { padding-left: 16px; }
+.tk-mp .tk-table th:last-child, .tk-mp .tk-table td:last-child { padding-right: 16px; }
+.tk-mp .tk-table td { padding-top: 10px; padding-bottom: 10px; }
+.tk-mp .tk-table tbody tr { animation: tk-row-y 350ms var(--tk-ease) both; }
+.tk-mp .tk-table-hover tbody tr { cursor: default; }
+.tk-mp .tk-table .tk-sub2 { display: block; font-size: 11px; color: var(--tk-muted); }
+
+/* estados de asistencia e incidencia (mismo par azul/rojo de Trackin) */
+.tk-st { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tk-st-present, .tk-st-ok2 { background: var(--tk-ontime-soft); color: var(--tk-ontime); }
+.tk-st-late { background: color-mix(in oklab, #d97706 14%, transparent); color: #b45309; }
+.tk-st-absent, .tk-st-bad { background: var(--tk-late-soft); color: var(--tk-late); }
+.tk-st-justified, .tk-st-wait { background: var(--sb-surface-container-high); color: var(--tk-muted); }
+html.dark .tk-st-late { color: #f59e0b; }
+
+/* ── Avisos (sin colores chillones) ───────────────────────── */
+.tk-note {
+  display: flex; align-items: flex-start; gap: 8px; padding: 12px 16px; border-radius: 16px;
+  background: var(--sb-surface-container-low); border: 1px solid var(--tk-line);
+  font-size: 12px; color: var(--tk-muted);
+}
+.tk-note .material-symbols-outlined { font-size: 16px; margin-top: 1px; }
+
+/* biometría y otros bloques heredados, alineados al radio y borde de Trackin */
+.tk-mp .bio-panel, .tk-mp .bio-card, .tk-mp .dev-card {
+  border-radius: 16px !important; border: 1px solid var(--tk-line) !important; box-shadow: none !important;
+}
+
+/* ── Biometría (partial biometric_panel) ──────────────────── */
+.tk-mp .bio-card { background: var(--sb-surface) !important; padding: 0 !important; margin: 0 !important; overflow: hidden; }
+.tk-mp .bio-head { margin: 0 !important; padding: 12px 16px; border-bottom: 1px solid var(--tk-line); }
+.tk-mp .bio-head h3 { font-size: 14px !important; font-weight: 600 !important; font-family: inherit !important; }
+.tk-mp .bio-head .material-symbols-outlined { font-size: 18px !important; color: var(--tk-muted) !important; }
+.tk-mp .bio-grid { padding: 16px; }
+.tk-mp .bio-item {
+  border-radius: 12px !important; border: 1px solid var(--tk-line) !important;
+  background: var(--sb-surface-container-low) !important;
+}
+.tk-mp .bio-item-ok .bio-item-label .material-symbols-outlined { color: var(--sb-primary); }
+.tk-mp .bio-thumb { border-color: var(--tk-line) !important; border-radius: 10px; }
+.tk-mp .bio-note { margin: 0 !important; padding: 0 16px 14px; }
+
+/* la campana de notificaciones está fija arriba a la derecha */
+.tk-mp > .tk-title { padding-right: 56px; }
+@media (max-width: 768px) { .tk-mp > .tk-title { padding-right: 0; } }
+
+/* ── Calendario de Mi Asistencia ──────────────────────────── */
+.tk-mp .as-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding: 14px 16px 14px; }
+.tk-mp .as-dow {
+  padding: 2px 0 4px; text-align: left; padding-left: 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tk-faint);
+}
+.tk-mp .as-cell {
+  aspect-ratio: auto !important; height: 58px; width: 100%;
+  display: flex !important; flex-direction: column; align-items: flex-start !important; justify-content: space-between !important;
+  padding: 6px 8px !important; border-radius: 10px !important; border: 1px solid transparent !important;
+  background: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important;
+  font-family: inherit !important; font-size: 12px !important; font-weight: 500 !important;
+  box-shadow: none !important; transform: none !important; cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease !important;
+}
+.tk-mp .as-cell:not(.empty):hover { border-color: var(--sb-outline-variant) !important; }
+.tk-mp .as-cell.empty { background: transparent !important; cursor: default; }
+.tk-mp .as-num { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tk-mp .as-in { align-self: flex-end; font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; opacity: 0.85; }
+.tk-mp .as-cell.present { background: var(--tk-ontime-soft) !important; color: var(--tk-ontime) !important; }
+.tk-mp .as-cell.late { background: color-mix(in oklab, #d97706 14%, transparent) !important; color: #b45309 !important; }
+.tk-mp .as-cell.absent { background: var(--tk-late-soft) !important; color: var(--tk-late) !important; }
+.tk-mp .as-cell.festivo:not(.present):not(.late):not(.absent) { background: color-mix(in oklab, #8b5cf6 12%, transparent) !important; color: #7c3aed !important; }
+.tk-mp .as-cell .as-fest-badge { position: absolute; top: 7px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: #8b5cf6; }
+.tk-mp .as-cell { position: relative; }
+.tk-mp .as-cell.today { border-color: var(--sb-primary) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sb-primary) 14%, transparent) !important; }
+.tk-mp .as-cell .as-st-dot { display: none; }
+html.dark .tk-mp .as-cell.late { color: #f59e0b !important; }
+@media (max-width: 640px) {
+  .tk-mp .as-cal { gap: 4px; padding: 12px; }
+  .tk-mp .as-cell { height: 44px; padding: 5px 6px !important; }
+  .tk-mp .as-in { display: none; }
+  .tk-mp .as-dow { padding-left: 4px; }
+}
+.tk-mp .tk-bio { display: inline-flex; align-items: center; gap: 4px; }
+.tk-mp .tk-bio .material-symbols-outlined { font-size: 14px; color: var(--sb-primary); }
+.tk-mp .tk-card-foot strong { color: var(--sb-on-surface); font-weight: 600; }
+
+/* ── Semana de Mi Horario ─────────────────────────────────── */
+.tk-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 16px; }
+.tk-wday {
+  display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 12px;
+  background: var(--sb-surface-container-low); border: 1px solid transparent;
+  animation: tk-row-y 350ms var(--tk-ease) both;
+}
+.tk-wday.on { background: color-mix(in oklab, var(--sb-primary) 10%, transparent); }
+.tk-wday.today { border-color: var(--sb-primary); }
+.tk-wday-n { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tk-faint); }
+.tk-wday.on .tk-wday-n { color: var(--sb-primary); }
+.tk-wday-h { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tk-wday-off { font-size: 12px; color: var(--tk-faint); }
+@media (max-width: 640px) {
+  .tk-week { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 12px; }
+}
+
+/* ── Mis Incidencias ──────────────────────────────────────── */
+.tk-mp td.tk-inc-det { white-space: normal; max-width: 360px; line-height: 1.45; }
+.tk-mp td.tk-inc-det .tk-sub2 { margin-top: 2px; }
+.tk-mp td.tk-inc-det .tk-sub2 b { font-weight: 600; color: var(--sb-on-surface); }
+.tk-mp td.tk-inc-det a.tk-link { display: inline-block; margin-top: 4px; font-size: 11px; }
+
+/* ── Mi Perfil ────────────────────────────────────────────── */
+.tk-pf-id { display: flex; align-items: center; gap: 16px; padding: 20px; flex-wrap: wrap; }
+.tk-pf-avatar {
+  display: grid; place-items: center; width: 64px; height: 64px; flex: none; border-radius: 50%;
+  background: var(--sb-primary); color: var(--sb-on-primary, #fff); font-size: 20px; font-weight: 600;
+}
+.tk-pf-who { min-width: 0; flex: 1; }
+.tk-pf-who h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+.tk-pf-who p { margin: 0; font-size: 14px; color: var(--tk-muted); }
+.tk-pf-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tk-set {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--tk-line-soft);
+}
+.tk-set:last-child { border-bottom: 0; }
+.tk-set-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tk-set-info strong { font-size: 14px; font-weight: 500; }
+.tk-set-info span { font-size: 12px; color: var(--tk-muted); }
+.tk-set-state { font-size: 11px; font-weight: 500; color: var(--tk-faint); white-space: nowrap; }
+.tk-mp .pf-toggle { background: var(--sb-surface-container-high) !important; border-radius: 9999px !important; }
+.tk-mp .pf-toggle.is-on { background: var(--sb-primary) !important; }
+.tk-mp .tk-kv-row .tk-st + .tk-st { margin-left: 4px; }
+.tk-mp .tk-table th.tk-r { text-align: right; }
+.tk-mp .dm-cell b { font-family: inherit !important; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }

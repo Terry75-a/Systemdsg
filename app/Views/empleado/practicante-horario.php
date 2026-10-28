@@ -1,124 +1,99 @@
-<style>
-        .hg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
-        .hg-cell {
-            background: var(--g-surface); border: 1px solid var(--g-border); border-radius: 14px;
-            padding: 16px; text-align: center;
-        }
-        .hg-cell .material-symbols-outlined { font-size: 26px; color: var(--g-primary); }
-        .hg-cell b { display: block; font-size: 20px; font-family: var(--g-font-display); margin-top: 6px; }
-        .hg-cell span { font-size: 11.5px; color: var(--g-text-secondary); }
-        .hg-note { font-size: 12.5px; color: var(--g-text-secondary); display: flex; gap: 8px; align-items: center; background: var(--g-warning-light); padding: 10px 14px; border-radius: 12px; color: #b26a00; }
-        .hg-week { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
-        .hg-day {
-            width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 600; background: var(--g-surface-variant); color: var(--g-text-secondary);
-        }
-        .hg-day.on { background: var(--g-primary); color: #fff; }
-        .hg-day.today { box-shadow: 0 0 0 2px var(--g-surface), 0 0 0 4px var(--g-primary); }
-        .hg-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
-        .hg-row + .hg-row { border-top: 1px solid var(--g-border); }
-        .hg-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--g-surface-variant); display: flex; align-items: center; justify-content: center; }
-        .hg-icon .material-symbols-outlined { font-size: 19px; color: var(--g-text-secondary); }
-    </style>
-
-<div class="page-head">
-    <a class="page-back" href="<?= base_url('mi-panel') ?>">
-        <span class="material-symbols-outlined">arrow_back</span> Volver a Mi Panel
-    </a>
-    <div class="page-title">
-        <span class="material-symbols-outlined">schedule</span>
-        <h2>Mi Horario</h2>
-    </div>
-    <p class="page-sub">Tu jornada de práctica configurada por tu administrador.</p>
-</div>
-
 <?php
-    $sinHorario = empty($miHorario);
+    $miHorario   = $miHorario ?? [];
+    $sinHorario  = empty($miHorario);
     $horaEntrada = $miHorario['hora_entrada'] ?? '08:00';
     $horaSalida  = $miHorario['hora_salida']  ?? '17:00';
-    $diasHorario = $miHorario['dias'] ?? '';
+    $diasHorario = (string) ($miHorario['dias'] ?? '');
     $tolerancia  = (int) ($miHorario['tolerancia'] ?? 10);
+    $esPrac      = (session()->get('user_role') ?? '') === 'Practicante';
 
-    $diasOrder = ['lun' => 'L', 'mar' => 'M', 'mié' => 'X', 'mier' => 'X', 'jue' => 'J', 'vie' => 'V', 'sáb' => 'S', 'sab' => 'S', 'dom' => 'D'];
-    $diasMap   = ['L' => 'Lunes', 'M' => 'Martes', 'X' => 'Miércoles', 'J' => 'Jueves', 'V' => 'Viernes', 'S' => 'Sábado', 'D' => 'Domingo'];
-    $activeDias = [];
+    // Días activos: entiende listas ("Lun, Mié, Vie") y rangos ("Lun - Vie")
+    $orden   = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    $claves  = ['lun' => 'L', 'mar' => 'M', 'mié' => 'X', 'mie' => 'X', 'jue' => 'J', 'vie' => 'V', 'sáb' => 'S', 'sab' => 'S', 'dom' => 'D'];
+    $nombres = ['L' => 'Lunes', 'M' => 'Martes', 'X' => 'Miércoles', 'J' => 'Jueves', 'V' => 'Viernes', 'S' => 'Sábado', 'D' => 'Domingo'];
+    $activos = [];
     if (!$sinHorario && $diasHorario !== '') {
-        $lower = mb_strtolower($diasHorario);
-        foreach ($diasOrder as $k => $letter) {
-            if (mb_strpos($lower, $k) !== false && !in_array($letter, $activeDias, true)) {
-                $activeDias[] = $letter;
+        $txt = mb_strtolower($diasHorario);
+        $aLetra = static function (string $t) use ($claves): ?string {
+            foreach ($claves as $k => $l) {
+                if (mb_strpos($t, $k) !== false) return $l;
+            }
+            return null;
+        };
+        foreach (preg_split('/[,;\/]|\sy\s/u', $txt) as $parte) {
+            $rango = preg_split('/\s*[-–]\s*|\s+a\s+/u', trim($parte));
+            if (count($rango) === 2 && ($ini = $aLetra($rango[0])) && ($fin = $aLetra($rango[1]))) {
+                $i = array_search($ini, $orden, true);
+                $f = array_search($fin, $orden, true);
+                for ($k = $i; $k !== false && $f !== false; $k = ($k + 1) % 7) {
+                    $activos[$orden[$k]] = true;
+                    if ($k === $f) break;
+                }
+            } elseif ($l = $aLetra($parte)) {
+                $activos[$l] = true;
             }
         }
     }
-    $semana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-    $hoyIdx = (int) date('N') - 1; // 1=lunes..7=domingo
+    $hoyIdx  = (int) date('N') - 1;
+    $limite  = date('H:i', strtotime(substr($horaEntrada, 0, 5)) + $tolerancia * 60);
+    $hEntTs  = strtotime(substr($horaEntrada, 0, 5));
+    $hSalTs  = strtotime(substr($horaSalida, 0, 5));
+    $horasDia = $hSalTs > $hEntTs ? round(($hSalTs - $hEntTs) / 3600, 1) : 0;
+    $diasLista = array_values(array_filter($orden, static fn ($l) => isset($activos[$l])));
 ?>
 
 <?php if ($sinHorario): ?>
-    <div class="dev-card">
-        <div style="text-align:center; padding:60px 20px; color:var(--g-text-secondary); font-size:13.5px;">
-            <span class="material-symbols-outlined" style="font-size:48px; display:block; margin:0 auto 12px; opacity:0.3;">schedule</span>
-            Tu administrador aún no configura un horario para ti.
-            <div style="margin-top:8px;">En cuanto lo active, verás aquí tus días y horas de práctica.</div>
+    <section class="tk-card">
+        <div class="tk-void" style="padding:56px 16px;">
+            <span class="material-symbols-outlined">schedule</span>
+            Tu administrador aún no configura un horario para ti.<br>
+            En cuanto lo active, verás aquí tus días y horas.
         </div>
-    </div>
+    </section>
 <?php else: ?>
-    <?php if (!empty($activeDias)): ?>
-        <div class="hg-week" style="margin-bottom:16px;">
-            <?php foreach ($semana as $i => $letra): ?>
-                <div class="hg-day <?= in_array($letra, $activeDias, true) ? 'on' : '' ?> <?= $i === $hoyIdx ? 'today' : '' ?>" title="<?= esc($diasMap[$letra] ?? $letra) ?>"><?= $letra ?></div>
+    <!-- KPIs del horario -->
+    <section class="tk-stats tk-stats-4">
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">login</span><div><p class="tk-stat-lbl">Entrada</p><p class="tk-stat-val"><?= esc(substr($horaEntrada, 0, 5)) ?></p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">logout</span><div><p class="tk-stat-lbl">Salida</p><p class="tk-stat-val"><?= esc(substr($horaSalida, 0, 5)) ?></p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">hourglass_top</span><div><p class="tk-stat-lbl">Horas por día</p><p class="tk-stat-val"><?= $horasDia ?> h</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">timer</span><div><p class="tk-stat-lbl">Tolerancia</p><p class="tk-stat-val"><?= $tolerancia ?> min</p></div></div>
+    </section>
+
+    <!-- Semana -->
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head">
+            <div><h3>Mi semana</h3><p><?= esc($diasHorario ?: '—') ?> · <?= count($diasLista) ?> <?= count($diasLista) === 1 ? 'día' : 'días' ?> <?= $esPrac ? 'de práctica' : 'laborables' ?>.</p></div>
+            <span class="tk-pill-state tk-st-neutral">Hoy · <?= esc($nombres[$orden[$hoyIdx]]) ?></span>
+        </div>
+        <div class="tk-week">
+            <?php foreach ($orden as $i => $l): $on = isset($activos[$l]); ?>
+                <div class="tk-wday <?= $on ? 'on' : '' ?> <?= $i === $hoyIdx ? 'today' : '' ?>">
+                    <span class="tk-wday-n"><?= esc(mb_substr($nombres[$l], 0, 3)) ?></span>
+                    <?php if ($on): ?>
+                        <span class="tk-wday-h"><?= esc(substr($horaEntrada, 0, 5)) ?></span>
+                        <span class="tk-wday-h"><?= esc(substr($horaSalida, 0, 5)) ?></span>
+                    <?php else: ?>
+                        <span class="tk-wday-off">Libre</span>
+                    <?php endif; ?>
+                </div>
             <?php endforeach; ?>
         </div>
-    <?php endif; ?>
+    </section>
 
-    <div class="hg-grid">
-        <div class="hg-cell">
-            <span class="material-symbols-outlined">login</span>
-            <b class="hg-mono"><?= esc(substr($horaEntrada, 0, 5)) ?></b>
-            <span>Entrada</span>
+    <!-- Reglas -->
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head">
+            <div><h3>¿Cómo se calcula tu puntualidad?</h3><p>Las reglas que aplica el sistema al marcar.</p></div>
         </div>
-        <div class="hg-cell">
-            <span class="material-symbols-outlined">logout</span>
-            <b><?= esc(substr($horaSalida, 0, 5)) ?></b>
-            <span>Salida</span>
+        <div class="tk-kv">
+            <div class="tk-kv-row"><span>Puntual</span><span>Marcas hasta las <strong class="tk-mono"><?= esc($limite) ?></strong> <span class="tk-st tk-st-present" style="margin-left:6px;">Puntual</span></span></div>
+            <div class="tk-kv-row"><span>Tardanza</span><span>Después de las <strong class="tk-mono"><?= esc($limite) ?></strong> · se genera una incidencia <span class="tk-st tk-st-late" style="margin-left:6px;">Tardanza</span></span></div>
+            <div class="tk-kv-row"><span>Días que trabajas</span><span><?= esc(implode(', ', array_map(static fn ($l) => $nombres[$l], $diasLista)) ?: '—') ?></span></div>
         </div>
-        <div class="hg-cell">
-            <span class="material-symbols-outlined">event_repeat</span>
-            <b><?= $diasHorario !== '' ? esc($diasHorario) : '—' ?></b>
-            <span>Días de práctica</span>
-        </div>
-        <div class="hg-cell">
-            <span class="material-symbols-outlined">timer</span>
-            <b><?= $tolerancia ?></b>
-            <span>Tolerancia (min)</span>
-        </div>
-    </div>
+    </section>
 
-    <div class="dev-card" style="margin-bottom:14px;">
-        <div class="dev-card-head">
-            <h2><span class="material-symbols-outlined">timer</span> ¿Cómo se calcula tu puntualidad?</h2>
-        </div>
-        <div style="padding: 6px 18px 12px;">
-            <div class="hg-row">
-                <div class="hg-icon"><span class="material-symbols-outlined">bolt</span></div>
-                <div>
-                    <div style="font-size:13.5px;">Si marcas antes de <strong><?= esc(substr($horaEntrada, 0, 5)) ?></strong> + <?= $tolerancia ?> min, tu asistencia se registra <span class="dev-badge dev-badge-green">Puntual</span>.</div>
-                    <div style="font-size:12px;color:var(--g-text-secondary);margin-top:4px;">Después de ese rango se registra <span class="dev-badge dev-badge-amber">Tardanza</span> y se genera una incidencia automática.</div>
-                </div>
-            </div>
-            <?php if (!empty($activeDias)): ?>
-                <div class="hg-row">
-                    <div class="hg-icon"><span class="material-symbols-outlined">local_fire_department</span></div>
-                    <div>
-                        <div style="font-size:13.5px;">Trabajas: <strong><?php foreach ($activeDias as $i => $d) { echo esc($diasMap[$d] ?? $d) . ($i < count($activeDias)-1 ? ', ' : ''); } ?></strong></div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <div class="hg-note">
-        <span class="material-symbols-outlined" style="font-size:17px;">info</span>
-        Tu administrador puede ajustar este horario en cualquier momento. Las modificaciones aplican desde el día siguiente.
+    <div class="tk-note">
+        <span class="material-symbols-outlined">info</span>
+        Tu administrador puede ajustar este horario en cualquier momento. Los cambios aplican desde el día siguiente.
     </div>
 <?php endif; ?>

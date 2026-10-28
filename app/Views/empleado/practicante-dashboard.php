@@ -1,217 +1,10 @@
-<style>
-        /* ── Stats: accesos directos a cada pagina ── */
-        .dev-stat-card {
-            position: relative; display: block; cursor: pointer;
-            transition: border-color 200ms, transform 200ms, box-shadow 200ms;
-        }
-        .stat-link:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -10px rgba(0,0,0,0.16); }
-        .stat-go {
-            position: absolute; top: 18px; right: 16px; font-size: 18px;
-            color: var(--g-text-secondary); opacity: 0; transform: translateX(-6px);
-            transition: opacity 200ms, transform 200ms;
-        }
-        .stat-link:hover .stat-go { opacity: 1; transform: translateX(0); color: var(--g-primary); }
-
-        /* ── Hero marcar asistencia ── */
-        .pra-status-pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
-            background: var(--g-success-light); color: var(--g-success);
-        }
-        .pra-status-pill.off { background: var(--g-surface-variant); color: var(--g-text-secondary); }
-        .pra-status-pill .material-symbols-outlined { font-size: 15px; }
-        .pra-marcar-times { gap: 10px; }
-        .pra-marcar-times > div {
-            background: var(--g-surface); border: 1px solid var(--g-border);
-            border-radius: 12px; padding: 8px 14px;
-        }
-        .pra-marcar-times span { margin-bottom: 2px; }
-
-        /* ── Bloques del mundo practicante ── */
-        .pr-irow {
-            display: flex; align-items: center; gap: 12px;
-            padding: 11px 0; border-bottom: 1px solid var(--g-border);
-        }
-        .pr-irow:last-child { border-bottom: none; }
-        .pr-iic {
-            width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
-            background: var(--g-surface-variant);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .pr-iic .material-symbols-outlined { font-size: 18px; color: var(--g-text-secondary); }
-        .pr-ilab {
-            font-size: 11px; color: var(--g-text-disabled);
-            letter-spacing: 0.03em; text-transform: uppercase;
-        }
-        .pr-ival { font-size: 13.5px; font-weight: 500; margin-top: 1px; }
-        .pr-mono { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; }
-
-        /* Barra de progreso */
-        .pr-track {
-            height: 10px; border-radius: 999px;
-            background: var(--g-surface-variant); overflow: hidden;
-            border: 1px solid var(--g-border);
-        }
-        .pr-track i {
-            display: block; height: 100%; border-radius: 999px;
-            background: linear-gradient(90deg, var(--g-primary), #5ac8fa);
-            transition: width 500ms ease;
-        }
-        .pr-track.pr-track-blue i { background: linear-gradient(90deg, #3b82f6, #22d3ee); }
-        .pr-pct {
-            font-size: 30px; font-weight: 700; line-height: 1;
-            font-family: var(--g-font-display);
-        }
-        .pr-meta {
-            display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-            font-size: 12px; color: var(--g-text-secondary); margin-top: 9px;
-        }
-        .pr-meta strong { color: var(--g-text); font-weight: 600; }
-        .pr-hbig {
-            font-size: 26px; font-weight: 700; line-height: 1;
-            font-family: var(--g-font-display);
-        }
-        .pr-minis { display: flex; gap: 12px; flex-wrap: wrap; }
-        .pr-mini {
-            flex: 1; min-width: 130px;
-            background: var(--g-surface); border: 1px solid var(--g-border);
-            border-radius: 12px; padding: 11px 14px;
-        }
-        .pr-mini .pr-ival { font-size: 15px; }
-
-        .pra-marcar {
-            display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
-            background: linear-gradient(135deg, var(--g-primary-light), var(--g-surface));
-            border: 1px solid var(--g-border); border-radius: 18px;
-            padding: 22px 26px; margin-bottom: 20px;
-        }
-        .pra-clock { flex-shrink: 0; }
-        .pra-clock-time { font-size: 34px; font-weight: 700; font-family: var(--g-font-display); line-height: 1; }
-        .pra-clock-sec { font-size: 14px; color: var(--g-text-secondary); margin-top: 4px; font-family: monospace; }
-        .pra-marcar-info { flex: 1; min-width: 220px; }
-        .pra-marcar-info h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; font-family: var(--g-font-display); }
-        .pra-marcar-info p { margin: 0; font-size: 13px; color: var(--g-text-secondary); }
-        .pra-marcar-times { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-        .pra-marcar-times div { font-size: 12.5px; }
-        .pra-marcar-times span { display: block; color: var(--g-text-secondary); font-size: 11px; }
-        .pra-marcar-times strong { font-family: monospace; font-size: 15px; }
-
-        @media (max-width: 768px) {
-            .pra-marcar { padding: 18px; gap: 16px; }
-            .pra-clock-time { font-size: 30px; }
-            .pra-marcar > div:last-child { width: 100%; }
-            .pra-marcar > div:last-child .dev-btn,
-            .pra-marcar > div:last-child .dev-badge {
-                width: 100%; justify-content: center;
-            }
-        }
-    </style>
-
 <?php
-    $hoy = $hoyRegistro ?? null;
-    $hEnt  = $hoy['time_in']  ?? null;
-    $hSal  = $hoy['time_out'] ?? null;
-    $sinHorario  = empty($miHorario);
+    $miInfo      = $miInfo ?? [];
+    $miHorario   = $miHorario ?? [];
     $horaEntrada = $miHorario['hora_entrada'] ?? null;
     $horaSalida  = $miHorario['hora_salida']  ?? null;
     $diasHorario = $miHorario['dias'] ?? null;
-?>
 
-<!-- Marcar asistencia hoy -->
-<section class="pra-marcar">
-    <div class="pra-clock">
-        <div class="pra-clock-time" id="praClock">--:--</div>
-        <div class="pra-clock-sec" id="praClockSec"></div>
-    </div>
-    <div class="pra-marcar-info">
-        <h3>Marcar asistencia de hoy</h3>
-        <p>
-            <?php if (!$hEnt): ?>
-                Aún no has marcado tu entrada.
-            <?php elseif (!$hSal): ?>
-                Entrada <strong><?= esc($hEnt) ?></strong> registrada · falta marcar la salida.
-            <?php else: ?>
-                Marcación completa de hoy.
-            <?php endif; ?>
-        </p>
-        <div class="pra-marcar-times">
-            <div><span>Entrada</span><strong><?= esc($hEnt ?: ($horaEntrada ? substr($horaEntrada, 0, 5) : '—')) ?></strong></div>
-            <div><span>Salida</span><strong><?= esc($hSal ?: ($horaSalida ? substr($horaSalida, 0, 5) : '—')) ?></strong></div>
-            <div><span>Jornada</span><strong><?= esc($diasHorario ?: '—') ?></strong></div>
-        </div>
-        <?php
-            $now = (int) date('Hi');
-            $hIn = (int) str_replace(':', '', (string) $horaEntrada);
-            $hOut = (int) str_replace(':', '', (string) $horaSalida);
-            $enHorario = !$sinHorario && $now >= $hIn && $now <= $hOut;
-        ?>
-        <div style="margin-top:12px;">
-            <span class="pra-status-pill <?= $enHorario ? '' : 'off' ?>">
-                <span class="material-symbols-outlined filled"><?= $enHorario ? 'work' : ($sinHorario ? 'schedule' : 'bedtime') ?></span>
-                <?php if ($sinHorario): ?>
-                    Sin horario configurado
-                <?php else: ?>
-                    <?= $enHorario ? 'En tu horario de practica' : 'Fuera de tu horario' ?>
-                <?php endif; ?>
-            </span>
-        </div>
-    </div>
-    <div style="flex-shrink:0;">
-        <?php if ($hEnt && $hSal): ?>
-            <div class="dev-badge dev-badge-green" style="font-size:13px;padding:10px 16px;">
-                <span class="material-symbols-outlined filled" style="font-size:18px;vertical-align:-4px;">check_circle</span> Completado hoy
-            </div>
-        <?php else: ?>
-            <button type="button" class="dev-btn <?= $hEnt ? 'dev-btn-primary' : 'dev-btn' ?>" style="padding:12px 22px;font-size:15px;" onclick="openBioCheck()">
-                <span class="material-symbols-outlined"><?= $hEnt ? 'logout' : 'login' ?></span>
-                <?= $hEnt ? 'Registrar salida' : 'Registrar entrada' ?>
-            </button>
-        <?php endif; ?>
-    </div>
-</section>
-
-<?= view('partials/biometric_panel', ['bioMark' => ['exit' => (bool) ($hEnt && !$hSal), 'hora_salida' => $sinHorario ? '' : substr($horaSalida, 0, 5)], 'userScheduleId' => (int) ($miInfo['schedule_id'] ?? 0)]) ?>
-
-<!-- Stats · atajos a cada pagina -->
-<section class="dev-stats-grid">
-    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">
-        <span class="material-symbols-outlined stat-go">arrow_forward</span>
-        <div class="dev-stat-icon si-accent"><span class="material-symbols-outlined filled">schedule</span></div>
-        <div class="dev-stat-label">Horas (semana)</div>
-        <div class="dev-stat-value"><?= number_format($horasSemana ?? 0, 1) ?> h</div>
-    </a>
-    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">
-        <span class="material-symbols-outlined stat-go">arrow_forward</span>
-        <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">check_circle</span></div>
-        <div class="dev-stat-label">Asistencias (mes)</div>
-        <div class="dev-stat-value"><?= $misAsistencias ?? 0 ?></div>
-    </a>
-    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">
-        <span class="material-symbols-outlined stat-go">arrow_forward</span>
-        <div class="dev-stat-icon si-amber"><span class="material-symbols-outlined filled">schedule</span></div>
-        <div class="dev-stat-label">Tardanzas (mes)</div>
-        <div class="dev-stat-value"><?= $misTardanzas ?? 0 ?></div>
-    </a>
-    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/incidencias') ?>">
-        <span class="material-symbols-outlined stat-go">arrow_forward</span>
-        <div class="dev-stat-icon si-red"><span class="material-symbols-outlined filled">warning</span></div>
-        <div class="dev-stat-label">Incidencias pendientes</div>
-        <div class="dev-stat-value"><?= $incPendientes ?? 0 ?></div>
-    </a>
-    <a class="dev-stat-card stat-link" href="<?= base_url('mi-panel/asistencias') ?>">
-        <span class="material-symbols-outlined stat-go">arrow_forward</span>
-        <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">balance</span></div>
-        <div class="dev-stat-label">Horas del mes</div>
-        <div class="dev-stat-value"><?= esc($horasMesReales ?? '0.00') ?> h</div>
-        <div style="font-size:11.5px;margin-top:2px;color:<?= ($saldoMesMin ?? 0) > 0 ? '#16a34a' : (($saldoMesMin ?? 0) < 0 ? '#dc2626' : 'inherit') ?>;font-weight:600;">
-            Saldo <?= esc($saldoMesTxt ?? '—') ?>
-            <span style="color:var(--sb-on-surface-variant);font-weight:500;">· prog. <?= esc($horasMesProg ?? '0.00') ?> h</span>
-        </div>
-    </a>
-</section>
-
-<?php
-    $miInfo   = $miInfo ?? [];
     $pct      = (int) ($pctPractica ?? 0);
     $iniP     = (string) ($inicioPractica ?? '');
     $finP     = (string) ($finPractica ?? '');
@@ -219,185 +12,113 @@
     $diasTotales = $iniP && $finP ? max(1, (int) round((strtotime($finP) - strtotime($iniP)) / 86400)) : 0;
     $diasCumpl   = $iniP ? max(0, (int) round((strtotime(date('Y-m-d')) - strtotime($iniP)) / 86400)) : 0;
     $mesRegistros = (int) ($misAsistencias ?? 0) + (int) ($misTardanzas ?? 0) + (int) ($misFaltas ?? 0);
-    $espH     = (float) ($horasSemanaEsp ?? 0);
-    $heH      = (float) ($horasSemana ?? 0);
-    $pctH     = $espH > 0 ? (int) min(100, round($heH / $espH * 100)) : 0;
-    $iniSem   = date('d/m/Y', strtotime('monday this week'));
-    $finSem   = date('d/m/Y', strtotime('sunday this week'));
+    $espH  = (float) ($horasSemanaEsp ?? 0);
+    $heH   = (float) ($horasSemana ?? 0);
+    $pctH  = $espH > 0 ? (int) min(100, round($heH / $espH * 100)) : 0;
+    $saldo = (int) ($saldoMesMin ?? 0);
+    $fmt   = static fn ($f) => $f ? date('d/m/Y', strtotime($f)) : '—';
 ?>
 
-<div class="dev-grid-2" style="margin-top:16px;">
+<?= view('partials/tk-marcar', [
+    'hoyRegistro' => $hoyRegistro ?? null,
+    'miHorario'   => $miHorario,
+    'miInfo'      => $miInfo,
+]) ?>
+
+<!-- KPIs · cada uno lleva a su página -->
+<section class="tk-stats tk-stats-5">
+    <a class="tk-stat" href="<?= base_url('mi-panel/asistencias') ?>">
+        <div class="tk-stat-top"><span class="material-symbols-outlined tk-stat-ico">schedule</span><span class="material-symbols-outlined tk-stat-go">arrow_forward</span></div>
+        <div><p class="tk-stat-lbl">Horas (semana)</p><p class="tk-stat-val"><?= number_format($heH, 1) ?> h</p></div>
+    </a>
+    <a class="tk-stat" href="<?= base_url('mi-panel/asistencias') ?>">
+        <div class="tk-stat-top"><span class="material-symbols-outlined tk-stat-ico">check_circle</span><span class="material-symbols-outlined tk-stat-go">arrow_forward</span></div>
+        <div><p class="tk-stat-lbl">Asistencias (mes)</p><p class="tk-stat-val"><?= (int) ($misAsistencias ?? 0) ?></p></div>
+    </a>
+    <a class="tk-stat" href="<?= base_url('mi-panel/asistencias') ?>">
+        <div class="tk-stat-top"><span class="material-symbols-outlined tk-stat-ico">timer</span><span class="material-symbols-outlined tk-stat-go">arrow_forward</span></div>
+        <div><p class="tk-stat-lbl">Tardanzas (mes)</p><p class="tk-stat-val"><?= (int) ($misTardanzas ?? 0) ?></p></div>
+    </a>
+    <a class="tk-stat" href="<?= base_url('mi-panel/incidencias') ?>">
+        <div class="tk-stat-top"><span class="material-symbols-outlined tk-stat-ico">warning</span><span class="material-symbols-outlined tk-stat-go">arrow_forward</span></div>
+        <div><p class="tk-stat-lbl">Incidencias pendientes</p><p class="tk-stat-val"><?= (int) ($incPendientes ?? 0) ?></p></div>
+    </a>
+    <a class="tk-stat" href="<?= base_url('mi-panel/asistencias') ?>">
+        <div class="tk-stat-top"><span class="material-symbols-outlined tk-stat-ico">balance</span><span class="material-symbols-outlined tk-stat-go">arrow_forward</span></div>
+        <div>
+            <p class="tk-stat-lbl">Horas del mes</p>
+            <p class="tk-stat-val"><?= esc($horasMesReales ?? '0.00') ?> h</p>
+            <p class="tk-stat-note"><span class="<?= $saldo > 0 ? 'tk-pos' : ($saldo < 0 ? 'tk-neg' : '') ?>">Saldo <?= esc($saldoMesTxt ?? '—') ?></span> · prog. <?= esc($horasMesProg ?? '0.00') ?> h</p>
+        </div>
+    </a>
+</section>
+
+<div class="tk-grid-2">
     <!-- Mi práctica -->
-    <div class="dev-card">
-        <div class="dev-card-head">
-            <h2><span class="material-symbols-outlined">school</span> Mi práctica</h2>
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head">
+            <div><h3>Mi práctica</h3><p>Tus datos como practicante.</p></div>
             <a href="<?= base_url('mi-panel/horario') ?>" class="dev-btn dev-btn-outline dev-btn-sm">Ver horario</a>
         </div>
-        <div style="padding: 4px 20px 14px;">
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">account_balance</span></div>
-                <div>
-                    <div class="pr-ilab">Institución</div>
-                    <div class="pr-ival"><?= esc($miInfo['institucion'] ?? '—') ?></div>
-                </div>
-            </div>
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">auto_stories</span></div>
-                <div>
-                    <div class="pr-ilab">Semestre</div>
-                    <div class="pr-ival"><?= esc($miInfo['semestre'] ?? '—') ?></div>
-                </div>
-            </div>
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">corporate_fare</span></div>
-                <div>
-                    <div class="pr-ilab">Empresa</div>
-                    <div class="pr-ival"><?= esc($miInfo['empresa'] ?? '—') ?></div>
-                </div>
-            </div>
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">badge</span></div>
-                <div>
-                    <div class="pr-ilab">Supervisor</div>
-                    <div class="pr-ival pr-mono"><?= esc($miInfo['admin_code'] ?? '—') ?></div>
-                </div>
-            </div>
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">qr_code</span></div>
-                <div>
-                    <div class="pr-ilab">Código</div>
-                    <div class="pr-ival pr-mono"><?= esc($miInfo['personal_code'] ?? '—') ?></div>
-                </div>
-            </div>
-            <div class="pr-irow">
-                <div class="pr-iic"><span class="material-symbols-outlined">event_available</span></div>
-                <div>
-                    <div class="pr-ilab">Alta en el sistema</div>
-                    <div class="pr-ival pr-mono"><?= $iniP ? esc(date('d/m/Y', strtotime($iniP))) : '—' ?></div>
-                </div>
-            </div>
+        <div class="tk-kv">
+            <div class="tk-kv-row"><span>Institución</span><span><?= esc($miInfo['institucion'] ?? '—') ?></span></div>
+            <div class="tk-kv-row"><span>Semestre</span><span><?= esc($miInfo['semestre'] ?? '—') ?></span></div>
+            <div class="tk-kv-row"><span>Empresa</span><span><?= esc(($miInfo['empresa'] ?? '') ?: '—') ?></span></div>
+            <div class="tk-kv-row"><span>Supervisor</span><span><span class="tk-code"><?= esc($miInfo['admin_code'] ?? '—') ?></span></span></div>
+            <div class="tk-kv-row"><span>Código</span><span><span class="tk-code"><?= esc($miInfo['personal_code'] ?? '—') ?></span></span></div>
+            <div class="tk-kv-row"><span>Alta en el sistema</span><span class="tk-mono"><?= esc($fmt($iniP)) ?></span></div>
         </div>
-    </div>
+    </section>
 
     <!-- Progreso de la práctica -->
-    <div class="dev-card" style="display:flex; flex-direction:column;">
-        <div class="dev-card-head">
-            <h2><span class="material-symbols-outlined">timeline</span> Progreso de la práctica</h2>
-            <span class="dev-badge <?= $pct >= 100 ? 'dev-badge-green' : 'dev-badge-blue' ?>"><?= $pct ?>%</span>
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head">
+            <div><h3>Progreso de la práctica</h3><p>Del inicio al fin estimado.</p></div>
+            <span class="tk-pill-state <?= $pct >= 100 ? 'tk-st-ok' : 'tk-st-on' ?>"><?= $pct ?>%</span>
         </div>
-        <div style="padding: 14px 20px 16px; flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:16px;">
-            <div>
-                <div style="display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap;">
-                    <div class="pr-pct"><?= $pct ?>%</div>
-                    <div style="font-size:13px; color:var(--g-text-secondary); padding-bottom:3px;">
-                        <?= $restaDia > 0 ? 'Faltan <strong>' . $restaDia . ' días</strong>' : 'Práctica finalizada' ?>
-                    </div>
-                </div>
-                <div class="pr-track" style="margin-top:14px;"><i style="width: <?= $pct ?>%"></i></div>
-                <div class="pr-meta">
-                    <span>Inicio <strong><?= $iniP ? esc(date('d/m/Y', strtotime($iniP))) : '—' ?></strong></span>
-                    <span>Fin estimado <strong><?= $finP ? esc(date('d/m/Y', strtotime($finP))) : '—' ?></strong></span>
-                </div>
-                <div class="pr-meta" style="margin-top:4px;">
-                    <span>Jornada <strong><?= esc($diasHorario) ?> · <?= esc(substr($horaEntrada, 0, 5)) ?> - <?= esc(substr($horaSalida, 0, 5)) ?></strong></span>
-                    <span><?= ($diasHorarioSem ?? 0) > 0 ? $diasHorarioSem . ' días/semana' : 'Sin horario' ?></span>
-                </div>
+        <div class="tk-prog">
+            <div class="tk-prog-big">
+                <b><?= $pct ?>%</b>
+                <span><?= $restaDia > 0 ? 'Faltan <strong>' . $restaDia . ' días</strong>' : 'Práctica finalizada' ?></span>
             </div>
-            <div class="pr-minis">
-                <div class="pr-mini">
-                    <div class="pr-ilab">Días de práctica</div>
-                    <div class="pr-ival pr-mono"><?= $diasCumpl ?> / <?= $diasTotales ?></div>
-                </div>
-                <div class="pr-mini">
-                    <div class="pr-ilab">Marcas (mes)</div>
-                    <div class="pr-ival pr-mono"><?= $mesRegistros ?> en total</div>
-                </div>
-                <div class="pr-mini">
-                    <div class="pr-ilab">Horas (semana)</div>
-                    <div class="pr-ival pr-mono"><?= number_format($heH, 1) ?> h</div>
-                </div>
+            <div class="tk-bar"><i style="--w: <?= $pct ?>%"></i></div>
+            <div class="tk-prog-meta">
+                <span>Inicio <strong><?= esc($fmt($iniP)) ?></strong></span>
+                <span>Fin estimado <strong><?= esc($fmt($finP)) ?></strong></span>
+            </div>
+            <div class="tk-prog-meta">
+                <span>Jornada <strong><?= esc($diasHorario ?: '—') ?><?= $horaEntrada ? ' · ' . esc(substr($horaEntrada, 0, 5)) . ' - ' . esc(substr((string) $horaSalida, 0, 5)) : '' ?></strong></span>
+                <span><?= ($diasHorarioSem ?? 0) > 0 ? (int) $diasHorarioSem . ' días/semana' : 'Sin horario' ?></span>
+            </div>
+            <div class="tk-minis">
+                <div><span>Días de práctica</span><strong><?= $diasCumpl ?> / <?= $diasTotales ?></strong></div>
+                <div><span>Marcas (mes)</span><strong><?= $mesRegistros ?></strong></div>
+                <div><span>Horas (semana)</span><strong><?= number_format($heH, 1) ?> h</strong></div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <!-- Resumen semanal de horas -->
-<div class="dev-card" style="margin-top:16px;">
-    <div class="dev-card-head">
-        <h2><span class="material-symbols-outlined">hourglass_bottom</span> Resumen semanal de horas</h2>
+<section class="tk-card tk-ovh tk-anim-item">
+    <div class="tk-card-head">
+        <div><h3>Resumen semanal de horas</h3><p>Semana del <?= date('d/m/Y', strtotime('monday this week')) ?> al <?= date('d/m/Y', strtotime('sunday this week')) ?>.</p></div>
         <a href="<?= base_url('mi-panel/asistencias') ?>" class="dev-btn dev-btn-outline dev-btn-sm">Ver asistencias</a>
     </div>
-    <div style="padding: 14px 20px 16px;">
-        <?php if ($espH <= 0): ?>
-            <div class="dev-empty" style="padding:26px 16px;">
-                <span class="material-symbols-outlined">event_busy</span>
-                <p>Sin horario asignado · pide a tu supervisor que registre tu horario de práctica</p>
+    <?php if ($espH <= 0): ?>
+        <div class="tk-void">
+            <span class="material-symbols-outlined">event_busy</span>
+            Sin horario asignado · pide a tu supervisor que registre tu horario de práctica.
+        </div>
+    <?php else: ?>
+        <div class="tk-hours">
+            <div class="tk-hours-n"><b><?= number_format($heH, 1) ?> h</b><span>Cumplidas</span></div>
+            <div class="tk-hours-sep">/</div>
+            <div class="tk-hours-n is-muted"><b><?= number_format($espH, 1) ?> h</b><span>Programadas</span></div>
+            <div class="tk-hours-bar">
+                <div class="tk-bar tk-bar-blue"><i style="--w: <?= $pctH ?>%"></i></div>
+                <div class="tk-prog-meta"><span>Avance de la semana</span><span><strong><?= $pctH ?>%</strong></span></div>
             </div>
-        <?php else: ?>
-            <div style="display:flex; align-items:center; gap:22px; flex-wrap:wrap;">
-                <div>
-                    <div class="pr-hbig"><?= number_format($heH, 1) ?> h</div>
-                    <div class="pr-ilab" style="margin-top:5px;">Cumplidas</div>
-                </div>
-                <div style="font-size:20px; color:var(--g-text-disabled); font-weight:400;">/</div>
-                <div>
-                    <div class="pr-hbig" style="color:var(--g-text-secondary);"><?= number_format($espH, 1) ?> h</div>
-                    <div class="pr-ilab" style="margin-top:5px;">Programadas</div>
-                </div>
-                <div style="flex:1; min-width:200px;">
-                    <div class="pr-track pr-track-blue"><i style="width: <?= $pctH ?>%"></i></div>
-                    <div class="pr-meta">
-                        <span>Semana del <strong><?= $iniSem ?></strong> al <strong><?= $finSem ?></strong></span>
-                        <span><strong><?= $pctH ?>%</strong> de la semana</span>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
-
-<script>
-    // ════════════════════════════════════════════
-    // TIEMPO REAL - Helpers para SSE (Empleado/Practicante)
-    // ════════════════════════════════════════════
-    window.actualizarUIAsistencia = function(asistencia) {
-        var btn = document.querySelector('.pra-marcar-cta .dev-btn');
-        if (!btn) return;
-        
-        var st = asistencia.status || 'absent';
-        var hEnt = asistencia.time_in || null;
-        var hSal = asistencia.time_out || null;
-        
-        if (hEnt && !hSal) {
-            btn.innerHTML = '<span class="material-symbols-outlined">logout</span> Registrar salida';
-            btn.className = 'dev-btn dev-btn-primary';
-        } else if (hEnt && hSal) {
-            btn.innerHTML = '<span class="material-symbols-outlined filled" style="font-size:18px;vertical-align:-4px;">check_circle</span> Completado hoy';
-            btn.className = 'dev-btn dev-btn-green';
-            btn.onclick = null;
-        } else {
-            btn.innerHTML = '<span class="material-symbols-outlined">login</span> Registrar entrada';
-            btn.className = 'dev-btn';
-        }
-        
-        var statusEl = document.querySelector('.pra-status-pill');
-        if (statusEl) {
-            var enHorario = !statusEl.classList.contains('off');
-            statusEl.className = 'pra-status-pill ' + (enHorario ? '' : 'off');
-            statusEl.innerHTML = '<span class="material-symbols-outlined filled">' + (enHorario ? 'work' : 'bedtime') + '</span> ' + (enHorario ? 'En tu horario' : 'Fuera de tu horario');
-        }
-    };
-
-    window.mostrarAlerta = function(datos) {
-        if (!datos || !Array.isArray(datos)) return;
-        datos.forEach(function(a) {
-            var msg = a.mensaje || 'Alerta';
-            var tipo = a.tipo === 'tardanza' ? 'warning' : 'danger';
-            var toast = document.createElement('div');
-            toast.className = 'dev-toast dev-toast-' + tipo;
-            toast.innerHTML = '<span class="material-symbols-outlined">' + (a.tipo === 'tardanza' ? 'schedule' : 'warning') + '</span> ' + (a.mensaje || 'Alerta');
-            document.body.appendChild(toast);
-            setTimeout(function() { toast.remove(); }, 5000);
-        });
-    };
-</script>
+        </div>
+    <?php endif; ?>
+</section>
