@@ -41,6 +41,12 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <!-- Widgets propios (campana + toasts): al final -->
     <link rel="stylesheet" href="<?= base_url('css/dashboard/panel-widgets.css?v=' . filemtime(FCPATH . 'css/dashboard/panel-widgets.css')) ?>">
+    <!-- Diseño System-Trackin en todo el sistema -->
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/dashboard/tk-sistema.css?v=' . filemtime(FCPATH . 'css/dashboard/tk-sistema.css')) ?>">
 
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" >

@@ -171,20 +171,20 @@ $GLOBALS['__pdsg_seg'] = $seg;
         overlay.classList.add('is-open');
 
         gsap.set(links, { opacity: 0, y: 6 });
-        gsap.set(modal, { width: 220 });
+        gsap.set(modal, { width: 224 });
 
         var contentH = 16;
         links.forEach(function(l) { contentH += l.offsetHeight; });
 
-        gsap.set(modal, { width: 56, height: 56 });
+        gsap.set(modal, { width: 48, height: 48 });
 
         var tl = gsap.timeline();
 
         tl.to(modal, {
-            width: 220,
+            width: 224,
             height: Math.min(contentH, window.innerHeight - 100),
-            borderRadius: '18px',
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--g-surface').trim() || '#ffffff',
+            borderRadius: '24px',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--sb-surface').trim() || '#ffffff',
             duration: 0.35,
             ease: 'back.out(1.1)'
         });
@@ -252,10 +252,10 @@ $GLOBALS['__pdsg_seg'] = $seg;
         }, '-=0.05');
 
         tl.to(modal, {
-            width: 56,
-            height: 56,
+            width: 48,
+            height: 48,
             borderRadius: '50%',
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--g-primary').trim() || '#1b7a42',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--sb-surface').trim() || '#ffffff',
             duration: 0.3,
             ease: 'power3.inOut'
         }, '-=0.1');

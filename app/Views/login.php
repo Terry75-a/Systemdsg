@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/login/loginindex.css?v=' . filemtime(FCPATH . 'css/login/loginindex.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/login/tk-login.css?v=' . filemtime(FCPATH . 'css/login/tk-login.css')) ?>">
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
 </head>
 <body>

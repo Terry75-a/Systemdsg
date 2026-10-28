@@ -2,8 +2,8 @@
 <main class="tp-page pl-page">
     <div class="pdsg-page-head">
         <div>
-            <h1 class="pdsg-page-title">Gestión de Planes</h1>
-            <p class="pdsg-page-sub">Administra los planes de servicio para tus clientes</p>
+            <h1 class="pdsg-page-title">Planes</h1>
+            <p class="pdsg-page-sub">Planes de servicio que asignas a tus clientes: precio, vigencia y descripción.</p>
         </div>
         <button type="button" id="plAdd" class="btn pdsg-add-btn tp-add">
             <i class="fa-solid fa-plus" aria-hidden="true"></i> Nuevo Plan
@@ -11,6 +11,14 @@
     </div>
 
     <div id="plNotice" class="alert alert-success" role="status" hidden></div>
+
+    <!-- KPIs (StatGrid): se llenan con los datos de la tabla -->
+    <section class="tk-stats tp-stats pl-stats" aria-label="Resumen de planes">
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">sell</span><div><p class="tk-stat-lbl">Planes registrados</p><p class="tk-stat-val" id="plStatTotal">—</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">event_available</span><div><p class="tk-stat-lbl">Vigentes</p><p class="tk-stat-val" id="plStatVig">—</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">payments</span><div><p class="tk-stat-lbl">Precio promedio</p><p class="tk-stat-val" id="plStatProm">—</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">filter_list</span><div><p class="tk-stat-lbl">Mostrando</p><p class="tk-stat-val" id="plStatShown">—</p></div></div>
+    </section>
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de planes">
         <div class="tp-toolbar">
             <div class="tp-category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Todos los planes</span><span class="pdsg-tab-count" id="plCount" aria-live="polite">—</span></div>
@@ -21,7 +29,8 @@
                 <thead><tr>
                     <th scope="col" class="tp-id-column">Código</th>
                     <th scope="col">Plan</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Vigencia</th>
+                    <th scope="col" class="pl-th-num">Precio</th>
                     <th scope="col" class="pdsg-th-end">Acciones</th>
                 </tr></thead>
                 <tbody></tbody>
@@ -87,7 +96,17 @@
             order: [[0, 'asc']],
             drawCallback: function () {
                 var api = this.api();
-                document.getElementById('plCount').textContent = api.page.info().recordsTotal;
+                var info = api.page.info();
+                document.getElementById('plCount').textContent = info.recordsTotal;
+                document.getElementById('plStatTotal').textContent = info.recordsTotal;
+                document.getElementById('plStatShown').textContent = info.recordsDisplay;
+                var suma = 0, n = 0, vig = 0, hoy = new Date().toISOString().slice(0, 10);
+                api.rows().data().each(function (r) {
+                    suma += parseFloat(r.precio) || 0; n++;
+                    if (r.fecha_de_vencimiento && r.fecha_de_vencimiento >= hoy && (!r.fecha_de_inicio || r.fecha_de_inicio <= hoy)) vig++;
+                });
+                document.getElementById('plStatVig').textContent = vig;
+                document.getElementById('plStatProm').textContent = 'S/ ' + (n ? suma / n : 0).toFixed(2);
             },
             ajax: {
                 url: "<?= base_url('planes/listar') ?>",
@@ -95,16 +114,32 @@
                 dataSrc: 'data'
             },
             columns: [
-                { data: 'id_plan', className: 'tp-code' },
-                { data: 'nombre_plan', render: function (data, type) {
+                { data: 'id_plan', className: 'tp-code', render: function (data, type) {
+                    if (type !== 'display') return data;
+                    return '<span class="tk-code-pill">PL-' + String(Number(data) || 0).padStart(2, '0') + '</span>';
+                }},
+                { data: 'nombre_plan', render: function (data, type, row) {
                     if (type !== 'display') return data;
                     var label = $('<span>').text(data || '').html();
-                    return '<span class="tp-name"><span class="tp-type-icon"><i class="fa-regular fa-credit-card" aria-hidden="true"></i></span><span>' + label + '</span></span>';
+                    var desc = $('<span>').text(row.descripcion || 'Sin descripción').html();
+                    return '<span class="tp-name"><span class="tp-type-icon"><i class="fa-regular fa-credit-card" aria-hidden="true"></i></span>'
+                        + '<span class="tp-name-txt"><b>' + label + '</b><small>' + desc + '</small></span></span>';
+                }},
+                { data: 'fecha_de_vencimiento', className: 'pl-vig', render: function (data, type, row) {
+                    if (type !== 'display') return data || '';
+                    var f = function (d) { return d ? d.split('-').reverse().join('/') : '—'; };
+                    var hoy = new Date().toISOString().slice(0, 10);
+                    var st = !row.fecha_de_inicio && !row.fecha_de_vencimiento ? ['Sin fechas', 'pl-st-none']
+                        : (row.fecha_de_vencimiento && row.fecha_de_vencimiento < hoy ? ['Vencido', 'pl-st-bad']
+                        : (row.fecha_de_inicio && row.fecha_de_inicio > hoy ? ['Programado', 'pl-st-wait'] : ['Vigente', 'pl-st-ok']));
+                    var rango = (row.fecha_de_inicio || row.fecha_de_vencimiento) ? '<span class="pl-vig-txt">' + f(row.fecha_de_inicio) + ' → ' + f(row.fecha_de_vencimiento) + '</span>' : '';
+                    return rango
+                        + '<span class="pl-st ' + st[1] + '"><i></i>' + st[0] + '</span>';
                 }},
                 { data: 'precio', className: 'tp-price', render: function (data, type) {
                     if (type !== 'display') return data;
                     var n = parseFloat(data) || 0;
-                    return 'S/ ' + n.toFixed(2);
+                    return '<span class="pl-price">S/ ' + n.toFixed(2) + '</span>';
                 }},
                 {
                     data: null,
@@ -130,15 +165,15 @@
                 lengthMenu: "Mostrar _MENU_ registros",
                 zeroRecords: '<div class="tp-empty"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><strong>Sin coincidencias</strong><span>Prueba con otro nombre o código.</span></div>',
                 emptyTable: '<div class="tp-empty"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><strong>Aún no hay planes</strong><span>Usa Nuevo Plan para registrar el primero.</span></div>',
-                info: "_START_–_END_ de _TOTAL_ planes",
+                info: "Mostrando _START_–_END_ de _TOTAL_ planes",
                 infoEmpty: "0 planes",
                 infoFiltered: "(de _MAX_ en total)",
                 search: "Buscar:",
                 paginate: {
                     first: "Primero",
                     last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
+                    next: '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i><span class="visually-hidden">Siguiente</span>',
+                    previous: '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i><span class="visually-hidden">Anterior</span>'
                 }
             }
         });

@@ -11,6 +11,13 @@
     </div>
 
     <div id="tpNotice" class="alert alert-success" role="status" hidden></div>
+
+    <!-- KPIs (StatGrid): se llenan con los datos de la tabla -->
+    <section class="tk-stats tp-stats" aria-label="Resumen de tipos de plan">
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">category</span><div><p class="tk-stat-lbl">Tipos registrados</p><p class="tk-stat-val" id="tpStatTotal">—</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">filter_list</span><div><p class="tk-stat-lbl">Mostrando</p><p class="tk-stat-val" id="tpStatShown">—</p></div></div>
+        <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">new_releases</span><div><p class="tk-stat-lbl">Último agregado</p><p class="tk-stat-val tp-stat-txt" id="tpStatLast">—</p></div></div>
+    </section>
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de tipos de plan">
         <div class="tp-toolbar">
             <div class="tp-category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Todos los tipos</span><span class="pdsg-tab-count" id="tpCount" aria-live="polite">—</span></div>
@@ -69,7 +76,13 @@
             order: [[0, 'asc']],
             drawCallback: function () {
                 var api = this.api();
-                document.getElementById('tpCount').textContent = api.page.info().recordsTotal;
+                var info = api.page.info();
+                document.getElementById('tpCount').textContent = info.recordsTotal;
+                document.getElementById('tpStatTotal').textContent = info.recordsTotal;
+                document.getElementById('tpStatShown').textContent = info.recordsDisplay;
+                var ultimo = null;
+                api.rows().data().each(function (r) { if (!ultimo || Number(r.id_tipo_plan) > Number(ultimo.id_tipo_plan)) ultimo = r; });
+                document.getElementById('tpStatLast').textContent = ultimo ? ultimo.nombre_tipo : '—';
             },
             "ajax": {
                 "url": "<?= base_url('tipo_plan/listar') ?>",
@@ -77,11 +90,15 @@
                 "dataSrc": "data"
             },
             "columns": [
-                { "data": "id_tipo_plan", "className": "tp-code" },
+                { "data": "id_tipo_plan", "className": "tp-code", "render": function (data, type) {
+                    if (type !== 'display') return data;
+                    return '<span class="tk-code-pill">TP-' + String(Number(data) || 0).padStart(2, '0') + '</span>';
+                } },
                 { "data": "nombre_tipo", "render": function (data, type) {
                     if (type !== 'display') return data;
                     var label = $('<span>').text(data || '').html();
-                    return '<span class="tp-name"><span class="tp-type-icon"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span><span>' + label + '</span></span>';
+                    return '<span class="tp-name"><span class="tp-type-icon"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span>'
+                        + '<span class="tp-name-txt"><b>' + label + '</b><small>Modalidad de plan</small></span></span>';
                 } },
                 { 
                     "data": null,
@@ -107,15 +124,15 @@
     "lengthMenu": "Mostrar _MENU_ registros",
     "zeroRecords": '<div class="tp-empty"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><strong>Sin coincidencias</strong><span>Prueba con otro nombre o código.</span></div>',
     "emptyTable": '<div class="tp-empty"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><strong>Aún no hay tipos de plan</strong><span>Usa Añadir para registrar el primero.</span></div>',
-    "info": "_START_–_END_ de _TOTAL_ tipos",
+    "info": "Mostrando _START_–_END_ de _TOTAL_ tipos",
     "infoEmpty": "0 tipos",
     "infoFiltered": "(de _MAX_ en total)",
     "search": "Buscar:",
     "paginate": {
         "first": "Primero",
         "last": "Último",
-        "next": "Siguiente",
-        "previous": "Anterior"
+        "next": '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i><span class="visually-hidden">Siguiente</span>',
+        "previous": '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i><span class="visually-hidden">Anterior</span>'
     }
 }
         });

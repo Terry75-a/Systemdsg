@@ -20,13 +20,19 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
     <div class="dsg-page">
         <header class="dev-topbar">
             <div class="dev-topbar-row">
-                <div class="dash-greeting">
-                    <h1 class="dash-greeting-title"><?= esc($saludo) ?>, <strong><?= esc($nombre) ?></strong></h1>
-                    <p class="dash-greeting-sub">Panel de Administración DSG Perú</p>
-                    <div class="dash-date">
-                        <span class="material-symbols-outlined">calendar_today</span>
-                        <?= date('d/m/Y') ?>
-                    </div>
+                <?php
+                    // Nombre de la página en la barra (como el header del AppShell de Trackin)
+                    $paginas = [
+                        'dashboard' => 'Inicio', 'personas' => 'Clientes', 'personasadd' => 'Registrar persona',
+                        'planes' => 'Planes', 'tipo_plan' => 'Tipos de plan', 'tipo_planadd' => 'Tipos de plan',
+                        'calendario' => 'Calendario', 'notificaciones' => 'Notificaciones', 'perfil' => 'Mi perfil',
+                        'usuarios' => 'Usuarios', 'permisos' => 'Permisos', 'menu' => 'Menú', 'configuracion' => 'Configuración',
+                    ];
+                    $paginaActual = $paginas[strtolower($seg)] ?? ($titulo ?? 'Panel');
+                ?>
+                <div class="dash-greeting tk-shell-head">
+                    <h1 class="tk-shell-title"><?= esc($paginaActual) ?></h1>
+                    <span class="tk-shell-hello"><?= esc($saludo) ?>, <?= esc(explode(' ', trim((string) $nombre))[0] ?: $nombre) ?></span>
                 </div>
                 <div class="dev-topbar-actions">
                     <!-- Notificaciones estilo asisten -->

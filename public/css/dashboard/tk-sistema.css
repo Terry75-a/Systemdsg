@@ -1,0 +1,698 @@
+/* ══════════════════════════════════════════════════════════════
+   TK-SISTEMA · dashboard del sistema principal (/dashboard) con el
+   diseño de System-Trackin. Se carga solo en /dashboard, después de
+   tk-dashboard.css y trackin.css.
+   ══════════════════════════════════════════════════════════════ */
+
+/* cabecera: el saludo queda chico y el título va en .tk-title */
+body:has(.dev-main) .dash-greeting-title { font-size: 14px !important; font-weight: 500 !important; margin: 0 !important; }
+body:has(.dev-main) .dash-greeting-title strong { font-weight: 600; }
+body:has(.dev-main) .dash-greeting-sub { font-size: 12px !important; margin: 0 !important; color: var(--tk-v70) !important; }
+body:has(.dev-main) .dash-date {
+  height: 26px; padding: 0 10px !important; border-radius: 9999px !important; margin-top: 6px !important;
+  background: var(--sb-surface) !important; border: 1px solid var(--tk-l40); font-size: 11px !important;
+}
+
+.tk-sys { display: flex; flex-direction: column; gap: 16px; }
+.tk-sys .tk-stats { margin-bottom: 0; }
+.tk-sys a.tk-stat { color: inherit; text-decoration: none; }
+
+/* KPIs de 4 y 5 */
+.tk-sys .tk-stats-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1024px) { .tk-sys .tk-stats-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* Accesos rápidos: filas con icono, texto y flecha */
+.tk-sys-links { display: grid; grid-template-columns: minmax(0, 1fr); }
+/* dos columnas solo cuando la tarjeta es ancha: celular apaisado o pantallas grandes */
+@media (min-width: 640px) and (max-width: 1023px), (min-width: 1400px) { .tk-sys-links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tk-dash a.tk-sys-link {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-bottom: 1px solid var(--tk-line-soft); text-decoration: none; color: var(--sb-on-surface);
+  transition: background-color 150ms ease;
+  animation: tk-row-y 350ms var(--tk-ease) both; animation-delay: calc(var(--i) * 40ms);
+}
+@media (min-width: 640px) and (max-width: 1023px), (min-width: 1400px) { .tk-dash a.tk-sys-link:nth-child(odd) { border-right: 1px solid var(--tk-line-soft); } }
+.tk-dash a.tk-sys-link:hover { background: var(--sb-surface-container-low); }
+.tk-sys-link-ico {
+  display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 10px;
+  background: var(--sb-surface-container); color: var(--tk-muted);
+}
+.tk-sys-link-ico .material-symbols-outlined { font-size: 18px; }
+.tk-dash a.tk-sys-link:hover .tk-sys-link-ico { background: color-mix(in oklab, var(--sb-primary) 12%, transparent); color: var(--sb-primary); }
+.tk-sys-link-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tk-sys-link-txt b { font-size: 13px; font-weight: 500; }
+.tk-sys-link-txt span { font-size: 11px; color: var(--tk-muted); }
+.tk-sys-link-go { font-size: 18px !important; color: var(--tk-faint); transition: transform 150ms ease, color 150ms ease; }
+.tk-dash a.tk-sys-link:hover .tk-sys-link-go { transform: translateX(2px); color: var(--sb-primary); }
+
+/* Estado del panel */
+.tk-sys .tk-p5 { padding: 16px 16px 12px; }
+.tk-sys-rest { background: var(--sb-surface-container-high) !important; }
+.tk-sys-rows { padding: 0 16px 8px; }
+.tk-sys-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 0;
+  border-top: 1px solid var(--tk-line-soft); font-size: 12px;
+}
+.tk-sys-row > span:first-child { color: var(--tk-muted); }
+.tk-sys-row > span:last-child { font-weight: 500; text-align: right; }
+
+/* ══════════════════════════════════════════════════════════════
+   Páginas del sistema (clientes, planes, usuarios, permisos…):
+   clases compartidas .pdsg-* con las medidas de System-Trackin.
+   ══════════════════════════════════════════════════════════════ */
+
+/* PageTitle */
+body:has(.dev-main) .pdsg-page-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px;
+  margin: 0 0 16px !important;
+}
+body:has(.dev-main) .pdsg-page-title {
+  margin: 0 !important; font-size: 20px !important; font-weight: 600 !important; letter-spacing: -0.025em;
+  line-height: 1.3; color: var(--sb-on-surface) !important; font-family: var(--tk-font) !important;
+}
+body:has(.dev-main) .pdsg-page-sub {
+  margin: 2px 0 0 !important; font-size: 12px !important; line-height: 1.45;
+  color: var(--tk-v70) !important; max-width: 620px;
+}
+body:has(.dev-main) .pdsg-add-btn {
+  height: 36px !important; padding: 0 16px !important; border-radius: 9999px !important;
+  background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; border: 0 !important;
+  font-size: 13px !important; font-weight: 500 !important; box-shadow: none !important;
+}
+body:has(.dev-main) .pdsg-add-btn:hover { filter: brightness(0.95); }
+
+/* Card */
+body:has(.dev-main) .pdsg-card {
+  border: 1px solid var(--tk-l40) !important; border-radius: 16px !important;
+  background: var(--sb-surface) !important; box-shadow: none !important; overflow: hidden;
+}
+
+/* Pestañas → chips redondos (sbf-chip) + buscador (sbf-search) */
+body:has(.dev-main) .pdsg-tabs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  padding: 12px 16px !important; background: transparent !important;
+  border-bottom: 1px solid var(--tk-l40) !important;
+}
+body:has(.dev-main) .pdsg-tab {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px !important;
+  border-radius: 9999px !important; border: 1.5px solid var(--sb-outline-variant) !important;
+  background: transparent !important; color: var(--sb-on-surface-variant) !important;
+  font-size: 12px !important; font-weight: 500 !important; transition: all 0.18s ease;
+}
+body:has(.dev-main) .pdsg-tab:hover { background: var(--sb-surface-container) !important; }
+body:has(.dev-main) .pdsg-tab.is-active {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; border-color: transparent !important;
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--sb-primary) 45%, transparent);
+}
+body:has(.dev-main) .pdsg-tab-count {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9999px !important; font-size: 10px !important;
+  display: inline-grid; place-items: center;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+body:has(.dev-main) .pdsg-tab.is-active .pdsg-tab-count { background: rgba(255,255,255,.25) !important; color: inherit !important; }
+body:has(.dev-main) .pdsg-search-wrap { margin-left: auto; }
+body:has(.dev-main) .pdsg-search-wrap .input-group {
+  height: 36px; border-radius: 9999px; overflow: hidden; flex-wrap: nowrap;
+  background: var(--sb-surface-container-low); border: 1px solid var(--sb-outline-variant);
+}
+body:has(.dev-main) .pdsg-search-wrap .input-group:focus-within { border-color: var(--sb-primary); box-shadow: var(--tk-ring); }
+body:has(.dev-main) .pdsg-search-wrap .input-group-text,
+body:has(.dev-main) .pdsg-search-wrap .form-control {
+  height: 100%; border: 0 !important; background: transparent !important; box-shadow: none !important; font-size: 13px;
+}
+
+/* Tabla (Table / Th / Tr / Td) */
+body:has(.dev-main) .pdsg-table-wrap { overflow-x: auto; }
+body:has(.dev-main) .pdsg-table { border-collapse: collapse !important; font-size: 12px; }
+body:has(.dev-main) .pdsg-table thead th {
+  height: 40px; padding: 0 12px !important; background: transparent !important;
+  font-size: 10px !important; font-weight: 600 !important; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--tk-v50) !important; border-bottom: 1px solid var(--tk-l40) !important; white-space: nowrap;
+}
+body:has(.dev-main) .pdsg-table tbody td {
+  height: 52px; padding: 8px 12px !important; font-size: 12px !important; vertical-align: middle;
+  color: var(--sb-on-surface) !important; border-bottom: 1px solid var(--tk-l25) !important; background: transparent !important;
+}
+body:has(.dev-main) .pdsg-table tbody tr:last-child td { border-bottom: 0 !important; }
+body:has(.dev-main) .pdsg-table tbody tr { background: transparent !important; transition: background-color 150ms ease; }
+body:has(.dev-main) .pdsg-table tbody tr:hover { background: var(--sb-surface-container-low) !important; }
+body:has(.dev-main) .pdsg-table :is(th, td):first-child { padding-left: 16px !important; }
+body:has(.dev-main) .pdsg-table :is(th, td):last-child { padding-right: 16px !important; }
+body:has(.dev-main) .pdsg-avatar {
+  width: 32px !important; height: 32px !important; font-size: 12px !important; border-radius: 50% !important;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+/* acciones: iconos redondos tenues */
+body:has(.dev-main) .pdsg-action {
+  width: 32px !important; height: 32px !important; border-radius: 9999px !important; border: 0 !important;
+  background: transparent !important; color: var(--tk-v70) !important; box-shadow: none !important;
+}
+body:has(.dev-main) .pdsg-action:hover { background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; }
+body:has(.dev-main) .pdsg-action.pdsg-action-danger:hover { color: var(--tk-late) !important; }
+
+/* Paginador y vacío */
+body:has(.dev-main) .pdsg-pagination {
+  padding: 8px 16px !important; border-top: 1px solid var(--tk-l40) !important; background: transparent !important;
+  font-size: 11px;
+}
+body:has(.dev-main) .pdsg-summary { color: var(--tk-v70); }
+body:has(.dev-main) .pdsg-page { border-radius: 9999px !important; min-width: 28px; height: 28px; font-size: 12px; }
+body:has(.dev-main) .pdsg-page.is-active { background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; }
+body:has(.dev-main) .pdsg-empty { padding: 40px 16px !important; color: var(--tk-v50) !important; font-size: 12px; }
+
+/* Modales del sistema: radio y borde de Trackin */
+body:has(.dev-main) .tp-modal-head h2 { font-size: 16px !important; font-weight: 600 !important; letter-spacing: -0.01em; }
+.tk-sys-note { margin: 2px 0 0; font-size: 11px; color: var(--tk-v70); }
+
+/* Registrar persona: en pantallas medianas, campos de dos en dos */
+@media (min-width: 768px) and (max-width: 1279px) {
+  body:has(.dev-main) .pe-field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  body:has(.dev-main) .pe-field-grid > * { grid-column: auto !important; width: auto !important; max-width: none !important; }
+  body:has(.dev-main) .pe-field-grid > .pe-lookup,
+  body:has(.dev-main) .pe-field-grid > .col-12,
+  body:has(.dev-main) .pe-field-grid > :is(.pe-section-heading, hr, .pe-field-divider, .pe-full) { grid-column: 1 / -1 !important; }
+}
+/* campos de formulario (input Trackin: r12, borde outline-variant, foco verde) */
+body:has(.dev-main) .pdsg-input,
+body:has(.dev-main) .pdsg-card .form-control:not(.border-start-0),
+body:has(.dev-main) .pdsg-card .form-select {
+  min-height: 40px; border-radius: 12px !important; border: 1px solid var(--sb-outline-variant) !important;
+  background: var(--sb-surface-container-low) !important; font-size: 13px !important; box-shadow: none !important;
+}
+body:has(.dev-main) .pdsg-input:focus,
+body:has(.dev-main) .pdsg-card .form-control:focus,
+body:has(.dev-main) .pdsg-card .form-select:focus { border-color: var(--sb-primary) !important; box-shadow: var(--tk-ring) !important; }
+body:has(.dev-main) .pdsg-field-label { font-size: 11px !important; font-weight: 500 !important; color: var(--tk-v70) !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   Cabecera (AppShell de Trackin): barra fina con saludo a la
+   izquierda y acciones a la derecha; en celular, una sola fila.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dev-main) .dsg-page > .dev-topbar {
+  padding: 14px 24px 0 !important; background: transparent !important; border: 0 !important;
+}
+body:has(.dev-main) .dsg-page > .dev-topbar .dev-topbar-row {
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+  justify-content: space-between !important; gap: 12px; flex-wrap: nowrap;
+}
+body:has(.dev-main) .dash-greeting { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+body:has(.dev-main) .dash-greeting-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dev-main) .dev-topbar-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+body:has(.dev-main) .dsg-dark-btn {
+  width: 36px !important; height: 36px !important; border-radius: 9999px !important;
+  background: var(--sb-surface) !important; border: 1px solid var(--tk-l40) !important; box-shadow: none !important;
+  color: var(--sb-on-surface-variant) !important;
+}
+body:has(.dev-main) .dsg-dark-btn:hover { background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; }
+body:has(.dev-main) .dsg-dark-btn .material-symbols-outlined { font-size: 19px !important; }
+body:has(.dev-main) .dsg-user-btn {
+  height: 40px; padding: 0 10px 0 4px !important; border-radius: 9999px !important; gap: 8px;
+  background: var(--sb-surface) !important; border: 1px solid var(--tk-l40) !important; box-shadow: none !important;
+}
+body:has(.dev-main) .dsg-user-avatar {
+  width: 30px !important; height: 30px !important; font-size: 11px !important;
+  background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important;
+}
+body:has(.dev-main) .dsg-user-name { font-size: 12px !important; font-weight: 600 !important; }
+body:has(.dev-main) .dsg-user-role { font-size: 10px !important; color: var(--tk-v70) !important; }
+body:has(.dev-main) .dsg-user-menu {
+  border-radius: 16px !important; border: 1px solid var(--tk-l40) !important; padding: 6px !important;
+  box-shadow: 0 16px 40px -12px rgba(0,0,0,.18) !important; background: var(--sb-surface) !important;
+}
+body:has(.dev-main) .dsg-user-menu-link { border-radius: 10px !important; font-size: 13px !important; padding: 8px 10px !important; }
+body:has(.dev-main) .dsg-user-menu-link:hover { background: var(--sb-surface-container) !important; }
+body:has(.dev-main) .dsg-user-menu-logout { color: var(--tk-late) !important; }
+
+/* contenido: mismo margen que la cabecera */
+body:has(.dev-main) .dsg-page > .dev-content { padding: 16px 24px 32px !important; }
+
+@media (max-width: 768px) {
+  body:has(.dev-main) .dsg-page > .dev-topbar { padding: 12px 16px 0 !important; }
+  body:has(.dev-main) .dsg-page > .dev-content { padding: 12px 16px 120px !important; }
+  body:has(.dev-main) .dash-greeting-sub, body:has(.dev-main) .dash-date { display: none !important; }
+  body:has(.dev-main) .dash-greeting-title { font-size: 13px !important; }
+  body:has(.dev-main) .dev-topbar-actions { gap: 6px; }
+  body:has(.dev-main) .dsg-user-meta, body:has(.dev-main) .dsg-user-chevron { display: none !important; }
+  body:has(.dev-main) .dsg-user-btn { padding: 0 3px !important; height: 38px; }
+  /* títulos y acciones de página en celular */
+  body:has(.dev-main) :is(.tk-title, .pdsg-page-head) { align-items: flex-start; }
+  body:has(.dev-main) :is(.tk-title-actions) { width: 100%; }
+  body:has(.dev-main) .tk-title-actions > :is(a, button) { flex: 1 1 auto; justify-content: center; }
+  body:has(.dev-main) .pdsg-page-title { font-size: 18px !important; }
+  body:has(.dev-main) .pdsg-add-btn { height: 34px !important; }
+  /* pestañas y buscador apilados */
+  body:has(.dev-main) .pdsg-search-wrap { margin-left: 0; min-width: 0 !important; max-width: none !important; width: 100% !important; }
+  body:has(.dev-main) .tk-sys-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+  body:has(.dev-main) .tk-sys-row > span:last-child { text-align: left; }
+}
+
+/* ── Tarjetas de la lista en celular (pdsg-mcard) ───────────── */
+body:has(.dev-main) .pdsg-mlist { padding: 0 !important; gap: 0 !important; }
+body:has(.dev-main) .pdsg-mcard {
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important;
+  border-bottom: 1px solid var(--tk-l25) !important; padding: 14px 16px !important; margin: 0 !important;
+}
+body:has(.dev-main) .pdsg-mcard:last-child { border-bottom: 0 !important; }
+body:has(.dev-main) .pdsg-mcard .pdsg-user-name { font-size: 13px !important; font-weight: 600 !important; }
+body:has(.dev-main) .pdsg-mcard-details { gap: 0 !important; margin-top: 8px !important; }
+body:has(.dev-main) .pdsg-mcard-detail {
+  background: transparent !important; border-radius: 0 !important; padding: 8px 0 !important;
+  border-bottom: 1px solid var(--tk-l25); font-size: 12px !important;
+}
+body:has(.dev-main) .pdsg-mcard-detail:last-child { border-bottom: 0; }
+body:has(.dev-main) .pdsg-mcard-label { font-size: 11px !important; color: var(--tk-v70) !important; }
+body:has(.dev-main) .pdsg-chip {
+  height: 22px; padding: 0 10px !important; border-radius: 9999px !important; font-size: 11px !important; font-weight: 500 !important;
+}
+body:has(.dev-main) .pdsg-chip-on { background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important; color: var(--sb-primary) !important; }
+body:has(.dev-main) .pdsg-chip-off { background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   Modales (Modal de HeroUI en Trackin): r20, borde fino, cabecera
+   con título 16px, pie con botones redondos.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dev-main) .modal-backdrop.show { opacity: .35 !important; }
+body:has(.dev-main) .modal-content {
+  border-radius: 20px !important; border: 1px solid var(--tk-l40) !important; overflow: hidden;
+  background: var(--sb-surface) !important; color: var(--sb-on-surface);
+  box-shadow: 0 24px 64px -16px rgba(0,0,0,.25) !important; font-family: var(--tk-font);
+}
+body:has(.dev-main) :is(.tp-modal-head, .pdsg-modal-bar, .modal-header) {
+  display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px !important;
+  border-bottom: 1px solid var(--tk-l40) !important; background: transparent !important;
+}
+body:has(.dev-main) :is(.tp-modal-head, .modal-header) h2,
+body:has(.dev-main) .modal-title { font-size: 16px !important; font-weight: 600 !important; letter-spacing: -0.01em; margin: 0; }
+body:has(.dev-main) .tp-modal-icon {
+  width: 36px !important; height: 36px !important; border-radius: 12px !important; flex: none;
+  background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important; color: var(--sb-primary) !important;
+}
+body:has(.dev-main) :is(.tp-modal-close, .pdsg-modal-close) {
+  width: 32px !important; height: 32px !important; border-radius: 9999px !important; border: 0 !important;
+  background: transparent !important; color: var(--tk-v70) !important; margin-left: auto;
+}
+body:has(.dev-main) :is(.tp-modal-close, .pdsg-modal-close):hover { background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; }
+body:has(.dev-main) :is(.tp-modal-body, .pdsg-modal-body, .modal-body) { padding: 18px 20px !important; }
+body:has(.dev-main) :is(.tp-modal-footer, .modal-footer) {
+  display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 18px !important;
+  border-top: 1px solid var(--tk-l40) !important; background: transparent !important;
+}
+body:has(.dev-main) :is(.tp-modal-save, .tp-modal-cancel, .modal-footer .btn) {
+  height: 38px !important; padding: 0 18px !important; border-radius: 9999px !important;
+  font-size: 13px !important; font-weight: 500 !important; box-shadow: none !important; border: 0 !important;
+}
+body:has(.dev-main) :is(.tp-modal-save, .modal-footer .btn-primary, .modal-footer .btn-success) {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important;
+}
+body:has(.dev-main) :is(.tp-modal-cancel, .modal-footer .btn-secondary, .modal-footer .btn-light) {
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important;
+}
+body:has(.dev-main) .modal-content :is(.form-control, .form-select) {
+  min-height: 40px; border-radius: 12px !important; border: 1px solid var(--sb-outline-variant) !important;
+  background: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important;
+  font-size: 13px !important; box-shadow: none !important;
+}
+body:has(.dev-main) .modal-content :is(.form-control, .form-select):focus { border-color: var(--sb-primary) !important; box-shadow: var(--tk-ring) !important; }
+body:has(.dev-main) .modal-content :is(label, .form-label) { font-size: 11px; font-weight: 500; color: var(--tk-v70); }
+/* ficha de detalle (ver cliente / sucursal) */
+body:has(.dev-main) .pdsg-modal-avatar { border-radius: 50% !important; background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; }
+body:has(.dev-main) .pdsg-modal-name { font-size: 16px !important; font-weight: 600 !important; }
+body:has(.dev-main) .pdsg-modal-sub { font-size: 12px !important; color: var(--tk-v70) !important; }
+body:has(.dev-main) .pdsg-modal-card {
+  border: 1px solid var(--tk-l40) !important; border-radius: 16px !important; box-shadow: none !important; background: var(--sb-surface) !important;
+}
+body:has(.dev-main) .pdsg-modal-group-title {
+  font-size: 10px !important; font-weight: 600 !important; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tk-v50) !important;
+}
+body:has(.dev-main) .pdsg-modal-field { border-radius: 0 !important; background: transparent !important; border-bottom: 1px solid var(--tk-l25); padding: 8px 0 !important; }
+body:has(.dev-main) .pdsg-modal-field-label { font-size: 11px !important; color: var(--tk-v70) !important; text-transform: none !important; letter-spacing: 0 !important; }
+body:has(.dev-main) .pdsg-modal-field-value { font-size: 13px !important; font-weight: 500 !important; }
+@media (max-width: 576px) {
+  body:has(.dev-main) .modal-dialog { margin: 0 !important; min-height: 100%; display: flex; align-items: flex-end; }
+  body:has(.dev-main) .modal-content { border-radius: 20px 20px 0 0 !important; max-height: 92vh; }
+  body:has(.dev-main) :is(.tp-modal-footer, .modal-footer) > * { flex: 1 1 0; justify-content: center; }
+}
+
+/* fecha de la cabecera: píldora a la medida del texto */
+body:has(.dev-main) .dash-date { display: inline-flex !important; align-self: flex-start; width: auto !important; gap: 6px; align-items: center; }
+body:has(.dev-main) .dash-date .material-symbols-outlined { font-size: 14px !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   Páginas con Bootstrap (Menú, Configuración): card, alert, badge,
+   list-group y botones con las medidas de Trackin.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dev-main) .dsg-page > .dev-content .card {
+  border: 1px solid var(--tk-l40) !important; border-radius: 16px !important;
+  box-shadow: none !important; background: var(--sb-surface) !important; overflow: hidden;
+}
+body:has(.dev-main) .dsg-page > .dev-content .card .card { background: var(--sb-surface-container-low) !important; border-radius: 12px !important; }
+body:has(.dev-main) .dsg-page > .dev-content .card-body { padding: 20px !important; }
+body:has(.dev-main) .dsg-page > .dev-content :is(h2.h4, h1.h3) {
+  font-size: 20px !important; font-weight: 600 !important; letter-spacing: -0.025em; margin-bottom: 2px !important;
+}
+body:has(.dev-main) .dsg-page > .dev-content :is(h2.h4, h1.h3) + p { font-size: 12px !important; color: var(--tk-v70) !important; }
+body:has(.dev-main) .dsg-page > .dev-content .card-title {
+  font-size: 14px !important; font-weight: 600 !important; display: flex; align-items: center; gap: 8px;
+}
+body:has(.dev-main) .dsg-page > .dev-content .card-title i { font-size: 13px; color: var(--tk-v50); }
+body:has(.dev-main) .dsg-page > .dev-content .card :is(p, li, small) { font-size: 12px; line-height: 1.55; }
+/* avisos: superficie neutra con borde, sin cian/amarillo fuerte */
+body:has(.dev-main) .dsg-page > .dev-content .alert {
+  border-radius: 16px !important; border: 1px solid var(--tk-l40) !important; box-shadow: none !important;
+  background: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important;
+  font-size: 12px; padding: 14px 16px !important;
+}
+body:has(.dev-main) .dsg-page > .dev-content .alert :is(h2, h3, h4, h5, strong) { font-size: 13px !important; font-weight: 600 !important; }
+body:has(.dev-main) .dsg-page > .dev-content .alert i { color: var(--sb-primary); }
+/* insignias: pastillas suaves */
+body:has(.dev-main) .dsg-page > .dev-content .badge {
+  border-radius: 9999px !important; padding: 4px 10px !important; font-size: 10px !important; font-weight: 600 !important;
+  border: 0 !important; background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+body:has(.dev-main) .dsg-page > .dev-content .badge:is(.text-success, .bg-success-subtle, .text-bg-success) { background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important; color: var(--sb-primary) !important; }
+body:has(.dev-main) .dsg-page > .dev-content .badge:is(.text-warning, .bg-warning-subtle, .text-bg-warning) { background: color-mix(in oklab, #d97706 14%, transparent) !important; color: #b45309 !important; }
+/* listas */
+body:has(.dev-main) .dsg-page > .dev-content .list-group { border-radius: 12px; overflow: hidden; }
+body:has(.dev-main) .dsg-page > .dev-content .list-group-item {
+  border: 0 !important; border-bottom: 1px solid var(--tk-l25) !important; background: transparent !important;
+  font-size: 13px; padding: 10px 14px !important; color: var(--sb-on-surface) !important;
+}
+body:has(.dev-main) .dsg-page > .dev-content .list-group-item:last-child { border-bottom: 0 !important; }
+body:has(.dev-main) .dsg-page > .dev-content .list-group-item.active,
+body:has(.dev-main) .dsg-page > .dev-content :is(.bg-dark, .text-bg-dark) {
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; font-weight: 600;
+}
+body:has(.dev-main) .dsg-page > .dev-content .bg-light { background: var(--sb-surface-container-low) !important; }
+/* botones Bootstrap del contenido: píldoras */
+body:has(.dev-main) .dsg-page > .dev-content .btn:not(.pdsg-add-btn):not(.pdsg-btn-search):not(.btn-close) {
+  border-radius: 9999px !important; font-size: 12px !important; font-weight: 500 !important; padding: 6px 14px !important; box-shadow: none !important;
+}
+body:has(.dev-main) .dsg-page > .dev-content .btn:is(.btn-primary, .btn-success) { background: var(--sb-primary) !important; border-color: transparent !important; color: #fff !important; }
+body:has(.dev-main) .dsg-page > .dev-content .btn:is(.btn-outline-secondary, .btn-light, .btn-outline-dark, .btn-secondary) {
+  background: var(--sb-surface-container) !important; border-color: transparent !important; color: var(--sb-on-surface) !important;
+}
+
+@media (max-width: 768px) {
+  /* en celular la fecha de la cabecera se oculta (va después de la regla de la píldora) */
+  body:has(.dev-main) .dash-date { display: none !important; }
+  /* los avisos emergentes suben por encima del menú inferior */
+  #toastContainer { bottom: 96px !important; left: 12px !important; right: 12px !important; }
+}
+/* la cabecera queda fija arriba: lleva fondo para que el contenido no se vea debajo */
+body:has(.dev-main) .dsg-page > .dev-topbar {
+  background: color-mix(in srgb, var(--tk-page-bg) 88%, transparent) !important;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  z-index: 20; padding-bottom: 10px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODALES · una sola receta para todo el sistema, réplica exacta
+   del modal de Tipos de plan (#tpModal, Modal de HeroUI):
+   r20, sombra suave, cabecera con icono en caja suave + título 16
+   + texto 12.5, cierre redondo arriba a la derecha, cuerpo 22px,
+   campos 44px r12, pie con botón principal ancho y "Cancelar"
+   fantasma debajo. Cubre las 3 familias de modales del sistema:
+   tp-modal-* · pdsg-modal-* · pe-ms-* y los .modal-header/footer.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dsg-page) .modal {
+  --dm-surface: var(--sb-surface, #fff); --dm-text: var(--sb-on-surface, #202124);
+  --dm-muted: var(--sb-on-surface-variant, #5f6368); --dm-border: color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+  --dm-soft: var(--sb-surface-container, #f1f3f4); --dm-accent: var(--sb-primary, #1b7a42);
+}
+body:has(.dsg-page) .modal-backdrop.show { --bs-backdrop-opacity: .55; opacity: .55 !important; background: rgb(32,33,36) !important; }
+
+/* diálogo */
+body:has(.dsg-page) .modal .modal-dialog {
+  max-width: 440px !important; margin: 16px auto !important; display: flex !important; align-items: center !important;
+  min-height: calc(100% - 32px) !important;
+}
+body:has(.dsg-page) .modal .modal-dialog:is(.modal-lg, .modal-xl),
+body:has(.dsg-page) .modal .modal-dialog:has(.pdsg-modal-grid, .row.g-3) { max-width: 640px !important; }
+body:has(.dsg-page) .modal .modal-dialog.pdsg-add-dialog { max-width: 980px !important; }
+body:has(.dsg-page) .modal .modal-dialog-scrollable .modal-content { max-height: calc(100vh - 32px); }
+body:has(.dsg-page) .modal .modal-content {
+  position: relative; width: 100%; padding: 0 !important;
+  background: var(--dm-surface) !important; color: var(--dm-text) !important;
+  border: 1px solid var(--dm-border) !important; border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(32,33,36,.22) !important; overflow: hidden;
+  font-family: var(--tk-font) !important;
+}
+body:has(.dsg-page) .modal.show .modal-dialog { animation: dmIn .2s cubic-bezier(.4,0,.2,1) both; }
+@keyframes dmIn { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { body:has(.dsg-page) .modal.show .modal-dialog { animation: none; } }
+
+/* cabecera: icono + título + texto, sin línea inferior */
+body:has(.dsg-page) .modal :is(.tp-modal-head, .pdsg-modal-bar, .pe-ms-head, .modal-header) {
+  position: relative !important; display: flex !important; align-items: flex-start !important; gap: 14px !important;
+  padding: 22px 52px 16px 22px !important; margin: 0 !important;
+  border: 0 !important; background: transparent !important; color: var(--dm-text) !important; min-height: 0 !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-icon, .pe-ms-icon, .pdsg-modal-avatar) {
+  display: grid !important; place-items: center !important; flex: none !important;
+  width: 40px !important; height: 40px !important; border-radius: 12px !important; border: 0 !important;
+  background: var(--dm-soft) !important; color: var(--dm-accent) !important;
+  font-size: 16px !important; font-weight: 600 !important; box-shadow: none !important; margin: 0 !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-head h2, .pe-ms-head h2, .pdsg-modal-name, .modal-title) {
+  margin: 2px 0 4px !important; font-size: 16px !important; font-weight: 600 !important;
+  letter-spacing: -.01em !important; line-height: 1.3 !important; color: var(--dm-text) !important; font-family: inherit !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-head p, .pe-ms-head p, .pdsg-modal-sub) {
+  display: block; margin: 0 !important; font-size: 12.5px !important; line-height: 1.55 !important; color: var(--dm-muted) !important;
+}
+body:has(.dsg-page) .modal :is(.pdsg-modal-head-info, .pe-ms-head-info) { min-width: 0; flex: 1; }
+body:has(.dsg-page) .modal .pdsg-modal-bar .pdsg-chip { align-self: center; flex: none; }
+/* cierre redondo arriba a la derecha */
+body:has(.dsg-page) .modal :is(.tp-modal-close, .pdsg-modal-close, .pe-ms-close, .modal-header .btn-close) {
+  position: absolute !important; top: 14px !important; right: 14px !important; margin: 0 !important;
+  width: 32px !important; height: 32px !important; padding: 0 !important; border-radius: 50% !important;
+  display: grid !important; place-items: center !important; border: 0 !important; box-shadow: none !important;
+  background-color: transparent !important; color: var(--dm-muted) !important; opacity: 1 !important;
+  transition: background-color 150ms cubic-bezier(.4,0,.2,1), color 150ms cubic-bezier(.4,0,.2,1);
+}
+body:has(.dsg-page) .modal :is(.tp-modal-close, .pdsg-modal-close, .pe-ms-close, .btn-close):hover { background-color: var(--dm-soft) !important; color: var(--dm-text) !important; }
+body:has(.dsg-page) .modal :is(.tp-modal-close, .pdsg-modal-close, .pe-ms-close) i { font-size: 14px !important; }
+body:has(.dsg-page) .modal .modal-header .btn-close { background-size: 10px !important; }
+
+/* cuerpo */
+body:has(.dsg-page) .modal :is(.tp-modal-body, .pdsg-modal-body, .pe-ms-body, .modal-body) {
+  padding: 18px 22px 4px !important; background: transparent !important; border: 0 !important;
+}
+body:has(.dsg-page) .modal :is(.pdsg-modal-scroll, .pe-ms-body-wrap) { background: transparent !important; }
+body:has(.dsg-page) .modal :is(.tp-modal-body, .pe-ms-body, .modal-body) :is(label, .form-label) {
+  display: block; margin-bottom: 8px !important; font-size: 13px !important; font-weight: 500 !important;
+  color: var(--dm-text) !important; text-transform: none !important; letter-spacing: 0 !important;
+}
+body:has(.dsg-page) .modal :is(.form-control, .form-select) {
+  min-height: 44px !important; font-size: 14px !important; border-radius: 12px !important;
+  border: 1px solid var(--dm-border) !important; background-color: var(--dm-surface) !important; color: var(--dm-text) !important;
+  box-shadow: none !important; transition: border-color 150ms cubic-bezier(.4,0,.2,1), box-shadow 150ms cubic-bezier(.4,0,.2,1);
+}
+body:has(.dsg-page) .modal :is(.form-control, .form-select):focus {
+  border-color: var(--dm-accent) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--dm-accent) 16%, transparent) !important;
+}
+body:has(.dsg-page) .modal .form-control::placeholder { color: var(--dm-muted) !important; font-size: 13.5px; }
+body:has(.dsg-page) .modal textarea.form-control { min-height: auto !important; resize: vertical; line-height: 1.5; }
+body:has(.dsg-page) .modal :is(.form-text, small.text-muted, .tp-modal-body > p) { color: var(--dm-muted) !important; font-size: 11.5px !important; line-height: 1.6; }
+body:has(.dsg-page) .modal .row.g-3 { --bs-gutter-y: 12px; --bs-gutter-x: 12px; }
+/* avisos dentro del modal */
+body:has(.dsg-page) .modal .alert {
+  font-size: 13px !important; border-radius: 12px !important; border: 0 !important; padding: 10px 14px !important;
+  background: var(--dm-soft) !important; color: var(--dm-text) !important;
+}
+body:has(.dsg-page) .modal .alert-danger { background: var(--tk-late-soft) !important; color: var(--tk-late) !important; }
+body:has(.dsg-page) .modal .alert-success { background: color-mix(in oklab, var(--dm-accent) 12%, transparent) !important; color: var(--dm-accent) !important; }
+
+/* pie: botón principal ancho arriba y "Cancelar" fantasma debajo */
+body:has(.dsg-page) .modal :is(.tp-modal-footer, .pe-ms-footer, .modal-footer) {
+  display: flex !important; flex-direction: column-reverse !important; align-items: stretch !important; gap: 8px !important;
+  padding: 16px 22px 22px !important; margin: 0 !important; border: 0 !important; background: transparent !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-footer, .pe-ms-footer, .modal-footer) > * { margin: 0 !important; }
+body:has(.dsg-page) .modal :is(.tp-modal-footer, .pe-ms-footer, .modal-footer) .btn {
+  min-height: 44px !important; width: 100% !important; padding: 0 18px !important;
+  border-radius: 999px !important; border: 0 !important; box-shadow: none !important;
+  font-size: 14px !important; font-weight: 500 !important; letter-spacing: .01em !important;
+  display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
+  transition: background-color 150ms cubic-bezier(.4,0,.2,1), color 150ms cubic-bezier(.4,0,.2,1), opacity 150ms;
+}
+/* principal: el botón de enviar / guardar */
+body:has(.dsg-page) .modal :is(.tp-modal-save, .pe-ms-save, .modal-footer .btn[type="submit"], .modal-footer .btn-primary, .modal-footer .btn-success) {
+  background: var(--dm-accent) !important; color: #fff !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-save, .pe-ms-save, .modal-footer .btn[type="submit"], .modal-footer .btn-primary, .modal-footer .btn-success):hover { background: #15653a !important; }
+body:has(.dsg-page) .modal :is(.tp-modal-save, .pe-ms-save, .modal-footer .btn):disabled { opacity: .6 !important; }
+body:has(.dsg-page) .modal :is(.tp-modal-save, .pe-ms-save) i { font-size: 13px !important; }
+/* secundario: cancelar / cerrar */
+body:has(.dsg-page) .modal :is(.tp-modal-cancel, .modal-footer .btn-secondary, .modal-footer .btn-light:not([type="submit"]), .modal-footer [data-bs-dismiss="modal"]) {
+  background: transparent !important; color: var(--dm-muted) !important;
+}
+body:has(.dsg-page) .modal :is(.tp-modal-cancel, .modal-footer .btn-secondary, .modal-footer [data-bs-dismiss="modal"]):hover { background: var(--dm-soft) !important; color: var(--dm-text) !important; }
+body:has(.dsg-page) .modal button:focus-visible { outline: 2px solid var(--dm-accent) !important; outline-offset: 2px; }
+
+/* fichas de detalle (ver cliente / ver sucursal): grupos con filas finas */
+body:has(.dsg-page) .modal .pdsg-modal-group { margin: 0 0 14px !important; }
+body:has(.dsg-page) .modal .pdsg-modal-card {
+  padding: 4px 14px !important; border-radius: 16px !important; border: 1px solid var(--dm-border) !important;
+  background: var(--dm-surface) !important; box-shadow: none !important;
+}
+body:has(.dsg-page) .modal .pdsg-modal-group-title {
+  display: flex !important; align-items: center; gap: 6px; margin: 10px 0 2px !important;
+  font-size: 10px !important; font-weight: 600 !important; letter-spacing: .06em !important; text-transform: uppercase !important;
+  color: var(--tk-v50) !important;
+}
+body:has(.dsg-page) .modal .pdsg-modal-group-title i { color: var(--dm-accent); font-size: 11px; }
+body:has(.dsg-page) .modal .pdsg-modal-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0 16px !important; }
+body:has(.dsg-page) .modal .pdsg-modal-field {
+  display: flex !important; flex-direction: column !important; gap: 2px !important; padding: 10px 0 !important; margin: 0 !important;
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  border-bottom: 1px solid var(--tk-l25) !important;
+}
+body:has(.dsg-page) .modal .pdsg-modal-field-label {
+  font-size: 11px !important; font-weight: 500 !important; color: var(--dm-muted) !important;
+  text-transform: none !important; letter-spacing: 0 !important; display: flex; align-items: center; gap: 6px;
+}
+body:has(.dsg-page) .modal .pdsg-modal-field-label i { font-size: 10px; opacity: .6; }
+body:has(.dsg-page) .modal .pdsg-modal-field-value { font-size: 13.5px !important; font-weight: 500 !important; color: var(--dm-text) !important; overflow-wrap: anywhere; }
+
+/* confirmación de borrado (confirmDsg) con la misma receta */
+body:has(.dsg-page) .dsg-cfm-card {
+  border-radius: 20px !important; border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 60%, transparent) !important;
+  box-shadow: 0 8px 32px rgba(32,33,36,.22) !important; padding: 22px !important; font-family: var(--tk-font) !important;
+  background: var(--sb-surface) !important; max-width: 380px !important;
+}
+body:has(.dsg-page) .dsg-cfm-icon {
+  width: 40px !important; height: 40px !important; border-radius: 12px !important;
+  background: var(--tk-late-soft) !important; color: var(--tk-late) !important;
+}
+body:has(.dsg-page) .dsg-cfm-title { font-size: 16px !important; font-weight: 600 !important; letter-spacing: -.01em; }
+body:has(.dsg-page) .dsg-cfm-msg { font-size: 12.5px !important; line-height: 1.55 !important; color: var(--sb-on-surface-variant) !important; }
+body:has(.dsg-page) .dsg-cfm-actions { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+body:has(.dsg-page) .dsg-cfm-btn {
+  min-height: 44px !important; width: 100% !important; border-radius: 999px !important; border: 0 !important;
+  font-size: 14px !important; font-weight: 500 !important; justify-content: center !important; box-shadow: none !important;
+}
+body:has(.dsg-page) .dsg-cfm-ok { background: var(--tk-late) !important; color: #fff !important; }
+body:has(.dsg-page) .dsg-cfm-cancel { background: transparent !important; color: var(--sb-on-surface-variant) !important; }
+body:has(.dsg-page) .dsg-cfm-cancel:hover { background: var(--sb-surface-container) !important; }
+
+/* celular: hoja inferior a todo lo ancho */
+@media (max-width: 576px) {
+  body:has(.dsg-page) .modal .modal-dialog { margin: 0 !important; min-height: 100% !important; align-items: flex-end !important; max-width: none !important; }
+  body:has(.dsg-page) .modal .modal-content { border-radius: 20px 20px 0 0 !important; border-bottom: 0 !important; max-height: 92vh; }
+  body:has(.dsg-page) .modal .pdsg-modal-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  body:has(.dsg-page) .modal :is(.tp-modal-footer, .pe-ms-footer, .modal-footer) { padding-bottom: calc(22px + env(safe-area-inset-bottom)) !important; }
+}
+/* en este sistema .modal es el contenedor de pantalla completa de Bootstrap:
+   anula el estilo de caja que trackin.css le da a los modales del panel de asistencias */
+body:has(.dsg-page) .modal {
+  background: transparent !important; border-radius: 0 !important; box-shadow: none !important;
+  border: 0 !important; transform: none !important;
+}
+/* filas de campos dentro de los modales: grilla de 12 con separación de 12px
+   (evita que los campos de media columna caigan uno por línea) */
+body:has(.dsg-page) .modal .row.g-3 {
+  display: grid !important; grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 12px !important; margin: 0 !important;
+}
+body:has(.dsg-page) .modal .row.g-3 > * { grid-column: span 12; width: auto !important; max-width: none !important; padding: 0 !important; margin: 0 !important; flex: none !important; }
+body:has(.dsg-page) .modal .row.g-3 > :is(.col-md-6, .col-sm-6, .col-6, .col-lg-6) { grid-column: span 6; }
+body:has(.dsg-page) .modal .row.g-3 > :is(.col-md-4, .col-sm-4, .col-4, .col-lg-4) { grid-column: span 4; }
+body:has(.dsg-page) .modal .row.g-3 > :is(.col-md-3, .col-3) { grid-column: span 3; }
+body:has(.dsg-page) .modal .row.g-3 > :is(.col-md-8, .col-8) { grid-column: span 8; }
+body:has(.dsg-page) .modal .row.g-3 > .d-none { display: none !important; }
+@media (max-width: 576px) {
+  body:has(.dsg-page) .modal .row.g-3 > * { grid-column: span 12 !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   APPSHELL DE TRACKIN · cabecera h-14 con el nombre de la página
+   (text-sm, medium, tenue) y a la derecha chips redondos sobre
+   surface-container-high; chip de perfil con avatar 20px, nombre
+   10px y rol en mayúsculas.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dev-main) .dsg-page { background: transparent !important; }
+body:has(.dev-main) .dsg-page > .dev-topbar { padding: 0 24px !important; min-height: 56px; display: flex; align-items: center; }
+body:has(.dev-main) .dsg-page > .dev-topbar .dev-topbar-row { width: 100%; min-height: 56px; }
+body:has(.dev-main) .tk-shell-head { display: flex; flex-direction: row !important; align-items: baseline; gap: 10px; min-width: 0; }
+body:has(.dev-main) .tk-shell-title {
+  margin: 0 !important; font-size: 14px !important; font-weight: 500 !important; letter-spacing: 0;
+  color: var(--sb-on-surface-variant) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+body:has(.dev-main) .tk-shell-hello { font-size: 11px; color: var(--tk-v50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* chips de la derecha */
+body:has(.dev-main) .dsg-dark-btn {
+  width: 32px !important; height: 32px !important; border: 0 !important;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+body:has(.dev-main) .dsg-dark-btn:hover { background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; }
+body:has(.dev-main) .dsg-dark-btn .material-symbols-outlined { font-size: 17px !important; }
+body:has(.dev-main) .dsg-user-btn {
+  height: 32px !important; padding: 0 12px 0 6px !important; gap: 8px !important; border: 0 !important;
+  background: var(--sb-surface-container-high) !important; transition: background-color 150ms ease;
+}
+body:has(.dev-main) .dsg-user-btn:hover { background: var(--sb-surface-container-highest, var(--sb-surface-container)) !important; }
+body:has(.dev-main) .dsg-user-avatar {
+  width: 20px !important; height: 20px !important; font-size: 8px !important; font-weight: 600 !important;
+  background: var(--sb-surface-container-highest, #e3e3e3) !important; color: var(--sb-on-surface) !important;
+}
+body:has(.dev-main) .dsg-user-meta { display: flex !important; flex-direction: row !important; align-items: center; gap: 8px; }
+body:has(.dev-main) .dsg-user-name { font-size: 10px !important; font-weight: 400 !important; color: var(--sb-on-surface-variant) !important; }
+body:has(.dev-main) .dsg-user-role { font-size: 10px !important; font-weight: 500 !important; text-transform: uppercase; color: var(--sb-on-surface-variant) !important; }
+body:has(.dev-main) .dsg-user-chevron { display: none !important; }
+@media (max-width: 768px) {
+  body:has(.dev-main) .dsg-page > .dev-topbar { padding: 0 16px !important; }
+  body:has(.dev-main) .tk-shell-hello { display: none; }
+  body:has(.dev-main) .dsg-user-btn { padding: 0 6px !important; width: 32px; justify-content: center; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MENÚ MÓVIL DE TRACKIN · barra en píldora flotante (bottom 1rem,
+   borde outline-variant, superficie al 90 % con blur, botones de
+   48px con burbuja primaria) y botón «más» blanco de 48px que se
+   abre en un menú r24 (morph).
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  body:has(.dev-main) .dev-mobile-nav {
+    bottom: 16px !important; left: 12px !important; padding: 6px 8px !important; gap: 4px !important;
+    border-radius: 50px !important; border: 1px solid var(--sb-outline-variant) !important;
+    background: color-mix(in srgb, var(--sb-surface-container-high) 90%, transparent) !important;
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1) !important;
+  }
+  body:has(.dev-main) .dev-mobile-nav a {
+    width: 48px !important; height: 48px !important; border-radius: 999px !important;
+    color: var(--sb-on-surface) !important; background: transparent !important;
+    transition: background-color 250ms cubic-bezier(.34,1.25,.64,1), transform 150ms ease !important;
+  }
+  body:has(.dev-main) .dev-mobile-nav a .material-symbols-outlined { font-size: 20px !important; opacity: .8; transition: transform 200ms ease, opacity 200ms ease; }
+  body:has(.dev-main) .dev-mobile-nav a.is-active { background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; }
+  body:has(.dev-main) .dev-mobile-nav a.is-active .material-symbols-outlined { opacity: 1; transform: scale(1.1); font-variation-settings: 'wght' 600; }
+  body:has(.dev-main) .dev-mobile-nav a:active { transform: scale(.9); }
+  /* botón «más» (morph) */
+  body:has(.dev-main) .dev-mobile-modal {
+    bottom: 16px !important; right: 12px !important; width: 48px; height: 48px;
+    background-color: var(--sb-surface); border: 1px solid var(--sb-outline-variant);
+    box-shadow: 0 8px 32px -8px rgba(0,0,0,.35);
+  }
+  body:has(.dev-main) .dev-modal-icon { color: var(--sb-on-surface) !important; font-size: 20px !important; }
+  body:has(.dev-main) .dev-mobile-modal-section { padding: 8px !important; }
+  body:has(.dev-main) .dev-mobile-modal-link {
+    gap: 12px !important; padding: 6px 12px !important; border-radius: 999px !important;
+    font-size: 14px !important; font-weight: 400 !important; color: var(--sb-on-surface) !important;
+  }
+  body:has(.dev-main) .dev-mobile-modal-link .material-symbols-outlined {
+    display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 8px;
+    background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant); font-size: 16px !important;
+  }
+  body:has(.dev-main) .dev-mobile-modal-link:hover { background: var(--sb-surface-container-high) !important; }
+  body:has(.dev-main) .dev-mobile-modal-link.is-active { background: var(--sb-primary) !important; color: var(--sb-on-primary, #fff) !important; font-weight: 500 !important; }
+  body:has(.dev-main) .dev-mobile-modal-link.is-active .material-symbols-outlined { background: rgba(255,255,255,.2); color: inherit; }
+  body:has(.dev-main) form:last-child > .dev-mobile-modal-link,
+  body:has(.dev-main) .dev-mobile-modal-section > form .dev-mobile-modal-link { color: #ef4444 !important; }
+  body:has(.dev-main) .dev-mobile-modal-section > form .dev-mobile-modal-link .material-symbols-outlined { background: rgba(239,68,68,.1); color: #ef4444; }
+}
+@media (max-width: 768px) {
+  /* en celular el chip de perfil muestra solo el avatar */
+  body:has(.dev-main) .dsg-user-meta { display: none !important; }
+}
