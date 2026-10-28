@@ -481,6 +481,8 @@
             backdrop-filter: none !important;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -494,13 +496,13 @@
                 : 'Todo el histórico';
         ?>
         <div class="dev-topbar">
-            <div class="dev-topbar-row">
+            <div class="tk-title">
                 <div>
-                    <h1 class="dev-topbar-title">Asistencias</h1>
-                    <p class="dev-topbar-subtitle">Registro de asistencia del equipo · <?= esc($rangoTxt) ?></p>
+                    <h1>Asistencias</h1>
+                    <p>Registro de asistencia del equipo · <?= esc($rangoTxt) ?></p>
                 </div>
-                <div class="dev-topbar-actions">
-                    <button type="submit" form="csv-form" class="dev-btn" title="Descargar el rango filtrado en CSV">
+                <div class="tk-title-actions">
+                    <button type="submit" form="csv-form" class="dev-btn dev-btn-sm" title="Descargar el rango filtrado en CSV">
                         <span class="material-symbols-outlined">download</span> Descargar CSV
                     </button>
                 </div>
@@ -542,7 +544,7 @@
                 ?>
 
                 <!-- KPIs · cada celda filtra por su estado (StatGrid de Trackin) -->
-                <div class="dev-stats-grid att-kpis">
+                <section class="tk-stats tk-stats-5">
                     <?php
                         $kpis = [
                             [''        , 'summarize'   , 'Total registros', $totalRegistros],
@@ -552,14 +554,13 @@
                             ['no_exit' , 'logout'      , 'Sin salida'     , $totalSinSalida],
                         ];
                         foreach ($kpis as [$est, $ico, $lbl, $num]): ?>
-                            <a class="dev-stat-card att-stat <?= $filtroEstado === $est ? 'on' : '' ?>"
+                            <a class="tk-stat <?= $filtroEstado === $est ? 'is-on' : '' ?>"
                                href="<?= $kpiLink($est) ?>" title="<?= $est === '' ? 'Ver todos los estados' : 'Filtrar por ' . $lbl ?>">
-                                <div class="dev-stat-icon"><span class="material-symbols-outlined"><?= $ico ?></span></div>
-                                <div class="dev-stat-label"><?= $lbl ?></div>
-                                <div class="dev-stat-value"><?= number_format((int) $num) ?></div>
+                                <span class="material-symbols-outlined tk-stat-ico"><?= $ico ?></span>
+                                <div><p class="tk-stat-lbl"><?= $lbl ?></p><p class="tk-stat-val"><?= number_format((int) $num) ?></p></div>
                             </a>
                         <?php endforeach; ?>
-                </div>
+                </section>
 
                 <!-- Filtros en una fila (como el listado de Unidades de Trackin) -->
                 <form method="get" action="<?= base_url('admin/asistencias') ?>" id="filtro-form" class="att-filters">

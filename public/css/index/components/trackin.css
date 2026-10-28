@@ -177,7 +177,7 @@ body:has(.dev-main) .dev-content {
 /* ── 5 · Tarjetas (Card) ───────────────────────────────────── */
 body:has(.dev-main) :is(.dev-card, .dev-table-wrap, .personal-table-wrap, .dtable-wrap, .in-card,
   .ad-block, .rp-bars, .cfg-card, .cfg-sec, .att-card, .perm-table-wrap, .mobile-card,
-  .personal-form-card, .dev-table-card) {
+  .personal-form-card, .dev-table-card, .tk-tbl-wrap) {
   border: 1px solid var(--tk-l40) !important;
   border-radius: 16px !important;
   background: var(--sb-surface) !important;
@@ -344,9 +344,17 @@ body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .ad-log, .perm-tab
   font-size: 10px !important; font-weight: 500 !important;
 }
 body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .tk-tbl) .dev-code {
-  border-radius: 6px; border: 1px solid color-mix(in srgb, var(--sb-primary) 35%, transparent);
+  border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--sb-primary) 35%, transparent);
   background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important;
-  color: var(--sb-primary); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 2px 8px;
+  color: var(--sb-primary); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 3px 12px;
+}
+/* código suelto (cabecera, tarjetas) en la misma píldora redonda */
+body:has(.dev-main) .tk-code-pill {
+  display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--sb-primary) 35%, transparent);
+  background: color-mix(in oklab, var(--sb-primary) 12%, transparent);
+  color: var(--sb-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em; white-space: nowrap;
 }
 /* acciones: iconos redondos tenues (MoreHorizontal / p-2 hover) */
 body:has(.dev-main) :is(.dev-table, .personal-table, .dtable, .dev-table-card, .tk-tbl) .dev-btn-icon {
@@ -742,3 +750,154 @@ body:has(.dev-main) .dev-mobile-nav a.is-active { background: var(--sb-primary) 
 @media (prefers-reduced-motion: reduce) {
   body:has(.dev-main) * { transition: none !important; animation: none !important; }
 }
+
+/* ── Chips suaves (Chip soft de HeroUI) ────────────────────── */
+body:has(.dev-main) .tk-chip-soft {
+  display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 10px;
+  border-radius: 9999px; font-size: 11px; font-weight: 500; white-space: nowrap;
+}
+body:has(.dev-main) .tk-chip-soft .material-symbols-outlined { font-size: 13px; }
+body:has(.dev-main) .tk-chip-ok { background: color-mix(in oklab, var(--sb-primary) 12%, transparent); color: var(--sb-primary); }
+body:has(.dev-main) .tk-chip-bad { background: var(--tk-late-soft); color: var(--tk-late); }
+body:has(.dev-main) .tk-chip-warn { background: color-mix(in oklab, #d97706 14%, transparent); color: #b45309; }
+body:has(.dev-main) .tk-chip-blue { background: var(--tk-ontime-soft); color: var(--tk-ontime); }
+body:has(.dev-main) .tk-chip-neutral { background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant); }
+html.dark body:has(.dev-main) .tk-chip-warn { color: #f59e0b; }
+
+/* ── KPIs de 4 (StatGrid grid-cols-2 lg:grid-cols-4) ───────── */
+body:has(.dev-main) .tk-stats.tk-stats-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 16px; }
+@media (min-width: 1024px) { body:has(.dev-main) .tk-stats.tk-stats-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+body:has(.dev-main) a.tk-stat { color: inherit; text-decoration: none !important; transition: background-color 150ms ease; }
+body:has(.dev-main) a.tk-stat:hover { background: var(--sb-surface-container-low); }
+
+/* ── Personal: cabecera PageTitle y tabla en Card ──────────── */
+body:has(.dev-main) .dev-topbar:has(> .tk-title) { display: block; }
+body:has(.dev-main) .dev-topbar > .tk-title .tk-title-actions .dev-btn-sm { height: 32px !important; }
+body:has(.dev-main) .personal-table-wrap {
+  background: var(--sb-surface) !important; border: 1px solid var(--tk-l40) !important; border-radius: 16px !important;
+}
+body:has(.dev-main) .personal-table-wrap .personal-table { min-width: 900px; }
+body:has(.dev-main) .personal-table-wrap .personal-table thead tr,
+body:has(.dev-main) .personal-table-wrap .personal-table th {
+  background: transparent !important;
+}
+body:has(.dev-main) .personal-table-wrap .personal-table th {
+  height: 40px; border-bottom: 1px solid var(--tk-l40) !important;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em; opacity: 1;
+  color: var(--tk-v50) !important;
+}
+body:has(.dev-main) .personal-table-wrap .personal-table th.tk-r { text-align: right; }
+body:has(.dev-main) .personal-table-wrap .personal-table td { height: 56px; border-bottom: 1px solid var(--tk-l25) !important; font-size: 12px; }
+body:has(.dev-main) .personal-table-wrap .personal-table tbody tr:last-child td { border-bottom: 0 !important; }
+body:has(.dev-main) .personal-table-wrap .personal-table tbody tr:hover { background: var(--sb-surface-container-low) !important; }
+body:has(.dev-main) .personal-table-wrap .personal-table th:first-child,
+body:has(.dev-main) .personal-table-wrap .personal-table td:first-child { padding-left: 16px; }
+body:has(.dev-main) .personal-table-wrap .personal-table th:last-child,
+body:has(.dev-main) .personal-table-wrap .personal-table td:last-child { padding-right: 16px; }
+body:has(.dev-main) .personal-user { display: flex; align-items: center; gap: 12px; }
+body:has(.dev-main) .personal-user-txt { min-width: 0; display: flex; flex-direction: column; }
+body:has(.dev-main) .personal-table .personal-user-name { font-size: 12px; font-weight: 500; }
+body:has(.dev-main) .personal-user-sub { font-size: 11px; color: var(--tk-v70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+body:has(.dev-main) .personal-table .personal-actions { justify-content: flex-end; }
+/* la campana de notificaciones está fija arriba a la derecha */
+body:has(.dev-main) .dev-topbar > .tk-title { padding-right: 56px; }
+@media (max-width: 768px) { body:has(.dev-main) .dev-topbar > .tk-title { padding-right: 0; } }
+/* títulos de sección de Personal: texto 14px semibold, icono tenue */
+body:has(.dev-main) .personal-section-title { font-size: 14px !important; font-weight: 600 !important; }
+body:has(.dev-main) .personal-section-title > .material-symbols-outlined { font-size: 18px !important; color: var(--tk-v50) !important; }
+/* KPIs de 5 (fila completa en pantallas chicas) y KPI activo como filtro */
+body:has(.dev-main) .tk-stats.tk-stats-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 16px; }
+body:has(.dev-main) .tk-stats.tk-stats-5 > :last-child { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  body:has(.dev-main) .tk-stats.tk-stats-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  body:has(.dev-main) .tk-stats.tk-stats-5 > :last-child { grid-column: auto; }
+}
+body:has(.dev-main) .tk-stat.is-on { background: var(--sb-surface-container); }
+body:has(.dev-main) .tk-stat.is-on .tk-stat-ico { color: var(--sb-primary); }
+
+/* ── Configuración (estilo página de ajustes de Trackin) ───── */
+body:has(.dev-main) .tk-cfg { display: flex; flex-direction: column; gap: 16px; }
+body:has(.dev-main) .tk-cfg .tk-stats { margin-bottom: 0; }
+body:has(.dev-main) .tk-cfg-grid { display: grid; gap: 16px; }
+@media (min-width: 1100px) { body:has(.dev-main) .tk-cfg-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; } }
+body:has(.dev-main) .tk-cfg-cols { display: grid; gap: 4px 32px; padding: 8px 16px 12px; }
+@media (min-width: 720px) { body:has(.dev-main) .tk-cfg-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+body:has(.dev-main) .tk-cfg-cap {
+  margin: 10px 0 2px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--tk-v50);
+}
+body:has(.dev-main) .tk-cfg-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 0;
+  border-bottom: 1px solid var(--tk-l25); font-size: 13px;
+}
+body:has(.dev-main) .tk-cfg-row:last-child { border-bottom: 0; }
+body:has(.dev-main) .tk-cfg-row > span:first-child { font-size: 12px; color: var(--tk-v70); white-space: nowrap; }
+body:has(.dev-main) .tk-cfg-row > span:last-child { text-align: right; font-weight: 500; color: var(--sb-on-surface); min-width: 0; overflow-wrap: anywhere; }
+body:has(.dev-main) .tk-cfg-num { font-variant-numeric: tabular-nums; }
+body:has(.dev-main) .cfg-muted { color: var(--tk-v50); font-weight: 400; }
+body:has(.dev-main) #cfg-card .cfg-edit { padding: 16px; }
+body:has(.dev-main) .tk-cfg-sets { padding: 4px 16px 8px; }
+body:has(.dev-main) .tk-cfg-set {
+  display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--tk-l25);
+}
+body:has(.dev-main) .tk-cfg-set:last-child { border-bottom: 0; }
+body:has(.dev-main) .tk-cfg-set-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+body:has(.dev-main) .tk-cfg-set-txt strong { font-size: 13px; font-weight: 600; }
+body:has(.dev-main) .tk-cfg-set-txt span { font-size: 12px; color: var(--tk-v70); overflow-wrap: anywhere; }
+/* el interruptor push: solo el riel, sin el texto del botón */
+body:has(.dev-main) .tk-cfg-set .cfg-push { margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; width: auto !important; }
+body:has(.dev-main) .tk-cfg-set .cfg-push .dark-toggle { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; padding: 0; cursor: pointer; z-index: 1; }
+body:has(.dev-main) .tk-cfg-set .cfg-push { position: relative; }
+body:has(.dev-main) .tk-cfg-fest {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding: 16px;
+  border-bottom: 1px solid var(--tk-l40);
+}
+body:has(.dev-main) .tk-cfg-field { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+body:has(.dev-main) .tk-cfg-field > span { font-size: 11px; font-weight: 500; color: var(--tk-v70); }
+body:has(.dev-main) .tk-cfg-field input {
+  height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--sb-outline-variant);
+  background: var(--sb-surface-container-low); color: var(--sb-on-surface); font: inherit; font-size: 13px; outline: none;
+}
+body:has(.dev-main) .tk-cfg-field input:focus { border-color: var(--sb-primary); box-shadow: var(--tk-ring); }
+body:has(.dev-main) .tk-cfg-field--date { width: 180px; }
+body:has(.dev-main) .tk-cfg-field--grow { flex: 1; min-width: 200px; }
+body:has(.dev-main) .tk-cfg-fest .dev-btn { height: 40px !important; }
+body:has(.dev-main) .tk-cfg-empty { margin: 0; padding: 28px 16px; text-align: center; font-size: 12px; color: var(--tk-v50); }
+body:has(.dev-main) .tk-cfg .tk-tbl th:first-child, body:has(.dev-main) .tk-cfg .tk-tbl td:first-child { padding-left: 16px; }
+body:has(.dev-main) .tk-cfg .tk-tbl th:last-child, body:has(.dev-main) .tk-cfg .tk-tbl td:last-child { padding-right: 16px; }
+@media (max-width: 640px) {
+  body:has(.dev-main) .tk-cfg-field--date, body:has(.dev-main) .tk-cfg-fest .dev-btn { width: 100%; justify-content: center; }
+}
+/* casilla "Obligatoria para marcar" en una sola línea */
+body:has(.dev-main) #cfg-card .cfg-check {
+  display: inline-flex !important; flex-direction: row !important; align-items: center; gap: 8px;
+  height: 40px; padding: 0 14px; border-radius: 9999px; margin: 0;
+  background: var(--sb-surface-container-low); border: 1px solid var(--sb-outline-variant);
+  font-size: 12px; font-weight: 500; color: var(--sb-on-surface); text-transform: none; letter-spacing: 0; cursor: pointer;
+}
+body:has(.dev-main) #cfg-card .cfg-check input {
+  width: 16px !important; height: 16px !important; min-height: 0 !important; padding: 0 !important; margin: 0;
+  border-radius: 4px; accent-color: var(--sb-primary); flex: none;
+}
+
+/* ── Horas por persona ─────────────────────────────────────── */
+body:has(.dev-main) .tk-hs-chips { display: flex; gap: 6px; height: 40px; align-items: center; }
+body:has(.dev-main) .tk-hs-chip {
+  height: 32px; padding: 0 14px; border-radius: 9999px; cursor: pointer;
+  border: 1.5px solid var(--sb-outline-variant); background: transparent;
+  color: var(--sb-on-surface-variant); font: inherit; font-size: 12px; font-weight: 500;
+  transition: all 0.18s ease;
+}
+body:has(.dev-main) .tk-hs-chip:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) .tk-hs-chip.on { background: var(--sb-primary); color: var(--sb-on-primary, #fff); border-color: transparent; }
+body:has(.dev-main) .tk-stat-val.tk-hs-pos { color: var(--sb-primary); }
+body:has(.dev-main) .tk-stat-val.tk-hs-neg { color: var(--tk-late); }
+body:has(.dev-main) .tk-hs-tbl { min-width: 980px; }
+body:has(.dev-main) .tk-hs-tbl th:first-child, body:has(.dev-main) .tk-hs-tbl td:first-child { padding-left: 16px; }
+body:has(.dev-main) .tk-hs-tbl th:last-child, body:has(.dev-main) .tk-hs-tbl td:last-child { padding-right: 16px; }
+body:has(.dev-main) .tk-hs-tbl th.tk-r { text-align: right; }
+body:has(.dev-main) .tk-hs-bar { width: 110px; height: 6px; border-radius: 9999px; background: var(--sb-surface-container-high); overflow: hidden; }
+body:has(.dev-main) .tk-hs-bar > i { display: block; height: 100%; border-radius: 9999px; background: var(--tk-ontime); }
+body:has(.dev-main) .tk-hs-tbl tr.tk-hs-total td { font-weight: 600; border-top: 2px solid var(--tk-l60); }
+body:has(.dev-main) .tk-hs-note b { color: var(--sb-on-surface); font-weight: 600; }
+body:has(.dev-main) .tk-hs-note { line-height: 1.5; }

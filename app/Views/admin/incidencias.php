@@ -266,6 +266,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -273,12 +275,19 @@
 <?= view('partials/admin-sidebar', ['activePage' => 'incidencias']) ?>
 
 <main class="dev-main">
-    <div class="dev-topbar in-topbar">
-        <div>
-            <h1 class="dev-topbar-title">Incidencias</h1>
-            <p class="dev-topbar-subtitle">Incidencias generadas desde la asistencia y asignadas a tu personal</p>
+    <div class="dev-topbar">
+        <div class="tk-title">
+            <div>
+                <h1>Incidencias</h1>
+                <p>Incidencias generadas desde la asistencia y asignadas a tu personal.</p>
+            </div>
+            <div class="tk-title-actions">
+                <span class="tk-chip-soft tk-chip-neutral"><?= count($incidents) ?> incidencias</span>
+                <button type="button" class="dev-btn dev-btn-primary dev-btn-sm" onclick="openCreateModal()">
+                    <span class="material-symbols-outlined">add</span> Nueva incidencia
+                </button>
+            </div>
         </div>
-        <span class="in-total-chip"><?= count($incidents) ?> incidencias</span>
     </div>
 
     <div class="dev-content">
@@ -325,42 +334,12 @@
         ];
         ?>
 
-        <!-- Métricas + acción primaria (sorteroOS admin/clubes + admin/usuarios) -->
-        <div class="in-metrics-row">
-            <div class="in-metrics">
-                <div class="in-metric">
-                    <div class="in-metric-top">
-                        <span class="material-symbols-outlined">pending_actions</span>
-                        <span class="in-metric-label">Pendientes</span>
-                    </div>
-                    <b><?= $pendientes ?></b>
-                </div>
-                <div class="in-metric">
-                    <div class="in-metric-top">
-                        <span class="material-symbols-outlined">hourglass_top</span>
-                        <span class="in-metric-label">En revisión</span>
-                    </div>
-                    <b><?= $revision ?></b>
-                </div>
-                <div class="in-metric">
-                    <div class="in-metric-top">
-                        <span class="material-symbols-outlined">verified</span>
-                        <span class="in-metric-label">Justificadas</span>
-                    </div>
-                    <b><?= $justificadas ?></b>
-                </div>
-                <div class="in-metric">
-                    <div class="in-metric-top">
-                        <span class="material-symbols-outlined">do_not_disturb_on</span>
-                        <span class="in-metric-label">Rechazadas</span>
-                    </div>
-                    <b><?= $rechazadas ?></b>
-                </div>
-            </div>
-            <button type="button" class="in-new" onclick="openCreateModal()">
-                <span class="material-symbols-outlined">add</span> Nueva incidencia
-            </button>
-        </div>
+        <section class="tk-stats tk-stats-4">
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">pending_actions</span><div><p class="tk-stat-lbl">Pendientes</p><p class="tk-stat-val"><?= $pendientes ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">hourglass_top</span><div><p class="tk-stat-lbl">En revisión</p><p class="tk-stat-val"><?= $revision ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">verified</span><div><p class="tk-stat-lbl">Justificadas</p><p class="tk-stat-val"><?= $justificadas ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">do_not_disturb_on</span><div><p class="tk-stat-lbl">Rechazadas</p><p class="tk-stat-val"><?= $rechazadas ?></p></div></div>
+        </section>
 
         <!-- Filtros por estado (server-side: conviven con el paginador) -->
         <div class="in-filters" id="inFilters">

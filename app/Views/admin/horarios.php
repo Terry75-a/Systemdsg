@@ -458,6 +458,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -495,8 +497,17 @@
 
 <main class="dev-main">
     <div class="dev-topbar">
-        <h1 class="dev-topbar-title">Horarios</h1>
-        <p class="dev-topbar-subtitle">Gestiona los horarios por tipo y asigna a tu personal</p>
+        <div class="tk-title">
+            <div>
+                <h1>Horarios</h1>
+                <p>Gestiona los horarios por tipo y asigna a tu personal.</p>
+            </div>
+            <div class="tk-title-actions">
+                <button type="button" class="dev-btn dev-btn-primary dev-btn-sm" onclick="openCreateModal()">
+                    <span class="material-symbols-outlined">add</span> Nuevo horario
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="dev-content">
@@ -522,42 +533,13 @@
             }
         ?>
 
-        <!-- Métricas + acción principal (admin/clubes + admin/usuarios) -->
-        <div class="hr-metrics-row">
-            <div class="hr-metrics">
-                <div class="hr-metric">
-                    <div class="hr-metric-top">
-                        <span class="material-symbols-outlined">schedule</span>
-                        <span class="hr-metric-label">Horarios</span>
-                    </div>
-                    <b><?= $totalHorarios ?></b>
-                </div>
-                <div class="hr-metric">
-                    <div class="hr-metric-top">
-                        <span class="material-symbols-outlined">work</span>
-                        <span class="hr-metric-label">De empleados</span>
-                    </div>
-                    <b><?= $horariosEmp ?></b>
-                </div>
-                <div class="hr-metric">
-                    <div class="hr-metric-top">
-                        <span class="material-symbols-outlined">school</span>
-                        <span class="hr-metric-label">De practicantes</span>
-                    </div>
-                    <b><?= $horariosPract ?></b>
-                </div>
-                <div class="hr-metric">
-                    <div class="hr-metric-top">
-                        <span class="material-symbols-outlined">group</span>
-                        <span class="hr-metric-label">Integrantes</span>
-                    </div>
-                    <b><?= $totalIntegra ?></b>
-                </div>
-            </div>
-            <button type="button" class="hr-new" onclick="openCreateModal()">
-                <span class="material-symbols-outlined">add</span> Nuevo horario
-            </button>
-        </div>
+
+        <section class="tk-stats tk-stats-4">
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">schedule</span><div><p class="tk-stat-lbl">Horarios</p><p class="tk-stat-val"><?= $totalHorarios ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">work</span><div><p class="tk-stat-lbl">De empleados</p><p class="tk-stat-val"><?= $horariosEmp ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">school</span><div><p class="tk-stat-lbl">De practicantes</p><p class="tk-stat-val"><?= $horariosPract ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">group</span><div><p class="tk-stat-lbl">Integrantes</p><p class="tk-stat-val"><?= $totalIntegra ?></p></div></div>
+        </section>
 
         <!-- Buscador + filtros por tipo (admin/usuarios) -->
         <div class="hr-toolbar">

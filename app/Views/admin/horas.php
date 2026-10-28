@@ -125,6 +125,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -132,8 +134,17 @@
 
     <main class="dev-main">
         <div class="dev-topbar">
-            <h1 class="dev-topbar-title">Horas por persona</h1>
-            <p class="dev-topbar-subtitle">Horas reales frente a las programadas en el horario · <?= esc($fecha_inicio) ?> → <?= esc($fecha_fin) ?></p>
+            <div class="tk-title">
+                <div>
+                    <h1>Horas por persona</h1>
+                    <p>Horas reales frente a las programadas en el horario · <?= esc(date('d/m/Y', strtotime($fecha_inicio))) ?> → <?= esc(date('d/m/Y', strtotime($fecha_fin))) ?></p>
+                </div>
+                <div class="tk-title-actions">
+                    <button type="submit" form="csv-form" class="dev-btn dev-btn-sm" title="Descargar el periodo en CSV">
+                        <span class="material-symbols-outlined">download</span> Exportar CSV
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="dev-content">
@@ -144,7 +155,7 @@
                 </div>
             <?php endif; ?>
 
-            <div class="rp-wrap">
+            <div class="rp-wrap tk-cfg">
 
             <?php
                 $total = $horasTotal ?? [
@@ -163,84 +174,72 @@
                 $dec = static fn (int $min): string => \App\Libraries\Asistencia\HorasQuery::horasDecimales($min);
             ?>
 
-            <!-- Filtros -->
-            <form method="get" action="<?= base_url('admin/horas') ?>" id="filtro-form" class="rp-bar">
-                <div class="rp-bar-group">
-                    <span class="rp-bar-cap">Desde</span>
-                    <input type="date" class="rp-input" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio) ?>">
+            <!-- Periodo -->
+            <section class="tk-card tk-ovh">
+                <div class="tk-card-head">
+                    <div><h3>Periodo</h3><p>Elige las fechas y, si quieres, una persona.</p></div>
                 </div>
-                <div class="rp-bar-group">
-                    <span class="rp-bar-cap">Hasta</span>
-                    <input type="date" class="rp-input" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin) ?>">
-                </div>
-                <div class="rp-bar-group rp-bar-group--grow">
-                    <span class="rp-bar-cap">Persona</span>
-                    <input type="search" class="rp-input" name="persona" value="<?= esc($busqueda ?? '') ?>" placeholder="Nombre o DNI" autocomplete="off">
-                </div>
-                <div class="rp-bar-group">
-                    <span class="rp-bar-cap">Periodo</span>
-                    <div class="rp-chips">
-                        <button type="button" class="rp-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Este mes</button>
-                        <button type="button" class="rp-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
+                <form method="get" action="<?= base_url('admin/horas') ?>" id="filtro-form" class="tk-cfg-fest">
+                    <label class="tk-cfg-field tk-cfg-field--date">
+                        <span>Desde</span>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" value="<?= esc($fecha_inicio) ?>">
+                    </label>
+                    <label class="tk-cfg-field tk-cfg-field--date">
+                        <span>Hasta</span>
+                        <input type="date" id="fecha_fin" name="fecha_fin" value="<?= esc($fecha_fin) ?>">
+                    </label>
+                    <label class="tk-cfg-field tk-cfg-field--grow">
+                        <span>Persona</span>
+                        <input type="search" name="persona" value="<?= esc($busqueda ?? '') ?>" placeholder="Nombre o DNI" autocomplete="off">
+                    </label>
+                    <div class="tk-cfg-field">
+                        <span>Atajos</span>
+                        <div class="tk-hs-chips">
+                            <button type="button" class="tk-hs-chip <?= $mode === 'mes' ? 'on' : '' ?>" onclick="rango('mes')">Este mes</button>
+                            <button type="button" class="tk-hs-chip <?= $mode === 'hoy' ? 'on' : '' ?>" onclick="rango('hoy')">Hoy</button>
+                        </div>
                     </div>
-                </div>
-                <button type="submit" class="rp-go"><span class="material-symbols-outlined">search</span> Calcular</button>
+                    <button type="submit" class="dev-btn dev-btn-primary dev-btn-sm"><span class="material-symbols-outlined">calculate</span> Calcular</button>
+                </form>
+            </section>
+            <form method="post" action="<?= site_url('admin/exportar/horas') ?>" id="csv-form" hidden>
+                <?= csrf_field() ?>
+                <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio) ?>">
+                <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin) ?>">
+                <input type="hidden" name="persona" value="<?= esc($busqueda ?? '') ?>">
             </form>
 
             <!-- KPIs -->
-            <div class="rp-sum">
-                <div class="rp-tile">
-                    <div class="rp-tile-top"><span class="material-symbols-outlined">timer</span><span class="rp-tile-lbl">Horas reales</span></div>
-                    <div class="rp-tile-num"><?= $fmt((int) $total['horas_reales']) ?></div>
-                </div>
-                <div class="rp-tile">
-                    <div class="rp-tile-top"><span class="material-symbols-outlined">event_available</span><span class="rp-tile-lbl">Programadas</span></div>
-                    <div class="rp-tile-num"><?= $fmt((int) $total['horas_programadas']) ?></div>
-                </div>
-                <div class="rp-tile">
-                    <div class="rp-tile-top"><span class="material-symbols-outlined">balance</span><span class="rp-tile-lbl">Saldo equipo</span></div>
-                    <div class="rp-tile-num <?= $total['saldo_min'] > 0 ? 'pos' : ($total['saldo_min'] < 0 ? 'neg' : '') ?>">
-                        <?= $fmt((int) $total['saldo_min']) ?>
-                    </div>
-                </div>
-                <div class="rp-tile">
-                    <div class="rp-tile-top"><span class="material-symbols-outlined">schedule</span><span class="rp-tile-lbl">Tardanzas</span></div>
-                    <div class="rp-tile-num"><?= (int) $total['tardanzas'] ?></div>
-                </div>
-                <div class="rp-tile">
-                    <div class="rp-tile-top"><span class="material-symbols-outlined">cancel</span><span class="rp-tile-lbl">Faltas</span></div>
-                    <div class="rp-tile-num"><?= (int) $total['faltas'] ?></div>
-                </div>
-            </div>
+            <?php
+                $sT    = (int) $total['saldo_min'];
+                $pctEq = (int) $total['horas_programadas'] > 0 ? (int) round($total['horas_reales'] / $total['horas_programadas'] * 100) : 0;
+            ?>
+            <section class="tk-stats tk-stats-5">
+                <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">timer</span><div><p class="tk-stat-lbl">Horas reales</p><p class="tk-stat-val"><?= $fmt((int) $total['horas_reales']) ?></p></div></div>
+                <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">event_available</span><div><p class="tk-stat-lbl">Programadas</p><p class="tk-stat-val"><?= $fmt((int) $total['horas_programadas']) ?></p></div></div>
+                <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">balance</span><div><p class="tk-stat-lbl">Saldo del equipo</p><p class="tk-stat-val <?= $sT > 0 ? 'tk-hs-pos' : ($sT < 0 ? 'tk-hs-neg' : '') ?>"><?= $fmt($sT) ?></p></div></div>
+                <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">percent</span><div><p class="tk-stat-lbl">Cumplimiento</p><p class="tk-stat-val"><?= $pctEq ?>%</p></div></div>
+                <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">warning</span><div><p class="tk-stat-lbl">Tardanzas · faltas</p><p class="tk-stat-val"><?= (int) $total['tardanzas'] ?> · <?= (int) $total['faltas'] ?></p></div></div>
+            </section>
 
-            <!-- Tabla -->
-            <div class="rp-sec-head rp-sec-head--split">
-                <h2><span class="material-symbols-outlined">table_chart</span> Detalle por persona</h2>
-                <form method="post" action="<?= site_url('admin/exportar/horas') ?>" id="csv-form">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="fecha_inicio" value="<?= esc($fecha_inicio) ?>">
-                    <input type="hidden" name="fecha_fin" value="<?= esc($fecha_fin) ?>">
-                    <input type="hidden" name="persona" value="<?= esc($busqueda ?? '') ?>">
-                    <button type="submit" class="rp-export">
-                        <span class="material-symbols-outlined">download</span> Exportar CSV
-                    </button>
-                </form>
-            </div>
-
+            <!-- Detalle por persona -->
+            <section class="tk-card tk-ovh">
+                <div class="tk-card-head">
+                    <div><h3>Detalle por persona</h3><p><?= count($filas) ?> <?= count($filas) === 1 ? 'persona' : 'personas' ?> · días trabajados, horas y saldo del periodo.</p></div>
+                </div>
             <?php if (empty($filas)): ?>
-                <div class="rp-empty">
-                    No hay personas que coincidan con el filtro de este periodo.
-                </div>
+                <p class="tk-cfg-empty">No hay personas que coincidan con el filtro de este periodo.</p>
             <?php else: ?>
-                <div class="tk-tbl-wrap" style="background: var(--sb-surface); border-radius: 16px; overflow: hidden;">
-                    <table class="tk-tbl">
+                <div class="tk-scroll">
+                    <table class="tk-tbl tk-hs-tbl">
                         <thead>
                             <tr>
                                 <th>Persona</th>
                                 <th>Horario</th>
-                                <th class="tk-r">Días<br><small style="font-weight:400;opacity:.6">lab. / trab.</small></th>
-                                <th class="tk-r">Horas reales</th>
+                                <th class="tk-r">Días</th>
+                                <th class="tk-r">Reales</th>
                                 <th class="tk-r">Programadas</th>
+                                <th>Cumplimiento</th>
                                 <th class="tk-r">Saldo</th>
                                 <th class="tk-r">Tard.</th>
                                 <th class="tk-r">Faltas</th>
@@ -248,12 +247,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($filas as $f):
-                            $saldo = (int) $f['saldo_min'];
-                            $cls   = $saldo > 0 ? 'pos' : ($saldo < 0 ? 'neg' : 'cero');
+                        <?php foreach ($filas as $i => $f):
+                            $saldo  = (int) $f['saldo_min'];
                             $nombre = $f['name'] !== '' ? $f['name'] : 'Sin nombre';
+                            $pctP   = (int) $f['horas_programadas'] > 0 ? (int) min(100, round($f['horas_reales'] / $f['horas_programadas'] * 100)) : 0;
                         ?>
-                            <tr>
+                            <tr style="--i: <?= $i ?>">
                                 <td>
                                     <div class="tk-cell-user">
                                         <span class="tk-cell-av"><?= strtoupper(mb_substr($nombre, 0, 1, 'UTF-8')) ?></span>
@@ -263,43 +262,48 @@
                                         </span>
                                     </div>
                                 </td>
-                                <td class="tk-cell-mono" style="font-size:12px;"><?= esc($f['horario_txt']) ?></td>
+                                <td class="tk-cell-muted"><?= esc($f['horario_txt']) ?></td>
                                 <td class="tk-r tk-cell-mono"><?= (int) $f['dias_trabajados'] ?> / <?= (int) $f['dias_laborables'] ?></td>
-                                <td class="tk-r tk-cell-mono"><?= esc($dec((int) $f['horas_reales'])) ?> h<?= (int) $f['estimadas'] > 0 ? ' <span class="zero" title="' . (int) $f['estimadas'] . ' jornadas estimadas por falta de salida">(' . (int) $f['estimadas'] . ' est.)</span>' : '' ?></td>
-                                <td class="tk-r tk-cell-mono"><?= esc($dec((int) $f['horas_programadas'])) ?> h</td>
-                                <td class="tk-r"><span class="saldo <?= $cls ?>"><?= ($saldo > 0 ? '+' : '') . esc($dec($saldo)) ?> h</span></td>
-                                <td class="tk-r tk-cell-mono <?= (int) $f['tardanzas'] > 0 ? '' : 'zero' ?>"><?= (int) $f['tardanzas'] ?></td>
-                                <td class="tk-r tk-cell-mono <?= (int) $f['faltas'] > 0 ? '' : 'zero' ?>"><?= (int) $f['faltas'] ?></td>
-                                <td class="tk-r tk-cell-mono <?= (int) $f['sin_salida'] > 0 ? '' : 'zero' ?>"><?= (int) $f['sin_salida'] ?></td>
+                                <td class="tk-r tk-cell-mono"><?= esc($dec((int) $f['horas_reales'])) ?> h<?= (int) $f['estimadas'] > 0 ? '<span class="tk-cell-sub" title="' . (int) $f['estimadas'] . ' jornadas estimadas por falta de salida"> · ' . (int) $f['estimadas'] . ' est.</span>' : '' ?></td>
+                                <td class="tk-r tk-cell-mono tk-cell-muted"><?= esc($dec((int) $f['horas_programadas'])) ?> h</td>
+                                <td>
+                                    <div class="tk-hs-bar"><i style="width: <?= $pctP ?>%"></i></div>
+                                    <span class="tk-cell-sub"><?= $pctP ?>%</span>
+                                </td>
+                                <td class="tk-r"><span class="tk-chip-soft <?= $saldo > 0 ? 'tk-chip-ok' : ($saldo < 0 ? 'tk-chip-bad' : 'tk-chip-neutral') ?>"><?= ($saldo > 0 ? '+' : '') . esc($dec($saldo)) ?> h</span></td>
+                                <td class="tk-r tk-cell-mono <?= (int) $f['tardanzas'] > 0 ? '' : 'tk-cell-muted' ?>"><?= (int) $f['tardanzas'] ?></td>
+                                <td class="tk-r tk-cell-mono <?= (int) $f['faltas'] > 0 ? '' : 'tk-cell-muted' ?>"><?= (int) $f['faltas'] ?></td>
+                                <td class="tk-r tk-cell-mono <?= (int) $f['sin_salida'] > 0 ? '' : 'tk-cell-muted' ?>"><?= (int) $f['sin_salida'] ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
                         <tfoot>
-                            <tr style="border-top: 2px solid color-mix(in srgb, var(--sb-outline-variant) 70%, transparent);">
-                                <td colspan="2" style="font-weight:600;">Total · <?= count($filas) ?> personas</td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= (int) $total['dias_trabajados'] ?> / <?= (int) $total['dias_laborables'] ?></td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= esc($dec((int) $total['horas_reales'])) ?> h</td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= esc($dec((int) $total['horas_programadas'])) ?> h</td>
-                                <td class="tk-r"><span class="saldo <?= $total['saldo_min'] > 0 ? 'pos' : ($total['saldo_min'] < 0 ? 'neg' : 'cero') ?>"><?= ($total['saldo_min'] > 0 ? '+' : '') . esc($dec((int) $total['saldo_min'])) ?> h</span></td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= (int) $total['tardanzas'] ?></td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= (int) $total['faltas'] ?></td>
-                                <td class="tk-r tk-cell-mono" style="font-weight:600;"><?= (int) $total['sin_salida'] ?></td>
+                            <tr class="tk-hs-total">
+                                <td colspan="2">Total · <?= count($filas) ?> personas</td>
+                                <td class="tk-r tk-cell-mono"><?= (int) $total['dias_trabajados'] ?> / <?= (int) $total['dias_laborables'] ?></td>
+                                <td class="tk-r tk-cell-mono"><?= esc($dec((int) $total['horas_reales'])) ?> h</td>
+                                <td class="tk-r tk-cell-mono"><?= esc($dec((int) $total['horas_programadas'])) ?> h</td>
+                                <td>
+                                    <div class="tk-hs-bar"><i style="width: <?= min(100, $pctEq) ?>%"></i></div>
+                                    <span class="tk-cell-sub"><?= $pctEq ?>%</span>
+                                </td>
+                                <td class="tk-r"><span class="tk-chip-soft <?= $sT > 0 ? 'tk-chip-ok' : ($sT < 0 ? 'tk-chip-bad' : 'tk-chip-neutral') ?>"><?= ($sT > 0 ? '+' : '') . esc($dec($sT)) ?> h</span></td>
+                                <td class="tk-r tk-cell-mono"><?= (int) $total['tardanzas'] ?></td>
+                                <td class="tk-r tk-cell-mono"><?= (int) $total['faltas'] ?></td>
+                                <td class="tk-r tk-cell-mono"><?= (int) $total['sin_salida'] ?></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             <?php endif; ?>
-
-            <p class="rp-note">
-                <span class="material-symbols-outlined">info</span>
-                <span>
-                    <b>Saldo</b> = horas reales − horas programadas del horario asignado (días laborables del periodo menos los festivos).
-                    Un saldo <b>positivo</b> son horas extra; un <b>negativo</b>, horas pendientes.
+                <p class="tk-card-foot tk-hs-note">
+                    <b>Saldo</b> = horas reales − horas programadas del horario (días laborables del periodo menos festivos).
+                    Positivo son horas extra; negativo, horas pendientes.
                     <?php if ((int) $total['estimadas'] > 0): ?>
-                        Las jornadas marcadas sin salida se estiman hasta la hora de salida del horario y se señalan con «est.».
+                        Las jornadas sin salida se estiman hasta la hora de salida del horario («est.»).
                     <?php endif; ?>
-                </span>
-            </p>
+                </p>
+            </section>
 
             </div>
         </div>

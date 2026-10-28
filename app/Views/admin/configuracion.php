@@ -17,7 +17,7 @@
 
         /* ── Modo edición: form ──────────────── */
         .cfg-edit { display: none; }
-        .cfg-card.is-editing .cfg-edit { display: block; }
+        #cfg-card.is-editing .cfg-edit { display: block; }
         .cfg-form { padding: 20px 24px 24px; }
         .cfg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 22px; }
         .cfg-field label {
@@ -62,7 +62,7 @@
 
         /* ── Modo visor ──────────────────────── */
         .cfg-view { display: block; padding: 8px 24px 24px; }
-        .cfg-card.is-editing .cfg-view { display: none; }
+        #cfg-card.is-editing .cfg-view { display: none; }
         .cfg-view-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 28px; }
         .cfg-view-item { padding: 14px 2px; border-bottom: 1px solid var(--g-border); }
         .cfg-view-label { font-size: 0.72rem; font-weight: 500; color: var(--g-text-secondary); margin-bottom: 4px; }
@@ -318,6 +318,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -325,10 +327,10 @@
 
     <main class="dev-main">
         <div class="dev-topbar">
-            <div class="dev-topbar-row">
+            <div class="tk-title">
                 <div>
-                    <h1 class="dev-topbar-title">Configuración</h1>
-                    <p class="dev-topbar-subtitle">Ajustes del sistema de asistencia</p>
+                    <h1>Configuración</h1>
+                    <p>Datos de tu empresa, zona de trabajo, notificaciones y días festivos.</p>
                 </div>
             </div>
         </div>
@@ -341,73 +343,69 @@
                 </div>
             <?php endif; ?>
 
-            <div class="cfg-wrap">
-                <?php
-                    $notifOn = !empty($config['notif_email']);
-                    $notifDest = trim($config['notif_email_dest'] ?? '');
-                ?>
-                <div class="cfg-card" id="cfg-card">
-                    <div class="cfg-sec-head cfg-sec-head--split">
-                        <h2><span class="material-symbols-outlined">settings</span> Configuración de la empresa</h2>
-                        <div class="cfg-head-actions">
-                            <button type="button" class="cfg-btn-ghost" id="btn-cancel" style="display:none;">
-                                <span class="material-symbols-outlined">close</span> Cancelar
-                            </button>
-                            <button type="button" class="cfg-btn-ghost cfg-btn-primary-ghost" id="btn-edit">
-                                <span class="material-symbols-outlined">edit</span> Editar
-                            </button>
-                        </div>
-                    </div>
+            <?php
+                $notifOn   = !empty($config['notif_email']);
+                $notifDest = trim($config['notif_email_dest'] ?? '');
+                $geoOn     = (int) ($config['geo_requerido'] ?? 0) === 1 && !empty($config['geo_lat']);
+                $val = static fn ($v) => ($v !== null && $v !== '') ? esc($v) : '<span class="cfg-muted">—</span>';
+                $diasFes = ['Monday' => 'Lunes', 'Tuesday' => 'Martes', 'Wednesday' => 'Miércoles', 'Thursday' => 'Jueves',
+                            'Friday' => 'Viernes', 'Saturday' => 'Sábado', 'Sunday' => 'Domingo'];
+            ?>
+            <div class="cfg-wrap tk-cfg">
 
-                    <div class="cfg-view" id="cfg-view">
-                        <div class="cfg-view-grid">
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Empresa</div>
-                                <div class="cfg-view-value"><?= esc($config['empresa'] ?? 'DSG PERU TECHNOLOGY SAC') ?></div>
+                <!-- KPIs del sistema -->
+                <section class="tk-stats tk-stats-4">
+                    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">groups</span><div><p class="tk-stat-lbl">Personal</p><p class="tk-stat-val"><?= (int) ($totalEmpleados ?? 0) ?></p></div></div>
+                    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">schedule</span><div><p class="tk-stat-lbl">Horarios</p><p class="tk-stat-val"><?= count($schedules ?? []) ?></p></div></div>
+                    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">warning</span><div><p class="tk-stat-lbl">Incidencias</p><p class="tk-stat-val"><?= count($incidents ?? []) ?></p></div></div>
+                    <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">event_busy</span><div><p class="tk-stat-lbl">Festivos</p><p class="tk-stat-val"><?= count($festivos ?? []) ?></p></div></div>
+                </section>
+
+                <div class="tk-cfg-grid">
+                    <!-- Empresa y reglas -->
+                    <section class="tk-card tk-ovh" id="cfg-card">
+                        <div class="tk-card-head">
+                            <div>
+                                <h3>Empresa y asistencia</h3>
+                                <p>Datos de tu empresa y reglas por defecto para marcar.</p>
                             </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">RUC</div>
-                                <div class="cfg-view-value <?= empty($config['ruc']) ? 'muted' : '' ?>"><?= esc($config['ruc'] ?? '—') ?></div>
+                            <div class="tk-title-actions">
+                                <button type="button" class="dev-btn dev-btn-sm" id="btn-cancel" style="display:none;">
+                                    <span class="material-symbols-outlined">close</span> Cancelar
+                                </button>
+                                <button type="button" class="dev-btn dev-btn-sm" id="btn-edit">
+                                    <span class="material-symbols-outlined">edit</span> Editar
+                                </button>
                             </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Dirección</div>
-                                <div class="cfg-view-value <?= empty($config['direccion']) ? 'muted' : '' ?>"><?= esc($config['direccion'] ?? '—') ?></div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Email</div>
-                                <div class="cfg-view-value <?= empty($config['email']) ? 'muted' : '' ?>"><?= esc($config['email'] ?? '—') ?></div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Teléfono</div>
-                                <div class="cfg-view-value <?= empty($config['telefono']) ? 'muted' : '' ?>"><?= esc($config['telefono'] ?? '—') ?></div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Horario default</div>
-                                <div class="cfg-view-value"><?= esc($config['horario_default'] ?? '08:00-17:00') ?></div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Tolerancia default</div>
-                                <div class="cfg-view-value"><?= (int) ($config['tolerancia_default'] ?? 15) ?> minutos</div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Notificaciones por email</div>
-                                <div class="cfg-view-value">
-                                    <span class="cfg-view-state <?= $notifOn ? 'on' : 'off' ?>"><i></i> <?= $notifOn ? 'Activo' : 'Inactivo' ?></span>
-                                    <?php if ($notifOn && $notifDest): ?><span class="cfg-view-label" style="margin:0;">· <?= esc($notifDest) ?></span><?php endif; ?>
+                        </div>
+
+                        <div class="cfg-view" id="cfg-view">
+                            <div class="tk-cfg-cols">
+                                <div>
+                                    <p class="tk-cfg-cap">Empresa</p>
+                                    <div class="tk-cfg-row"><span>Razón social</span><span><?= $val($config['empresa'] ?? 'DSG PERU TECHNOLOGY SAC') ?></span></div>
+                                    <div class="tk-cfg-row"><span>RUC</span><span class="tk-cfg-num"><?= $val($config['ruc'] ?? '') ?></span></div>
+                                    <div class="tk-cfg-row"><span>Dirección</span><span><?= $val($config['direccion'] ?? '') ?></span></div>
+                                    <div class="tk-cfg-row"><span>Email</span><span><?= $val($config['email'] ?? '') ?></span></div>
+                                    <div class="tk-cfg-row"><span>Teléfono</span><span class="tk-cfg-num"><?= $val($config['telefono'] ?? '') ?></span></div>
                                 </div>
-                            </div>
-                            <div class="cfg-view-item">
-                                <div class="cfg-view-label">Zona de trabajo (geo)</div>
-                                <div class="cfg-view-value">
-                                    <?php if ((int) ($config['geo_requerido'] ?? 0) === 1 && ! empty($config['geo_lat'])): ?>
-                                        Radio <?= (int) ($config['geo_radio_m'] ?? 0) ?> m · <?= esc($config['geo_lat'] . ', ' . $config['geo_lng']) ?>
-                                    <?php else: ?>
-                                        <span class="muted">No requerida</span>
+                                <div>
+                                    <p class="tk-cfg-cap">Asistencia</p>
+                                    <div class="tk-cfg-row"><span>Horario por defecto</span><span class="tk-cfg-num"><?= esc($config['horario_default'] ?? '08:00-17:00') ?></span></div>
+                                    <div class="tk-cfg-row"><span>Tolerancia</span><span><?= (int) ($config['tolerancia_default'] ?? 15) ?> min</span></div>
+                                    <div class="tk-cfg-row"><span>Zona de trabajo</span><span>
+                                        <?php if ($geoOn): ?>
+                                            <span class="tk-chip-soft tk-chip-ok">Obligatoria</span>
+                                        <?php else: ?>
+                                            <span class="tk-chip-soft tk-chip-neutral">No requerida</span>
+                                        <?php endif; ?>
+                                    </span></div>
+                                    <?php if ($geoOn): ?>
+                                        <div class="tk-cfg-row"><span>Radio · centro</span><span class="tk-cfg-num"><?= (int) ($config['geo_radio_m'] ?? 0) ?> m · <?= esc($config['geo_lat'] . ', ' . $config['geo_lng']) ?></span></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <div class="cfg-edit" id="cfg-edit">
                         <form action="<?= site_url('admin/save-config') ?>" method="POST">
@@ -485,82 +483,97 @@
                             </div>
                         </form>
                     </div>
+                    </section>
+
+                    <!-- Avisos -->
+                    <section class="tk-card tk-ovh">
+                        <div class="tk-card-head">
+                            <div><h3>Avisos</h3><p>Cómo te enteras de lo que pasa en tu equipo.</p></div>
+                        </div>
+                        <div class="tk-cfg-sets">
+                            <div class="tk-cfg-set">
+                                <div class="tk-cfg-set-txt">
+                                    <strong>Correo</strong>
+                                    <span><?= $notifOn && $notifDest ? 'Se envían a ' . esc($notifDest) : 'Avisos de asistencias e incidencias por email.' ?></span>
+                                </div>
+                                <span class="tk-chip-soft <?= $notifOn ? 'tk-chip-ok' : 'tk-chip-neutral' ?>"><?= $notifOn ? 'Activo' : 'Inactivo' ?></span>
+                                <button type="button" class="dev-btn dev-btn-sm" id="btn-notif-view">Configurar</button>
+                            </div>
+                            <div class="tk-cfg-set">
+                                <div class="tk-cfg-set-txt">
+                                    <strong>Notificaciones push</strong>
+                                    <span>Avisos en este navegador al momento.</span>
+                                </div>
+                                <div class="dark-toggle-wrap cfg-push" id="pushWrap">
+                                    <button type="button" class="dark-toggle" id="pushBtn" aria-label="Notificaciones push">
+                                        <span class="material-symbols-outlined">notifications_active</span>
+                                        <span>Push</span>
+                                    </button>
+                                    <div class="dark-toggle-track" id="pushTrack">
+                                        <div class="dark-toggle-thumb" id="pushThumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tk-cfg-set">
+                                <div class="tk-cfg-set-txt">
+                                    <strong>Versión del sistema</strong>
+                                    <span>Asistencias DSG.</span>
+                                </div>
+                                <span class="tk-code-pill">1.0.0</span>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="cfg-sec-head">
-                    <h2><span class="material-symbols-outlined">info</span> Información del sistema</h2>
-                </div>
-                <div class="cfg-tiles">
-                        <div class="cfg-tile">
-                            <b><?= $totalEmpleados ?? 0 ?></b>
-                            <span>Empleados</span>
-                        </div>
-                        <div class="cfg-tile">
-                            <b><?= count($schedules ?? []) ?></b>
-                            <span>Horarios</span>
-                        </div>
-                        <div class="cfg-tile">
-                            <b><?= count($incidents ?? []) ?></b>
-                            <span>Incidencias</span>
-                        </div>
-                        <div class="cfg-tile">
-                            <b>1.0.0</b>
-                            <span>Versión</span>
-                        </div>
+                <!-- Días festivos -->
+                <section class="tk-card tk-ovh">
+                    <div class="tk-card-head">
+                        <div><h3>Días festivos</h3><p>Esos días no se cierra la asistencia ni se marcan faltas.</p></div>
+                        <span class="tk-chip-soft tk-chip-neutral"><?= count($festivos ?? []) ?> registrados</span>
                     </div>
-                <div class="dark-toggle-wrap cfg-push" id="pushWrap">
-                    <button type="button" class="dark-toggle" id="pushBtn">
-                        <span class="material-symbols-outlined">notifications_active</span>
-                        <span>Notificaciones push</span>
-                    </button>
-                    <div class="dark-toggle-track" id="pushTrack">
-                        <div class="dark-toggle-thumb" id="pushThumb"></div>
-                    </div>
-                </div>
-
-                <div class="cfg-sec-head cfg-sec-head--split">
-                    <h2><span class="material-symbols-outlined">event_busy</span> Días festivos</h2>
-                    <span class="cfg-hint">Esos días no se cierra asistencia ni se marcan faltas</span>
-                </div>
-                <div class="cfg-form cfg-fest-form">
-                    <form action="<?= site_url('admin/festivos/guardar') ?>" method="POST" class="cfg-fest-row">
+                    <form action="<?= site_url('admin/festivos/guardar') ?>" method="POST" class="tk-cfg-fest">
                         <?= csrf_field() ?>
-                        <div class="cfg-field cfg-field--date">
-                            <span class="cfg-cap">Fecha</span>
+                        <label class="tk-cfg-field tk-cfg-field--date">
+                            <span>Fecha</span>
                             <input type="date" id="fest_fecha" name="fest_fecha" required>
-                        </div>
-                        <div class="cfg-field cfg-field--grow">
-                            <span class="cfg-cap">Nombre del día</span>
+                        </label>
+                        <label class="tk-cfg-field tk-cfg-field--grow">
+                            <span>Nombre del día</span>
                             <input type="text" id="fest_nombre" name="fest_nombre" maxlength="120" placeholder="Fiestas Patrias" required>
-                        </div>
-                        <button type="submit" class="cfg-btn">
+                        </label>
+                        <button type="submit" class="dev-btn dev-btn-primary dev-btn-sm">
                             <span class="material-symbols-outlined">add</span> Agregar
                         </button>
                     </form>
-                </div>
-                <div class="cfg-fest-list">
-                            <?php $listaFestivos = $festivos ?? []; ?>
-                            <?php if (empty($listaFestivos)): ?>
-                                <p style="font-size:.85rem;color:var(--g-text-secondary);margin:6px 0 0;">Aún no hay festivos registrados.</p>
-                            <?php else: ?>
-                                    <?php foreach ($listaFestivos as $f): ?>
-                                        <div class="cfg-fest-item">
-                                            <span class="material-symbols-outlined">event</span>
-                                            <div>
-                                                <b><?= esc($f['nombre']) ?></b>
-                                                <span><?= date('d/m/Y', strtotime($f['fecha'])) ?></span>
-                                            </div>
-                                            <form action="<?= site_url('admin/festivos/eliminar') ?>" method="POST" data-confirm-delete='{"message":"¿Eliminar este festivo?"}'>
+                    <?php $listaFestivos = $festivos ?? []; ?>
+                    <?php if (empty($listaFestivos)): ?>
+                        <p class="tk-cfg-empty">Aún no hay festivos registrados.</p>
+                    <?php else: ?>
+                        <div class="tk-scroll">
+                            <table class="tk-tbl">
+                                <thead><tr><th>Fecha</th><th>Día</th><th>Nombre</th><th class="tk-r">Acción</th></tr></thead>
+                                <tbody>
+                                <?php foreach ($listaFestivos as $f): $ts = strtotime($f['fecha']); ?>
+                                    <tr>
+                                        <td class="tk-cell-mono"><?= date('d/m/Y', $ts) ?></td>
+                                        <td class="tk-cell-muted"><?= esc($diasFes[date('l', $ts)] ?? '') ?></td>
+                                        <td><span class="tk-cell-main"><?= esc($f['nombre']) ?></span></td>
+                                        <td class="tk-r">
+                                            <form action="<?= site_url('admin/festivos/eliminar') ?>" method="POST" data-confirm-delete='{"message":"¿Eliminar este festivo?"}' style="display:inline;margin:0;">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="fest_id" value="<?= (int) $f['id'] ?>">
-                                                <button type="submit" class="cfg-btn-ghost">
-                                                    <span class="material-symbols-outlined">delete</span> Quitar
+                                                <button type="submit" class="dev-btn-icon dev-btn-danger" title="Quitar festivo">
+                                                    <span class="material-symbols-outlined">delete</span>
                                                 </button>
                                             </form>
-                                        </div>
-                                    <?php endforeach; ?>
-                            <?php endif; ?>
-                </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </section>
             </div>
         </div>
     </main>
@@ -620,6 +633,8 @@
 
         if (btnNotif && overlay) {
             btnNotif.addEventListener('click', function () { overlay.classList.add('is-open'); });
+            var btnNotifView = document.getElementById('btn-notif-view');
+            if (btnNotifView) btnNotifView.addEventListener('click', function () { overlay.classList.add('is-open'); });
             overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) overlay.classList.remove('is-open'); });
             overlay.querySelectorAll('[data-mc]').forEach(function (b) { b.addEventListener('click', function () { overlay.classList.remove('is-open'); }); });
         }

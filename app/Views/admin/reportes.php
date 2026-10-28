@@ -166,6 +166,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -173,8 +175,12 @@
 
     <main class="dev-main">
         <div class="dev-topbar">
-            <h1 class="dev-topbar-title">Reportes</h1>
-            <p class="dev-topbar-subtitle">Análisis de asistencia del equipo</p>
+            <div class="tk-title">
+                <div>
+                    <h1>Reportes</h1>
+                    <p>Análisis de asistencia del equipo por rango de fechas y persona.</p>
+                </div>
+            </div>
         </div>
 
         <div class="dev-content">
@@ -328,29 +334,42 @@
             </div>
 
                 <?php if (!empty($attendance)): ?>
-                    <div class="rp-list" id="tabla-asistencia">
+                    <div class="tk-tbl-wrap">
+                    <table class="tk-tbl" id="tabla-asistencia">
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Fecha</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         <?php foreach ($attendance as $r):
-                            $st   = $r['status'] ?? '';
-                            $estado = match($st) { 'present' => 'present', 'late' => 'late', 'absent' => 'absent', default => 'absent' };
-                            $label  = match($st) { 'present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', default => ucfirst($st) };
+                            $st     = $r['status'] ?? '';
+                            $estado = match($st) { 'present' => 'present', 'late' => 'late', 'no_exit' => 'no_exit', default => 'absent' };
+                            $label  = match($st) { 'present' => 'Presente', 'late' => 'Tardanza', 'absent' => 'Falta', 'no_exit' => 'Sin salida', 'absent_justified' => 'Falta justificada', default => ucfirst($st) };
                             $nombre = $r['name'] ?? 'Empleado';
                         ?>
-                        <div class="rp-item" data-nombre="<?= esc($nombre) ?>" data-dni="<?= esc($r['dni'] ?? '') ?>" data-fecha="<?= esc($r['date'] ?? '') ?>" data-entrada="<?= esc($r['time_in'] ?? '') ?>" data-salida="<?= esc($r['time_out'] ?? '') ?>" data-estado="<?= esc($label) ?>">
-                            <div class="rp-av"><?= strtoupper(substr($nombre, 0, 1)) ?></div>
-                            <div class="rp-main">
-                                <div class="rp-name">
-                                    <?= esc($nombre) ?>
-                                    <span class="rp-dni"><?= esc($r['dni'] ?? '') ?></span>
-                                </div>
-                                <div class="rp-meta">
-                                    <span><b><?= esc($r['date'] ?? '') ?></b></span>
-                                    <span>Entrada <b><?= esc($r['time_in'] ?? '-') ?></b></span>
-                                    <span>Salida <b><?= esc($r['time_out'] ?? '-') ?></b></span>
-                                </div>
-                            </div>
-                            <span class="rp-estado <?= $estado ?>"><i></i><?= $label ?></span>
-                        </div>
+                            <tr data-nombre="<?= esc($nombre) ?>" data-dni="<?= esc($r['dni'] ?? '') ?>" data-fecha="<?= esc($r['date'] ?? '') ?>" data-entrada="<?= esc($r['time_in'] ?? '') ?>" data-salida="<?= esc($r['time_out'] ?? '') ?>" data-estado="<?= esc($label) ?>">
+                                <td>
+                                    <div class="tk-cell-user">
+                                        <span class="tk-cell-av"><?= strtoupper(mb_substr($nombre, 0, 1, 'UTF-8')) ?></span>
+                                        <span>
+                                            <span class="tk-cell-main"><?= esc($nombre) ?></span><br>
+                                            <span class="tk-cell-sub tk-cell-mono">DNI <?= esc($r['dni'] ?? '—') ?></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="tk-cell-mono"><?= !empty($r['date']) ? esc(date('d/m/Y', strtotime($r['date']))) : '—' ?></td>
+                                <td class="tk-cell-mono"><?= !empty($r['time_in']) ? esc(substr($r['time_in'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                <td class="tk-cell-mono"><?= !empty($r['time_out']) ? esc(substr($r['time_out'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                <td><span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span></td>
+                            </tr>
                         <?php endforeach; ?>
+                        </tbody>
+                    </table>
                     </div>
 
                     <?php

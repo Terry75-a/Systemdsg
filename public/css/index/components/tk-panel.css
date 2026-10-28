@@ -101,7 +101,7 @@
 .tk-kv-row > span:last-child { font-size: 14px; color: var(--sb-on-surface); text-align: right; }
 .tk-mono { font-variant-numeric: tabular-nums; }
 .tk-code {
-  display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px;
+  display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 9999px;
   border: 1px solid color-mix(in oklab, var(--sb-primary) 35%, transparent);
   background: color-mix(in oklab, var(--sb-primary) 10%, transparent);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 600;

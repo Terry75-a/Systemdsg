@@ -154,7 +154,7 @@
 
         .dev-table-mobile { display: none; }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 767px) {
             .personal-table-wrap { display: none; }
             .dev-table-mobile { display: flex !important; flex-direction: column; gap: 12px; }
             .personal-code-item { padding: 16px; flex-wrap: wrap; }
@@ -441,6 +441,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
     <!-- PWA -->
     <?= view('partials/pwa-head') ?>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
 </head>
 <body>
@@ -449,15 +451,23 @@
 
 <div class="dev-main">
     <div class="dev-topbar">
-        <div>
-            <h1><strong>Personal</strong></h1>
-            <p>Gestiona tu equipo de trabajo, crea empleados y genera codigos de registro.</p>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-            <span style="background:var(--g-success-light);color:var(--g-success);padding:8px 14px;border-radius:10px;font-family:'SF Mono',Consolas,monospace;font-size:13px;font-weight:600;"><?= esc($adminCode ?? 'ADMIN-???') ?></span>
-            <?php if (!empty($adminEmpresa)): ?>
-            <span style="background:var(--g-surface-variant);color:var(--g-text-secondary);padding:8px 14px;border-radius:10px;font-size:13px;font-weight:500;"><?= esc($adminEmpresa) ?></span>
-            <?php endif; ?>
+        <div class="tk-title">
+            <div>
+                <h1>Personal</h1>
+                <p>Crea empleados y practicantes, revisa su biometría y contrato, y genera códigos de registro.</p>
+            </div>
+            <div class="tk-title-actions">
+                <span class="tk-code-pill"><?= esc($adminCode ?? 'ADMIN-???') ?></span>
+                <?php if (!empty($adminEmpresa)): ?>
+                    <span class="tk-chip-soft tk-chip-neutral"><?= esc($adminEmpresa) ?></span>
+                <?php endif; ?>
+                <button type="button" class="dev-btn dev-btn-sm" onclick="openModal('createCodeModal')">
+                    <span class="material-symbols-outlined">vpn_key</span> Generar código
+                </button>
+                <button type="button" class="dev-btn dev-btn-primary dev-btn-sm" onclick="openModal('createEmployeeModal')">
+                    <span class="material-symbols-outlined">person_add</span> Crear empleado
+                </button>
+            </div>
         </div>
     </div>
 
@@ -474,38 +484,25 @@
         <!-- Métricas + acciones: las MISMAS tarjetas del dashboard
              (dev-stats-grid + dev-stat-card); cada una lleva a su
              sección de esta misma página, como en el dashboard -->
-        <div class="personal-stats-row">
-            <div class="dev-stats-grid">
-                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
-                    <div class="dev-stat-icon si-accent"><span class="material-symbols-outlined filled">badge</span></div>
-                    <div class="dev-stat-label">Total equipo</div>
-                    <div class="dev-stat-value"><?= count($empleados) ?></div>
-                </a>
-                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
-                    <div class="dev-stat-icon si-green"><span class="material-symbols-outlined filled">person</span></div>
-                    <div class="dev-stat-label">Empleados</div>
-                    <div class="dev-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Empleado')) ?></div>
-                </a>
-                <a href="#equipo" class="dev-stat-card" title="Ver el equipo">
-                    <div class="dev-stat-icon si-amber"><span class="material-symbols-outlined filled">school</span></div>
-                    <div class="dev-stat-label">Practicantes</div>
-                    <div class="dev-stat-value"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante')) ?></div>
-                </a>
-                <a href="#codigos" class="dev-stat-card" title="Ver códigos de registro">
-                    <div class="dev-stat-icon si-blue"><span class="material-symbols-outlined filled">qr_code</span></div>
-                    <div class="dev-stat-label">Códigos activos</div>
-                    <div class="dev-stat-value"><?= count(array_filter($codes, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
-                </a>
-            </div>
-            <div class="personal-new-actions">
-                <button type="button" class="dev-btn dev-btn-primary" onclick="openModal('createEmployeeModal')">
-                    <span class="material-symbols-outlined">person_add</span> Crear empleado
-                </button>
-                <button type="button" class="dev-btn" onclick="openModal('createCodeModal')">
-                    <span class="material-symbols-outlined">vpn_key</span> Generar código
-                </button>
-            </div>
-        </div>
+        <!-- KPIs (StatGrid de Trackin): cada uno lleva a su sección -->
+        <section class="tk-stats tk-stats-4 personal-kpis">
+            <a href="#equipo" class="tk-stat">
+                <span class="material-symbols-outlined tk-stat-ico">groups</span>
+                <div><p class="tk-stat-lbl">Total equipo</p><p class="tk-stat-val"><?= count($empleados) ?></p></div>
+            </a>
+            <a href="#equipo" class="tk-stat">
+                <span class="material-symbols-outlined tk-stat-ico">badge</span>
+                <div><p class="tk-stat-lbl">Empleados</p><p class="tk-stat-val"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Empleado')) ?></p></div>
+            </a>
+            <a href="#equipo" class="tk-stat">
+                <span class="material-symbols-outlined tk-stat-ico">school</span>
+                <div><p class="tk-stat-lbl">Practicantes</p><p class="tk-stat-val"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante')) ?></p></div>
+            </a>
+            <a href="#codigos" class="tk-stat">
+                <span class="material-symbols-outlined tk-stat-ico">vpn_key</span>
+                <div><p class="tk-stat-lbl">Códigos activos</p><p class="tk-stat-val"><?= count(array_filter($codes, fn($c) => ($c['status'] ?? '') === 'active')) ?></p></div>
+            </a>
+        </section>
 
         <div class="personal-section" id="equipo">
             <?php
@@ -571,23 +568,19 @@
                     <table class="personal-table">
                         <thead>
                             <tr>
-                                <th>Empleado</th>
-                                <th>Codigo</th>
-                                <th>DNI</th>
-                                <th>Semestre</th>
-                                <th>Institucion</th>
-                                <th>Area</th>
-                                <th>Cargo</th>
+                                <th>Persona</th>
+                                <th>Código</th>
                                 <th>Rol</th>
-                                <th>Biometria</th>
+                                <th>Área · cargo</th>
+                                <th>Biometría</th>
                                 <th>Contrato</th>
                                 <th>Creado</th>
-                                <th style="width:80px;"></th>
+                                <th class="tk-r">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($empleados)): ?>
-                                <tr><td colspan="11"><div class="empty-state"><span class="material-symbols-outlined">person_off</span><p>No hay empleados registrados</p></div></td></tr>
+                                <tr><td colspan="8"><div class="empty-state"><span class="material-symbols-outlined">person_off</span><p>No hay empleados registrados</p></div></td></tr>
                             <?php else: ?>
                                 <?php foreach ($empleados as $emp):
                                     $role = $emp['role'] ?? 'Empleado';
@@ -607,28 +600,30 @@
                                         <td>
                                             <div class="personal-user">
                                                 <div class="personal-avatar <?= $avatarClass ?>"><?= $initial ?></div>
-                                                <div class="personal-user-name"><?= esc($name) ?></div>
+                                                <div class="personal-user-txt">
+                                                    <div class="personal-user-name"><?= esc($name) ?></div>
+                                                    <div class="personal-user-sub">DNI <?= esc($emp['dni'] ?? '—') ?><?= !empty($emp['email']) ? ' · ' . esc($emp['email']) : '' ?></div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td><code class="dev-code"><?= esc($emp['personal_code'] ?? '—') ?></code></td>
-                                        <td class="personal-mono"><?= esc($emp['dni'] ?? '---') ?></td>
-                                        <td><?= esc(($emp['role'] ?? '') === 'Practicante' ? ($emp['semestre'] ?? '—') : '—') ?></td>
-                                        <td><?= esc(($emp['role'] ?? '') === 'Practicante' ? ($emp['institucion'] ?? '—') : '—') ?></td>
-                                        <td><?= esc($emp['area'] ?? '-') ?></td>
-                                        <td><?= esc($emp['cargo'] ?? '-') ?></td>
                                         <td><span class="personal-role <?= $roleClass ?>"><?= esc($role) ?></span></td>
+                                        <td>
+                                            <div class="personal-user-name"><?= esc(($emp['area'] ?? '') ?: '—') ?></div>
+                                            <div class="personal-user-sub"><?= esc(($emp['cargo'] ?? '') ?: '—') ?><?= ($emp['role'] ?? '') === 'Practicante' ? ' · ' . esc(($emp['institucion'] ?? '') ?: '—') . ' · ' . esc(($emp['semestre'] ?? '') ?: '—') : '' ?></div>
+                                        </td>
                                         <td>
                                             <?php
                                                 $bH = (int) ($emp['huella_registrada'] ?? 0);
                                                 $bR = (int) ($emp['rostro_registrado'] ?? 0);
                                             ?>
-                                            <span class="dev-badge" style="font-size:11px; <?= $bH && $bR ? 'background:rgba(46,204,113,.15);color:var(--g-success);' : 'background:rgba(239,68,68,.12);color:var(--g-error);' ?>">
-                                                <?= $bH && $bR ? 'H.+R. ✓' : ($bH || $bR ? 'Incompleta' : 'Pendiente') ?>
+                                            <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : ($bH || $bR ? 'tk-chip-warn' : 'tk-chip-bad') ?>">
+                                                <?= $bH && $bR ? 'Completa' : ($bH || $bR ? 'Incompleta' : 'Pendiente') ?>
                                             </span>
                                         </td>
                                         <td>
                                             <?php $ct = $emp['contract_type'] ?? 'Indefinido'; $cd = (int) ($emp['contract_duration'] ?? 0); ?>
-                                            <span class="dev-badge" style="font-size:11px; <?= $ct === 'Indefinido' ? 'background:rgba(120,144,156,.12);color:#90a4ae;' : 'background:rgba(26,115,232,.12);color:#1a73e8;' ?>">
+                                            <span class="tk-chip-soft <?= $ct === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
                                                 <?= $ct === 'Indefinido' ? 'Indefinido' : ($ct === 'Meses' ? $cd . ' mes(es)' : $cd . ' año(s)') ?>
                                             </span>
                                         </td>
@@ -660,7 +655,7 @@
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <tr id="personNoResults" style="display:none;">
-                                <td colspan="12">
+                                <td colspan="8">
                                     <div class="pf-empty" style="display:block;">
                                         <span class="material-symbols-outlined" style="font-size:44px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">person_search</span>
                                         Ninguna persona coincide con el filtro.
@@ -694,7 +689,7 @@
                                     <div class="personal-avatar <?= $avatarClass ?>" style="width:42px;height:42px;font-size:16px;flex-shrink:0;"><?= $initial ?></div>
                                     <div class="m-card-info">
                                         <div class="m-card-name"><?= esc($name) ?></div>
-                                        <div class="m-card-sub"><code style="font-family:monospace;"><?= esc($emp['personal_code'] ?? '') ?></code> · DNI <?= esc($emp['dni'] ?? '---') ?></div>
+                                        <div class="m-card-sub"><code class="tk-code-pill"><?= esc($emp['personal_code'] ?? '') ?></code> · DNI <?= esc($emp['dni'] ?? '---') ?></div>
                                         <?php if (($emp['role'] ?? '') === 'Practicante'): ?>
                                         <div class="m-card-sub" style="margin-top:2px;">
                                             <span class="material-symbols-outlined" style="font-size:13px;vertical-align:-2px;">school</span>
@@ -711,10 +706,10 @@
                                     $_cd = (int) ($emp['contract_duration'] ?? 0);
                                 ?>
                                 <div class="m-card-chips">
-                                    <span class="dev-badge" <?= $bH && $bR ? 'style="background:rgba(46,204,113,.15);color:var(--g-success);"' : 'style="background:rgba(239,68,68,.12);color:var(--g-error);"' ?>>
+                                    <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : 'tk-chip-bad' ?>">
                                         <span class="material-symbols-outlined">fingerprint</span> <?= $bH && $bR ? 'Biometría ✓' : 'Biometría pendiente' ?>
                                     </span>
-                                    <span class="dev-badge" <?= $_ct === 'Indefinido' ? 'style="background:rgba(120,144,156,.12);color:#90a4ae;"' : 'style="background:rgba(26,115,232,.12);color:#1a73e8;"' ?>>
+                                    <span class="tk-chip-soft <?= $_ct === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
                                         <span class="material-symbols-outlined">description</span> <?= $_ct === 'Indefinido' ? 'Contrato indefinido' : 'Contrato ' . $_cd . ($_ct === 'Meses' ? ' mes(es)' : ' año(s)') ?>
                                     </span>
                                 </div>
@@ -819,7 +814,7 @@
                                 <div style="font-weight:600;font-family:var(--g-font-display);"><?= esc(session()->get('user_name') ?? 'Admin') ?></div>
                                 <div style="font-size:11px;color:var(--g-text-secondary);">Será el encargado de este empleado/practicante</div>
                             </div>
-                            <span style="font-family:monospace;font-weight:600;font-size:12px;color:var(--g-success);"><?= esc($adminCode ?? 'ADMIN-???') ?></span>
+                            <span class="tk-code-pill"><?= esc($adminCode ?? 'ADMIN-???') ?></span>
                         </div>
                     </div>
                     <div class="dev-field"><label>Nombre completo</label><input type="text" id="create_emp_name" name="emp_name" placeholder="Ej. Juan Perez" required></div>
