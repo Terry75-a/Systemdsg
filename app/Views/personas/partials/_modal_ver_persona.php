@@ -1,90 +1,61 @@
-<div class="modal fade" id="modalVerPersona" tabindex="-1" aria-hidden="true">
+<div class="modal fade pv-modal" id="modalVerPersona" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content pdsg-modal-content">
+    <div class="modal-content pdsg-modal-content pv-content">
 
-      <div class="pdsg-modal-bar">
-        <span class="pdsg-modal-avatar" id="ver_avatar">-</span>
-        <div class="pdsg-modal-head-info">
-          <h5 class="pdsg-modal-name" id="ver_nombre">-</h5>
-          <span class="pdsg-modal-sub" id="ver_razon_social">-</span>
+      <!-- Cabecera -->
+      <div class="pdsg-modal-bar pv-hero">
+        <span class="pdsg-modal-avatar pv-avatar" id="ver_avatar">-</span>
+        <div class="pdsg-modal-head-info pv-who">
+          <h5 class="pdsg-modal-name pv-name" id="ver_nombre">-</h5>
+          <span class="pdsg-modal-sub pv-biz"><span class="material-symbols-outlined">apartment</span> <span id="ver_razon_social">-</span></span>
         </div>
-        <span class="pdsg-chip pdsg-chip-on" id="pdsg-modal-chip"><i class="fa-solid fa-circle"></i> Activo</span>
-        <button type="button" class="pdsg-modal-close" data-bs-dismiss="modal" aria-label="Cerrar">
-          <i class="fa-solid fa-xmark"></i>
+        <span class="pdsg-chip pdsg-chip-on pv-state" id="pdsg-modal-chip"><span class="ms-dot"></span> Activo</span>
+        <button type="button" class="pdsg-modal-close pv-close" data-bs-dismiss="modal" aria-label="Cerrar">
+          <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
-      <div class="pdsg-modal-scroll">
-        <div class="pdsg-modal-body">
+      <div class="pdsg-modal-scroll pv-scroll">
+        <div class="pdsg-modal-body pv-body">
 
-          <div class="pdsg-modal-group">
-            <div class="pdsg-modal-card">
-              <span class="pdsg-modal-group-title"><i class="fa-solid fa-id-card"></i> Datos personales</span>
-              <div class="pdsg-modal-grid">
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-user"></i> Apellido paterno</span>
-                  <span class="pdsg-modal-field-value" id="ver_apellido_paterno">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-user"></i> Apellido materno</span>
-                  <span class="pdsg-modal-field-value" id="ver_apellido_materno">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-hashtag"></i> DNI</span>
-                  <span class="pdsg-modal-field-value pdsg-mono" id="ver_dni">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-hashtag"></i> RUC</span>
-                  <span class="pdsg-modal-field-value pdsg-mono" id="ver_ruc">-</span>
+          <!-- Franja de datos clave (StatGrid) -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-stats">
+              <div class="pv-stat"><span class="pv-stat-lbl"><span class="material-symbols-outlined">badge</span> DNI</span><span class="pv-stat-val pv-mono" id="ver_dni">-</span></div>
+              <div class="pv-stat"><span class="pv-stat-lbl"><span class="material-symbols-outlined">receipt_long</span> RUC</span><span class="pv-stat-val pv-mono" id="ver_ruc">-</span></div>
+              <div class="pv-stat"><span class="pv-stat-lbl"><span class="material-symbols-outlined">call</span> Teléfono</span><span class="pv-stat-val pv-mono" id="ver_telefono">-</span></div>
+            </div>
+          </div>
+
+          <!-- Datos en filas (Row de Trackin) -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-card">
+              <div class="pv-card-head"><h6><span class="material-symbols-outlined">person</span> Datos personales</h6><span>Identidad y domicilio</span></div>
+              <div class="pv-rows">
+                <div class="pv-row"><span><span class="material-symbols-outlined">person</span> Apellido paterno</span><b id="ver_apellido_paterno">-</b></div>
+                <div class="pv-row"><span><span class="material-symbols-outlined">person</span> Apellido materno</span><b id="ver_apellido_materno">-</b></div>
+                <div class="pv-row"><span><span class="material-symbols-outlined">home</span> Dirección</span><b id="ver_direccion">-</b></div>
+                <div class="pv-row pv-row-loc">
+                  <span><span class="material-symbols-outlined">location_on</span> Ubicación</span>
+                  <b class="pv-loc">
+                    <span id="ver_departamento">-</span><span class="material-symbols-outlined">chevron_right</span>
+                    <span id="ver_provincia">-</span><span class="material-symbols-outlined">chevron_right</span>
+                    <span id="ver_distrito">-</span>
+                  </b>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="pdsg-modal-group">
-            <div class="pdsg-modal-card">
-              <span class="pdsg-modal-group-title"><i class="fa-solid fa-address-book"></i> Contacto</span>
-              <div class="pdsg-modal-grid">
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-phone"></i> Teléfono</span>
-                  <span class="pdsg-modal-field-value" id="ver_telefono">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-location-dot"></i> Dirección</span>
-                  <span class="pdsg-modal-field-value" id="ver_direccion">-</span>
-                </div>
-              </div>
+          <!-- Sucursales (las tarjetas las arma personas-lista.js) -->
+          <div class="pdsg-modal-group pdsg-modal-group--suc pv-group">
+            <div class="pv-suc-head">
+              <h6><span class="material-symbols-outlined">storefront</span> Sucursales <span class="pdsg-suc-count pv-count" id="ver_suc_count" hidden>0</span></h6>
+              <span>Toca una sucursal para ver su detalle</span>
             </div>
-          </div>
-
-          <div class="pdsg-modal-group">
-            <div class="pdsg-modal-card">
-              <span class="pdsg-modal-group-title"><i class="fa-solid fa-map-location-dot"></i> Ubicación</span>
-              <div class="pdsg-modal-grid">
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-location-dot"></i> Departamento</span>
-                  <span class="pdsg-modal-field-value" id="ver_departamento">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-location-dot"></i> Provincia</span>
-                  <span class="pdsg-modal-field-value" id="ver_provincia">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-location-dot"></i> Distrito</span>
-                  <span class="pdsg-modal-field-value" id="ver_distrito">-</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pdsg-modal-group pdsg-modal-group--suc">
-            <span class="pdsg-modal-group-title">
-              <i class="fa-solid fa-shop"></i> Sucursales
-              <span class="pdsg-suc-count" id="ver_suc_count" hidden>0</span>
-            </span>
-            <div class="pdsg-suc-grid" id="ver_sucursales">
+            <div class="pdsg-suc-grid pv-suc-grid" id="ver_sucursales">
               <div class="pdsg-suc-empty" id="sucursales_vacio">
-                <i class="bi bi-inbox"></i>
+                <span class="material-symbols-outlined">inbox</span>
                 <span>Sin sucursales registradas</span>
               </div>
             </div>

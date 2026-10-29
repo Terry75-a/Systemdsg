@@ -696,3 +696,230 @@ body:has(.dev-main) .dsg-user-chevron { display: none !important; }
   /* en celular el chip de perfil muestra solo el avatar */
   body:has(.dev-main) .dsg-user-meta { display: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FICHAS «Ver cliente» y «Ver sucursal» (.pv-modal) · minimal:
+   cabecera blanca, avatar suave, franja de datos clave unida,
+   filas etiqueta/valor y sucursales en tarjetas planas.
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dsg-page) .pv-modal .modal-dialog { max-width: 560px !important; }
+body:has(.dsg-page) #modalVerSucursal .modal-dialog { max-width: 460px !important; }
+body:has(.dsg-page) .pv-modal .pv-content {
+  border-radius: 20px !important; overflow: hidden; background: var(--sb-surface) !important;
+  max-height: calc(100vh - 32px); display: flex; flex-direction: column;
+}
+/* cabecera */
+body:has(.dsg-page) .pv-modal .pv-hero {
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  padding: 20px 56px 16px 20px !important; background: var(--sb-surface) !important; color: var(--sb-on-surface) !important;
+  border-bottom: 1px solid var(--tk-l40) !important; position: relative !important;
+}
+body:has(.dsg-page) .pv-modal .pv-avatar {
+  width: 44px !important; height: 44px !important; border-radius: 50% !important; flex: none;
+  background: color-mix(in oklab, var(--sb-primary) 12%, transparent) !important; color: var(--sb-primary) !important;
+  font-size: 15px !important; font-weight: 600 !important; box-shadow: none !important;
+}
+body:has(.dsg-page) .pv-modal .pv-who { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
+body:has(.dsg-page) .pv-modal .pv-name {
+  margin: 0 !important; font-size: 16px !important; font-weight: 600 !important; letter-spacing: -.01em !important;
+  color: var(--sb-on-surface) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+body:has(.dsg-page) .pv-modal .pv-biz { display: flex !important; align-items: center; gap: 6px; font-size: 12px !important; color: var(--tk-v70) !important; min-width: 0; }
+body:has(.dsg-page) .pv-modal .pv-biz i { font-size: 11px; }
+body:has(.dsg-page) .pv-modal .pv-biz span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dsg-page) .pv-modal .pv-state { flex: none; }
+body:has(.dsg-page) .pv-modal .pv-close {
+  position: absolute !important; top: 50% !important; right: 14px !important; translate: 0 -50%;
+  width: 32px !important; height: 32px !important; border-radius: 50% !important;
+  background: transparent !important; color: var(--tk-v70) !important;
+}
+body:has(.dsg-page) .pv-modal .pv-close:hover { background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; }
+/* cuerpo */
+body:has(.dsg-page) .pv-modal .pv-scroll { overflow-y: auto; flex: 1; background: var(--sb-surface) !important; }
+body:has(.dsg-page) .pv-modal .pv-body { display: flex; flex-direction: column; gap: 14px; padding: 16px 20px 20px !important; }
+body:has(.dsg-page) .pv-modal .pv-group { margin: 0 !important; }
+body:has(.dsg-page) .pv-modal .pv-stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; overflow: hidden; border-radius: 14px;
+  background: var(--tk-l40); border: 1px solid var(--tk-l40);
+}
+body:has(.dsg-page) .pv-modal .pv-stats-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+body:has(.dsg-page) .pv-modal .pv-stat { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--sb-surface); min-width: 0; }
+body:has(.dsg-page) .pv-modal .pv-stat-lbl { font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--tk-v50); }
+body:has(.dsg-page) .pv-modal .pv-stat-val { font-size: 14px; font-weight: 600; color: var(--sb-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dsg-page) .pv-modal .pv-mono { font-variant-numeric: tabular-nums; }
+body:has(.dsg-page) .pv-modal .pv-card { border: 0; background: transparent; }
+body:has(.dsg-page) .pv-modal .pv-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 0 4px; }
+body:has(.dsg-page) .pv-modal :is(.pv-card-head, .pv-suc-head) h6 { margin: 0; font-size: 13px; font-weight: 600; color: var(--sb-on-surface); display: flex; align-items: center; gap: 8px; }
+body:has(.dsg-page) .pv-modal :is(.pv-card-head, .pv-suc-head) > span { font-size: 11px; color: var(--tk-v50); }
+body:has(.dsg-page) .pv-modal .pv-rows { padding: 0; }
+body:has(.dsg-page) .pv-modal .pv-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 10px 0;
+  border-bottom: 1px solid var(--tk-l25); font-size: 13px;
+}
+body:has(.dsg-page) .pv-modal .pv-row:last-child { border-bottom: 0; }
+body:has(.dsg-page) .pv-modal .pv-row > span { font-size: 12px; color: var(--tk-v70); white-space: nowrap; }
+body:has(.dsg-page) .pv-modal .pv-row > b { font-weight: 500; text-align: right; color: var(--sb-on-surface); overflow-wrap: anywhere; }
+body:has(.dsg-page) .pv-modal .pv-loc { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
+body:has(.dsg-page) .pv-modal .pv-loc i { font-size: 8px; color: var(--tk-v50); }
+/* sucursales */
+body:has(.dsg-page) .pv-modal .pv-suc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 6px 0 8px; border-top: 1px solid var(--tk-l25); padding-top: 14px; }
+body:has(.dsg-page) .pv-modal .pv-count {
+  display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 9999px;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important; font-size: 11px !important; font-weight: 600;
+}
+body:has(.dsg-page) .pv-modal .pv-suc-grid { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-card {
+  display: flex !important; flex-direction: column !important; gap: 0 !important; padding: 12px 14px !important; margin: 0 !important;
+  border-radius: 14px !important; border: 1px solid var(--tk-l40) !important; background: var(--sb-surface) !important;
+  box-shadow: none !important; cursor: pointer; transform: none !important; transition: background-color 150ms ease !important;
+}
+body:has(.dsg-page) .pv-modal .pdsg-suc-card:hover { background: var(--sb-surface-container-low) !important; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-top { display: flex !important; align-items: center !important; gap: 10px !important; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-avatar {
+  width: 32px !important; height: 32px !important; border-radius: 50% !important; flex: none;
+  display: grid !important; place-items: center !important; font-size: 12px !important; font-weight: 600 !important;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+body:has(.dsg-page) .pv-modal .pdsg-suc-id { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-nombre { font-size: 13px !important; font-weight: 600 !important; color: var(--sb-on-surface) !important; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-dir { display: flex; align-items: center; gap: 4px; font-size: 11px !important; color: var(--tk-v70) !important; min-width: 0; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-dir i { display: none; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-dir-txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-chevron { color: var(--tk-v50) !important; font-size: 11px; background: transparent !important; border: 0 !important; }
+/* en la lista solo cabecera de la sucursal; el detalle está en su ficha */
+body:has(.dsg-page) .pv-modal :is(.pdsg-suc-fields, .pdsg-suc-foot) { display: none !important; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 22px 12px;
+  border-radius: 14px; border: 1px dashed var(--tk-l60); color: var(--tk-v50); font-size: 12px;
+}
+@media (max-width: 576px) {
+  body:has(.dsg-page) .pv-modal .pv-hero { padding: 18px 52px 14px 16px !important; }
+  body:has(.dsg-page) .pv-modal .pv-body { padding: 14px 16px 20px !important; }
+  body:has(.dsg-page) .pv-modal .pv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body:has(.dsg-page) .pv-modal .pv-stats:not(.pv-stats-2) > :last-child { grid-column: 1 / -1; }
+  body:has(.dsg-page) .pv-modal .pv-row { flex-direction: column; gap: 2px; }
+  body:has(.dsg-page) .pv-modal .pv-row > b, body:has(.dsg-page) .pv-modal .pv-loc { text-align: left; justify-content: flex-start; }
+}
+
+/* Sucursales de «Ver cliente»: vuelve el diseño de tarjetas anterior
+   (dos columnas, inicial en cuadro negro y lima, teléfono y correo,
+   «Ver detalle completo» y realce verde al pasar el mouse). */
+body:has(.dsg-page) #modalVerPersona .pv-suc-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card {
+  gap: 10px !important; padding: 14px !important; border-radius: 16px !important;
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease !important;
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card:hover {
+  background: var(--sb-surface) !important; border-color: var(--sb-primary) !important; transform: translateY(-2px) !important;
+  box-shadow: 0 10px 24px -14px color-mix(in oklab, var(--sb-primary) 60%, transparent) !important;
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-avatar {
+  width: 36px !important; height: 36px !important; border-radius: 12px !important; font-size: 13px !important; font-weight: 700 !important;
+  background: #0b0b0b !important; color: #bedf3c !important;
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-nombre { font-size: 14px !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-dir i { display: inline !important; font-size: 10px; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-fields {
+  display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px 10px !important;
+  padding-top: 10px; border-top: 1px solid var(--tk-l25);
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-field { display: flex !important; flex-direction: column !important; gap: 1px !important; min-width: 0; background: transparent !important; padding: 0 !important; border: 0 !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-field-label { font-size: 10px !important; text-transform: uppercase; letter-spacing: .04em; color: var(--tk-v50) !important; display: flex; align-items: center; gap: 5px; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-field-label i { font-size: 9px; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-field-value { font-size: 12.5px !important; font-weight: 500 !important; color: var(--sb-on-surface) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-field--extra:not(:nth-child(2)) { display: none !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-foot {
+  display: flex !important; align-items: center; gap: 6px; font-size: 11.5px !important; font-weight: 500; color: var(--sb-primary) !important;
+  background: transparent !important; padding: 0 !important; border: 0 !important;
+}
+@media (max-width: 576px) {
+  body:has(.dsg-page) #modalVerPersona .pv-suc-grid { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Fichas Ver cliente / Ver sucursal · ajuste fino:
+   íconos Material Symbols, botones y adaptación por pantalla.
+   ══════════════════════════════════════════════════════════════ */
+/* punto de estado de las etiquetas (reemplaza el ícono de círculo) */
+body:has(.dsg-page) .ms-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+body:has(.dsg-page) .pdsg-chip { display: inline-flex !important; align-items: center !important; gap: 6px !important; height: 24px; line-height: 1; white-space: nowrap; }
+
+/* íconos dentro de las fichas */
+body:has(.dsg-page) .pv-modal .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; line-height: 1; }
+body:has(.dsg-page) .pv-modal .pv-stat-lbl { display: flex; align-items: center; gap: 6px; }
+body:has(.dsg-page) .pv-modal .pv-stat-lbl .material-symbols-outlined { font-size: 15px; color: var(--sb-primary); }
+body:has(.dsg-page) .pv-modal .pv-row > span { display: inline-flex; align-items: center; gap: 8px; }
+body:has(.dsg-page) .pv-modal .pv-row > span .material-symbols-outlined { font-size: 17px; color: var(--tk-v50); }
+body:has(.dsg-page) .pv-modal :is(.pv-card-head, .pv-suc-head) h6 .material-symbols-outlined { font-size: 18px; color: var(--sb-primary); }
+body:has(.dsg-page) .pv-modal .pv-biz .material-symbols-outlined { font-size: 15px; }
+body:has(.dsg-page) .pv-modal .pv-loc .material-symbols-outlined { font-size: 14px; color: var(--tk-v50); }
+body:has(.dsg-page) .pv-modal .pdsg-suc-dir .material-symbols-outlined { font-size: 14px; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-field-label .material-symbols-outlined { font-size: 13px; }
+body:has(.dsg-page) .pv-modal .pdsg-suc-empty .material-symbols-outlined { font-size: 24px; }
+
+/* botón cerrar: 36px, fondo suave al pasar, foco visible */
+body:has(.dsg-page) .pv-modal .pv-close {
+  width: 36px !important; height: 36px !important; top: 16px !important; translate: none !important;
+  display: grid !important; place-items: center !important; border: 0 !important;
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface-variant) !important;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease !important;
+}
+body:has(.dsg-page) .pv-modal .pv-close .material-symbols-outlined { font-size: 20px; }
+body:has(.dsg-page) .pv-modal .pv-close:hover { background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface) !important; }
+body:has(.dsg-page) .pv-modal .pv-close:active { transform: scale(.92); }
+body:has(.dsg-page) .pv-modal .pv-close:focus-visible { outline: 2px solid var(--sb-primary) !important; outline-offset: 2px; }
+body:has(.dsg-page) .pv-modal .pv-hero { padding-right: 64px !important; min-height: 76px; }
+
+/* tarjetas de sucursal: flecha en botón redondo y «Ver detalle» como píldora */
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-top { gap: 10px !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-top .pdsg-chip { flex: none; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-chevron {
+  width: 28px; height: 28px; flex: none; display: grid !important; place-items: center; border-radius: 50%;
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface-variant) !important;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-chevron .material-symbols-outlined { font-size: 18px; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card:hover .pdsg-suc-chevron { background: var(--sb-primary) !important; color: #fff !important; transform: translateX(2px); }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-foot {
+  align-self: flex-start; height: 30px; padding: 0 12px !important; border-radius: 9999px !important; gap: 4px !important;
+  background: color-mix(in oklab, var(--sb-primary) 10%, transparent) !important; color: var(--sb-primary) !important;
+  font-size: 12px !important; font-weight: 600 !important; transition: background-color 150ms ease;
+}
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-foot .material-symbols-outlined { font-size: 16px; transition: transform 150ms ease; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card:hover .pdsg-suc-foot { background: color-mix(in oklab, var(--sb-primary) 16%, transparent) !important; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card:hover .pdsg-suc-foot .material-symbols-outlined { transform: translateX(3px); }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-card:focus-visible { outline: 2px solid var(--sb-primary); outline-offset: 2px; }
+body:has(.dsg-page) #modalVerPersona .pdsg-suc-nombre { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* adaptación por pantalla */
+body:has(.dsg-page) .pv-modal .pv-content { max-height: min(860px, calc(100dvh - 32px)) !important; }
+@media (min-width: 577px) and (max-width: 900px) {
+  body:has(.dsg-page) #modalVerPersona .modal-dialog { max-width: calc(100vw - 48px) !important; }
+}
+/* tarjetas angostas: estado debajo del nombre para que no se corte */
+@media (min-width: 577px) and (max-width: 680px) {
+  body:has(.dsg-page) #modalVerPersona .pv-suc-grid { grid-template-columns: minmax(0, 1fr) !important; }
+}
+@media (max-width: 576px) {
+  /* hoja inferior con esquinas redondeadas y su propio desplazamiento */
+  body:has(.dsg-page) .pv-modal .modal-dialog { align-items: flex-end !important; }
+  body:has(.dsg-page) .pv-modal .pv-content {
+    max-height: 92dvh !important; border-radius: 20px 20px 0 0 !important; border-bottom: 0 !important;
+  }
+  body:has(.dsg-page) .pv-modal .pv-hero::before {
+    content: ""; position: absolute; top: 8px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 9999px;
+    background: var(--sb-outline-variant);
+  }
+  body:has(.dsg-page) .pv-modal .pv-hero { padding: 24px 60px 14px 16px !important; flex-wrap: wrap; min-height: 0; }
+  body:has(.dsg-page) .pv-modal .pv-close { top: 20px !important; right: 12px !important; }
+  body:has(.dsg-page) .pv-modal .pv-state { order: 3; margin-left: 56px; }
+  body:has(.dsg-page) .pv-modal .pv-body { padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
+  body:has(.dsg-page) #modalVerPersona .pdsg-suc-fields { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+}
+/* celular: la hoja de las fichas no ocupa toda la pantalla (deja ver el fondo arriba) */
+@media (max-width: 576px) {
+  html body:has(.dsg-page) .pv-modal .modal-dialog .pv-content {
+    min-height: 0 !important; height: auto !important; max-height: 92dvh !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+}

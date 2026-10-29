@@ -43,9 +43,9 @@
 
     function chipEstado(activo) {
         if (activo) {
-            return '<span class="pdsg-chip pdsg-chip-on"><i class="fa-solid fa-circle"></i> Activo</span>';
+            return '<span class="pdsg-chip pdsg-chip-on"><span class="ms-dot"></span> Activo</span>';
         }
-        return '<span class="pdsg-chip pdsg-chip-off"><i class="fa-solid fa-circle"></i> Inactivo</span>';
+        return '<span class="pdsg-chip pdsg-chip-off"><span class="ms-dot"></span> Inactivo</span>';
     }
 
     function renderBotonVer(c) {
@@ -78,21 +78,21 @@
      */
     function tarjetaSucursal(s, index) {
         var chip = (s.estado == 1)
-            ? '<span class="pdsg-chip pdsg-chip-on"><i class="fa-solid fa-circle"></i> Activo</span>'
-            : '<span class="pdsg-chip pdsg-chip-off"><i class="fa-solid fa-circle"></i> Inactivo</span>';
+            ? '<span class="pdsg-chip pdsg-chip-on"><span class="ms-dot"></span> Activo</span>'
+            : '<span class="pdsg-chip pdsg-chip-off"><span class="ms-dot"></span> Inactivo</span>';
 
         var campos = [
-            ['fa-solid fa-phone', 'Teléfono', s.telefono, ''],
-            ['fa-solid fa-envelope', 'Correo', s.correo, ' pdsg-suc-field--extra'],
-            ['fa-solid fa-user-tie', 'Representante', s.representante, ' pdsg-suc-field--extra'],
-            ['fa-solid fa-tags', 'Tipo', s.tipo, ' pdsg-suc-field--extra'],
-            ['fa-solid fa-hashtag', 'Código cliente', s.codigo_cliente, ' pdsg-suc-field--extra pdsg-suc-field--mono']
+            ['call', 'Teléfono', s.telefono, ''],
+            ['mail', 'Correo', s.correo, ' pdsg-suc-field--extra'],
+            ['badge', 'Representante', s.representante, ' pdsg-suc-field--extra'],
+            ['sell', 'Tipo', s.tipo, ' pdsg-suc-field--extra'],
+            ['tag', 'Código cliente', s.codigo_cliente, ' pdsg-suc-field--extra pdsg-suc-field--mono']
         ];
 
         var htmlCampos = campos.map(function (c) {
             return `
                 <div class="pdsg-suc-field${c[3]}">
-                    <span class="pdsg-suc-field-label"><i class="${c[0]}"></i> ${c[1]}</span>
+                    <span class="pdsg-suc-field-label"><span class="material-symbols-outlined">${c[0]}</span> ${c[1]}</span>
                     <span class="pdsg-suc-field-value">${escHtml(c[2]) || '—'}</span>
                 </div>`;
         }).join('');
@@ -114,13 +114,13 @@
                     <span class="pdsg-suc-avatar">${inicialesSucursal(s.nombre_sucursal)}</span>
                     <div class="pdsg-suc-id">
                         <span class="pdsg-suc-nombre">${escHtml(s.nombre_sucursal) || '-'}</span>
-                        <span class="pdsg-suc-dir"><i class="fa-solid fa-location-dot"></i><span class="pdsg-suc-dir-txt">${escHtml(s.direccion) || '—'}</span></span>
+                        <span class="pdsg-suc-dir"><span class="material-symbols-outlined">location_on</span><span class="pdsg-suc-dir-txt">${escHtml(s.direccion) || '—'}</span></span>
                     </div>
                     ${chip}
-                    <span class="pdsg-suc-chevron"><i class="fa-solid fa-chevron-right"></i></span>
+                    <span class="pdsg-suc-chevron"><span class="material-symbols-outlined">chevron_right</span></span>
                 </div>
                 <div class="pdsg-suc-fields">${htmlCampos}</div>
-                <div class="pdsg-suc-foot"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver detalle completo</div>
+                <div class="pdsg-suc-foot">Ver detalle completo <span class="material-symbols-outlined">arrow_forward</span></div>
             </article>
         `;
     }
@@ -396,9 +396,9 @@
         $('#ver_avatar').text(iniciales);
         var chip = $('#pdsg-modal-chip');
         if (estadoActual == 1) {
-            chip.attr('class', 'pdsg-chip pdsg-chip-on').html('<i class="fa-solid fa-circle"></i> Activo');
+            chip.attr('class', 'pdsg-chip pdsg-chip-on').html('<span class="ms-dot"></span> Activo');
         } else {
-            chip.attr('class', 'pdsg-chip pdsg-chip-off').html('<i class="fa-solid fa-circle"></i> Inactivo');
+            chip.attr('class', 'pdsg-chip pdsg-chip-off').html('<span class="ms-dot"></span> Inactivo');
         }
 
         $.ajax({
@@ -435,7 +435,7 @@
                     } else {
                         cont.append(`
                             <div class="pdsg-suc-empty" id="sucursales_vacio">
-                                <i class="bi bi-inbox"></i>
+                                <span class="material-symbols-outlined">inbox</span>
                                 <span>Sin sucursales registradas</span>
                             </div>
                         `);
@@ -740,9 +740,9 @@
 
         var chip = $('#suc-chip');
         if (suc.estado == 1) {
-            chip.attr('class', 'pdsg-chip pdsg-chip-on').html('<i class="fa-solid fa-circle"></i> Activo');
+            chip.attr('class', 'pdsg-chip pdsg-chip-on').html('<span class="ms-dot"></span> Activo');
         } else {
-            chip.attr('class', 'pdsg-chip pdsg-chip-off').html('<i class="fa-solid fa-circle"></i> Inactivo');
+            chip.attr('class', 'pdsg-chip pdsg-chip-off').html('<span class="ms-dot"></span> Inactivo');
         }
 
         var modal = new bootstrap.Modal(document.getElementById('modalVerSucursal'));

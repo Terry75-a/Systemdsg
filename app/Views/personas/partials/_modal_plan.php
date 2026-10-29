@@ -1,85 +1,107 @@
-<div class="modal " id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabe" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <form class="modal-content" id="formAsignarPlan" method="POST">
-      
+<div class="modal mf-modal" id="modalPlan" tabindex="-1" aria-labelledby="modalPlanLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content mf-content" id="formAsignarPlan" method="POST">
+
       <!-- ID para identificar la sucursal o empresa -->
       <input type="hidden" id="idSucursalModal" name="id_sucursal" value="">
       <input type="hidden" id="idEmpresaModal" name="id_empresa" value="">
-      
-      <div class="pe-ms-head">
-        <span class="pe-ms-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span>
-        <div class="pe-ms-head-info">
+
+      <!-- Cabecera -->
+      <div class="mf-head">
+        <span class="mf-icon"><span class="material-symbols-outlined">workspace_premium</span></span>
+        <div class="mf-head-info">
           <h2 id="modalPlanLabel">Asignar Plan de Servicio</h2>
           <p>Selecciona el plan y condiciones para este cliente.</p>
         </div>
-        <button type="button" class="pe-ms-close" data-bs-dismiss="modal" aria-label="Cerrar">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        <button type="button" class="mf-close" data-bs-dismiss="modal" aria-label="Cerrar">
+          <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
-      <div class="pe-ms-body-wrap" style="overflow-y: auto; max-height: calc(85vh - 160px);">
-        <div class="pe-ms-body">
-          <div class="alert mb-3" role="alert">
-            Asignando plan a: <strong id="modalClienteNombre"></strong>
-          </div>
+      <div class="mf-scroll">
+        <div class="mf-body">
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="selectPlan">Seleccionar Plan disponible: <span class="text-danger">*</span></label>
-              <select class="form-select" id="selectPlan" name="id_plan" required></select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="selectTipoPlan">Tipo de plan: <span class="text-danger">*</span></label>
-              <select class="form-select" id="selectTipoPlan" name="id_tipo_plan" required></select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="fechaInicio">Fecha de Inicio: <span class="text-danger">*</span></label>
-              <!-- name="fecha_de_inicio" igual a la BD -->
-              <input type="date" class="form-control" id="fechaInicio" name="fecha_de_inicio" required>
-            </div>
-
-            <div class="col-md-6" id="grupoVencimiento">
-              <label for="fechaVencimiento">Fecha de Vencimiento:</label>
-              <!-- name="fecha_de_vencimiento" igual a la BD -->
-              <input type="date" class="form-control" id="fechaVencimiento" name="fecha_de_vencimiento" readonly placeholder="Cálculo automático">
-            </div>
-              <div class="col-12 d-none" id="bloqueFinMensual">
-  <label class="form-label fw-bold mb-2">Finalización del plan mensual:</label>
-
-  <div class="form-check mb-2">
-    <input class="form-check-input" type="radio" name="tipo_fin" id="finSinFecha" value="SIN_FIN" checked onchange="actualizarCamposFin()">
-    <label class="form-check-label" for="finSinFecha" style="cursor: pointer;">Sin fecha de finalización</label>
-  </div>
-
-  
-
-  <div class="form-check d-flex align-items-center gap-2">
-    <input class="form-check-input mt-0" type="radio" name="tipo_fin" id="finFecha" value="FECHA" onchange="actualizarCamposFin()">
-    <label class="form-check-label mb-0" for="finFecha" style="cursor: pointer;">Finalizar el</label>
-    <input type="date" class="form-control" style="width: 190px; height: 35px; min-width: 190px;"
-           id="fechaFinMensual" name="fecha_fin" disabled>
-  </div>
-</div>
-
-            <div class="col-md-6">
-              <label for="inputPrecio">Precio Cobrado (S/): <span class="text-danger">*</span></label>
-              <input type="number" step="0.01" class="form-control" id="inputPrecio" name="precio" placeholder="0.00" required>
-            </div>
-
-            <div class="col-12">
-              <label for="txtObservaciones">Observaciones (Opcional):</label>
-              <textarea class="form-control" id="txtObservaciones" name="observaciones" rows="2" placeholder="Ej: Pago adelantado, descuento especial..."></textarea>
+          <!-- A quién se asigna -->
+          <div class="mf-target" role="status">
+            <span class="mf-target-ic"><span class="material-symbols-outlined">storefront</span></span>
+            <div class="mf-target-info">
+              <span>Asignando plan a</span>
+              <strong id="modalClienteNombre"></strong>
             </div>
           </div>
+
+          <!-- Plan -->
+          <section class="mf-sec">
+            <h3 class="mf-sec-title"><span class="material-symbols-outlined">inventory_2</span> Plan</h3>
+            <div class="mf-grid">
+              <div class="mf-f">
+                <label for="selectPlan">Plan disponible <span class="mf-req">*</span></label>
+                <select class="form-select" id="selectPlan" name="id_plan" required></select>
+              </div>
+              <div class="mf-f">
+                <label for="selectTipoPlan">Tipo de plan <span class="mf-req">*</span></label>
+                <select class="form-select" id="selectTipoPlan" name="id_tipo_plan" required></select>
+              </div>
+            </div>
+          </section>
+
+          <!-- Vigencia -->
+          <section class="mf-sec">
+            <h3 class="mf-sec-title"><span class="material-symbols-outlined">event</span> Vigencia</h3>
+            <div class="mf-grid">
+              <div class="mf-f">
+                <label for="fechaInicio">Fecha de inicio <span class="mf-req">*</span></label>
+                <!-- name="fecha_de_inicio" igual a la BD -->
+                <input type="date" class="form-control" id="fechaInicio" name="fecha_de_inicio" required>
+              </div>
+              <div class="mf-f" id="grupoVencimiento">
+                <label for="fechaVencimiento">Fecha de vencimiento <span class="mf-hint">Automática</span></label>
+                <!-- name="fecha_de_vencimiento" igual a la BD -->
+                <input type="date" class="form-control" id="fechaVencimiento" name="fecha_de_vencimiento" readonly placeholder="Cálculo automático">
+              </div>
+
+              <div class="mf-f mf-span d-none" id="bloqueFinMensual">
+                <label class="mf-lbl">Finalización del plan mensual</label>
+                <div class="mf-options">
+                  <label class="mf-option" for="finSinFecha">
+                    <input class="form-check-input" type="radio" name="tipo_fin" id="finSinFecha" value="SIN_FIN" checked onchange="actualizarCamposFin()">
+                    <span class="mf-option-txt"><b>Sin fecha de fin</b><small>Se renueva cada mes</small></span>
+                  </label>
+                  <label class="mf-option" for="finFecha">
+                    <input class="form-check-input" type="radio" name="tipo_fin" id="finFecha" value="FECHA" onchange="actualizarCamposFin()">
+                    <span class="mf-option-txt"><b>Finalizar el</b><small>Elige el último día</small></span>
+                  </label>
+                </div>
+                <input type="date" class="form-control mf-fin-date" id="fechaFinMensual" name="fecha_fin" disabled aria-label="Fecha de finalización">
+              </div>
+            </div>
+          </section>
+
+          <!-- Cobro -->
+          <section class="mf-sec">
+            <h3 class="mf-sec-title"><span class="material-symbols-outlined">payments</span> Cobro</h3>
+            <div class="mf-grid">
+              <div class="mf-f mf-span">
+                <label for="inputPrecio">Precio cobrado <span class="mf-req">*</span></label>
+                <div class="mf-input">
+                  <span class="mf-affix">S/</span>
+                  <input type="number" step="0.01" class="form-control" id="inputPrecio" name="precio" placeholder="0.00" required>
+                </div>
+              </div>
+              <div class="mf-f mf-span">
+                <label for="txtObservaciones">Observaciones <span class="mf-hint">Opcional</span></label>
+                <textarea class="form-control" id="txtObservaciones" name="observaciones" rows="2" placeholder="Ej: Pago adelantado, descuento especial..."></textarea>
+              </div>
+            </div>
+          </section>
+
         </div>
       </div>
 
-      <div class="pe-ms-footer" style="flex-shrink: 0;">
-        
-        <button type="submit" class="btn pe-ms-save" id="btnGuardarPlan">
-          <i class="fa-solid fa-check" aria-hidden="true"></i> Asignar Plan
+      <div class="mf-foot">
+        <button type="button" class="mf-btn mf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="mf-btn mf-btn-primary" id="btnGuardarPlan">
+          <span class="material-symbols-outlined">check</span> Asignar Plan
         </button>
       </div>
 

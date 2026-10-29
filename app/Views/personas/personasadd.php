@@ -2,6 +2,7 @@
 ?>
 
 <link rel="stylesheet" href="<?= base_url('css/dashboard/persona-editor.css?v=' . filemtime(FCPATH . 'css/dashboard/persona-editor.css')) ?>">
+<link rel="stylesheet" href="<?= base_url('css/dashboard/tk-persona.css?v=' . filemtime(FCPATH . 'css/dashboard/tk-persona.css')) ?>">
 <div class="container-fluid px-2 pdsg-persona-page">
 
     <!-- Mensajes flash -->
@@ -18,52 +19,45 @@
         </div>
     <?php endif; ?>
 
-    <div class="card shadow mb-4 border-0 pdsg-add-wrap">
-        <div class="card-body pdsg-add-body">
-
-            <form action="<?= base_url('personas/guardar-todo') ?>" method="POST" id="formPersona">
+    <div class="pf-shell pdsg-add-wrap">
+            <form action="<?= base_url('personas/guardar-todo') ?>" method="POST" id="formPersona" class="pf-form">
                 <?= csrf_field() ?>
                 <!-- Contenedor para registrar los IDs de sucursales a eliminar en BD -->
 <div id="sucursalesEliminadasContainer"></div>
 
                 <input type="hidden" name="id_persona" value="<?= isset($persona) ? (is_array($persona) ? $persona['id_persona'] : $persona->id_persona) : '' ?>">
 
-                <!-- Hero: título + CTA -->
-                <div class="pdsg-add-head">
-                    <span class="pdsg-add-avatar">
-                        <i class="fa-solid <?= isset($persona) ? 'fa-user-pen' : 'fa-user-plus' ?>"></i>
-                    </span>
-                    <div class="pdsg-add-head-info">
-                        <span class="pe-eyebrow">DIRECTORIO DE CLIENTES</span>
-                        <h5 class="pdsg-add-title" id="pe-title">
-                            <?= isset($persona) ? 'Editar Persona' : 'Registrar Nueva Persona' ?>
-                        </h5>
-                        <span class="pdsg-add-sub">Complete la información del cliente en un solo lugar.</span>
-                    </div>
-                    <a href="<?= base_url('personas') ?>" class="pdsg-add-close text-decoration-none" title="Cancelar" aria-label="Cerrar formulario">
-                        <i class="fa-solid fa-xmark"></i>
+
+                <!-- ═══ Barra superior: volver · título · pasos · guardar ═══ -->
+                <header class="pf-top">
+                    <a href="<?= base_url('personas') ?>" class="pf-back pdsg-add-close" title="Cerrar" aria-label="Cerrar formulario">
+                        <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                </div>
+                    <div class="pf-top-title">
+                        <span class="pf-crumb">Clientes <i class="fa-solid fa-chevron-right"></i> <?= isset($persona) ? 'Editar' : 'Nuevo' ?></span>
+                        <h1 id="pe-title"><?= isset($persona) ? 'Editar cliente' : 'Nuevo cliente' ?></h1>
+                    </div>
+                    <nav class="pf-steps" aria-label="Secciones del formulario">
+                        <a href="#pf-identidad" class="is-on"><b>1</b>Persona</a>
+                        <a href="#pf-empresa"><b>2</b>Empresa</a>
+                    </nav>
+                    <button type="submit" class="btn pdsg-btn-save pf-save" id="btnGuardar">
+                        <?php if (isset($persona)): ?>
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Actualizar Cambios
+                        <?php else: ?>
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Persona
+                        <?php endif; ?>
+                    </button>
+                </header>
 
-                <div class="pe-workspace">
-                    <aside class="pe-sidebar" aria-label="Secciones del formulario">
-                        <span class="pe-nav-label">INFORMACIÓN DEL CLIENTE</span>
-                        <nav class="pe-nav">
-                            <a href="#pe-personal" class="pe-nav-link" aria-current="location"><span class="pe-nav-number">01</span><span>Datos personales<small>Identidad y contacto</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
-                            <a href="#pe-business" class="pe-nav-link"><span class="pe-nav-number">02</span><span>Empresa<small>Información opcional</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
-                        </nav>
-                        <div class="pe-sidebar-note"><i class="fa-regular fa-circle-question" aria-hidden="true"></i><p>¿Por dónde empezar?<span>Ingrese el DNI y use la búsqueda para completar los datos disponibles.</span></p></div>
-                    </aside>
-                    <div class="pe-scroll" tabindex="0" aria-label="Datos del cliente">
-                <!-- ══════════════════════════════════════════════ -->
-                <!-- SECCIÓN: DATOS PERSONALES                      -->
-                <!-- ══════════════════════════════════════════════ -->
-                <section class="pdsg-modal-card pdsg-add-card" id="pe-personal" aria-labelledby="pe-personal-title">
-                    <div class="pe-section-heading"><span class="pe-section-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span><div><span class="pe-eyebrow">01 / PERSONA</span><h2 class="pdsg-modal-group-title" id="pe-personal-title">Datos personales</h2></div></div>
-                    <p class="pdsg-section-help">Identificación, contacto y domicilio del cliente.</p>
-
-                    <div class="row g-3 pe-field-grid">
-                        <div class="pe-lookup">
+                <div class="pf-body">
+                    <!-- ═══ Inicio: búsqueda por DNI + ficha en vivo ═══ -->
+                    <section class="pf-hero">
+                        <div class="pf-hero-main">
+                            <span class="pf-kicker"><i class="fa-solid fa-bolt"></i> Empieza aquí</span>
+                            <h2>Busca al cliente por su DNI</h2>
+                            <p>Los nombres y apellidos se completan solos con los datos de RENIEC.</p>
+                        <div class="pe-lookup pf-lookup">
                             <label for="dni" class="pdsg-field-label">DNI <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="text"
@@ -85,7 +79,28 @@
                             <div id="alertaDni" class="mt-1" aria-live="polite"></div>
                         </div>
 
-                        <div class="col-md-4">
+                        </div>
+                        <aside class="pf-card" aria-live="polite">
+                            <span class="pf-card-avatar" id="pfAv">?</span>
+                            <div class="pf-card-info">
+                                <b id="pfName">Sin nombre aún</b>
+                                <span id="pfDoc">DNI —</span>
+                            </div>
+                            <ul class="pf-card-meta">
+                                <li><i class="fa-solid fa-phone"></i><span id="pfTel">—</span></li>
+                                <li><i class="fa-regular fa-envelope"></i><span id="pfMail">—</span></li>
+                                <li><i class="fa-regular fa-building"></i><span id="pfBiz">Sin empresa</span></li>
+                            </ul>
+                            <div class="pf-card-bar"><i id="pfBar"></i></div>
+                            <span class="pf-card-pct" id="pfPct">0 % completo</span>
+                        </aside>
+                    </section>
+
+                    <!-- ═══ Persona ═══ -->
+                    <section class="pf-sec" id="pf-identidad">
+                        <div class="pf-sec-side"><span class="pf-num">01</span><h3>Identidad</h3><p>Nombre completo tal como figura en el DNI.</p></div>
+                        <div class="pf-sec-card"><div class="pf-grid">
+                        <div class="pf-f">
                             <label for="nombre" class="pdsg-field-label">Nombre(s) <span class="text-danger">*</span></label>
                             <input type="text"
                                    id="nombre"
@@ -95,8 +110,7 @@
                                    value="<?= old('nombre', isset($persona) ? (is_array($persona) ? $persona['nombre'] : $persona->nombre) : '') ?>"
                                    required>
                         </div>
-
-                        <div class="col-md-4">
+                        <div class="pf-f">
                             <label for="apellido_paterno" class="pdsg-field-label">Apellido Paterno <span class="text-danger">*</span></label>
                             <input type="text"
                                    id="apellido_paterno"
@@ -106,8 +120,7 @@
                                    value="<?= old('apellido_paterno', isset($persona) ? (is_array($persona) ? $persona['apellido_paterno'] : $persona->apellido_paterno) : '') ?>"
                                    required>
                         </div>
-
-                        <div class="col-md-4">
+                        <div class="pf-f">
                             <label for="apellido_materno" class="pdsg-field-label">Apellido Materno</label>
                             <input type="text"
                                    id="apellido_materno"
@@ -116,9 +129,12 @@
                                    placeholder="Se llena automáticamente"
                                    value="<?= old('apellido_materno', isset($persona) ? (is_array($persona) ? $persona['apellido_materno'] : $persona->apellido_materno) : '') ?>">
                         </div>
-
-                        <div class="pe-field-divider">Contacto</div>
-                        <div class="col-md-4">
+                        </div></div>
+                    </section>
+                    <section class="pf-sec" id="pe-personal">
+                        <div class="pf-sec-side"><span class="pf-num">02</span><h3>Contacto</h3><p>Cómo comunicarte con el cliente.</p></div>
+                        <div class="pf-sec-card"><div class="pf-grid">
+                        <div class="pf-f">
                             <label for="telefono" class="pdsg-field-label">Teléfono</label>
                             <input type="text"
                                    id="telefono"
@@ -128,8 +144,7 @@
                                    maxlength="9"
                                    placeholder="Ej: 999888777">
                         </div>
-
-                        <div class="pe-wide">
+                        <div class="pf-f">
                             <label for="correo" class="pdsg-field-label">Correo</label>
                             <input type="email"
                                    id="correo"
@@ -138,8 +153,7 @@
                                    value="<?= old('correo', isset($persona) ? (is_array($persona) ? $persona['correo'] : $persona->correo) : '') ?>"
                                    placeholder="correo@ejemplo.com">
                         </div>
-
-                        <div class="col-md-4">
+                        <div class="pf-f">
                             <label for="fecha_nacimiento" class="pdsg-field-label">Fecha de Nacimiento</label>
                             <input type="date"
                                    id="fecha_nacimiento"
@@ -147,9 +161,12 @@
                                    name="fecha_nacimiento"
                                    class="form-control pdsg-input">
                         </div>
-
-                        <div class="pe-field-divider">Domicilio personal</div>
-                        <div class="pe-full">
+                        </div></div>
+                    </section>
+                    <section class="pf-sec">
+                        <div class="pf-sec-side"><span class="pf-num">03</span><h3>Domicilio</h3><p>Dirección personal del cliente.</p></div>
+                        <div class="pf-sec-card"><div class="pf-grid">
+                        <div class="pf-f pf-full">
                             <label for="direccion_rep" class="pdsg-field-label">Dirección Personal</label>
                             <input type="text"
                                    id="direccion_rep"
@@ -158,8 +175,7 @@
                                    class="form-control pdsg-input"
                                    placeholder="Av. / Jr. / Calle...">
                         </div>
-
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="departamento_rep" class="pdsg-field-label">Departamento</label>
                             <select id="departamento_rep" name="departamento_rep" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
@@ -172,30 +188,26 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="provincia_rep" class="pdsg-field-label">Provincia</label>
                             <select id="provincia_rep" name="provincia_rep" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
                             </select>
                         </div>
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="distrito_rep" class="pdsg-field-label">Distrito</label>
                             <select id="distrito_rep" name="distrito_rep" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
                             </select>
                         </div>
-                    </div>
-                </section>
+                        </div></div>
+                    </section>
 
-                <!-- ══════════════════════════════════════════════ -->
-                <!-- SECCIÓN: DATOS EMPRESARIALES                   -->
-                <!-- ══════════════════════════════════════════════ -->
-                <section class="pdsg-modal-card pdsg-add-card" id="pe-business" aria-labelledby="pe-business-title">
-                    <div class="pe-section-heading"><span class="pe-section-icon"><i class="fa-regular fa-building" aria-hidden="true"></i></span><div><span class="pe-eyebrow">02 / EMPRESA</span><h2 class="pdsg-modal-group-title" id="pe-business-title">Datos empresariales <small class="pdsg-opcional">Opcional</small></h2></div></div>
-                    <p class="pdsg-section-help">Complete esta sección si el cliente tiene una empresa.</p>
-
-                    <div class="row g-3 pe-field-grid">
-                        <div class="pe-lookup">
+                    <!-- ═══ Empresa ═══ -->
+                    <section class="pf-sec" id="pf-empresa">
+                        <div class="pf-sec-side"><span class="pf-num">04</span><h3>Empresa <small>Opcional</small></h3><p>Solo si el cliente factura con RUC. La razón social y la dirección fiscal se completan solas.</p></div>
+                        <div class="pf-sec-card" id="pe-business"><div class="pf-grid">
+                        <div class="pe-lookup pf-f pf-full">
                             <label for="ruc" class="pdsg-field-label">RUC</label>
                             <div class="input-group">
                                 <input type="text"
@@ -216,7 +228,7 @@
                             <div id="alertaRuc" class="mt-1" aria-live="polite"></div>
                         </div>
 
-                        <div class="pe-wide">
+                        <div class="pf-f">
                             <label for="razon_social" class="pdsg-field-label">Razón Social</label>
                             <input type="text"
                                    id="razon_social"
@@ -225,8 +237,7 @@
                                    class="form-control pdsg-input"
                                    placeholder="Se llena automáticamente">
                         </div>
-
-                        <div class="pe-full">
+                        <div class="pf-f pf-full">
                             <label for="correo_empresa" class="pdsg-field-label">Correo Empresarial</label>
                             <input type="email"
                                    id="correo_empresa"
@@ -235,9 +246,8 @@
                                    class="form-control pdsg-input"
                                    placeholder="empresa@correo.com">
                         </div>
-
-                        <div class="pe-field-divider">Domicilio fiscal</div>
-                        <div class="pe-full">
+                            <div class="pf-sub pf-full">Domicilio fiscal</div>
+                        <div class="pf-f pf-full">
                             <label for="direccion" class="pdsg-field-label">Dirección Fiscal</label>
                             <input type="text"
                                    id="direccion"
@@ -246,8 +256,7 @@
                                    class="form-control pdsg-input"
                                    placeholder="Se llena automáticamente">
                         </div>
-
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="departamento_repdos" class="pdsg-field-label">Departamento</label>
                             <select id="departamento_repdos" name="departamento_repdos" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
@@ -260,20 +269,20 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="provincia_repdos" class="pdsg-field-label">Provincia</label>
                             <select id="provincia_repdos" name="provincia_repdos" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
                             </select>
                         </div>
-                        <div class="pe-location">
+                        <div class="pf-f">
                             <label for="distrito_repdos" class="pdsg-field-label">Distrito</label>
                             <select id="distrito_repdos" name="distrito_repdos" class="form-select pdsg-input">
                                 <option value="">-- Seleccionar --</option>
                             </select>
                         </div>
-                    </div>
-                </section>
+                        </div></div>
+                    </section>
 
                 <!-- ══════════════════════════════════════════════ -->
                 <!-- SECCIÓN: TABLA DE SUCURSALES                   -->
@@ -381,23 +390,13 @@
                     </div>
                 </div>
 
-                    </div><!-- .pe-scroll -->
-                </div><!-- .pe-workspace -->
-                <!-- BOTONES PRINCIPALES -->
-                <div class="d-flex gap-2 pdsg-add-actions">
-                    <span class="pe-required-note"><span>*</span> Campos obligatorios</span>
-                    <button type="submit" class="btn pdsg-btn-save px-4" id="btnGuardar">
-                        <?php if (isset($persona)): ?>
-                            <i class="fa-solid fa-floppy-disk me-1"></i> Actualizar Cambios
-                        <?php else: ?>
-                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Persona
-                        <?php endif; ?>
-                    </button>
-                    
                 </div>
 
+                <footer class="pf-foot">
+                    <span class="pe-required-note"><span>*</span> Campos obligatorios</span>
+                    <span class="pf-foot-hint"><i class="fa-regular fa-keyboard"></i> Puedes guardar en cualquier momento desde la barra superior</span>
+                </footer>
             </form>
-        </div>
     </div>
 </div>
 <?= view('personas/partials/_modal_sucursal') ?>
@@ -416,6 +415,50 @@ window.PDSG_CFG = {
     distritoEmpresa: '<?= isset($empresa) ? (is_array($empresa) ? $empresa['id_distrito'] : $empresa->id_distrito) : '' ?>',
     tieneSucursales: <?= !empty($sucursales) ? 'true' : 'false' ?>
 };
+</script>
+
+<script>
+/* Ficha en vivo y pasos: solo muestra lo que se escribe, no cambia el envío */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var campos = ['dni', 'nombre', 'apellido_paterno', 'telefono', 'correo', 'direccion_rep', 'departamento_rep'];
+    function v(id) { var e = $(id); return e ? String(e.value || '').trim() : ''; }
+    function pintar() {
+        var nom = [v('nombre'), v('apellido_paterno'), v('apellido_materno')].filter(Boolean).join(' ');
+        $('pfName').textContent = nom || 'Sin nombre aún';
+        $('pfAv').textContent = nom ? nom.split(/\s+/).slice(0, 2).map(function (p) { return p[0]; }).join('').toUpperCase() : '?';
+        $('pfDoc').textContent = 'DNI ' + (v('dni') || '—');
+        $('pfTel').textContent = v('telefono') || '—';
+        $('pfMail').textContent = v('correo') || '—';
+        $('pfBiz').textContent = v('razon_social') || (v('ruc') ? 'RUC ' + v('ruc') : 'Sin empresa');
+        var ok = campos.filter(function (id) { return v(id) !== ''; }).length;
+        var pct = Math.round(ok / campos.length * 100);
+        $('pfBar').style.width = pct + '%';
+        $('pfPct').textContent = pct + ' % completo';
+    }
+    var form = $('formPersona');
+    if (form) { form.addEventListener('input', pintar); form.addEventListener('change', pintar); }
+    setInterval(pintar, 800); /* también refleja lo que completa la búsqueda por DNI/RUC */
+    pintar();
+
+    /* pasos de la barra superior: marca la sección visible */
+    var pasos = document.querySelectorAll('.pf-steps a');
+    var secciones = [$('pf-identidad'), $('pf-empresa')];
+    var cont = document.querySelector('.pf-body');
+    function marcar() {
+        var idx = 0;
+        secciones.forEach(function (sec, i) { if (sec && sec.getBoundingClientRect().top < window.innerHeight * 0.45) idx = i; });
+        pasos.forEach(function (a, i) { a.classList.toggle('is-on', i === idx); });
+    }
+    (cont || window).addEventListener('scroll', marcar, { passive: true });
+    window.addEventListener('scroll', marcar, { passive: true });
+    pasos.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var t = document.querySelector(a.getAttribute('href'));
+            if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+    });
+})();
 </script>
 
 <!-- Carga del JavaScript externo modular -->

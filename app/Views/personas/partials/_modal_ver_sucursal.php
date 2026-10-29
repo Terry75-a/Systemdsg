@@ -1,50 +1,39 @@
-<div class="modal fade" id="modalVerSucursal" tabindex="-1" aria-hidden="true">
+<div class="modal fade pv-modal" id="modalVerSucursal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content pdsg-modal-content">
+    <div class="modal-content pdsg-modal-content pv-content">
 
-      <div class="pdsg-modal-bar">
-        <span class="pdsg-modal-avatar" id="suc_avatar">-</span>
-        <div class="pdsg-modal-head-info">
-          <h5 class="pdsg-modal-name" id="suc_nombre">-</h5>
-          <span class="pdsg-modal-sub" id="suc_detalle_sub">-</span>
+      <!-- Cabecera -->
+      <div class="pdsg-modal-bar pv-hero">
+        <span class="pdsg-modal-avatar pv-avatar" id="suc_avatar">-</span>
+        <div class="pdsg-modal-head-info pv-who">
+          <h5 class="pdsg-modal-name pv-name" id="suc_nombre">-</h5>
+          <span class="pdsg-modal-sub pv-biz" id="suc_detalle_sub">-</span>
         </div>
-        <span class="pdsg-chip pdsg-chip-on" id="suc-chip"><i class="fa-solid fa-circle"></i> Activo</span>
-        <button type="button" class="pdsg-modal-close" data-bs-dismiss="modal" aria-label="Cerrar">
-          <i class="fa-solid fa-xmark"></i>
+        <span class="pdsg-chip pdsg-chip-on pv-state" id="suc-chip"><span class="ms-dot"></span> Activo</span>
+        <button type="button" class="pdsg-modal-close pv-close" data-bs-dismiss="modal" aria-label="Cerrar">
+          <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
-      <div class="pdsg-modal-scroll">
-        <div class="pdsg-modal-body">
+      <div class="pdsg-modal-scroll pv-scroll">
+        <div class="pdsg-modal-body pv-body">
 
-          <div class="pdsg-modal-group">
-            <div class="pdsg-modal-card">
-              <span class="pdsg-modal-group-title"><i class="fa-solid fa-shop"></i> Datos de la sucursal</span>
-              <div class="pdsg-modal-grid">
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-hashtag"></i> Código cliente</span>
-                  <span class="pdsg-modal-field-value pdsg-mono" id="suc_codigo">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-user-tie"></i> Representante</span>
-                  <span class="pdsg-modal-field-value" id="suc_representante">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-tags"></i> Tipo</span>
-                  <span class="pdsg-modal-field-value" id="suc_tipo">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-phone"></i> Teléfono</span>
-                  <span class="pdsg-modal-field-value" id="suc_telefono">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-envelope"></i> Correo</span>
-                  <span class="pdsg-modal-field-value" id="suc_correo">-</span>
-                </div>
-                <div class="pdsg-modal-field">
-                  <span class="pdsg-modal-field-label"><i class="fa-solid fa-location-dot"></i> Dirección</span>
-                  <span class="pdsg-modal-field-value" id="suc_direccion">-</span>
-                </div>
+          <!-- Contacto -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-stats pv-stats-2">
+              <div class="pv-stat"><span class="pv-stat-lbl"><span class="material-symbols-outlined">call</span> Teléfono</span><span class="pv-stat-val pv-mono" id="suc_telefono">-</span></div>
+              <div class="pv-stat"><span class="pv-stat-lbl"><span class="material-symbols-outlined">mail</span> Correo</span><span class="pv-stat-val" id="suc_correo">-</span></div>
+            </div>
+          </div>
+
+          <!-- Datos en filas -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-card">
+              <div class="pv-rows">
+                <div class="pv-row"><span><span class="material-symbols-outlined">location_on</span> Dirección</span><b id="suc_direccion">-</b></div>
+                <div class="pv-row"><span><span class="material-symbols-outlined">badge</span> Representante</span><b id="suc_representante">-</b></div>
+                <div class="pv-row"><span><span class="material-symbols-outlined">sell</span> Tipo</span><b id="suc_tipo">-</b></div>
+                <div class="pv-row"><span><span class="material-symbols-outlined">tag</span> Código cliente</span><b class="pv-mono" id="suc_codigo">-</b></div>
               </div>
             </div>
           </div>
