@@ -1,19 +1,26 @@
 /* ══════════════════════════════════════════════════════════════
-   TK-LOGIN · réplica 1:1 del login de System-Trackin
-   (src/components/LoginForm.tsx + SlideToSubmit + RouteBackdrop):
-   fondo #0b0b0b, columna max-w-sm, marca + «Ingresar» extralight,
-   campos h-14 rounded-2xl blancos al 7 %, divisor con ciudades,
-   barra «desliza para ingresar» h-72 y panel derecho con cuadrícula
-   48px, brillo radial y ruta animada.
+   TK-LOGIN · login del panel de clientes con la estructura del
+   login de System-Trackin y los colores de la página principal de
+   DSG (fondo negro, verde #0b7a4f, Plus Jakarta Sans).
+   Botón normal de envío y escena tecnológica a la derecha:
+   rejilla 3D en movimiento, anillos que giran alrededor del logo,
+   línea de escaneo y paneles de datos flotantes.
    ══════════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap');
+
+:root {
+  --dsg: #0b7a4f;          /* verde de la página principal */
+  --dsg-hover: #0d8f5c;
+  --dsg-light: #3ddc97;    /* verde claro para textos sobre negro */
+  --dsg-glow: rgba(11, 122, 79, .45);
+}
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: #0b0b0b; }
-body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; min-height: 100%; background: #000; }
+body { font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
 
 .tkl {
-  display: grid; min-height: 100vh; min-height: 100dvh; background: #0b0b0b; color: #fff;
+  display: grid; min-height: 100vh; min-height: 100dvh; background: #000; color: #fff;
   grid-template-columns: minmax(0, 1fr);
 }
 @media (min-width: 1024px) { .tkl { grid-template-columns: minmax(24rem, 1fr) 1.25fr; } }
@@ -25,27 +32,27 @@ body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; color: #fff
 .tkl-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .tkl-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .tkl-brand img { width: 44px; height: 44px; flex: none; border-radius: 9999px; background: #fff; object-fit: cover; }
-.tkl-brand-txt { display: flex; flex-direction: column; min-width: 0; font-size: 11px; line-height: 1.25; color: rgba(255,255,255,.5); }
-.tkl-brand-txt b { font-weight: 600; color: #bedf3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tkl-head h1 { margin: 0; flex: none; font-size: 36px; font-weight: 200; letter-spacing: -0.025em; line-height: 1.1; }
+.tkl-brand-txt { display: flex; flex-direction: column; min-width: 0; font-size: 11px; line-height: 1.3; color: rgba(255,255,255,.5); }
+.tkl-brand-txt b { font-weight: 600; color: var(--dsg-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tkl-head h1 { margin: 0; flex: none; font-size: 36px; font-weight: 200; letter-spacing: -0.03em; line-height: 1.1; }
 
-.tkl-lead { margin: 24px 0 0; text-align: center; font-size: 14px; line-height: 1.625; color: rgba(255,255,255,.4); }
+.tkl-lead { margin: 24px 0 0; text-align: center; font-size: 14px; line-height: 1.625; color: rgba(255,255,255,.45); }
 
 .tkl-alert {
-  display: flex; align-items: center; gap: 10px; margin-top: 20px; padding: 12px 14px; border-radius: 16px;
+  display: flex; align-items: center; gap: 10px; margin-top: 20px; padding: 12px 14px; border-radius: 14px;
   background: rgba(230,103,103,.14); color: #f2a4a4; font-size: 13px;
 }
 .tkl-alert.is-warn { background: rgba(245,158,11,.14); color: #fcd38a; }
 
 .tkl-fields { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
 .tkl-input {
-  width: 100%; height: 56px; padding: 0 16px; border: 0; border-radius: 16px; outline: none; box-shadow: none;
+  width: 100%; height: 56px; padding: 0 16px; border: 1px solid transparent; border-radius: 14px; outline: none; box-shadow: none;
   background: rgba(255,255,255,.07); color: #fff; font: inherit; font-size: 15px;
-  transition: background-color 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 .tkl-input::placeholder { color: rgba(255,255,255,.4); }
-.tkl-input:focus { background: rgba(255,255,255,.10); }
-.tkl-input:-webkit-autofill { -webkit-text-fill-color: #fff; box-shadow: 0 0 0 100px #1c1c1c inset; transition: background-color 9999s; }
+.tkl-input:focus { background: rgba(255,255,255,.09); border-color: var(--dsg); box-shadow: 0 0 0 4px rgba(11,122,79,.22); }
+.tkl-input:-webkit-autofill { -webkit-text-fill-color: #fff; box-shadow: 0 0 0 100px #151515 inset; transition: background-color 9999s; }
 .tkl-pass { position: relative; }
 .tkl-pass .tkl-input { padding-right: 52px; }
 .tkl-eye {
@@ -55,60 +62,148 @@ body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; color: #fff
 }
 .tkl-eye:hover { background: rgba(255,255,255,.08); color: #fff; }
 
-.tkl-divider { display: flex; align-items: center; gap: 12px; margin: 32px 0; font-size: 12px; color: rgba(255,255,255,.3); }
+.tkl-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; font-size: 12px; color: rgba(255,255,255,.3); }
 .tkl-divider span { height: 1px; flex: 1; background: rgba(255,255,255,.1); }
 
-/* ── barra «desliza para ingresar» ── */
-.tkl-slide {
-  position: relative; height: 72px; padding: 8px; overflow: hidden; user-select: none; -webkit-user-select: none;
-  border-radius: 50px; background: rgba(255,255,255,.07);
+/* ── botón normal (píldora verde, como «Hablar ahora» de la página) ── */
+.tkl-submit {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; height: 56px; padding: 0 24px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--dsg); color: #fff; font: inherit; font-size: 15px; font-weight: 600; letter-spacing: .01em;
+  box-shadow: 0 10px 28px -10px var(--dsg-glow);
+  transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
-.tkl-slide-fill { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 120px; border-radius: 50px; background: #bedf3c; opacity: .04; }
-.tkl-slide-hint {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4px;
-  padding-left: 112px; font-size: 18px; color: rgba(255,255,255,.6); pointer-events: none;
-}
-.tkl-slide-hint i { font-style: normal; animation: tklHint 1.4s ease-in-out infinite; }
-.tkl-slide-hint i:nth-child(2) { animation-delay: .18s; }
-.tkl-slide-hint i:nth-child(3) { animation-delay: .36s; }
-@keyframes tklHint { 0%, 100% { opacity: .2; transform: translateX(0); } 50% { opacity: 1; transform: translateX(4px); } }
-.tkl-slide-btn {
-  position: relative; display: grid; place-items: center; width: 120px; height: 56px; padding: 0; border: 0;
-  border-radius: 50px; cursor: grab; touch-action: none;
-  background: #078a04; color: #fff; font: inherit; font-size: 14px; font-weight: 600;
-  box-shadow: 0 4px 18px color-mix(in oklab, #078a04 40%, transparent);
-  transition: scale 150ms ease;
-}
-.tkl-slide-btn:hover { scale: 1.03; }
-.tkl-slide-btn:active { scale: .96; cursor: grabbing; }
-.tkl-slide-btn:focus-visible { outline: 2px solid #bedf3c; outline-offset: 3px; }
+.tkl-submit i { font-size: 14px; transition: transform 200ms ease; }
+.tkl-submit:hover { background: var(--dsg-hover); box-shadow: 0 14px 34px -10px var(--dsg-glow); }
+.tkl-submit:hover i { transform: translateX(3px); }
+.tkl-submit:active { transform: scale(.98); }
+.tkl-submit:focus-visible { outline: 2px solid var(--dsg-light); outline-offset: 3px; }
 .tkl-spin { display: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; animation: tklSpin .7s linear infinite; }
 @keyframes tklSpin { to { transform: rotate(360deg); } }
-.tkl-slide.is-loading .tkl-slide-label { display: none; }
-.tkl-slide.is-loading .tkl-spin { display: block; }
-.tkl-slide.is-shake { animation: tklShake 500ms cubic-bezier(.6,.6,.12,1.26); }
-@keyframes tklShake { 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } }
+.tkl-submit.is-loading .tkl-submit-label, .tkl-submit.is-loading i { display: none; }
+.tkl-submit.is-loading .tkl-spin { display: block; }
+.tkl-submit:disabled { cursor: progress; }
 
 .tkl-foot { margin: 24px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.4); }
 .tkl-foot a { color: rgba(255,255,255,.7); text-decoration: underline; text-underline-offset: 2px; }
+.tkl-foot a:hover { color: var(--dsg-light); }
 .tkl-foot span { margin: 0 6px; }
 
-/* ── panel derecho ── */
+/* ══════════════════════════════════════════════════════════════
+   Panel derecho · escena tecnológica
+   ══════════════════════════════════════════════════════════════ */
 .tkl-side { display: none; padding: 12px; }
 @media (min-width: 1024px) { .tkl-side { display: block; } }
-.tkl-map {
-  position: relative; height: 100%; min-height: calc(100vh - 24px); overflow: hidden; border-radius: 2rem; background-color: #000;
-  background-image:
-    linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 65%);
-  background-size: 48px 48px, 48px 48px, 100% 100%;
+.tkl-tech {
+  position: relative; height: 100%; min-height: calc(100vh - 24px); overflow: hidden; border-radius: 2rem;
+  background: radial-gradient(120% 90% at 50% 35%, #06291b 0%, #020b07 55%, #000 100%);
+  isolation: isolate;
 }
-.tkl-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.tkl-caption { position: absolute; left: 32px; right: 32px; bottom: 32px; }
-.tkl-caption-cities { margin: 0; font-size: 12px; letter-spacing: .3em; color: rgba(255,255,255,.5); }
+/* rejilla en perspectiva que avanza (suelo 3D) */
+.tkl-floor {
+  position: absolute; left: -50%; right: -50%; bottom: -10%; height: 70%;
+  background-image:
+    linear-gradient(rgba(61,220,151,.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,220,151,.28) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(520px) rotateX(62deg); transform-origin: 50% 0;
+  animation: tklFloor 3.2s linear infinite;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 35%, #000 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 35%, #000 100%);
+}
+@keyframes tklFloor { to { background-position: 0 64px, 0 0; } }
+/* brillo central */
+.tkl-glow {
+  position: absolute; left: 50%; top: 40%; width: 520px; height: 520px; translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(11,122,79,.55) 0%, rgba(11,122,79,.12) 40%, transparent 70%);
+  filter: blur(10px); animation: tklPulse 4s ease-in-out infinite;
+}
+@keyframes tklPulse { 50% { opacity: .65; scale: 1.08; } }
+/* línea de escaneo */
+.tkl-scan {
+  position: absolute; left: 0; right: 0; top: -20%; height: 18%;
+  background: linear-gradient(to bottom, transparent, rgba(61,220,151,.10), transparent);
+  animation: tklScan 6s linear infinite; pointer-events: none;
+}
+@keyframes tklScan { to { top: 110%; } }
+
+/* núcleo con anillos */
+.tkl-core { position: absolute; left: 50%; top: 40%; width: 340px; height: 340px; translate: -50% -50%; }
+.tkl-rings { width: 100%; height: 100%; overflow: visible; }
+.tkl-rings .r { fill: none; stroke: rgba(61,220,151,.35); stroke-width: 1.2; transform-origin: 200px 200px; }
+.tkl-rings .r1 { stroke-dasharray: 2 10; animation: tklSpinR 40s linear infinite; }
+.tkl-rings .r2 { stroke-dasharray: 60 18 6 18; stroke: rgba(61,220,151,.5); animation: tklSpinR 24s linear infinite reverse; }
+.tkl-rings .r3 { stroke-dasharray: 120 40; stroke: rgba(61,220,151,.7); stroke-width: 1.6; animation: tklSpinR 14s linear infinite; }
+.tkl-rings .orb { transform-origin: 200px 200px; fill: var(--dsg-light); filter: drop-shadow(0 0 6px var(--dsg-light)); }
+.tkl-rings .o1 { animation: tklSpinR 12s linear infinite; }
+.tkl-rings .o2 { animation: tklSpinR 9s linear infinite reverse; }
+.tkl-rings .o3 { animation: tklSpinR 6s linear infinite; }
+@keyframes tklSpinR { to { transform: rotate(360deg); } }
+.tkl-core-logo {
+  position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; translate: -50% -50%;
+  display: grid; place-items: center; border-radius: 50%; background: #fff;
+  box-shadow: 0 0 0 8px rgba(11,122,79,.18), 0 0 60px 10px rgba(11,122,79,.55);
+}
+.tkl-core-logo img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; }
+
+/* paneles de datos flotantes (vidrio) */
+.tkl-card {
+  position: absolute; display: flex; flex-direction: column; gap: 6px; min-width: 190px; padding: 14px 16px;
+  border-radius: 16px; border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 20px 50px -20px rgba(0,0,0,.8);
+  animation: tklFloat 6s ease-in-out infinite;
+}
+.tkl-card b { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.tkl-card b small { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.5); }
+.tkl-card-lbl { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,.55); }
+.tkl-card-lbl i { color: var(--dsg-light); font-size: 12px; }
+.tkl-up, .tkl-ok { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--dsg-light); }
+.tkl-warn { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #fbbf24; }
+.tkl-card.c1 { left: 7%; top: 12%; }
+.tkl-card.c2 { right: 7%; top: 16%; animation-delay: -1.5s; }
+.tkl-card.c3 { left: 9%; top: 58%; animation-delay: -3s; }
+.tkl-card.c4 { right: 8%; top: 54%; animation-delay: -4.5s; }
+@keyframes tklFloat { 50% { transform: translateY(-10px); } }
+.tkl-bars { display: flex; align-items: flex-end; gap: 6px; height: 46px; }
+.tkl-bars i {
+  width: 14px; height: var(--h); border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(to top, var(--dsg), var(--dsg-light));
+  transform-origin: bottom; animation: tklBar 2.4s ease-in-out infinite;
+}
+.tkl-bars i:nth-child(2) { animation-delay: .15s; } .tkl-bars i:nth-child(3) { animation-delay: .3s; }
+.tkl-bars i:nth-child(4) { animation-delay: .45s; } .tkl-bars i:nth-child(5) { animation-delay: .6s; }
+.tkl-bars i:nth-child(6) { animation-delay: .75s; } .tkl-bars i:nth-child(7) { animation-delay: .9s; }
+@keyframes tklBar { 50% { transform: scaleY(.7); } }
+
+.tkl-caption { position: absolute; left: 32px; right: 32px; bottom: 32px; z-index: 2; }
+.tkl-caption-cities { margin: 0; font-size: 11px; letter-spacing: .3em; color: rgba(255,255,255,.5); }
 .tkl-caption-line { margin: 8px 0 0; font-size: 20px; font-weight: 300; }
 
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .tkl-card { min-width: 160px; padding: 12px 14px; }
+  .tkl-card b { font-size: 18px; }
+  .tkl-core { width: 280px; height: 280px; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .tkl-slide-hint i, .tkl-spin { animation: none; }
+  .tkl-floor, .tkl-glow, .tkl-scan, .tkl-rings *, .tkl-card, .tkl-bars i, .tkl-spin { animation: none !important; }
+}
+
+/* ── Ajuste a la pantalla: sin barra de desplazamiento ──
+   La página mide justo el alto de la ventana; si la ventana es muy
+   baja, solo la columna del formulario se desplaza por dentro. */
+html, body { height: 100%; overflow: hidden; }
+.tkl { height: 100vh; height: 100dvh; min-height: 0; }
+.tkl-col { min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.tkl-col::-webkit-scrollbar { display: none; }
+.tkl-side { min-height: 0; height: 100%; }
+.tkl-tech { min-height: 0; height: 100%; }
+@media (max-height: 640px) and (min-width: 1024px) {
+  .tkl-card { transform: scale(.85); }
+  .tkl-core { width: 240px; height: 240px; }
+}
+/* panel derecho: mismo margen arriba y abajo, esquinas redondas completas */
+@media (min-width: 1024px) {
+  .tkl-side { height: 100vh; height: 100dvh; padding: 12px; }
+  .tkl-tech { height: calc(100vh - 24px); height: calc(100dvh - 24px); }
 }

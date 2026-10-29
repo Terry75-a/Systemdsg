@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -59,16 +59,11 @@
 
             <div class="tkl-divider"><span></span>Restaurantes · Boticas · Minimarkets<span></span></div>
 
-            <!-- Enter también envía; el botón visible es la barra «desliza para ingresar» -->
-            <button type="submit" hidden></button>
-            <div class="tkl-slide" id="tklSlide">
-                <span class="tkl-slide-fill" id="tklFill" aria-hidden="true"></span>
-                <span class="tkl-slide-hint" id="tklHint" aria-hidden="true"><i>›</i><i>›</i><i>›</i></span>
-                <button type="button" class="tkl-slide-btn" id="tklHandle" aria-label="Ingresar">
-                    <span class="tkl-slide-label">Ingresar</span>
-                    <span class="tkl-spin" aria-hidden="true"></span>
-                </button>
-            </div>
+            <button type="submit" class="tkl-submit" id="tklSubmit" aria-label="Ingresar">
+                <span class="tkl-submit-label">Ingresar</span>
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                <span class="tkl-spin" aria-hidden="true"></span>
+            </button>
 
             <p class="tkl-foot">
                 <a href="<?= base_url('/') ?>">Volver al sitio principal</a>
@@ -78,39 +73,48 @@
         </form>
     </section>
 
-    <!-- Panel derecho: cuadrícula + ruta animada -->
+    <!-- Panel derecho: escena tecnológica (rejilla 3D, anillos y paneles de datos) -->
     <section class="tkl-side" aria-hidden="true">
-        <div class="tkl-map">
-            <svg viewBox="100 60 1400 780" preserveAspectRatio="xMidYMid meet">
-                <?php
-                $routes = [
-                    ['r1', 'M220 730 C 380 700, 480 600, 640 520', 5],
-                    ['r2', 'M640 520 C 760 470, 800 340, 900 250', 4],
-                    ['r3', 'M640 520 C 900 560, 1180 420, 1330 170', 7],
-                ];
-                $nodes = [['LIMA', 220, 730], ['HUÁNUCO', 640, 520], ['PUCALLPA', 900, 250], ['IQUITOS', 1330, 170]];
-                ?>
-                <?php foreach ($routes as [$id, $d, $dur]): ?>
-                    <path id="<?= $id ?>" d="<?= $d ?>" fill="none" stroke="#fff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4 10">
-                        <animate attributeName="stroke-dashoffset" from="0" to="-56" dur="2.5s" repeatCount="indefinite" />
-                    </path>
-                    <?php foreach ([0, 0.5] as $o): ?>
-                        <circle r="4" fill="#bedf3c">
-                            <animateMotion dur="<?= $dur ?>s" begin="<?= -$o * $dur ?>s" repeatCount="indefinite"><mpath href="#<?= $id ?>" /></animateMotion>
-                        </circle>
-                    <?php endforeach; ?>
-                <?php endforeach; ?>
-                <?php foreach ($nodes as $i => [$label, $x, $y]): ?>
-                    <circle cx="<?= $x ?>" cy="<?= $y ?>" r="6" fill="#09ae04" />
-                    <circle cx="<?= $x ?>" cy="<?= $y ?>" r="6" fill="none" stroke="#09ae04">
-                        <animate attributeName="r" values="6;30" dur="3s" begin="<?= $i * 0.7 ?>s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" values="0.7;0" dur="3s" begin="<?= $i * 0.7 ?>s" repeatCount="indefinite" />
-                    </circle>
-                    <text x="<?= $x + 18 ?>" y="<?= $y + 5 ?>" fill="#fff" fill-opacity="0.55" font-size="18" letter-spacing="4" font-family="monospace"><?= $label ?></text>
-                <?php endforeach; ?>
-            </svg>
+        <div class="tkl-tech">
+            <div class="tkl-floor"></div>
+            <div class="tkl-glow"></div>
+            <div class="tkl-scan"></div>
+
+            <!-- núcleo: logo con anillos que giran -->
+            <div class="tkl-core">
+                <svg class="tkl-rings" viewBox="0 0 400 400">
+                    <circle cx="200" cy="200" r="190" class="r r1"/>
+                    <circle cx="200" cy="200" r="150" class="r r2"/>
+                    <circle cx="200" cy="200" r="110" class="r r3"/>
+                    <g class="orb o1"><circle cx="200" cy="10" r="5"/></g>
+                    <g class="orb o2"><circle cx="200" cy="50" r="4"/></g>
+                    <g class="orb o3"><circle cx="200" cy="90" r="3"/></g>
+                </svg>
+                <span class="tkl-core-logo"><img src="<?= base_url('images/logo_circular.png') ?>" alt=""></span>
+            </div>
+
+            <!-- paneles flotantes -->
+            <div class="tkl-card c1">
+                <span class="tkl-card-lbl"><i class="fa-solid fa-cash-register"></i> Ventas de hoy</span>
+                <b>S/ 2,480.50</b>
+                <span class="tkl-up"><i class="fa-solid fa-arrow-trend-up"></i> +12.4 %</span>
+            </div>
+            <div class="tkl-card c2">
+                <span class="tkl-card-lbl"><i class="fa-solid fa-chart-column"></i> Últimos 7 días</span>
+                <div class="tkl-bars"><i style="--h:42%"></i><i style="--h:65%"></i><i style="--h:48%"></i><i style="--h:80%"></i><i style="--h:58%"></i><i style="--h:92%"></i><i style="--h:74%"></i></div>
+            </div>
+            <div class="tkl-card c3">
+                <span class="tkl-card-lbl"><i class="fa-solid fa-file-invoice"></i> Facturación electrónica</span>
+                <span class="tkl-ok"><i class="fa-solid fa-circle-check"></i> Enviada a SUNAT</span>
+            </div>
+            <div class="tkl-card c4">
+                <span class="tkl-card-lbl"><i class="fa-solid fa-boxes-stacked"></i> Inventario</span>
+                <b>1,284 <small>productos</small></b>
+                <span class="tkl-warn"><i class="fa-solid fa-triangle-exclamation"></i> 3 con stock bajo</span>
+            </div>
+
             <div class="tkl-caption">
-                <p class="tkl-caption-cities">LIMA · HUÁNUCO · PUCALLPA · IQUITOS</p>
+                <p class="tkl-caption-cities">PUNTO DE VENTA · INVENTARIO · FACTURACIÓN</p>
                 <p class="tkl-caption-line">Todo tu negocio, bajo control.</p>
             </div>
         </div>
@@ -119,62 +123,16 @@
 
 <script src="<?= base_url('js/eyepassword.js?v=' . filemtime(FCPATH . 'js/eyepassword.js')) ?>"></script>
 <script>
-/* Barra «desliza para ingresar» (réplica de SlideToSubmit de Trackin):
-   arrastra el botón; si pasa del 80 % se envía el formulario.
-   Clic, Enter o espacio sobre el botón también envían. */
+/* Al enviar: el botón muestra un círculo de carga y no se puede pulsar dos veces */
 (function () {
     var form = document.getElementById('tklForm');
-    var slide = document.getElementById('tklSlide');
-    var handle = document.getElementById('tklHandle');
-    var fill = document.getElementById('tklFill');
-    var hint = document.getElementById('tklHint');
-    if (!form || !slide || !handle) return;
-
-    var HANDLE = 120, PAD = 8, x = 0, startX = 0, dragging = false, moved = false, sent = false;
-    var max = function () { return slide.clientWidth - HANDLE - PAD * 2; };
-
-    function paint(anim) {
-        var m = Math.max(max(), 1);
-        handle.style.transition = fill.style.transition = anim ? 'transform 420ms cubic-bezier(.34,1.25,.64,1), width 420ms cubic-bezier(.34,1.25,.64,1), opacity 420ms' : 'none';
-        handle.style.transform = 'translateX(' + x + 'px)';
-        fill.style.width = (x + HANDLE) + 'px';
-        fill.style.opacity = (0.04 + 0.18 * (x / m)).toFixed(3);
-        hint.style.opacity = Math.max(0, 1 - x / (m * 0.45)).toFixed(3);
-    }
-    function submit() {
-        if (sent) return;
-        if (!form.reportValidity()) { x = 0; paint(true); slide.classList.add('is-shake'); setTimeout(function () { slide.classList.remove('is-shake'); }, 500); return; }
-        sent = true;
-        x = max(); paint(true);
-        slide.classList.add('is-loading');
-        form.submit();
-    }
-
-    handle.addEventListener('pointerdown', function (e) {
-        if (sent) return;
-        dragging = true; moved = false; startX = e.clientX - x;
-        handle.setPointerCapture(e.pointerId);
+    var btn = document.getElementById('tklSubmit');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.classList.add('is-loading');
+        btn.setAttribute('aria-busy', 'true');
+        setTimeout(function () { btn.disabled = true; }, 0);
     });
-    handle.addEventListener('pointermove', function (e) {
-        if (!dragging) return;
-        var nx = Math.min(Math.max(e.clientX - startX, 0), max());
-        if (Math.abs(nx - x) > 2) moved = true;
-        x = nx; paint(false);
-    });
-    function end() {
-        if (!dragging) return;
-        dragging = false;
-        if (!moved) { submit(); return; }
-        if (x > max() * 0.8) submit(); else { x = 0; paint(true); }
-    }
-    handle.addEventListener('pointerup', end);
-    handle.addEventListener('pointercancel', end);
-    handle.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); submit(); }
-    });
-    form.addEventListener('submit', function () { sent = true; slide.classList.add('is-loading'); });
-    window.addEventListener('resize', function () { if (!sent) { x = 0; paint(false); } });
-    paint(false);
 })();
 </script>
 </body>
