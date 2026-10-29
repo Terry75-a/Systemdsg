@@ -1,0 +1,3 @@
+@echo off
+cd /d C:\xampp\htdocs\project-dsgperu
+C:\xampp\php\php.exe spark vencimientos:enviar >> writable\logs\vencimientos.log 2>&1

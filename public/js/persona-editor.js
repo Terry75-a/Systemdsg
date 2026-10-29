@@ -314,7 +314,7 @@ if (provSuc) provSuc.addEventListener('change', function () { cargarDistritosSuc
 // ════════════════════════════════════════════════════
 const btnAbrirModalNuevaSuc = document.getElementById('btnAbrirModalNuevaSucursal');
 if (btnAbrirModalNuevaSuc) {
-    btnAbrirModalNuevaSuc.addEventListener('click', function () {
+    btnAbrirModalNuevaSuc.addEventListener('click', async function () {
         document.getElementById('formSucursal').reset();
         document.getElementById('editandoIndice').value = '';
         document.getElementById('modalSucursalTitulo').textContent = 'Registrar Sucursal';
@@ -322,29 +322,30 @@ if (btnAbrirModalNuevaSuc) {
         document.getElementById('provincia_sucursal').innerHTML = '<option value="">--Seleccionar--</option>';
         document.getElementById('distrito_sucursal').innerHTML = '<option value="">--Seleccionar--</option>';
 
-        const primeraFila = document.querySelector('#tbodySucursales tr:not(#filaVacia)');
+        
+        const filas = document.querySelectorAll('#tbodySucursales tr:not(#filaVacia)');
+        const ultimaFila = filas.length ? filas[filas.length - 1] : null;
 
-        if (primeraFila) {
-            const indice = primeraFila.getAttribute('data-indice');
-            
-            // Función auxiliar para leer los inputs ocultos de la fila
-            const getVal = (campo) => {
-                return primeraFila.querySelector(`input[name="sucursales[${indice}][${campo}]"]`)?.value 
-                    || primeraFila.querySelector(`input[name*="[${campo}]"]`)?.value 
-                    || '';
-            };
+        if (ultimaFila) {
+            const indice = ultimaFila.getAttribute('data-indice');
+            const getVal = (campo) =>
+                ultimaFila.querySelector(`input[name="sucursales[${indice}][${campo}]"]`)?.value || '';
 
-            // 3. Extraer valores de la primera sucursal
-            const primerNombre        = getVal('nombre_sucursal');
-            const primerRepresentante = getVal('representante_sucursal') || getVal('representante');
-            const primerTelefono      = getVal('telefono');
-            const primerCorreo        = getVal('correo');
+            document.getElementById('nombre_sucursal').value        = getVal('nombre_sucursal');
+            document.getElementById('representante_sucursal').value = getVal('representante_sucursal') || getVal('representante');
+            document.getElementById('telefono_sucursal').value      = getVal('telefono');
+            document.getElementById('correo_sucursal').value        = getVal('correo');
+            document.getElementById('direccion_sucursal').value     = getVal('direccion');
 
-            // 4. Precargar los campos del modal
-            document.getElementById('nombre_sucursal').value        = primerNombre;
-            document.getElementById('representante_sucursal').value = primerRepresentante;
-            document.getElementById('telefono_sucursal').value      = primerTelefono;
-            document.getElementById('correo_sucursal').value        = primerCorreo;
+            const depId  = getVal('departamento_sucursal');
+            const provId = getVal('provincia_sucursal');
+            const distId = getVal('distrito_sucursal');
+
+            document.getElementById('departamento_sucursal').value = depId;
+            if (depId) {
+                await cargarProvinciasSucursal(depId, provId, distId);
+            }
+            // El código de cliente se deja vacío a propósito (debe ser distinto en cada sucursal)
         }
 
         const modal = obtenerModalSucursal();

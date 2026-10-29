@@ -50,6 +50,11 @@
               </select>
             </div>
 
+            <div class="col-md-6">
+              <label for="planDiasAviso">Días de aviso (Repeticiones antes de vencer):</label>
+              <input type="number" min="1" max="60" class="form-control" id="planDiasAviso" name="num_repeticiones" value="5" placeholder="Ej: 5">
+            </div>
+
             <div class="col-12">
               <label for="pagoCorreo">Correo de notificación:</label>
               <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">

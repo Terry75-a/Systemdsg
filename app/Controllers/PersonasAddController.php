@@ -229,7 +229,38 @@ public function index($id = null)
     // ══════════════════════════════════════════════════════════════════
     // REGISTRAR / EDITAR PERSONA (GUARDAR TODO)
     // ══════════════════════════════════════════════════════════════════
+public function borrar($id = null)
+{
+    if (!$id) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'ID no válido']);
+    }
 
+    $this->db->transStart();
+
+    $empresa = $this->db->table('empresa')->where('id_persona', $id)->get()->getRow();
+    if ($empresa) {
+        $ids = array_column(
+            $this->db->table('empresa_sucursales')->select('id_sucursal')
+                ->where('id_empresa', $empresa->id_empresa)->get()->getResultArray(),
+            'id_sucursal'
+        );
+        if ($ids) {
+            $this->db->table('pagos')->whereIn('id_sucursal', $ids)->delete();
+        }
+        $this->db->table('empresa_sucursales')->where('id_empresa', $empresa->id_empresa)->delete();
+        $this->db->table('empresa')->where('id_empresa', $empresa->id_empresa)->delete();
+    }
+    $this->db->table('personas')->where('id_persona', $id)->delete();
+
+    $this->db->transComplete();
+
+    if ($this->db->transStatus() === false) {
+        log_message('error', 'Error al borrar persona: ' . json_encode($this->db->error()));
+        return $this->response->setJSON(['status' => 'error', 'message' => 'No se pudo eliminar.']);
+    }
+
+    return $this->response->setJSON(['status' => 'success', 'message' => 'Persona eliminada permanentemente.']);
+}
     
  public function guardar_todo()
     {
@@ -465,28 +496,29 @@ if (strpos((string)$indice, 'existing_') === 0) {
         $numRepeticiones = $this->request->getPost('num_repeticiones');
         $fechaFin        = $this->request->getPost('fecha_fin');
 
-        $repeticionesFinal = null;
-        $fechaFinFinal     = null;
-
-        if ($tipoFin === 'REPETICIONES') {
-            $repeticionesFinal = !empty($numRepeticiones) ? (int)$numRepeticiones : 12;
-        } elseif ($tipoFin === 'FECHA') {
-            $fechaFinFinal = !empty($fechaFin) ? $fechaFin : null;
+       // Si no viene fecha de vencimiento (ej. Plan Mensual), calculamos +1 mes desde fecha_de_inicio para poder avisar
+        if (empty($fechaVencimiento) && !empty($fechaInicio)) {
+            $fechaVencimiento = date('Y-m-d', strtotime($fechaInicio . ' +1 month'));
         }
+
+        // Guardamos la cantidad de días/repeticiones de aviso (por defecto 5 días antes)
+        $repeticionesFinal = !empty($numRepeticiones) ? (int)$numRepeticiones : 5;
+        $fechaFinFinal     = ($tipoFin === 'FECHA' && !empty($fechaFin)) ? $fechaFin : null;
 
         $dataPago = [
             'id_sucursal'          => (int)$idSucursal,
             'id_plan'              => !empty($idPlan) ? (int)$idPlan : null,
             'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
             'id_tipo_pago'         => (int)$id_tipo_pago,
-             'concepto'            =>  !empty($concepto) ? trim($concepto) : null,
+            'concepto'             => !empty($concepto) ? trim($concepto) : null,
             'fecha_de_inicio'      => $fechaInicio,
-            'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
+            'fecha_de_vencimiento' => $fechaVencimiento,
             'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',
             'num_repeticiones'     => $repeticionesFinal,
             'fecha_fin'            => $fechaFinFinal,
             'precio'               => !empty($precio) ? (float)$precio : 0.00,
             'observaciones'        => !empty($observaciones) ? trim($observaciones) : null,
+            'correo_notificacion'  => !empty($correo_notificacion) ? trim($correo_notificacion) : null,
             'estado'               => 1,
             'created_at'           => date('Y-m-d H:i:s'),
         ];
@@ -540,6 +572,7 @@ if (strpos((string)$indice, 'existing_') === 0) {
         $monto            = $this->request->getPost('monto');
         $fechaVencimiento = $this->request->getPost('fecha_vencimiento');
         $diasAviso        = $this->request->getPost('dias_aviso');
+        $ultimoAviso      = $this->request->getPost('ultimo_aviso');
         $correo           = $this->request->getPost('correo_notificacion');
         $estado           = $this->request->getPost('estado') ?? 1;
 
@@ -555,6 +588,7 @@ if (strpos((string)$indice, 'existing_') === 0) {
         if (!empty($correo)) {
             $obs .= " | Correo de aviso: " . trim($correo);
         }
+        
 
         $dataPago = [
             'id_sucursal'          => (int)$idSucursal,
@@ -569,7 +603,8 @@ if (strpos((string)$indice, 'existing_') === 0) {
             'fecha_fin'            => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'precio'               => (float)$monto,
             'observaciones'        => $this->request->getPost('observaciones') ?: null, // Directo
-    'correo_notificacion'  => !empty($correo) ? trim($correo) : null,          // Columna propia
+            'correo_notificacion'  => !empty($correo) ? trim($correo) : null,          // Columna propia
+            'ultimo_aviso'         => !empty($ultimoAviso) ? $ultimoAviso : null,
             'estado'               => (int)$estado,
             'created_at'           => date('Y-m-d H:i:s'),
         ];
@@ -599,3 +634,4 @@ if (strpos((string)$indice, 'existing_') === 0) {
         }
     }
 }
+

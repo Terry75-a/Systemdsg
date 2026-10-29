@@ -102,92 +102,102 @@ $fecha = $meses[(int) date('n')] . ' ' . date('j') . ', ' . date('Y');
 
         <script>
             $(document).ready(function() {
-    var $btn =$('#dsgNotificationBtn');
-    var $drop =$('#dsgNotifDropdown');
-    var $badge =$('#dsgNotifBadge');
-    var $list =$('#dsgNotifList');
-    var $countText =$('#dsgNotifCountText');
+                var $btn = $('#dsgNotificationBtn');
+                var $drop = $('#dsgNotifDropdown');
+                var $badge = $('#dsgNotifBadge');
+                var $list = $('#dsgNotifList');
+                var $countText = $('#dsgNotifCountText');
+                var $backdrop = $('#dsgNotifBackdrop');
+                var $closeBtn = $('#dsgNotifClose');
 
-    // 1. Abrir/cerrar modal de notificaciones (minimal · backdrop · Escape · mobile bottom-sheet)
-    var $backdrop = $('#dsgNotifBackdrop');
-    var $closeBtn = $('#dsgNotifClose');
+                // Mover backdrop + modal al <body>
+                $('body').append($backdrop, $drop);
 
-    // Mover backdrop + modal al <body>: position:fixed queda roto si un
-    // ancestro (topbar/dev-main con transforms de GSAP) crea un containing
-    // block y el modal se ancla mal (cortado arriba en desktop).
-    $('body').append($backdrop, $drop);
-
-    function openNotif() {
-        $drop.addClass('is-open');
-        $backdrop.addClass('is-open');
-        document.body.classList.add('dsg-notif-open');
-        $btn.attr('aria-expanded', 'true');
-    }
-    function closeNotif() {
-        $drop.removeClass('is-open');
-        $backdrop.removeClass('is-open');
-        document.body.classList.remove('dsg-notif-open');
-        $btn.attr('aria-expanded', 'false');
-    }
-    function toggleNotif() {
-        if ($drop.hasClass('is-open')) closeNotif(); else openNotif();
-    }
-
-    $btn.attr('aria-haspopup', 'dialog').attr('aria-expanded', 'false');
-    $btn.on('click', function(e) {
-        e.stopPropagation();
-        toggleNotif();
-    });
-    $backdrop.on('click', closeNotif);
-    $closeBtn.on('click', closeNotif);
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' && $drop.hasClass('is-open')) closeNotif();
-    });
-
-    var emptyHtml = '<div class="dsg-notif-empty">' +
-        '<span class="material-symbols-outlined">notifications_none</span>' +
-        '<small>No tienes notificaciones pendientes</small>' +
-    '</div>';
-
-    function cargarNotificaciones() {
-        $.getJSON("<?= base_url('notificaciones/alertas') ?>")
-            .done(function(data) {
-                var total = data.total || 0;
-                var items = data.items || [];
-
-                if (total > 0) {
-                    $badge.text(total > 99 ? '99+' : total).show();
-                    $btn.addClass('has-unread');
-                    $countText.text(total + ' pendientes');
-                    $list.empty();
-
-                    items.forEach(function(item) {
-                        var inicial = (item.cliente || item.titulo || 'N').charAt(0).toUpperCase();
-                        $list.append(
-                            '<a href="' + (item.url || '#') + '" class="dsg-notif-item">' +
-                                '<span class="dsg-notif-dot"></span>' +
-                                '<span class="dsg-notif-avatar">' + inicial + '</span>' +
-                                '<span class="dsg-notif-content">' +
-                                    '<span class="dsg-notif-title"><strong>' + item.titulo + ':</strong> ' + item.mensaje + '</span>' +
-                                    '<span class="dsg-notif-time">' +
-                                        '<span class="material-symbols-outlined" style="font-size:13px;">schedule</span>' +
-                                        (item.tiempo || 'Reciente') +
-                                    '</span>' +
-                                '</span>' +
-                            '</a>'
-                        );
-                    });
-                } else {
-                    $badge.hide();
-                    $btn.removeClass('has-unread');
-                    $countText.text('0 pendientes');
-                    $list.html(emptyHtml);
+                function openNotif() {
+                    $drop.css('display', 'flex').addClass('is-open');
+                    $backdrop.addClass('is-open');
+                    document.body.classList.add('dsg-notif-open');
+                    $btn.attr('aria-expanded', 'true');
                 }
-            })
-            .fail(function() {
-                $badge.hide();
-                $btn.removeClass('has-unread');
+
+                function closeNotif() {
+                    $drop.removeClass('is-open').hide();
+                    $backdrop.removeClass('is-open');
+                    document.body.classList.remove('dsg-notif-open');
+                    $btn.attr('aria-expanded', 'false');
+                }
+
+                function toggleNotif() {
+                    if ($drop.hasClass('is-open')) closeNotif(); else openNotif();
+                }
+
+                $btn.attr('aria-haspopup', 'dialog').attr('aria-expanded', 'false');
+                $btn.on('click', function(e) {
+                    e.stopPropagation();
+                    toggleNotif();
+                });
+                $backdrop.on('click', closeNotif);
+                $closeBtn.on('click', closeNotif);
+                $(document).on('keydown', function(e) {
+                    if (e.key === 'Escape' && $drop.hasClass('is-open')) closeNotif();
+                });
+
+                var emptyHtml = '<div class="dsg-notif-empty">' +
+                    '<span class="material-symbols-outlined">notifications_none</span>' +
+                    '<small>No tienes notificaciones pendientes</small>' +
+                '</div>';
+
+                function cargarNotificaciones() {
+                    $.getJSON("<?= base_url('notificaciones/alertas') ?>")
+                        .done(function(data) {
+                            var total = data.total || 0;
+                            var items = data.items || [];
+
+                            if (total > 0) {
+                                $badge.text(total > 99 ? '99+' : total).show();
+                                $btn.addClass('has-unread');
+                                $countText.text(total + (total === 1 ? ' pendiente' : ' pendientes'));
+                                $list.empty();
+
+                                items.forEach(function(item) {
+                                    var inicial = (item.cliente || item.titulo || 'N').charAt(0).toUpperCase();
+                                    $list.append(
+                                        '<a href="' + (item.url || '#') + '" class="dsg-notif-item">' +
+                                            '<span class="dsg-notif-dot"></span>' +
+                                            '<span class="dsg-notif-avatar">' + inicial + '</span>' +
+                                            '<span class="dsg-notif-content">' +
+                                                '<span class="dsg-notif-title"><strong>' + item.titulo + ':</strong> ' + item.mensaje + '</span>' +
+                                                '<span class="dsg-notif-time">' +
+                                                    '<span class="material-symbols-outlined" style="font-size:13px;">schedule</span> ' +
+                                                    (item.tiempo || 'Reciente') +
+                                                '</span>' +
+                                            '</span>' +
+                                        '</a>'
+                                    );
+                                });
+
+                                // Si hay alertas hoy cuyos correos aún no se han enviado, los enviamos en segundo plano (0 lag)
+                                if (data.disparar_correos_hoy) {
+                                    fetch("<?= base_url('notificaciones/enviar-correos') ?>", { keepalive: true }).catch(function() {});
+                                }
+                            } else {
+                                $badge.hide();
+                                $btn.removeClass('has-unread');
+                                $countText.text('0 pendientes');
+                                $list.html(emptyHtml);
+                            }
+                        })
+                        .fail(function() {
+                            $badge.hide();
+                            $btn.removeClass('has-unread');
+                        });
+                }
+
+                // Exponer globalmente por si se asigna un plan nuevo desde un modal
+                window.cargarNotificacionesDsg = cargarNotificaciones;
+
+                // ¡IMPORTANTE! Ejecutar al cargar la página y actualizar cada 60 segundos
+                cargarNotificaciones();
+                setInterval(cargarNotificaciones, 60000);
             });
-    }
- });
         </script>
