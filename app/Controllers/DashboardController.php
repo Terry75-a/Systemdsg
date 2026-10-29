@@ -38,5 +38,7 @@ class DashboardController extends Controller
         echo view('layouts/topbar', $data);
         echo view('dashboard', $data);
         echo view('layouts/footer');
+        
+
     }
 }

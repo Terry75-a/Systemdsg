@@ -9,6 +9,6 @@ class PagosModel extends Model{
    protected $table = "pagos";
    protected $primaryKey = 'id_pago';
    protected $returnType = 'object';
-   protected $allowedFields = ['id_sucursal' , 'id_plan' , 'id_tipo_plan' ,'id_tipo_pago' , 'fecha_de_inicio' , 'fecha_de_vencimiento' , 'tipo_fin' , 'num_repeticiones' , 'fecha_fin' ,'precio' , 'observaciones' , 'correo_notificacion' , 'concepto' ,'estado' , 'created_at' , 'updated_at'];
+   protected $allowedFields = ['id_sucursal' , 'id_plan' , 'id_tipo_plan' ,'id_tipo_pago' , 'fecha_de_inicio' , 'fecha_de_vencimiento' , 'tipo_fin' , 'num_repeticiones' , 'fecha_fin' ,'precio' , 'observaciones' , 'correo_notificacion' , 'ultimo_aviso', 'concepto' ,'estado' , 'created_at' , 'updated_at'];
 
 }

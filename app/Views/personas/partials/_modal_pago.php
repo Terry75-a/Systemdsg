@@ -76,6 +76,40 @@
             </div>
           </section>
 
+            <div class="col-md-6">
+              <label for="pagoMonto">Monto:<span class="text-danger">*</span></label>
+              <input type="number" step="0.01" min="0" class="form-control" id="pagoMonto" name="monto" placeholder="Ej. 50.00" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="pagoFechaVenc">Fecha de vencimiento:</label>
+              <input type="date" class="form-control" id="pagoFechaVenc" name="fecha_vencimiento">
+            </div>
+
+            <div class="col-md-6">
+              <label for="pagoEstado">Estado:</label>
+              <select class="form-select" id="pagoEstado" name="estado">
+                <option value="1" selected>ACTIVO</option>
+                <option value="0">INACTIVO</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="planDiasAviso">Días de aviso (Repeticiones antes de vencer):</label>
+              <input type="number" min="1" max="60" class="form-control" id="planDiasAviso" name="num_repeticiones" value="5" placeholder="Ej: 5">
+            </div>
+
+            <div class="col-12">
+              <label for="pagoCorreo">Correo de notificación:</label>
+              <input type="email" class="form-control" id="pagoCorreo" name="correo_notificacion" placeholder="correo@ejemplo.com">
+            </div>
+
+            <div class="col-12">
+  <label for="pagoObservaciones">Observaciones:</label>
+  <textarea class="form-control" id="pagoObservaciones" name="observaciones" rows="2" placeholder="Detalles u observaciones adicionales..."></textarea>
+</div>
+
+          </div>
         </div>
       </div>
 
