@@ -66,14 +66,14 @@
             <div class="tk-kv-row"><span>Empresa</span><span><?= esc(($miInfo['empresa'] ?? '') ?: '—') ?></span></div>
             <div class="tk-kv-row"><span>Supervisor</span><span><span class="tk-code"><?= esc($miInfo['admin_code'] ?? '—') ?></span></span></div>
             <div class="tk-kv-row"><span>Código</span><span><span class="tk-code"><?= esc($miInfo['personal_code'] ?? '—') ?></span></span></div>
-            <div class="tk-kv-row"><span>Alta en el sistema</span><span class="tk-mono"><?= esc($fmt($iniP)) ?></span></div>
+            <div class="tk-kv-row"><span><?= !empty($inicioPracticaContrato) ? 'Inicio de práctica' : 'Alta en el sistema' ?></span><span class="tk-mono"><?= esc($fmt($iniP)) ?></span></div>
         </div>
     </section>
 
     <!-- Progreso de la práctica -->
     <section class="tk-card tk-ovh tk-anim-item">
         <div class="tk-card-head">
-            <div><h3>Progreso de la práctica</h3><p>Del inicio al fin estimado.</p></div>
+            <div><h3>Progreso de la práctica</h3><p><?= !empty($finPracticaEstimado) ? 'Del inicio al fin estimado (sin fecha de fin en tu contrato).' : 'Del inicio al fin de tu contrato.' ?></p></div>
             <span class="tk-pill-state <?= $pct >= 100 ? 'tk-st-ok' : 'tk-st-on' ?>"><?= $pct ?>%</span>
         </div>
         <div class="tk-prog">
@@ -84,7 +84,7 @@
             <div class="tk-bar"><i style="--w: <?= $pct ?>%"></i></div>
             <div class="tk-prog-meta">
                 <span>Inicio <strong><?= esc($fmt($iniP)) ?></strong></span>
-                <span>Fin estimado <strong><?= esc($fmt($finP)) ?></strong></span>
+                <span><?= !empty($finPracticaEstimado) ? 'Fin estimado' : 'Fin' ?> <strong><?= esc($fmt($finP)) ?></strong></span>
             </div>
             <div class="tk-prog-meta">
                 <span>Jornada <strong><?= esc($diasHorario ?: '—') ?><?= $horaEntrada ? ' · ' . esc(substr($horaEntrada, 0, 5)) . ' - ' . esc(substr((string) $horaSalida, 0, 5)) : '' ?></strong></span>

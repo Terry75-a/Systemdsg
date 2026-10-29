@@ -129,12 +129,17 @@ class EmployeeController extends BaseController
             ->where('date <=', $weekEnd)
             ->findAll();
 
-        $diasSemana      = $this->diasDeHorario((string) ($miHorario['dias'] ?? ''));
+        // Días reales del horario (misma lectura que /admin/horas y el cron de faltas):
+        // "Mar - Sáb" → mar..sáb, "Lun, Mié, Vie" → esos tres. Sin horario → 0 días.
+        $diasSet         = $miHorario ? \App\Libraries\Asistencia\HorasQuery::diasSemana((string) ($miHorario['dias'] ?? '')) : [];
+        $diasSemana      = count($diasSet);
         $horasDia        = $this->horasDiarias($miHorario);
         $horasSemana     = $this->horasDe($registrosSemana);
         $horasMes        = $this->horasDe($misRegistros);
-        $horasSemanaEsp  = round($horasDia * $diasSemana, 1);
-        $horasMesEsp     = round($horasDia * $this->diasProgramadosEn(date('Y-m-01'), $hoy, $diasSemana), 1);
+        $festivosSemana  = $this->festivoModel->fechasEnRango($weekStart, $weekEnd, $adminId > 0 ? $adminId : null);
+        $festivosMesHoy  = $this->festivoModel->fechasEnRango(date('Y-m-01'), $hoy, $adminId > 0 ? $adminId : null);
+        $horasSemanaEsp  = round($horasDia * $this->diasProgramadosEn($weekStart, $weekEnd, $diasSet, $festivosSemana), 1);
+        $horasMesEsp     = round($horasDia * $this->diasProgramadosEn(date('Y-m-01'), $hoy, $diasSet, $festivosMesHoy), 1);
 
         // ── Saldo del mes con la misma librería que /admin/horas:
         //    horas reales vs las programadas en el horario ──
@@ -155,9 +160,15 @@ class EmployeeController extends BaseController
         }
 
         // ── Progreso de la práctica (alta → fin del semestre) ──
-        $inicioPrac = !empty($user['created']) ? substr((string) $user['created'], 0, 10) : $hoy;
+        //    Inicio: fecha de inicio del contrato; si no se cargó, el alta en el sistema.
+        //    Fin: fin del contrato; si falta, se estima a 5 meses y se indica como estimado.
+        $inicioReal = (string) ($user['contract_start'] ?? '');
+        $inicioPrac = $this->fechaValida($inicioReal)
+            ? $inicioReal
+            : (!empty($user['created']) ? substr((string) $user['created'], 0, 10) : $hoy);
         $finPrac    = (string) ($user['contract_end'] ?? '');
-        if ($finPrac === '' || $finPrac < $inicioPrac) {
+        $finEstimado = ! $this->fechaValida($finPrac) || $finPrac < $inicioPrac;
+        if ($finEstimado) {
             $finPrac = date('Y-m-d', strtotime($inicioPrac . ' +5 months'));
         }
         $totalDias   = max(1, (int) round((strtotime($finPrac) - strtotime($inicioPrac)) / 86400));
@@ -183,6 +194,8 @@ class EmployeeController extends BaseController
             'diasHorarioSem'  => $diasSemana,
             'inicioPractica'  => $inicioPrac,
             'finPractica'     => $finPrac,
+            'finPracticaEstimado'    => $finEstimado,
+            'inicioPracticaContrato' => $this->fechaValida($inicioReal),
             'pctPractica'     => $pctPractica,
             'miInfo'          => $user,
             'miHorario'       => $miHorario,
@@ -201,6 +214,15 @@ class EmployeeController extends BaseController
             'bioRostroPath'   => (string) ($user['rostro_path'] ?? ''),
             'bioHuellaCredId' => (string) ($user['huella_cred_id'] ?? ''),
         ];
+    }
+
+    /** Fecha Y-m-d real (descarta vacíos y '0000-00-00'). */
+    private function fechaValida(?string $fecha): bool
+    {
+        $f = trim((string) $fecha);
+        if ($f === '' || str_starts_with($f, '0000')) return false;
+        $d = \DateTime::createFromFormat('Y-m-d', substr($f, 0, 10));
+        return $d !== false && $d->format('Y-m-d') === substr($f, 0, 10);
     }
 
     /** Horas reales trabajadas a partir de time_in → time_out */
@@ -223,36 +245,39 @@ class EmployeeController extends BaseController
         return $s > 0 ? round($s, 1) : 0.0;
     }
 
-    /** Días que abarca el campo `dias` del horario (ej. "Lun - Vie" → 5). 0 = sin datos. */
-    private function diasDeHorario(?string $dias): int
+    /**
+     * Días programados entre dos fechas: sólo los días de la semana del horario
+     * ($diasSet usa date('w'): 0=dom..6=sáb) y que no sean feriado.
+     */
+    private function diasProgramadosEn(string $desde, string $hasta, array $diasSet, array $festivos = []): int
     {
-        $d = mb_strtolower(trim((string) $dias));
-        if ($d === '') return 0;
-        $d = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ü'], ['a', 'e', 'i', 'o', 'u', 'u'], $d);
-
-        $orden = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
-        $pos   = [];
-        foreach ($orden as $i => $k) {
-            if (mb_strpos($d, $k) !== false) $pos[] = $i;
-        }
-        if (!$pos) return 0;
-
-        // "Lun - Vie" / "Lunes a Viernes" → rango inclusivo
-        if (count($pos) === 2 && preg_match('/\s(-|a|al|hasta)\s/', $d)) {
-            return abs($pos[1] - $pos[0]) + 1;
-        }
-        return count($pos);
-    }
-
-    /** Días programados (Lun..dom según el horario) entre dos fechas */
-    private function diasProgramadosEn(string $desde, string $hasta, int $diasSemana): int
-    {
-        if ($diasSemana <= 0) return 0;
+        if ($diasSet === []) return 0;
+        $feriados = array_flip(array_map('strval', $festivos));
         $n = 0;
-        for ($d = $desde; $d <= $hasta && $n < 400; $d = date('Y-m-d', strtotime($d . ' +1 day'))) {
-            if ((int) date('N', strtotime($d)) <= $diasSemana) $n++;
+        for ($d = $desde, $i = 0; $d <= $hasta && $i < 400; $d = date('Y-m-d', strtotime($d . ' +1 day')), $i++) {
+            if (isset($diasSet[(int) date('w', strtotime($d))]) && ! isset($feriados[$d])) $n++;
         }
         return $n;
+    }
+
+    /**
+     * ¿Hoy toca trabajar según el horario? Devuelve el motivo si NO toca
+     * ('Feriado: …' o 'Día de descanso'), o null si es día laborable.
+     */
+    private function motivoDiaNoLaborable(array $horario, int $adminId, string $fecha): ?string
+    {
+        foreach ($this->festivoModel->getAll($adminId > 0 ? $adminId : null) as $f) {
+            if ((string) ($f['fecha'] ?? '') === $fecha) {
+                return 'Feriado: ' . (string) ($f['nombre'] ?? 'Festivo');
+            }
+        }
+        if ($horario) {
+            $dias = \App\Libraries\Asistencia\HorasQuery::diasSemana((string) ($horario['dias'] ?? ''));
+            if (! isset($dias[(int) date('w', strtotime($fecha))])) {
+                return 'Día de descanso';
+            }
+        }
+        return null;
     }
 
     public function dashboard()
@@ -377,6 +402,12 @@ class EmployeeController extends BaseController
 
         $att = $this->attendanceModel->findByUserAndDate($userId, $hoy);
 
+        // Horario del colaborador (una sola consulta) y si hoy le toca trabajar.
+        // En feriado o día de descanso se registra la marca, pero sin tardanza
+        // ni salida anticipada: no hay hora de entrada/salida que cumplir.
+        $sc         = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+        $diaLibre   = $this->motivoDiaNoLaborable($sc, $adminId, $hoy);
+
         // Falta automática generada por el cron (sin entrada): si el colaborador
         // llegó después, se convierte en TARDANZA, no en salida.
         $faltaAuto = $att
@@ -387,11 +418,16 @@ class EmployeeController extends BaseController
             // ENTRADA
             $entrada = date('H:i');
             $incFaltaOk = false;
-            $tolerancia = (int) ($this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '')['tolerancia'] ?? 10);
-            $horaBase = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '')['hora_entrada'] ?? '08:00';
+            $tolerancia = (int) ($sc['tolerancia'] ?? 10);
+            $horaBase   = $sc['hora_entrada'] ?? '08:00';
 
             $limite = strtotime($horaBase) + $tolerancia * 60;
-            $status = strtotime($ahora) <= $limite ? 'present' : 'late';
+            $status = ($diaLibre !== null || strtotime($ahora) <= $limite) ? 'present' : 'late';
+
+            $observacion = $faltaAuto ? 'Llegó después de la falta automática' : '';
+            if ($diaLibre !== null) {
+                $observacion = 'Marcó en ' . mb_strtolower($diaLibre);
+            }
 
             $registro = [
                 'admin_id'   => $adminId ?: null,
@@ -402,7 +438,7 @@ class EmployeeController extends BaseController
                 'time_in'    => $ahora,
                 'time_out'   => null,
                 'status'     => $status,
-                'observacion'=> $faltaAuto ? 'Llegó después de la falta automática' : '',
+                'observacion'=> $observacion,
                 'evidencia'  => $evidencia,
                 'lat'        => $geo['lat'],
                 'lng'        => $geo['lng'],
@@ -459,7 +495,9 @@ class EmployeeController extends BaseController
             $svc->marcacionRegistrada($attId, $adminId);
             $svc->asistenciaMarcada($attId, $adminId);
 
-            $s->setFlashdata('msg', "Entrada registrada a las {$entrada}" . ($status === 'late' ? ' · Tardanza' : ' · Puntual'));
+            $s->setFlashdata('msg', "Entrada registrada a las {$entrada}" . ($diaLibre !== null
+                ? ' · ' . $diaLibre
+                : ($status === 'late' ? ' · Tardanza' : ' · Puntual')));
             $s->setFlashdata('tipo', $status === 'late' ? 'warning' : 'success');
 
         } elseif (empty($att['time_out'])) {
@@ -475,11 +513,15 @@ class EmployeeController extends BaseController
             ]);
 
             // Salida anticipada: si se retira antes de su hora de salida prevista
-            $sc = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+            // (en feriado o día de descanso no hay hora de salida que cumplir)
             $horaSalidaPrevista = $sc['hora_salida'] ?? '';
-            $salidaAnticipada = ($horaSalidaPrevista !== '' && strtotime($ahora) < strtotime($horaSalidaPrevista));
+            $salidaAnticipada = ($diaLibre === null && $horaSalidaPrevista !== '' && strtotime($ahora) < strtotime($horaSalidaPrevista));
+            $conMotivo = false;
             if ($salidaAnticipada) {
                 $just = trim((string) $this->request->getPost('justificacion'));
+                // Con motivo → pasa a revisión del admin. Sin motivo → queda
+                // Pendiente para que el colaborador la justifique en Mis Incidencias.
+                $conMotivo = $just !== '';
                 $this->incidentModel->insert([
                     'admin_id'      => $adminId ?: null,
                     'att_id'        => (int) $att['id'],
@@ -488,8 +530,8 @@ class EmployeeController extends BaseController
                     'tipo'          => 'Salida anticipada',
                     'fecha'         => date('Y-m-d H:i:s'),
                     'detalle'       => "Salió a las {$salida} · salida prevista " . substr($horaSalidaPrevista, 0, 5),
-                    'estado'        => 'Revisión',
-                    'justificacion' => $just !== '' ? $just : 'Sin motivo registrado',
+                    'estado'        => $conMotivo ? 'Revisión' : 'Pendiente',
+                    'justificacion' => $conMotivo ? $just : '',
                 ]);
 
                 // Aviso por correo al empleado
@@ -505,8 +547,16 @@ class EmployeeController extends BaseController
             $svc->marcacionRegistrada((int) $att['id'], $adminId);
             $svc->asistenciaMarcada((int) $att['id'], $adminId);
 
-            $s->setFlashdata('msg', "Salida registrada a las {$salida}" . ($salidaAnticipada ? ' · salida anticipada JUSTIFICADA, en revisión' : ''));
-            $s->setFlashdata('tipo', 'success');
+            if (! $salidaAnticipada) {
+                $s->setFlashdata('msg', "Salida registrada a las {$salida}");
+                $s->setFlashdata('tipo', 'success');
+            } elseif ($conMotivo) {
+                $s->setFlashdata('msg', "Salida registrada a las {$salida} · salida anticipada con motivo, en revisión");
+                $s->setFlashdata('tipo', 'success');
+            } else {
+                $s->setFlashdata('msg', "Salida registrada a las {$salida} · salida anticipada sin motivo: justifícala en Mis Incidencias");
+                $s->setFlashdata('tipo', 'warning');
+            }
 
         } else {
             $s->setFlashdata('msg', 'Hoy ya registraste tu entrada y salida');

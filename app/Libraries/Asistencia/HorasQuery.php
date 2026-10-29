@@ -241,7 +241,7 @@ class HorasQuery
      * 'Lun - Vie' → [1..5]; 'Lun, Mié, Vie' → [1,3,5].
      * Vacío o irreconocible → laborables por defecto.
      */
-    private function diasSemana(string $texto): array
+    public static function diasSemana(string $texto): array
     {
         $map = [
             'lun' => 1, 'lunes' => 1,
