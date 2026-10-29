@@ -1,139 +1,114 @@
 /* ══════════════════════════════════════════════════════════════
-   TK-LOGIN · login del panel de clientes con el diseño del login
-   de System-Trackin (fondo #0b0b0b, campos h-14 blancos al 7 %,
-   panel derecho con cuadrícula y degradado). Solo cambia el
-   aspecto: el formulario, sus nombres y su acción siguen iguales.
+   TK-LOGIN · réplica 1:1 del login de System-Trackin
+   (src/components/LoginForm.tsx + SlideToSubmit + RouteBackdrop):
+   fondo #0b0b0b, columna max-w-sm, marca + «Ingresar» extralight,
+   campos h-14 rounded-2xl blancos al 7 %, divisor con ciudades,
+   barra «desliza para ingresar» h-72 y panel derecho con cuadrícula
+   48px, brillo radial y ruta animada.
    ══════════════════════════════════════════════════════════════ */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
-html, body { background: #0b0b0b !important; }
-body, body * { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif !important; }
-body .fa-solid, body .fa-regular { font-family: 'Font Awesome 6 Free' !important; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #0b0b0b; }
+body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
 
-.lg-page {
-  min-height: 100vh; padding: 0 !important; background: #0b0b0b !important;
-  display: block !important;
+.tkl {
+  display: grid; min-height: 100vh; min-height: 100dvh; background: #0b0b0b; color: #fff;
+  grid-template-columns: minmax(0, 1fr);
 }
-.lg-card {
-  display: grid !important; min-height: 100vh; width: 100% !important; max-width: none !important;
-  grid-template-columns: minmax(0, 1fr); border-radius: 0 !important; box-shadow: none !important;
-  background: transparent !important; border: 0 !important; margin: 0 !important;
-}
-@media (min-width: 1024px) { .lg-card { grid-template-columns: minmax(24rem, 1fr) 1.25fr; } }
+@media (min-width: 1024px) { .tkl { grid-template-columns: minmax(24rem, 1fr) 1.25fr; } }
 
-/* columna del formulario */
-.lg-form-col {
-  display: flex !important; align-items: center; justify-content: center;
-  padding: 40px 24px !important; background: transparent !important; color: #fff;
-}
-.lg-form-inner { width: 100%; max-width: 24rem !important; display: flex; flex-direction: column; }
-.lg-back {
-  align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 40px !important;
-  font-size: 12px !important; color: rgba(255,255,255,.45) !important; text-decoration: none !important;
-}
-.lg-back:hover { color: rgba(255,255,255,.8) !important; }
-.lg-tag {
-  align-self: flex-start; padding: 0 !important; background: none !important; border: 0 !important;
-  font-size: 11px !important; font-weight: 600 !important; letter-spacing: .02em;
-  color: #4fd24a !important; text-transform: none !important;
-}
-.lg-h1 {
-  margin: 6px 0 0 !important; font-size: 40px !important; font-weight: 200 !important;
-  letter-spacing: -0.03em !important; line-height: 1.05 !important; color: #fff !important;
-}
-.lg-h1 .grad {
-  background: none !important; -webkit-text-fill-color: currentColor !important; color: #fff !important;
-  font-weight: 400 !important; font-style: normal !important;
-}
-.lg-sub { margin: 16px 0 0 !important; font-size: 14px !important; line-height: 1.6; color: rgba(255,255,255,.4) !important; }
+/* ── columna del formulario ── */
+.tkl-col { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+.tkl-form { display: flex; flex-direction: column; width: 100%; max-width: 24rem; }
 
-/* avisos */
-:is(.lg-alert-error, .lg-alert-warning) {
-  display: flex; align-items: center; gap: 10px; margin-top: 20px !important; padding: 12px 14px !important;
-  border-radius: 16px !important; border: 0 !important; font-size: 13px !important;
-}
-.lg-alert-error { background: rgba(230,103,103,.14) !important; color: #f2a4a4 !important; }
-.lg-alert-warning { background: rgba(245,158,11,.14) !important; color: #fcd38a !important; }
+.tkl-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tkl-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.tkl-brand img { width: 44px; height: 44px; flex: none; border-radius: 9999px; background: #fff; object-fit: cover; }
+.tkl-brand-txt { display: flex; flex-direction: column; min-width: 0; font-size: 11px; line-height: 1.25; color: rgba(255,255,255,.5); }
+.tkl-brand-txt b { font-weight: 600; color: #bedf3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tkl-head h1 { margin: 0; flex: none; font-size: 36px; font-weight: 200; letter-spacing: -0.025em; line-height: 1.1; }
 
-/* campos (Input h-14 rounded-2xl bg-white/[0.07]) */
-.lg-form { margin-top: 32px !important; display: flex; flex-direction: column; gap: 12px !important; }
-.lg-field { display: flex; flex-direction: column; gap: 0; margin: 0 !important; }
-.lg-field > label {
-  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
-}
-.lg-input {
-  position: relative; display: flex; align-items: center; height: 56px !important;
-  border-radius: 16px !important; border: 0 !important; box-shadow: none !important;
-  background: rgba(255,255,255,.07) !important; transition: background-color 150ms ease;
-}
-.lg-input:focus-within { background: rgba(255,255,255,.10) !important; box-shadow: 0 0 0 1px rgba(79,210,74,.55) !important; }
-.lg-input input {
-  flex: 1; height: 100%; padding: 0 48px 0 16px !important; border: 0 !important; outline: none !important;
-  background: transparent !important; color: #fff !important; font-size: 15px !important; box-shadow: none !important;
-}
-.lg-input input::placeholder { color: rgba(255,255,255,.4) !important; }
-.lg-input input:-webkit-autofill {
-  -webkit-text-fill-color: #fff; transition: background-color 9999s ease 0s;
-  box-shadow: 0 0 0 100px #1d1d1d inset !important;
-}
-.lg-trailing {
-  position: absolute; right: 14px; display: grid; place-items: center; width: 28px; height: 28px;
-  background: none !important; border: 0 !important; color: rgba(255,255,255,.35) !important; font-size: 14px;
-}
-.lg-eye { cursor: pointer; border-radius: 9999px !important; }
-.lg-eye:hover { color: #fff !important; background: rgba(255,255,255,.08) !important; }
+.tkl-lead { margin: 24px 0 0; text-align: center; font-size: 14px; line-height: 1.625; color: rgba(255,255,255,.4); }
 
-/* botón principal (píldora verde) */
-.lg-submit {
-  margin-top: 20px !important; height: 56px !important; width: 100%; border: 0 !important;
-  border-radius: 9999px !important; background: #078a04 !important; color: #fff !important;
-  font-size: 15px !important; font-weight: 500 !important; letter-spacing: 0 !important;
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: 0 8px 24px -8px rgba(7,138,4,.6) !important; transition: background-color 150ms ease, transform 150ms ease !important;
+.tkl-alert {
+  display: flex; align-items: center; gap: 10px; margin-top: 20px; padding: 12px 14px; border-radius: 16px;
+  background: rgba(230,103,103,.14); color: #f2a4a4; font-size: 13px;
 }
-.lg-submit:hover { background: #09a305 !important; transform: none !important; }
-.lg-submit:active { transform: scale(.99) !important; }
+.tkl-alert.is-warn { background: rgba(245,158,11,.14); color: #fcd38a; }
 
-.lg-help { margin: 24px 0 0 !important; text-align: center; font-size: 12px !important; color: rgba(255,255,255,.4) !important; }
-.lg-foot {
-  margin-top: 40px !important; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.08);
-  text-align: center; font-size: 11px !important; color: rgba(255,255,255,.3) !important;
+.tkl-fields { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+.tkl-input {
+  width: 100%; height: 56px; padding: 0 16px; border: 0; border-radius: 16px; outline: none; box-shadow: none;
+  background: rgba(255,255,255,.07); color: #fff; font: inherit; font-size: 15px;
+  transition: background-color 150ms ease;
 }
-.lg-foot a { color: rgba(255,255,255,.6) !important; text-decoration: underline; text-underline-offset: 2px; }
+.tkl-input::placeholder { color: rgba(255,255,255,.4); }
+.tkl-input:focus { background: rgba(255,255,255,.10); }
+.tkl-input:-webkit-autofill { -webkit-text-fill-color: #fff; box-shadow: 0 0 0 100px #1c1c1c inset; transition: background-color 9999s; }
+.tkl-pass { position: relative; }
+.tkl-pass .tkl-input { padding-right: 52px; }
+.tkl-eye {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 9999px; cursor: pointer;
+  background: transparent; color: rgba(255,255,255,.35); font-size: 14px; transition: background-color 150ms, color 150ms;
+}
+.tkl-eye:hover { background: rgba(255,255,255,.08); color: #fff; }
 
-/* panel derecho (cuadrícula + degradado, esquinas 2rem) */
-.lg-side {
-  display: none !important; position: relative; margin: 12px !important; border-radius: 2rem !important;
-  overflow: hidden; background-color: #000 !important;
+.tkl-divider { display: flex; align-items: center; gap: 12px; margin: 32px 0; font-size: 12px; color: rgba(255,255,255,.3); }
+.tkl-divider span { height: 1px; flex: 1; background: rgba(255,255,255,.1); }
+
+/* ── barra «desliza para ingresar» ── */
+.tkl-slide {
+  position: relative; height: 72px; padding: 8px; overflow: hidden; user-select: none; -webkit-user-select: none;
+  border-radius: 50px; background: rgba(255,255,255,.07);
+}
+.tkl-slide-fill { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 120px; border-radius: 50px; background: #bedf3c; opacity: .04; }
+.tkl-slide-hint {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding-left: 112px; font-size: 18px; color: rgba(255,255,255,.6); pointer-events: none;
+}
+.tkl-slide-hint i { font-style: normal; animation: tklHint 1.4s ease-in-out infinite; }
+.tkl-slide-hint i:nth-child(2) { animation-delay: .18s; }
+.tkl-slide-hint i:nth-child(3) { animation-delay: .36s; }
+@keyframes tklHint { 0%, 100% { opacity: .2; transform: translateX(0); } 50% { opacity: 1; transform: translateX(4px); } }
+.tkl-slide-btn {
+  position: relative; display: grid; place-items: center; width: 120px; height: 56px; padding: 0; border: 0;
+  border-radius: 50px; cursor: grab; touch-action: none;
+  background: #078a04; color: #fff; font: inherit; font-size: 14px; font-weight: 600;
+  box-shadow: 0 4px 18px color-mix(in oklab, #078a04 40%, transparent);
+  transition: scale 150ms ease;
+}
+.tkl-slide-btn:hover { scale: 1.03; }
+.tkl-slide-btn:active { scale: .96; cursor: grabbing; }
+.tkl-slide-btn:focus-visible { outline: 2px solid #bedf3c; outline-offset: 3px; }
+.tkl-spin { display: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; animation: tklSpin .7s linear infinite; }
+@keyframes tklSpin { to { transform: rotate(360deg); } }
+.tkl-slide.is-loading .tkl-slide-label { display: none; }
+.tkl-slide.is-loading .tkl-spin { display: block; }
+.tkl-slide.is-shake { animation: tklShake 500ms cubic-bezier(.6,.6,.12,1.26); }
+@keyframes tklShake { 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } }
+
+.tkl-foot { margin: 24px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.4); }
+.tkl-foot a { color: rgba(255,255,255,.7); text-decoration: underline; text-underline-offset: 2px; }
+.tkl-foot span { margin: 0 6px; }
+
+/* ── panel derecho ── */
+.tkl-side { display: none; padding: 12px; }
+@media (min-width: 1024px) { .tkl-side { display: block; } }
+.tkl-map {
+  position: relative; height: 100%; min-height: calc(100vh - 24px); overflow: hidden; border-radius: 2rem; background-color: #000;
   background-image:
     linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(79,210,74,.16), transparent 65%) !important;
-  background-size: 48px 48px, 48px 48px, 100% 100% !important;
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 65%);
+  background-size: 48px 48px, 48px 48px, 100% 100%;
 }
-@media (min-width: 1024px) { .lg-side { display: block !important; } .lg-card { height: 100vh; height: 100dvh; } }
-.lg-side-art {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: .22 !important; mix-blend-mode: luminosity; filter: grayscale(.6) !important;
-}
-.lg-side-card {
-  position: absolute !important; left: 32px; right: 32px; bottom: 32px; top: auto !important;
-  padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important;
-  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; color: #fff;
-}
-.lg-side-stars { color: #4fd24a !important; font-size: 11px; letter-spacing: 3px; }
-.lg-side-card p { margin: 12px 0 0 !important; font-size: 20px !important; font-weight: 300 !important; line-height: 1.4; color: #fff !important; }
-.lg-side-who { display: flex; align-items: center; gap: 12px; margin-top: 16px !important; }
-.lg-side-who img { width: 40px; height: 40px; border-radius: 9999px; background: #fff; object-fit: cover; }
-.lg-side-who b { display: block; font-size: 13px; font-weight: 600; color: #fff; }
-.lg-side-who span { display: block; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-.lg-page .lg-side { min-height: 0 !important; padding: 0 !important; }
-.lg-page .lg-side .lg-side-art { opacity: .22 !important; filter: grayscale(.6) brightness(.8) !important; }
-@media (min-width: 1024px) {
-  html, body { margin: 0 !important; height: 100%; overflow: hidden; }
-  .lg-page { min-height: 0 !important; height: 100vh; height: 100dvh; }
-  .lg-form-col { overflow-y: auto; }
-}
-@media (min-width: 1024px) {
-  .lg-page .lg-side { height: calc(100vh - 24px) !important; height: calc(100dvh - 24px) !important; align-self: center; border: 0 !important; }
+.tkl-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tkl-caption { position: absolute; left: 32px; right: 32px; bottom: 32px; }
+.tkl-caption-cities { margin: 0; font-size: 12px; letter-spacing: .3em; color: rgba(255,255,255,.5); }
+.tkl-caption-line { margin: 8px 0 0; font-size: 20px; font-weight: 300; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tkl-slide-hint i, .tkl-spin { animation: none; }
 }
