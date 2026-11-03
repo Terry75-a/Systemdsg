@@ -135,7 +135,7 @@ class App extends BaseConfig
      * @see https://www.php.net/manual/en/timezones.php for list of timezones
      *      supported by PHP.
      */
-    public string $appTimezone = 'UTC';
+    public string $appTimezone = 'America/Lima'; // Perú (UTC-5, sin horario de verano): misma hora que MySQL y que el reloj del panel
 
     /**
      * --------------------------------------------------------------------------
