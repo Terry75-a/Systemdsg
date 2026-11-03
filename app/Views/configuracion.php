@@ -154,7 +154,7 @@
                         </div>
                     </div>
 
-                    
+                    <!-- Item 3: Tus accesos directos que ya tenías en tu vista -->
                     <div class="mt-4 mb-2">
                         <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">Accesos rápidos de administración</span>
                     </div>
