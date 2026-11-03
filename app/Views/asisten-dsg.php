@@ -134,7 +134,7 @@
         <div class="mm-section-head reveal">
             <span class="title-text">Demo en vivo</span>
             <h2 class="main-title">Míralo funcionando</h2>
-            <p class="mm-section-sub">15 segundos para ver cómo tu equipo marca, cómo ves tardanzas en tiempo real y cómo se exporta la planilla.</p>
+            <p class="mm-section-sub">21 segundos para ver cómo tu equipo marca, cómo ves tardanzas en tiempo real y cómo se exporta la planilla.</p>
         </div>
         <div id="mm-video-container" class="mm-video-container reveal" data-delay="1">
             <div class="mm-video-thumb" data-role="thumbnail">
