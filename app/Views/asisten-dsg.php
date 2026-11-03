@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Asisten DSG: control de asistencia del personal. Marcación con ubicación en tiempo real, tardanzas, reportes para planilla y multi-sede.">
-    <title>Asisten DSG · Control de asistencia del personal</title>
+    <meta name="description" content="Asisten DSG: herramienta interna de DSG Perú Technology para el control de asistencia del equipo. Marcación con ubicación en tiempo real, tardanzas, reportes para planilla y multi-sede.">
+    <title>Asisten DSG · Control de asistencia del equipo DSG</title>
 
     <!-- Tema guardado: se aplica antes del primer pintado para evitar destello -->
     <script>try{var t=localStorage.getItem('mmTheme');if(t==='dark')document.documentElement.classList.add('tema-oscuro');else if(t==='light')document.documentElement.classList.add('tema-claro');}catch(e){}</script>
@@ -33,8 +33,7 @@
                 <button class="mm-nav-btn mm-theme-btn" type="button" data-mm-theme-toggle aria-label="Cambiar entre modo claro y oscuro" title="Modo claro / oscuro">
                     <span class="material-symbols-rounded">dark_mode</span>
                 </button>
-                <a href="<?= base_url('login-verde') ?>" class="mm-nav-btn">Iniciar sesión</a>
-                <a href="#contacto" class="mm-nav-btn is-outline">Solicitar demo</a>
+                <a href="<?= base_url('login-verde') ?>" class="mm-nav-btn is-outline">Iniciar sesión</a>
                 <button class="mm-nav-toggle" id="mmToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
                     <span class="material-symbols-rounded">menu</span>
                 </button>
@@ -44,7 +43,6 @@
             <a href="#caracteristicas"><span>Características</span><span class="material-symbols-rounded">trending_up</span></a>
             <a href="#faq"><span>Preguntas frecuentes</span><span class="material-symbols-rounded">help</span></a>
             <a href="<?= base_url('login-verde') ?>"><span>Iniciar sesión</span><span class="material-symbols-rounded">login</span></a>
-            <a href="#contacto"><span>Solicitar demo</span><span class="material-symbols-rounded">event_available</span></a>
             <button class="mm-nav-btn mm-theme-btn" type="button" data-mm-theme-toggle>
                 <span class="mm-theme-label">Modo oscuro</span>
                 <span class="material-symbols-rounded">dark_mode</span>
@@ -58,17 +56,17 @@
     <!-- ═══════════ HERO ═══════════ -->
     <section class="mm-hero">
         <div class="mm-hero-copy reveal in">
-            <a href="#contacto" class="cta-button"><span class="tag">GRATIS</span> Reserva una demo <span class="arrow">→</span></a>
-            <h1 class="main-title">La asistencia de tu equipo, sin planillas a mano.</h1>
-            <p class="mm-hero-desc">Registra ingresos, salidas, tardanzas y faltas en segundos. Reportes listos para tu planilla y control total desde tu celular.</p>
+            <a href="#demo-video" class="cta-button"><span class="tag">Uso interno</span> Ver cómo funciona <span class="arrow">→</span></a>
+            <h1 class="main-title">La asistencia de nuestro equipo, sin planillas a mano.</h1>
+            <p class="mm-hero-desc">Registra ingresos, salidas, tardanzas y faltas en segundos. Reportes listos para la planilla y control total desde cualquier dispositivo.</p>
             <div class="mm-hero-ctas">
-                <a href="#contacto" class="mm-btn mm-btn-filled">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
-                <a href="<?= base_url('login-verde') ?>" class="mm-btn mm-btn-tonal">Iniciar sesión</a>
+                <a href="<?= base_url('login-verde') ?>" class="mm-btn mm-btn-filled">Iniciar sesión <span class="material-symbols-rounded">arrow_forward</span></a>
+                <a href="#demo-video" class="mm-btn mm-btn-tonal">Ver el video</a>
             </div>
             <div class="mm-hero-checks">
                 <span><span class="material-symbols-rounded">check</span> Sin instalación</span>
-                <span><span class="material-symbols-rounded">check</span> Cancela cuando quieras</span>
-                <span><span class="material-symbols-rounded">check</span> Soporte en Perú</span>
+                <span><span class="material-symbols-rounded">check</span> Acceso interno del equipo</span>
+                <span><span class="material-symbols-rounded">check</span> Soporte del equipo DSG</span>
             </div>
         </div>
 
@@ -132,9 +130,9 @@
     <!-- ═══════════ VIDEO DEMO ═══════════ -->
     <section class="mm-section mm-video-section" id="demo-video">
         <div class="mm-section-head reveal">
-            <span class="title-text">Demo en vivo</span>
+            <span class="title-text">Video</span>
             <h2 class="main-title">Míralo funcionando</h2>
-            <p class="mm-section-sub">15 segundos para ver cómo tu equipo marca, cómo ves tardanzas en tiempo real y cómo se exporta la planilla.</p>
+            <p class="mm-section-sub">21 segundos para ver cómo el equipo marca, cómo se ven las tardanzas en tiempo real y cómo se exporta la planilla.</p>
         </div>
         <div id="mm-video-container" class="mm-video-container reveal" data-delay="1">
             <div class="mm-video-thumb" data-role="thumbnail">
@@ -161,14 +159,14 @@
                     <span class="material-symbols-rounded">rocket_launch</span>
                     <h3 class="title-medium">Simple</h3>
                 </div>
-                <p>Una interfaz clara para marcar, supervisar y exportar la asistencia de tu equipo, sin capacitaciones eternas.</p>
+                <p>Una interfaz clara para marcar, supervisar y exportar la asistencia del equipo, sin capacitaciones eternas.</p>
             </div>
             <div class="grid-card">
                 <div class="title-with-icon">
                     <span class="material-symbols-rounded">security</span>
                     <h3 class="title-medium">Seguro</h3>
                 </div>
-                <p>Los datos de tu personal viajan cifrados y solo los ve el equipo que tú autorizas.</p>
+                <p>Los datos del equipo viajan cifrados y solo los ve quien la administración autoriza.</p>
             </div>
             <div class="grid-card">
                 <div class="title-with-icon">
@@ -185,8 +183,7 @@
         <div class="mm-section-head reveal">
             <span class="title-text">Características</span>
             <h2 class="main-title">Todo lo que necesitas</h2>
-            <p class="mm-section-sub">Marcar, supervisar y justificar la asistencia de todo tu equipo sin hojas sueltas ni chats perdidos.</p>
-        </div>
+            <p class="mm-section-sub">Marcar, supervisar y justificar la asistencia de todo el equipo sin hojas sueltas ni chats perdidos.</p>        </div>
 
         <div class="tab-wrapper reveal" data-delay="1">
             <div class="menu-pill-container" role="tablist">
@@ -211,13 +208,12 @@
                     </div>
                     <div class="feature-content-right">
                         <h3>Marcación con ubicación en tiempo real</h3>
-                        <p>Tu personal registra ingreso y salida desde su celular con su ubicación verificada en el momento. Sin filas, sin equipos costosos, sin excusas.</p>
+                        <p>El equipo registra ingreso y salida desde su celular con su ubicación verificada en el momento. Sin filas, sin equipos costosos, sin excusas.</p>
                         <ul class="feature-list">
                             <li><span class="material-symbols-rounded">my_location</span> Registro con la ubicación del colaborador</li>
                             <li><span class="material-symbols-rounded">smartphone</span> Desde cualquier celular</li>
                             <li><span class="material-symbols-rounded">download_for_offline</span> Sin apps ni equipos extra</li>
                         </ul>
-                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -240,7 +236,6 @@
                             <li><span class="material-symbols-rounded">notifications_active</span> Alertas en tiempo real</li>
                             <li><span class="material-symbols-rounded">edit_document</span> Justificaciones desde el móvil</li>
                         </ul>
-                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -263,7 +258,6 @@
                             <li><span class="material-symbols-rounded">apartment</span> Por área o sede</li>
                             <li><span class="material-symbols-rounded">calendar_month</span> Calendario por persona</li>
                         </ul>
-                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -278,13 +272,12 @@
                     </div>
                     <div class="feature-content-right">
                         <h3>Reportes para planilla</h3>
-                        <p>Horas, extras y descuentos exportados en un clic. Tu contador te lo va a agradecer.</p>
+                        <p>Horas, extras y descuentos exportados en un clic, listos para el proceso de planilla.</p>
                         <ul class="feature-list">
                             <li><span class="material-symbols-rounded">calculate</span> Horas y extras calculadas solas</li>
                             <li><span class="material-symbols-rounded">file_download</span> Exportación en un clic</li>
                             <li><span class="material-symbols-rounded">payments</span> Descuentos por falta y tardanza</li>
                         </ul>
-                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -301,13 +294,12 @@
                     </div>
                     <div class="feature-content-right">
                         <h3>Multi-sede y móvil</h3>
-                        <p>Varias sucursales bajo control desde tu celular, con permisos por supervisor.</p>
+                        <p>Varias sedes bajo control desde el panel, con permisos por supervisor.</p>
                         <ul class="feature-list">
                             <li><span class="material-symbols-rounded">storefront</span> Varias sucursales a la vez</li>
                             <li><span class="material-symbols-rounded">badge</span> Permisos por supervisor</li>
                             <li><span class="material-symbols-rounded">visibility</span> Visión general en vivo</li>
                         </ul>
-                        <a href="#contacto" class="mm-btn mm-btn-tonal" style="align-self:flex-start">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></a>
                     </div>
                 </div>
             </div>
@@ -319,7 +311,7 @@
         <div class="mm-section-head reveal">
             <span class="title-text">Multiplataforma</span>
             <h2 class="main-title">En la palma de tu mano</h2>
-            <p class="mm-section-sub">Accede a tu control de asistencia desde cualquier dispositivo: teléfono, tablet u ordenador.</p>
+            <p class="mm-section-sub">Accede al control de asistencia desde cualquier dispositivo: teléfono, tablet u ordenador.</p>
         </div>
         <div class="mm-multi-mock reveal" data-delay="1">
             <img src="<?= base_url('images/asisten-multiplataforma.webp') ?>" alt="Asisten DSG en MacBook Pro e iPhone" loading="lazy" width="1839" height="938">
@@ -328,7 +320,7 @@
             <div class="device-card">
                 <span class="material-symbols-rounded">smartphone</span>
                 <h3>Celular</h3>
-                <p>Tu personal marca desde donde sea y tú revisas todo en movimiento.</p>
+                <p>El equipo marca desde donde sea y supervisas todo en movimiento.</p>
             </div>
             <div class="device-card">
                 <span class="material-symbols-rounded">tablet_mac</span>
@@ -343,48 +335,6 @@
         </div>
     </section>
 
-    <!-- ═══════════ TESTIMONIOS ═══════════ -->
-    <section class="mm-section">
-        <div class="mm-section-head reveal">
-            <span class="title-text">Testimonios</span>
-            <h2 class="main-title">Lo que dicen de Asisten DSG</h2>
-        </div>
-        <div class="testimonios-grid reveal" data-delay="1">
-            <div class="testimonio-card">
-                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
-                <p class="testimonio-text">Pasamos del cuaderno a tener todo el personal controlado desde el celular. La planilla sale sola.</p>
-                <div class="testimonio-author">
-                    <span class="testimonio-name">Juan Alberto</span>
-                    <span class="testimonio-role">Vifarma, Perú</span>
-                </div>
-            </div>
-            <div class="testimonio-card">
-                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
-                <p class="testimonio-text">Marcamos desde dos sedes con la ubicación de cada colaborador y las tardanzas ya no se discuten: todo queda registrado con hora y minuto.</p>
-                <div class="testimonio-author">
-                    <span class="testimonio-name">María Torres</span>
-                    <span class="testimonio-role">Farmacia San Martín</span>
-                </div>
-            </div>
-            <div class="testimonio-card">
-                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
-                <p class="testimonio-text">El reporte de planilla sale listo cada mes: horas, extras y descuentos sin pelearme con el Excel.</p>
-                <div class="testimonio-author">
-                    <span class="testimonio-name">Carlos Ruiz</span>
-                    <span class="testimonio-role">Grupo La Plaza</span>
-                </div>
-            </div>
-            <div class="testimonio-card">
-                <span class="material-symbols-rounded testimonio-quote">format_quote</span>
-                <p class="testimonio-text">Empezamos con diez empleados y hoy controlamos tres sedes desde el celular, con permisos por supervisor.</p>
-                <div class="testimonio-author">
-                    <span class="testimonio-name">Lucía Fernández</span>
-                    <span class="testimonio-role">Comercial Cusco</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- ═══════════ FAQ ═══════════ -->
     <section class="mm-section" id="faq">
         <div class="mm-section-head reveal">
@@ -393,54 +343,43 @@
         </div>
         <div class="faq-list reveal" data-delay="1">
             <details class="faq-item">
-                <summary>¿Cómo marca mi personal?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Cada trabajador registra ingreso y salida desde su celular con su ubicación en tiempo real. No necesita instalar apps ni comprar equipos.</div>
+                <summary>¿Cómo marca el equipo?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Cada colaborador registra ingreso y salida desde su celular con su ubicación en tiempo real. No necesita instalar apps ni comprar equipos.</div>
             </details>
             <details class="faq-item">
                 <summary>¿Sirve para varias sedes?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Sí. El plan Negocio incluye 2 sedes y el plan Corporativo sedes ilimitadas, cada una con sus propios horarios y supervisores.</div>
+                <div class="faq-answer">Sí. Cada sede y área tiene sus propios horarios y supervisores, y se ven todas desde el mismo panel.</div>
             </details>
             <details class="faq-item">
-                <summary>¿Puedo exportar a mi planilla?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Sí. Los reportes incluyen horas trabajadas, extras, tardanzas y descuentos, exportables en un clic para tu proceso de planilla.</div>
+                <summary>¿Puedo exportar a la planilla?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Sí. Los reportes incluyen horas trabajadas, extras, tardanzas y descuentos, exportables en un clic para el proceso de planilla.</div>
             </details>
             <details class="faq-item">
-                <summary>¿Puedo cambiar de plan después?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Sí, puedes subir o bajar de plan en cualquier momento. El cambio se refleja en tu siguiente ciclo de facturación.</div>
+                <summary>¿Quién puede ver los datos?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Solo el equipo autorizado de DSG Perú Technology: cada supervisor ve a su gente y la administración ve el panorama general.</div>
             </details>
             <details class="faq-item">
-                <summary>¿Hay contrato o permanencia mínima?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">No, no hay contratos ni permanencia. Puedes cancelar cuando quieras sin penalidades.</div>
+                <summary>¿Desde qué dispositivo entro?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">Desde celular, tablet o computadora. Funciona en el navegador, sin instalar nada.</div>
             </details>
             <details class="faq-item">
-                <summary>¿Puedo probar gratis antes de contratar?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Sí, ofrecemos una demo gratuita de 15 días sin necesidad de tarjeta de crédito. Prueba todas las funciones antes de decidir.</div>
-            </details>
-            <details class="faq-item">
-                <summary>¿Qué incluye el soporte?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Todos los planes incluyen soporte por chat y correo. Los planes Negocio y Corporativo incluyen soporte prioritario con respuesta en menos de 2 horas.</div>
+                <summary>¿Quién da soporte?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
+                <div class="faq-answer">El equipo de DSG Perú Technology. Escríbenos a soporte@dsgperu.com o llámanos al +51 923 942 001.</div>
             </details>
             <details class="faq-item">
                 <summary>¿Mis datos están seguros?<span class="material-symbols-rounded faq-chevron">expand_more</span></summary>
-                <div class="faq-answer">Los datos de tu personal viajan cifrados y solo los ven tú y los supervisores que tú autorices.</div>
+                <div class="faq-answer">Los datos viajan cifrados y solo los ve el equipo que la administración autorice.</div>
             </details>
         </div>
     </section>
 
-    <!-- ═══════════ CONTACTO / SOLICITAR DEMO ═══════════ -->
+    <!-- ═══════════ SOPORTE INTERNO ═══════════ -->
     <section class="mm-section" id="contacto">
         <div class="mm-section-head reveal">
-            <span class="title-text">Contacto</span>
-            <h2 class="main-title">Solicita tu demo gratuita</h2>
-            <p class="mm-section-sub">Cuéntanos cuántas personas y sedes manejas y te mostramos Asisten DSG funcionando. Respondemos en menos de 24 horas.</p>
+            <span class="title-text">Soporte</span>
+            <h2 class="main-title">¿Necesitas ayuda?</h2>
+            <p class="mm-section-sub">Herramienta interna de DSG Perú Technology. Si algo no funciona o necesitas un cambio, escríbenos y lo resolvemos.</p>
         </div>
-
-        <?php if (session()->getFlashdata('success')): ?>
-            <div class="mm-form-flash is-success reveal"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-        <?php if (session()->getFlashdata('error')): ?>
-            <div class="mm-form-flash is-error reveal"><?= session()->getFlashdata('error') ?></div>
-        <?php endif; ?>
 
         <div class="mm-contact-grid reveal" data-delay="1">
             <div class="mm-contact-info content-box">
@@ -455,30 +394,9 @@
                 </a>
                 <div class="mm-contact-line">
                     <span class="mm-contact-ic"><span class="material-symbols-rounded">location_on</span></span>
-                    <span><small>Visítanos</small>Pucallpa, Perú</span>
+                    <span><small>Oficina</small>Pucallpa, Perú</span>
                 </div>
-                <p class="mm-contact-note">También puedes solicitar una cotización para el plan Corporativo: respondemos con una propuesta a la medida de tus sedes.</p>
-            </div>
-
-            <div class="mm-contact-form content-box">
-                <form action="<?= base_url('enviar') ?>" method="POST">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="asunto" value="Solicitar demo · Asisten DSG">
-                    <div class="mm-field">
-                        <input type="text" name="nombre" placeholder="Nombre completo" required>
-                    </div>
-                    <div class="mm-field-row">
-                        <div class="mm-field"><input type="email" name="correo" placeholder="Correo electrónico" required></div>
-                        <div class="mm-field"><input type="text" name="empresa" placeholder="Empresa"></div>
-                    </div>
-                    <div class="mm-field">
-                        <input type="tel" name="telefono" placeholder="Teléfono / WhatsApp">
-                    </div>
-                    <div class="mm-field">
-                        <textarea name="mensaje" rows="4" placeholder="¿Cuántas personas y sedes quieres controlar?"></textarea>
-                    </div>
-                    <button type="submit" class="mm-btn mm-btn-filled mm-btn-submit">Solicitar demo <span class="material-symbols-rounded">arrow_forward</span></button>
-                </form>
+                <p class="mm-contact-note">El acceso al panel es solo para el equipo autorizado. Si no tienes usuario, pídelo al administrador del sistema.</p>
             </div>
         </div>
     </section>
@@ -493,7 +411,7 @@
                 <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
                 <span>Asisten DSG</span>
             </a>
-            <p>Control de asistencia del personal con ubicación en tiempo real: marcación, tardanzas y reportes de planilla en un solo lugar.</p>
+            <p>Control de asistencia del equipo con ubicación en tiempo real: marcación, tardanzas y reportes de planilla en un solo lugar. Herramienta interna de DSG Perú Technology.</p>
             <p class="mm-cookie"><span class="material-symbols-rounded">cookie</span> Usamos cookies técnicas para el funcionamiento de la web y cookies de preferencias si aceptas “Recordarme”.</p>
         </div>
         <div class="mm-footer-col">
@@ -502,7 +420,6 @@
         </div>
         <div class="mm-footer-col">
             <h4>Acciones</h4>
-            <a href="#contacto"><span class="material-symbols-rounded">forum</span> Contáctanos</a>
             <a href="<?= base_url('login-verde') ?>"><span class="material-symbols-rounded">login</span> Iniciar sesión</a>
             <a href="<?= base_url('/') ?>"><span class="material-symbols-rounded">language</span> Sitio principal</a>
         </div>
@@ -511,10 +428,6 @@
         <p>&copy; <?= date('Y') ?> DSG Perú Technology · Asisten DSG. Todos los derechos reservados.</p>
     </div>
 </footer>
-
-<a class="mm-fab" href="#contacto" aria-label="Contáctanos">
-    <span class="material-symbols-rounded">chat_bubble</span>
-</a>
 
 <script>
 (function () {

@@ -494,7 +494,7 @@
                 <span class="material-symbols-outlined tk-stat-ico">badge</span>
                 <div><p class="tk-stat-lbl">Empleados</p><p class="tk-stat-val"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Empleado')) ?></p></div>
             </a>
-            <a href="#equipo" class="tk-stat">
+            <a href="#practicantes" class="tk-stat">
                 <span class="material-symbols-outlined tk-stat-ico">school</span>
                 <div><p class="tk-stat-lbl">Practicantes</p><p class="tk-stat-val"><?= count(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante')) ?></p></div>
             </a>
@@ -504,40 +504,69 @@
             </a>
         </section>
 
-        <div class="personal-section" id="equipo">
-            <?php
-                $areasDisponibles = [];
-                foreach ($empleados as $p) {
+        <?php
+            /* ═══ DOS TABLAS: empleados y practicantes ═══
+               $empleados trae TODO el personal (Empleado, Admin, Dev y
+               Practicante); aquí se parte en dos listas y se renderiza
+               el mismo bloque por cada una, con sus propios filtros. */
+            $listaEmpleados    = array_values(array_filter($empleados, fn($e) => ($e['role'] ?? '') !== 'Practicante'));
+            $listaPracticantes = array_values(array_filter($empleados, fn($e) => ($e['role'] ?? '') === 'Practicante'));
+
+            $areasDe = static function (array $lista): array {
+                $areas = [];
+                foreach ($lista as $p) {
                     $a = trim((string) ($p['area'] ?? ''));
-                    if ($a !== '') { $areasDisponibles[$a] = true; }
+                    if ($a !== '') { $areas[$a] = true; }
                 }
-                $areasDisponibles = array_keys($areasDisponibles);
-                sort($areasDisponibles, SORT_NATURAL | SORT_FLAG_CASE);
-                $totalPersonas = count($empleados);
-            ?>
+                $areas = array_keys($areas);
+                sort($areas, SORT_NATURAL | SORT_FLAG_CASE);
+                return $areas;
+            };
+
+            $seccionesPersonal = [
+                ['id' => 'equipo',        'titulo' => 'Empleados',    'icono' => 'badge',  'lista' => $listaEmpleados,    'vacio' => 'No hay empleados registrados'],
+                ['id' => 'practicantes',  'titulo' => 'Practicantes', 'icono' => 'school', 'lista' => $listaPracticantes, 'vacio' => 'No hay practicantes registrados'],
+            ];
+        ?>
+        <?php foreach ($seccionesPersonal as $sec):
+            $lista            = $sec['lista'];
+            $pref             = $sec['id'];
+            $areasDisponibles = $areasDe($lista);
+            $totalPersonas    = count($lista);
+
+            /* El filtro de rol sólo tiene sentido si la tabla mezcla roles */
+            $rolesDisponibles = array_values(array_unique(array_map(
+                fn($e) => $e['role'] ?? 'Empleado',
+                $lista
+            )));
+            sort($rolesDisponibles, SORT_NATURAL | SORT_FLAG_CASE);
+        ?>
+        <div class="personal-section" id="<?= $pref ?>">
             <div class="personal-section-head">
                 <h2 class="personal-section-title">
-                    <span class="material-symbols-outlined">group</span>
-                    Equipo
-                    <span class="personal-count" id="personCount"><?= $totalPersonas ?> personas</span>
+                    <span class="material-symbols-outlined"><?= $sec['icono'] ?></span>
+                    <?= $sec['titulo'] ?>
+                    <span class="personal-count" data-f="count" data-total="<?= $totalPersonas ?>"><?= $totalPersonas ?> personas</span>
                 </h2>
 
                 <div class="pf-bar">
                     <div class="pf-search">
                         <span class="material-symbols-outlined">search</span>
-                        <input type="search" class="pf-input" id="personSearch" placeholder="Buscar por nombre, DNI, código, área..." oninput="filtrarPersonas()">
+                        <input type="search" class="pf-input" data-f="search" placeholder="Buscar por nombre, DNI, código, área..." oninput="filtrarPersonas('<?= $pref ?>')">
                     </div>
+                    <?php if (count($rolesDisponibles) > 1): ?>
                     <span class="pf-select-wrap">
-                        <select class="pf-select" id="personRol" onchange="filtrarPersonas()" aria-label="Filtrar por rol">
+                        <select class="pf-select" data-f="rol" onchange="filtrarPersonas('<?= $pref ?>')" aria-label="Filtrar por rol">
                             <option value="">Rol: todos</option>
-                            <option value="Empleado">Empleado</option>
-                            <option value="Practicante">Practicante</option>
-                            <option value="Admin">Admin</option>
+                            <?php foreach ($rolesDisponibles as $r): ?>
+                                <option value="<?= esc($r) ?>"><?= esc($r) ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <span class="material-symbols-outlined">expand_more</span>
                     </span>
+                    <?php endif; ?>
                     <span class="pf-select-wrap">
-                        <select class="pf-select" id="personEstado" onchange="filtrarPersonas()" aria-label="Filtrar por estado">
+                        <select class="pf-select" data-f="estado" onchange="filtrarPersonas('<?= $pref ?>')" aria-label="Filtrar por estado">
                             <option value="">Estado: todos</option>
                             <option value="Activo">Activo</option>
                             <option value="Inactivo">Inactivo</option>
@@ -548,7 +577,7 @@
                     </span>
                     <?php if ($areasDisponibles): ?>
                     <span class="pf-select-wrap">
-                        <select class="pf-select" id="personArea" onchange="filtrarPersonas()" aria-label="Filtrar por área">
+                        <select class="pf-select" data-f="area" onchange="filtrarPersonas('<?= $pref ?>')" aria-label="Filtrar por área">
                             <option value="">Área: todas</option>
                             <?php foreach ($areasDisponibles as $a): ?>
                                 <option value="<?= esc($a) ?>"><?= esc($a) ?></option>
@@ -557,7 +586,7 @@
                         <span class="material-symbols-outlined">expand_more</span>
                     </span>
                     <?php endif; ?>
-                    <button type="button" class="pf-clear" onclick="limpiarPersonas()" title="Quitar filtros">
+                    <button type="button" class="pf-clear" onclick="limpiarPersonas('<?= $pref ?>')" title="Quitar filtros">
                         <span class="material-symbols-outlined">filter_alt_off</span> Limpiar
                     </button>
                 </div>
@@ -579,10 +608,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (empty($empleados)): ?>
-                                <tr><td colspan="8"><div class="empty-state"><span class="material-symbols-outlined">person_off</span><p>No hay empleados registrados</p></div></td></tr>
+                            <?php if (empty($lista)): ?>
+                                <tr><td colspan="8"><div class="empty-state"><span class="material-symbols-outlined">person_off</span><p><?= esc($sec['vacio']) ?></p></div></td></tr>
                             <?php else: ?>
-                                <?php foreach ($empleados as $emp):
+                                <?php foreach ($lista as $emp):
                                     $role = $emp['role'] ?? 'Empleado';
                                     $roleClass = match($role) { 'Dev' => 'role-dev', 'Admin' => 'role-admin', 'Practicante' => 'role-practicante', default => 'role-empleado' };
                                     $avatarClass = $role === 'Dev' ? 'pa-dev' : ($role === 'Admin' ? 'pa-admin' : 'pa-empleado');
@@ -654,7 +683,7 @@
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-                            <tr id="personNoResults" style="display:none;">
+                            <tr data-f="noresults" style="display:none;">
                                 <td colspan="8">
                                     <div class="pf-empty" style="display:block;">
                                         <span class="material-symbols-outlined" style="font-size:44px;display:block;margin:0 auto 8px;opacity:.25;color:var(--g-text-disabled);">person_search</span>
@@ -667,10 +696,10 @@
                 </div>
 
                 <div class="dev-table-mobile">
-                    <?php if (empty($empleados)): ?>
-                        <div class="empty-state"><span class="material-symbols-outlined">person_off</span><p>No hay empleados registrados</p></div>
+                    <?php if (empty($lista)): ?>
+                        <div class="empty-state"><span class="material-symbols-outlined">person_off</span><p><?= esc($sec['vacio']) ?></p></div>
                     <?php else: ?>
-                        <?php foreach ($empleados as $emp):
+                        <?php foreach ($lista as $emp):
                             $role = $emp['role'] ?? 'Empleado';
                             $roleClass = match($role) { 'Dev' => 'role-dev', 'Admin' => 'role-admin', 'Practicante' => 'role-practicante', default => 'role-empleado' };
                             $avatarClass = $role === 'Dev' ? 'pa-dev' : ($role === 'Admin' ? 'pa-admin' : 'pa-empleado');
@@ -727,10 +756,11 @@
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
-                    <div class="pf-empty" id="personNoResultsMobile">Ninguna persona coincide con el filtro.</div>
+                    <div class="pf-empty" data-f="noresults-m">Ninguna persona coincide con el filtro.</div>
                 </div>
             </div>
         </div>
+        <?php endforeach; ?>
 
         <div class="personal-section" id="codigos">
             <div class="personal-section-head">
@@ -1328,15 +1358,27 @@
 
 <script>
     (function () {
-        var total = <?= (int) $totalPersonas ?>;
-        window.filtrarPersonas = function () {
-            var q   = (document.getElementById('personSearch').value || '').toLowerCase().trim();
-            var rol = document.getElementById('personRol').value;
-            var est = document.getElementById('personEstado').value;
-            var are = (document.getElementById('personArea') || {}).value || '';
+        /* Los filtros son POR TABLA: cada sección (#equipo, #practicantes)
+           tiene su propia barra, sus propias filas y su propio contador.
+           Se busca todo dentro de la sección mediante [data-f]. */
+        function seccion(pref) { return document.getElementById(pref); }
+        function dentro(pref, sel) { var s = seccion(pref); return s ? s.querySelector(sel) : null; }
+        function todosDentro(pref, sel) { var s = seccion(pref); return s ? Array.prototype.slice.call(s.querySelectorAll(sel)) : []; }
+
+        window.filtrarPersonas = function (pref) {
+            pref = pref || 'equipo';
+            var s = seccion(pref);
+            if (!s) return;
+
+            var f = function (n) { return dentro(pref, '[data-f="' + n + '"]'); };
+            var q   = ((f('search') || {}).value || '').toLowerCase().trim();
+            var rol = (f('rol') || {}).value || '';
+            var est = (f('estado') || {}).value || '';
+            var are = (f('area') || {}).value || '';
+            var hayFiltro = !!(q || rol || est || are);
             var visibles = 0;
 
-            document.querySelectorAll('[data-buscar]').forEach(function (el) {
+            todosDentro(pref, '[data-buscar]').forEach(function (el) {
                 var ok = (!q || (el.getAttribute('data-buscar') || '').indexOf(q) !== -1)
                       && (!rol || el.getAttribute('data-rol') === rol)
                       && (!est || el.getAttribute('data-estado') === est)
@@ -1345,41 +1387,46 @@
                 if (ok && el.tagName === 'TR') visibles++;
             });
 
-            var cnt = document.getElementById('personCount');
-            if (cnt) cnt.textContent = (q || rol || est || are)
-                ? visibles + ' de ' + total + ' personas'
-                : total + ' personas';
+            var cnt = f('count');
+            if (cnt) {
+                var total = parseInt(cnt.getAttribute('data-total'), 10) || 0;
+                cnt.textContent = hayFiltro
+                    ? visibles + ' de ' + total + ' personas'
+                    : total + ' personas';
+            }
 
-            var nd = document.getElementById('personNoResults');
-            if (nd) nd.style.display = (q || rol || est || are) && visibles === 0 ? '' : 'none';
-            var nm = document.getElementById('personNoResultsMobile');
-            if (nm) nm.style.display = (q || rol || est || are) && visibles === 0 ? 'block' : 'none';
+            var nd = f('noresults');
+            if (nd) nd.style.display = hayFiltro && visibles === 0 ? '' : 'none';
+            var nm = f('noresults-m');
+            if (nm) nm.style.display = hayFiltro && visibles === 0 ? 'block' : 'none';
         };
 
-        window.limpiarPersonas = function () {
-            document.getElementById('personSearch').value = '';
-            document.getElementById('personRol').value = '';
-            document.getElementById('personEstado').value = '';
-            var ar = document.getElementById('personArea');
-            if (ar) ar.value = '';
-            filtrarPersonas();
-            marcarFiltros();
+        window.limpiarPersonas = function (pref) {
+            pref = pref || 'equipo';
+            ['search', 'rol', 'estado', 'area'].forEach(function (n) {
+                var el = dentro(pref, '[data-f="' + n + '"]');
+                if (el) el.value = '';
+            });
+            filtrarPersonas(pref);
+            marcarFiltros(pref);
         };
 
         /* Un filtro con valor se pinta como la píldora activa de sorteroOS */
-        window.marcarFiltros = function () {
-            ['personRol', 'personEstado', 'personArea'].forEach(function (id) {
-                var s = document.getElementById(id);
-                if (!s) return;
-                var wrap = s.closest('.pf-select-wrap');
-                if (wrap) wrap.classList.toggle('on', s.value !== '');
+        window.marcarFiltros = function (pref) {
+            ['equipo', 'practicantes'].forEach(function (p) {
+                if (pref && p !== pref) return;
+                todosDentro(p, '.pf-select').forEach(function (s) {
+                    var wrap = s.closest('.pf-select-wrap');
+                    if (wrap) wrap.classList.toggle('on', s.value !== '');
+                });
             });
         };
-        ['personRol', 'personEstado', 'personArea'].forEach(function (id) {
-            var s = document.getElementById(id);
-            if (s) s.addEventListener('change', marcarFiltros);
+        ['equipo', 'practicantes'].forEach(function (p) {
+            todosDentro(p, '.pf-select').forEach(function (s) {
+                s.addEventListener('change', function () { marcarFiltros(p); });
+            });
+            marcarFiltros(p);
         });
-        marcarFiltros();
     })();
 </script>
 

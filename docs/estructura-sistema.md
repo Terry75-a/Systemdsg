@@ -181,7 +181,7 @@ Archivo: `app/Config/Routes.php` (311 líneas). Control por defecto `Home`.
 
 | Método | Ruta | Controlador |
 |---|---|---|
-| GET | `/`, `/dsg`, `/precio`, `/servicios`, `/asisten-dsg`, `/precio-asisten` | `Home::*` |
+| GET | `/`, `/dsg`, `/precio`, `/servicios`, `/asisten-dsg` | `Home::*` |
 | GET | `/registro` | `AuthController::registerForm` |
 | POST | `/auth/register` | `AuthController::register` |
 | GET | `/login-verde` | `AuthController::loginForm` |
@@ -614,7 +614,7 @@ Multi-tenant: casi todo lleva `admin_id` → cada Admin ve solo su gente.
 | **Empleado** | `empleado/{dashboard, practicante-dashboard, practicante-asistencias, practicante-horario, practicante-incidencias}.php` |
 | **Dev (7)** | `dev-{panel, admins, empleados, codigos, estructura, auditoria, perfil}.php` |
 | **ERP** | `personas/{personas, personasadd, personasadd_frame, tabla}`, `Usuarios.php`, `Permisos.php`, `Menu.php`, `perfil.php`, `calendario/`, `mantenedor/{planes, tipo_plan, tipo_planadd}`, `clientes/`, `notificaciones/` |
-| **Landing / auth** | `index`, `dsg`, `precio`, `servicios`, `asisten-dsg`, `precio-asisten`, `login`, `login-asisten`, `registro`, `contacto-demo`, `dashboard`, `dashboard-verde` |
+| **Landing / auth** | `index`, `dsg`, `precio`, `servicios`, `asisten-dsg`, `login`, `login-asisten`, `registro`, `contacto-demo`, `dashboard`, `dashboard-verde` |
 | **Errores** | `errors/{html,cli}/*` |
 
 **Patrón de composición ERP:**
