@@ -51,12 +51,6 @@ class Home extends BaseController
         return view('asisten-dsg');
     }
 
-    // Página de precios de Asisten DSG
-    public function precioAsisten(): string
-    {
-        return view('precio-asisten');
-    }
-
     // Login standalone: paleta verde Asisten DSG
     public function loginVerde(): string
     {

@@ -24,7 +24,6 @@ $routes->get('dsg', 'Home::dsg');
 $routes->get('precio', 'Home::precio');
 $routes->get('servicios', 'Home::servicios');
 $routes->get('asisten-dsg', 'Home::asistencia');
-$routes->get('precio-asisten', 'Home::precioAsisten');
 $routes->get('terminos', 'Home::terminos');
 
 // Sitemap dinámico (usa el baseURL configurado)
