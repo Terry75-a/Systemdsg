@@ -17,6 +17,7 @@
         .ad-back {
             display: inline-flex; align-items: center; gap: 6px; font-size: .85rem;
             font-weight: 600; color: var(--g-primary); text-decoration: none;
+            align-self: flex-start;
         }
         .ad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 6px 18px 18px; }
         .ad-kv { padding: 10px 0; }
@@ -119,7 +120,7 @@
             <?php endif; ?>
 
             <div class="ad-wrap">
-                <a class="ad-back" href="<?= site_url('admin/asistencias') ?>">
+                <a class="ad-back dev-btn dev-btn-sm dev-btn-outline" href="<?= site_url('admin/asistencias') ?>">
                     <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> Volver a asistencias
                 </a>
 
