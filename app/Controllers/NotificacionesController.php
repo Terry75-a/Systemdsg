@@ -104,6 +104,7 @@ class NotificacionesController extends BaseController
         echo view('layouts/footer');
     }
 
+
     /**
      * Devuelve el JSON para la campanita del topbar (total + lista de empresas por vencer)
      */
@@ -205,3 +206,5 @@ class NotificacionesController extends BaseController
         ]);
     }
 }
+
+
