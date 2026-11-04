@@ -80,6 +80,11 @@ class EmployeeController extends BaseController
 
         $hoyRegistro = $this->attendanceModel->findByUserAndDate($userId, $hoy) ?: null;
 
+        // Salidas de días anteriores que quedaron sin marcar: deben cerrarse
+        // antes de registrar la entrada de hoy.
+        $salidasPendientes = $this->attendanceModel->findPendingExits($userId, $hoy);
+        $salidaPendiente   = $salidasPendientes[0] ?? null;
+
         $misRegistros = $this->attendanceModel
             ->where('user_id', $userId)
             ->like('date', $mes, 'after')
@@ -200,6 +205,8 @@ class EmployeeController extends BaseController
             'miInfo'          => $user,
             'miHorario'       => $miHorario,
             'hoyRegistro'     => $hoyRegistro,
+            'salidaPendiente' => $salidaPendiente,
+            'salidasPendientes' => $salidasPendientes,
             'misRegistros'    => $misRegistros,
             'misIncidencias'  => $misIncidencias,
             'misAsistencias'  => $misAsistencias,
@@ -399,6 +406,139 @@ class EmployeeController extends BaseController
             return redirect()->to(base_url('mi-panel'));
         }
         $geo['geo_ok'] = $geoValido;
+
+        // ── Salidas pendientes de días anteriores ──────────────────────────
+        // Si el colaborador olvidó marcar su salida, primero debe cerrarla;
+        // recién después puede marcar la entrada de hoy.
+        $pendientes   = $this->attendanceModel->findPendingExits($userId, $hoy);
+        $pendienteId  = (int) $this->request->getPost('salida_pendiente_id');
+
+        if ($pendienteId > 0) {
+            $pendiente = null;
+            foreach ($pendientes as $p) {
+                if ((int) ($p['id'] ?? 0) === $pendienteId) { $pendiente = $p; break; }
+            }
+
+            if ($pendiente === null) {
+                $s->setFlashdata('msg', 'La salida pendiente ya no existe o no te pertenece.');
+                $s->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('mi-panel'));
+            }
+
+            $scPend      = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+            $horaProg    = substr((string) ($scPend['hora_salida'] ?? ''), 0, 5);
+            $horaPost    = trim((string) $this->request->getPost('hora_salida_pendiente'));
+
+            if (preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $horaPost) === 1) {
+                $horaSalidaTxt = $horaPost;
+            } elseif ($horaProg !== '') {
+                // No recordó la hora: se usa la salida de su horario.
+                $horaSalidaTxt = $horaProg;
+            } else {
+                $s->setFlashdata('msg', 'Indica la hora en que saliste para cerrar tu salida pendiente.');
+                $s->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('mi-panel'));
+            }
+
+            $fechaPend = date('d/m/Y', strtotime((string) $pendiente['date']));
+
+            // La salida debe ser posterior a la entrada de ese mismo día.
+            $entradaPend = substr((string) ($pendiente['time_in'] ?? ''), 0, 5);
+            if ($entradaPend !== '' && strtotime($horaSalidaTxt) <= strtotime($entradaPend)) {
+                $s->setFlashdata('msg', "La hora de salida ({$horaSalidaTxt}) debe ser posterior a tu entrada ({$entradaPend}) del {$fechaPend}.");
+                $s->setFlashdata('tipo', 'warning');
+                return redirect()->to(base_url('mi-panel'));
+            }
+
+            $timeOut = strlen($horaSalidaTxt) === 5 ? $horaSalidaTxt . ':00' : $horaSalidaTxt;
+
+            // ¿Salió antes de su hora? Sólo entonces se genera la incidencia.
+            // En feriado o día de descanso no hay hora de salida que cumplir.
+            $diaLibrePend    = $this->motivoDiaNoLaborable($scPend, $adminId, (string) $pendiente['date']);
+            $salidaAnticipada = $diaLibrePend === null
+                && $horaProg !== ''
+                && strtotime($horaSalidaTxt) < strtotime($horaProg);
+            $just             = trim((string) $this->request->getPost('justificacion'));
+            $conMotivo        = $just !== '';
+
+            // Si el cron la había marcado como "Sin salida", al cerrarla se
+            // recalcula el estado real según la hora de entrada.
+            $statusPend  = (string) ($pendiente['status'] ?? '');
+            $statusNuevo = null;
+            if ($statusPend === 'no_exit') {
+                $statusNuevo  = 'present';
+                $horaBasePend = substr((string) ($scPend['hora_entrada'] ?? ''), 0, 5);
+                $tolPend      = (int) ($scPend['tolerancia'] ?? 10);
+                $entradaPend  = substr((string) ($pendiente['time_in'] ?? ''), 0, 5);
+                if ($diaLibrePend === null && $horaBasePend !== '' && $entradaPend !== ''
+                    && strtotime($entradaPend) > strtotime($horaBasePend) + $tolPend * 60) {
+                    $statusNuevo = 'late';
+                }
+            }
+
+            $obs = trim((string) ($pendiente['observacion'] ?? ''));
+            $nota = "Salida del {$fechaPend} registrada el " . date('d/m/Y') . '.';
+            $obs  = $obs === '' ? $nota : $obs . ' · ' . $nota;
+
+            $cambios = [
+                'time_out'    => $timeOut,
+                'evidencia'   => $evidencia ?: ($pendiente['evidencia'] ?? ''),
+                'lat'         => $geo['lat'],
+                'lng'         => $geo['lng'],
+                'ip'          => $geo['ip'],
+                'geo_ok'      => $geo['geo_ok'] ?? null,
+                'observacion' => $obs,
+            ];
+            if ($statusNuevo !== null) {
+                $cambios['status'] = $statusNuevo;
+            }
+            $this->attendanceModel->update((int) $pendiente['id'], $cambios);
+
+            if ($salidaAnticipada) {
+                $this->incidentModel->insert([
+                    'admin_id'      => $adminId ?: null,
+                    'att_id'        => (int) $pendiente['id'],
+                    'user_id'       => $userId,
+                    'name'          => $user['name'] ?? '',
+                    'tipo'          => 'Salida anticipada',
+                    'fecha'         => date('Y-m-d H:i:s'),
+                    'detalle'       => "Salió a las {$horaSalidaTxt} · salida prevista {$horaProg} (registro tardío del {$fechaPend})",
+                    'estado'        => $conMotivo ? 'Revisión' : 'Pendiente',
+                    'justificacion' => $conMotivo ? $just : '',
+                ]);
+
+                (new \App\Services\NotificationService())->avisarSalidaAnticipada(
+                    $user,
+                    $horaProg,
+                    $horaSalidaTxt
+                );
+            }
+
+            $svc = new \App\Services\NotificationService();
+            $svc->marcacionRegistrada((int) $pendiente['id'], $adminId);
+            $svc->asistenciaMarcada((int) $pendiente['id'], $adminId);
+
+            $quedan = count($pendientes) - 1;
+            $s->setFlashdata('msg', "Salida pendiente del {$fechaPend} registrada a las {$horaSalidaTxt}"
+                . ($salidaAnticipada
+                    ? ($conMotivo ? ' · salida anticipada con motivo, en revisión' : ' · salida anticipada sin motivo: justifícala en Mis Incidencias')
+                    : '')
+                . ($quedan > 0
+                    ? ". Quedan {$quedan} salida(s) pendiente(s) por registrar."
+                    : '. Ya puedes marcar tu entrada de hoy.'));
+            $s->setFlashdata('tipo', $salidaAnticipada && ! $conMotivo ? 'warning' : 'success');
+            return redirect()->to(base_url('mi-panel'));
+        }
+
+        // Intento de marcar cualquier asistencia con salidas anteriores abiertas:
+        // se bloquea y se le indica cuál debe cerrar primero.
+        if ($pendientes !== []) {
+            $p     = $pendientes[0];
+            $fecha = date('d/m/Y', strtotime((string) $p['date']));
+            $s->setFlashdata('msg', "Tienes una salida pendiente del {$fecha}. Regístrala primero y después podrás marcar la entrada de hoy.");
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('mi-panel'));
+        }
 
         $att = $this->attendanceModel->findByUserAndDate($userId, $hoy);
 

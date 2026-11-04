@@ -20,6 +20,27 @@ class AttendanceModel extends Model
         return $this->where('user_id', $userId)->where('date', $date)->first();
     }
 
+    /**
+     * Salidas sin registrar de días anteriores (entrada marcada, salida vacía).
+     * Se ordenan de la más antigua a la más reciente: el colaborador debe
+     * cerrarlas en ese orden antes de poder marcar la entrada de hoy.
+     */
+    public function findPendingExits(int $userId, ?string $before = null): array
+    {
+        return $this->where('user_id', $userId)
+            ->where('date <', $before ?? date('Y-m-d'))
+            ->where('time_in IS NOT NULL', null, false)
+            ->where('time_out', null)
+            ->orderBy('date', 'ASC')
+            ->findAll();
+    }
+
+    /** La salida pendiente más antigua del colaborador (o null). */
+    public function findOldestPendingExit(int $userId, ?string $before = null): ?array
+    {
+        return $this->findPendingExits($userId, $before)[0] ?? null;
+    }
+
     public function getToday(?int $adminId = null): array
     {
         $builder = $this->where('date', date('Y-m-d'));

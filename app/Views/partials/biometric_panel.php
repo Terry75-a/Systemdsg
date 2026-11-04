@@ -9,6 +9,12 @@
     // y cual es la hora de salida esperada (para detectar salida anticipada)
     $bioMarkExit      = (bool) (($bioMark['exit'] ?? false) === true);
     $bioMarkHoraSalida = (string) ($bioMark['hora_salida'] ?? '');
+    // Salida pendiente de un día anterior (si existe)
+    $bioPendingId      = (int) ($bioMark['pending_id'] ?? 0);
+    $bioPendingDate    = (string) ($bioMark['pending_date'] ?? '');
+    $bioPendingTimeIn  = (string) ($bioMark['pending_time_in'] ?? '');
+    $bioPendingSched   = (string) ($bioMark['pending_scheduled'] ?? $bioMarkHoraSalida);
+    $bioPendingDateTxt = $bioPendingDate !== '' ? date('d/m/Y', strtotime($bioPendingDate)) : '';
     // ID del horario del usuario
     $userScheduleId   = (int) ($userScheduleId ?? 0);
 ?>
@@ -194,11 +200,30 @@
                 <span class="material-symbols-outlined">swap_horiz</span> <span id="bioSwitchText"></span>
             </button>
 
+            <!-- Salida pendiente de un día anterior -->
+            <div id="bioCheckPending" style="display:none; margin-top:14px;">
+                <div style="background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.32); border-radius:12px; padding:11px 13px; margin-bottom:10px; display:flex; gap:10px; align-items:flex-start;">
+                    <span class="material-symbols-outlined" style="color:#60a5fa; font-size:19px; flex-shrink:0;">history</span>
+                    <div style="font-size:12.5px; color:var(--g-text-secondary,#a9b6c8); line-height:1.5;">
+                        Salida pendiente del <strong style="color:var(--g-text,#e5edf7);"><?= esc($bioPendingDateTxt) ?></strong>
+                        (entrada <span style="font-family:monospace; font-weight:700;"><?= esc(substr($bioPendingTimeIn, 0, 5)) ?></span>).
+                        Indica la hora en que saliste.
+                    </div>
+                </div>
+                <label for="bioPendingHora" style="display:block; font-size:11.5px; color:var(--g-text-secondary,#a9b6c8); margin-bottom:5px;">Hora de salida</label>
+                <input type="time" id="bioPendingHora" value="<?= esc($bioPendingSched) ?>"
+                    style="width:100%; box-sizing:border-box; border:1px solid var(--g-border,#26323f); border-radius:12px; padding:10px 13px; font-size:14px; font-family:monospace; color:var(--g-text,#e5edf7); background:var(--g-surface,#1b2430);">
+                <div style="font-size:11px; color:var(--g-text-secondary,#a9b6c8); margin-top:6px; line-height:1.45;">
+                    Si no cambias la hora, se registrará la salida de tu horario
+                    (<span style="font-family:monospace; font-weight:700;"><?= esc($bioPendingSched ?: '—') ?></span>).
+                </div>
+            </div>
+
             <div id="bioCheckEarly" style="display:none; margin-top:14px;">
                 <div style="background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.32); border-radius:12px; padding:11px 13px; margin-bottom:9px; display:flex; gap:10px; align-items:flex-start;">
                     <span class="material-symbols-outlined" style="color:var(--g-warning,#f59e0b); font-size:19px; flex-shrink:0;">logout</span>
                     <div style="font-size:12.5px; color:var(--g-text-secondary,#a9b6c8); line-height:1.5;">
-                        Estás saliendo <strong style="color:var(--g-text,#e5edf7);">antes de tu hora de salida</strong>
+                        <span id="bioCheckEarlyLead">Estás saliendo <strong style="color:var(--g-text,#e5edf7);">antes de tu hora de salida</strong></span>
                         (<span id="bioCheckHoraSalida" style="font-family:monospace; font-weight:700;"></span>).
                         Escribe el motivo; quedará en <strong style="color:var(--g-text,#e5edf7);">revisión</strong> para tu administrador.
                     </div>
@@ -223,6 +248,8 @@
         <input type="hidden" name="bio_metodo" id="bioCheckMetodo" value="">
         <input type="hidden" name="evidencia" id="bioCheckEvi" value="">
         <input type="hidden" name="justificacion" id="bioCheckJustVal" value="">
+        <input type="hidden" name="salida_pendiente_id" id="bioPendingId" value="<?= $bioPendingId ?>">
+        <input type="hidden" name="hora_salida_pendiente" id="bioPendingHoraVal" value="">
         <input type="hidden" name="lat" id="bioLat" value="">
         <input type="hidden" name="lng" id="bioLng" value="">
     </form>
@@ -460,19 +487,22 @@
         $('bioCheckConfirm').disabled = true;
         $('bioCheckHuellaBtn').disabled = false;
 
-        // Salida anticipada: si se marca salida antes de la hora prevista, pedir motivo
-        B.earlyExit = setupEarlyExit();
-        var box = $('bioCheckEarly');
-        if (B.earlyExit) {
-            $('bioCheckHoraSalida').textContent = '<?= esc($bioMarkHoraSalida) ?>';
-            $('bioCheckJust').value = '';
-            $('bioCheckJustVal').value = '';
-            box.style.display = '';
+        // Salida pendiente: se pide la hora real (por defecto, la del horario)
+        B.pending = <?= $bioPendingId ?> > 0;
+        B.pendingSched = '<?= esc($bioPendingSched) ?>';
+        var pBox = $('bioCheckPending');
+        if (B.pending) {
+            pBox.style.display = '';
+            var ph = $('bioPendingHora');
+            if (!ph.value) ph.value = B.pendingSched;
+            $('bioPendingHoraVal').value = ph.value;
         } else {
-            $('bioCheckJust').value = '';
-            $('bioCheckJustVal').value = '';
-            box.style.display = 'none';
+            pBox.style.display = 'none';
+            $('bioPendingHoraVal').value = '';
         }
+
+        // Salida anticipada: si sale antes de la hora prevista, pedir motivo
+        refreshEarlyBox();
 
         detectMethod(tH, tR).then(function (m) {
             m = (m === 'huella' && !tH) || (m === 'facial' && !tR) ? (tH ? 'huella' : 'facial') : m;
@@ -530,14 +560,51 @@
         });
     }
 
+    function horaMin(h) {
+        if (!/^\d{2}:\d{2}$/.test(h)) return null;
+        var p = h.split(':');
+        return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+    }
+
+    // ¿La hora elegida para la salida pendiente es antes de la del horario?
+    function pendingEarly() {
+        if (!B.pending) return false;
+        var hm = horaMin($('bioPendingHora').value);
+        var sm = horaMin(B.pendingSched);
+        return hm !== null && sm !== null && hm < sm;
+    }
+
     function setupEarlyExit() {
         if (<?= $bioMarkExit ? '1' : '0' ?> !== 1) return false;
+        if (B.pending) return pendingEarly();
         var h = '<?= esc($bioMarkHoraSalida) ?>';
-        if (!/^\d{2}:\d{2}$/.test(h)) return false;
-        var p = h.split(':');
-        var salMin = parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+        var sm = horaMin(h);
+        if (sm === null) return false;
         var n = new Date();
-        return (n.getHours() * 60 + n.getMinutes()) < salMin;
+        return (n.getHours() * 60 + n.getMinutes()) < sm;
+    }
+
+    // Muestra u oculta el motivo según la hora elegida (salida de hoy o pendiente)
+    function refreshEarlyBox() {
+        B.earlyExit = setupEarlyExit();
+        var box = $('bioCheckEarly');
+        if (B.earlyExit) {
+            $('bioCheckHoraSalida').textContent = B.pending ? B.pendingSched : '<?= esc($bioMarkHoraSalida) ?>';
+            $('bioCheckEarlyLead').innerHTML = (B.pending ? 'Saliste' : 'Estás saliendo')
+                + ' <strong style="color:var(--g-text,#e5edf7);">antes de tu hora de salida</strong>';
+            box.style.display = '';
+        } else {
+            $('bioCheckJust').value = '';
+            $('bioCheckJustVal').value = '';
+            box.style.display = 'none';
+        }
+    }
+
+    // Al cambiar la hora de la salida pendiente se recalcula si fue anticipada
+    var _phInput = document.getElementById('bioPendingHora');
+    if (_phInput) {
+        _phInput.addEventListener('input', refreshEarlyBox);
+        _phInput.addEventListener('change', refreshEarlyBox);
     }
 
     function canFinger() {
@@ -741,6 +808,16 @@
         if (!(B.humino_huellaOk || B.facialOk)) {
             msg('bioCheckMsg', 'Verifica tu huella o tu rostro para continuar.', false);
             return;
+        }
+        // Salida pendiente: validar la hora real antes de enviar
+        if (B.pending) {
+            var hp = $('bioPendingHora').value.trim();
+            if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(hp)) {
+                msg('bioCheckMsg', 'Indica una hora de salida válida (HH:MM).', false);
+                return;
+            }
+            $('bioPendingHoraVal').value = hp;
+            B.earlyExit = pendingEarly();
         }
         if (B.earlyExit) {
             var just = $('bioCheckJust').value.trim();

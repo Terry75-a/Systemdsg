@@ -20,9 +20,11 @@
 ?>
 
 <?= view('partials/tk-marcar', [
-    'hoyRegistro' => $hoyRegistro ?? null,
-    'miHorario'   => $miHorario,
-    'miInfo'      => $miInfo,
+    'hoyRegistro'        => $hoyRegistro ?? null,
+    'salidaPendiente'    => $salidaPendiente ?? null,
+    'salidasPendientes'  => $salidasPendientes ?? [],
+    'miHorario'          => $miHorario,
+    'miInfo'             => $miInfo,
 ]) ?>
 
 <!-- KPIs · cada uno lleva a su página -->
