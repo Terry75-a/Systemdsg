@@ -100,6 +100,7 @@
         return `
             <article class="pdsg-suc-card pdsg-suc-row" role="button" tabindex="0"
                 data-index="${index}"
+                data-id="${escHtml(s.id_sucursal || '')}"
                 data-nombre="${escHtml(s.nombre_sucursal || '')}"
                 data-codigo="${escHtml(s.codigo_cliente || '')}"
                 data-representante="${escHtml(s.representante || '')}"
@@ -745,9 +746,81 @@
             chip.attr('class', 'pdsg-chip pdsg-chip-off').html('<span class="ms-dot"></span> Inactivo');
         }
 
+        cargarPagosSucursal($fila.data('id'));
+
         var modal = new bootstrap.Modal(document.getElementById('modalVerSucursal'));
         modal.show();
     });
+
+    // ── Plan y pagos de la sucursal (solo lectura) ──
+    var pagosReq = 0;
+    function soles(n) { return 'S/ ' + Number(n || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function fechaCorta(f) {
+        if (!f) return '';
+        var p = String(f).slice(0, 10).split('-');
+        return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : f;
+    }
+    function estadoPago(it) {
+        if (!it.activo) return ['Inactivo', 'is-off'];
+        if (it.sin_fin) return ['Vigente', 'is-ok'];
+        if (it.dias === null || it.dias === undefined) return ['Activo', 'is-ok'];
+        if (it.dias < 0) return ['Vencido hace ' + Math.abs(it.dias) + ' d', 'is-bad'];
+        if (it.dias === 0) return ['Vence hoy', 'is-warn'];
+        if (it.dias <= 7) return ['Vence en ' + it.dias + ' d', 'is-warn'];
+        return ['Vigente', 'is-ok'];
+    }
+    function filaPago(it, esPlan) {
+        var st = estadoPago(it);
+        var detalle = [];
+        if (esPlan && it.tipo_plan) detalle.push(escHtml(it.tipo_plan));
+        if (it.inicio) detalle.push('Desde ' + fechaCorta(it.inicio));
+        detalle.push(it.sin_fin ? 'Sin fecha de fin' : (it.vence ? 'Vence ' + fechaCorta(it.vence) : 'Sin vencimiento'));
+        return '<div class="pv-pago">' +
+                 '<div class="pv-pago-main">' +
+                   '<span class="pv-pago-name">' + escHtml(it.nombre) + '</span>' +
+                   '<span class="pv-pago-sub">' + detalle.join(' · ') + '</span>' +
+                   (it.observacion ? '<span class="pv-pago-obs">' + escHtml(it.observacion) + '</span>' : '') +
+                 '</div>' +
+                 '<div class="pv-pago-side">' +
+                   '<b class="pv-pago-monto">' + soles(it.precio) + '</b>' +
+                   '<span class="pv-pago-st ' + st[1] + '"><span class="ms-dot"></span> ' + st[0] + '</span>' +
+                 '</div>' +
+               '</div>';
+    }
+    function vacioPago(icono, txt) {
+        return '<div class="pv-pago-empty"><span class="material-symbols-outlined">' + icono + '</span>' + txt + '</div>';
+    }
+    function cargarPagosSucursal(idSuc) {
+        var req = ++pagosReq;
+        var $pl = $('#suc_planes'), $pg = $('#suc_pagos');
+        $('#suc_planes_meta, #suc_pagos_meta').text('');
+        if (!idSuc || !cfg.urlPagosSucursal) {
+            $pl.html(vacioPago('info', 'Guarda la sucursal para ver su plan.'));
+            $pg.html(vacioPago('info', 'Guarda la sucursal para ver sus pagos.'));
+            return;
+        }
+        $pl.html(vacioPago('progress_activity', 'Cargando plan…'));
+        $pg.html(vacioPago('progress_activity', 'Cargando pagos…'));
+        $.getJSON(cfg.urlPagosSucursal + '/' + encodeURIComponent(idSuc))
+            .done(function (res) {
+                if (req !== pagosReq) return;              // otra sucursal abierta mientras tanto
+                var d = (res && res.data) || { planes: [], otros: [] };
+                $pl.html(d.planes.length ? d.planes.map(function (it) { return filaPago(it, true); }).join('')
+                                         : vacioPago('workspace_premium', 'Sin plan asignado.'));
+                $pg.html(d.otros.length ? d.otros.map(function (it) { return filaPago(it, false); }).join('')
+                                        : vacioPago('receipt_long', 'Sin otros pagos registrados.'));
+                if (d.planes.length > 1) $('#suc_planes_meta').text(d.planes.length + ' planes');
+                if (d.otros.length) {
+                    var total = d.otros.reduce(function (a, it) { return a + (it.activo ? Number(it.precio || 0) : 0); }, 0);
+                    $('#suc_pagos_meta').text(d.otros.length + (d.otros.length === 1 ? ' pago · ' : ' pagos · ') + soles(total));
+                }
+            })
+            .fail(function () {
+                if (req !== pagosReq) return;
+                $pl.html(vacioPago('error', 'No se pudo cargar el plan.'));
+                $pg.html(vacioPago('error', 'No se pudieron cargar los pagos.'));
+            });
+    }
 
     function pdsgModalSucursalCerrar() {
         var modal = $('#modalVerSucursal');

@@ -261,4 +261,61 @@ public function Asignarplanes(){
         return $this->response->setJSON(['status' => 'error', 'message' => 'No se encontró una empresa asociada a esta persona.']);
     }
   }
+
+  /**
+   * Plan(es) y otros pagos de una sucursal, para el modal «Ver sucursal».
+   * Solo lectura. Funciona aunque la tabla pagos aún no tenga las columnas
+   * id_tipo_pago / concepto / correo_notificacion (bases sin actualizar):
+   * en ese caso, un registro con plan se toma como plan y el resto como pago.
+   * GET personas/pagosSucursal/{id}
+   */
+  public function pagosSucursal($idSucursal = null)
+  {
+    $id = (int) $idSucursal;
+    if ($id <= 0) {
+      return $this->response->setStatusCode(400)->setJSON(['status' => 'error', 'message' => 'Sucursal no válida.']);
+    }
+
+    $db = \Config\Database::connect();
+    $col = static fn (string $c): bool => $db->fieldExists($c, 'pagos');
+    $sel = 'pg.id_pago, pg.id_plan, pg.fecha_de_inicio, pg.fecha_de_vencimiento, pg.tipo_fin, pg.num_repeticiones,'
+         . ' pg.fecha_fin, pg.precio, pg.observaciones, pg.estado, pl.nombre_plan, tp.nombre_tipo AS tipo_plan'
+         . ($col('id_tipo_pago') ? ', pg.id_tipo_pago' : ', NULL AS id_tipo_pago')
+         . ($col('concepto') ? ', pg.concepto' : ', NULL AS concepto')
+         . ($col('correo_notificacion') ? ', pg.correo_notificacion' : ', NULL AS correo_notificacion');
+
+    $rows = $db->table('pagos pg')
+               ->select($sel, false)
+               ->join('planes pl', 'pl.id_plan = pg.id_plan', 'left')
+               ->join('tipo_plan tp', 'tp.id_tipo_plan = pg.id_tipo_plan', 'left')
+               ->where('pg.id_sucursal', $id)
+               ->orderBy('pg.id_pago', 'DESC')
+               ->get()->getResultArray();
+
+    $hoy = strtotime(date('Y-m-d'));
+    $planes = [];
+    $otros  = [];
+    foreach ($rows as $r) {
+      $tipo = $r['id_tipo_pago'] !== null ? (int) $r['id_tipo_pago'] : (!empty($r['id_plan']) ? 1 : 2);
+      // vencimiento: el registrado o, si el plan termina en una fecha, esa fecha
+      $vence = $r['fecha_de_vencimiento'] ?: (($r['tipo_fin'] ?? '') === 'FECHA' ? $r['fecha_fin'] : null);
+      $dias  = $vence ? (int) round((strtotime($vence) - $hoy) / 86400) : null;
+      $item  = [
+        'id'          => (int) $r['id_pago'],
+        'nombre'      => $tipo === 1 ? ($r['nombre_plan'] ?: 'Plan') : ($r['concepto'] ?: ($r['observaciones'] ?: 'Pago')),
+        'tipo_plan'   => $r['tipo_plan'],
+        'precio'      => (float) $r['precio'],
+        'inicio'      => $r['fecha_de_inicio'],
+        'vence'       => $vence,
+        'sin_fin'     => ($r['tipo_fin'] ?? '') === 'SIN_FIN' && !$vence,
+        'dias'        => $dias,
+        'activo'      => (int) $r['estado'] === 1,
+        'observacion' => $tipo === 1 ? $r['observaciones'] : ($r['concepto'] ? $r['observaciones'] : null),
+        'correo'      => $r['correo_notificacion'],
+      ];
+      if ($tipo === 1) { $planes[] = $item; } else { $otros[] = $item; }
+    }
+
+    return $this->response->setJSON(['status' => 'success', 'data' => ['planes' => $planes, 'otros' => $otros]]);
+  }
 }

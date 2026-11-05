@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20260922?v=20260922') ?>">
-    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
 </head>
 <body>
 
@@ -23,8 +24,8 @@
 
             <div class="reveal">
                 <div class="login-brand">
-                    <span class="login-brand-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo"></span>
-                    <span class="login-brand-text">DSG Perú<small>TECHNOLOGY</small></span>
+                    <span class="login-brand-mark"><img src="<?= base_url('images/asisten/asisten-icono-app.svg') ?>" alt="Asisten DSG"></span>
+                    <span class="login-brand-text">Asisten DSG<small>DSG PERÚ TECHNOLOGY</small></span>
                 </div>
 
                 <div class="login-eyebrow"><span class="pulse"></span> Acceso autorizado</div>
@@ -149,7 +150,7 @@
 
                 <div class="login-foot">
                     <a href="<?= base_url('registro') ?>" class="login-foot-link">¿No tienes cuenta? Crear una</a>
-                    <a href="<?= base_url('asisten-dsg') ?>" class="login-foot-link">← Volver al sitio principal</a>
+                    <a href="<?= base_url('/') ?>" class="login-foot-link">← Volver al sitio principal</a>
                     <span class="login-foot-help">¿Problemas para entrar? Contacta a tu administrador.</span>
                 </div>
             </div>

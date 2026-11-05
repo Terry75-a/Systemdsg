@@ -180,4 +180,69 @@ abstract class BaseController extends Controller
 
         return redirect()->to(base_url($route));
     }
+
+    // ════════════════════════════════════════
+    // IMÁGENES BIOMÉTRICAS (rostro / evidencia)
+    // ════════════════════════════════════════
+
+    /** Límites de la imagen biométrica (bytes binarios). */
+    protected const BIO_MAX_BIN = 3145728;   // 3 MB
+    protected const BIO_MAX_B64 = 4194304;   // 4 MB en base64
+    protected const BIO_MIN_BIN = 200;
+    protected const BIO_DIRS    = ['evidencias', 'rostros'];
+    protected const BIO_MIME    = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
+    /**
+     * Guarda una imagen biométrica (data URL) en writable/uploads.
+     *
+     * $targetUserId es el dueño del archivo: al marcar asistencia es la
+     * sesión actual; cuando el administrador registra el rostro de alguien,
+     * esa persona. EvidenciaController usa ese prefijo (user_ID_) para el
+     * control de acceso, así que nunca se inventa.
+     */
+    protected function saveBioImage(string $dataUrl, string $subdir, ?int $targetUserId = null): string
+    {
+        // Sólo los directorios previstos: nada de traversal.
+        if (! in_array($subdir, self::BIO_DIRS, true)) {
+            return '';
+        }
+
+        $dataUrl = trim($dataUrl);
+        if ($dataUrl === '' || ! preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/i', $dataUrl)) {
+            return '';
+        }
+
+        $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
+        if (strlen($base64) > self::BIO_MAX_B64) {
+            return '';
+        }
+
+        $bin = base64_decode($base64, true);
+        if ($bin === false || strlen($bin) < self::BIO_MIN_BIN || strlen($bin) > self::BIO_MAX_BIN) {
+            return '';
+        }
+
+        // Debe ser una imagen real del tipo declarado (bloquea SVG/HTML embebido).
+        $info = @getimagesizefromstring($bin);
+        $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
+        if (! isset(self::BIO_MIME[$mime])) {
+            return '';
+        }
+
+        $dir = WRITEPATH . 'uploads/' . $subdir;
+        if (! is_dir($dir) && ! @mkdir($dir, 0775, true)) {
+            return '';
+        }
+
+        $owner = $targetUserId ?? (int) session()->get('user_id');
+        $name  = 'user_' . $owner
+            . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(4))
+            . '.' . self::BIO_MIME[$mime];
+
+        if (@file_put_contents($dir . '/' . $name, $bin) === false) {
+            return '';
+        }
+
+        return $subdir . '/' . $name;
+    }
 }

@@ -547,4 +547,130 @@ class AdminController extends AdminBaseController
         return redirect()->to(base_url('admin/horarios'));
     }
 
+    // ════════════════════════════════════════
+    // BIOMETRÍA DEL PERSONAL — la registra el admin
+    // ════════════════════════════════════════
+
+    /**
+     * Devuelve la persona sólo si es Empleado/Practicante del equipo de
+     * este admin. Un admin jamás toca el personal de otro.
+     */
+    private function personaBio(int $userId): ?array
+    {
+        if ($userId <= 0) return null;
+
+        $member = $this->userModel->find($userId);
+        if (! $member) return null;
+
+        if (! in_array((string) ($member['role'] ?? ''), ['Empleado', 'Practicante'], true)) return null;
+
+        return (int) ($member['admin_id'] ?? -1) === $this->adminId() ? $member : null;
+    }
+
+    /** Borra una imagen biométrica sólo si es de esa persona. */
+    private function borrarImagenBio(?string $relPath, int $userId): void
+    {
+        if ($relPath === null || $relPath === '') return;
+
+        $nombre = basename($relPath);
+        $dir    = dirname($relPath);
+        if (! in_array($dir, self::BIO_DIRS, true)) return;
+        if (! preg_match('/^user_' . $userId . '_[A-Za-z0-9_\-]+\.(jpg|png|webp)$/', $nombre)) return;
+
+        $ruta = WRITEPATH . 'uploads/' . $dir . '/' . $nombre;
+        if (is_file($ruta)) {
+            @unlink($ruta);
+        }
+    }
+
+    /**
+     * Foto de referencia del rostro. La captura el admin (cámara o archivo)
+     * para que nadie pueda registrar una foto que no es la suya.
+     * Con estado=off quita la foto que ya existía.
+     */
+    public function biometriaRostro()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+
+        $member = $this->personaBio((int) $this->request->getPost('user_id'));
+        if ($member === null) {
+            return $this->response->setStatusCode(403)
+                ->setJSON(['ok' => false, 'msj' => 'Esta persona no pertenece a tu equipo']);
+        }
+
+        $id     = (int) $member['id'];
+        $nombre = (string) ($member['name'] ?? '');
+
+        if ((string) $this->request->getPost('estado') === 'off') {
+            $this->borrarImagenBio($member['rostro_path'] ?? null, $id);
+            $this->userModel->update($id, [
+                'rostro_registrado' => 0,
+                'rostro_fecha'      => null,
+                'rostro_path'       => null,
+            ]);
+
+            return $this->response->setJSON([
+                'ok'  => true,
+                'msj' => "Foto de referencia de {$nombre} eliminada",
+            ]);
+        }
+
+        $path = $this->saveBioImage(trim((string) $this->request->getPost('imagen')), 'rostros', $id);
+        if ($path === '') {
+            return $this->response->setJSON([
+                'ok'  => false,
+                'msj' => 'No se pudo guardar la foto. Usa una imagen JPG, PNG o WebP de hasta 3 MB.',
+            ]);
+        }
+
+        $this->borrarImagenBio($member['rostro_path'] ?? null, $id);
+        $this->userModel->update($id, [
+            'rostro_registrado' => 1,
+            'rostro_fecha'      => date('Y-m-d H:i:s'),
+            'rostro_path'       => $path,
+        ]);
+
+        return $this->response->setJSON([
+            'ok'   => true,
+            'msj'  => "Rostro registrado para {$nombre}",
+            'path' => base_url('admin/evidencia/rostros/' . basename($path)),
+        ]);
+    }
+
+    /**
+     * Huella: WebAuthn sólo se inscribe desde el dispositivo de la persona,
+     * así que el admin sólo activa o apaga el modo «sin lector».
+     */
+    public function biometriaHuella()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+
+        $member = $this->personaBio((int) $this->request->getPost('user_id'));
+        if ($member === null) {
+            return $this->response->setStatusCode(403)
+                ->setJSON(['ok' => false, 'msj' => 'Esta persona no pertenece a tu equipo']);
+        }
+
+        $id     = (int) $member['id'];
+        $nombre = (string) ($member['name'] ?? '');
+        $activa = (string) $this->request->getPost('estado') === 'on';
+
+        // Al apagar se borran también las credenciales WebAuthn que
+        // hubiera, para que no quede una huella «fantasma» usable.
+        (new \App\Models\WebAuthnCredentialModel())->clearUser($id);
+
+        $this->userModel->update($id, [
+            'huella_registrada' => $activa ? 2 : 0,   // 2 = sin lector, 1 = real
+            'huella_fecha'      => $activa ? date('Y-m-d H:i:s') : null,
+            'huella_cred_id'    => $activa ? 'sim-' . bin2hex(random_bytes(6)) : null,
+        ]);
+
+        return $this->response->setJSON([
+            'ok'  => true,
+            'msj' => $activa
+                ? "Huella habilitada en modo sin lector para {$nombre}"
+                : "Huella desactivada para {$nombre}",
+        ]);
+    }
+
 }

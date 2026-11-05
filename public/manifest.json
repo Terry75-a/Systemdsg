@@ -1,13 +1,13 @@
 {
-    "name": "DSG Perú · Asistencia",
-    "short_name": "DSG",
+    "name": "Asisten DSG",
+    "short_name": "Asisten",
     "description": "Marca tu asistencia, revisa tu horario e incidencias desde tu celular.",
     "start_url": "./mi-panel",
     "scope": "./",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#f8f9fa",
-    "theme_color": "#1b7a42",
+    "theme_color": "#1c5b40",
     "lang": "es",
     "icons": [
         {

@@ -923,3 +923,31 @@ body:has(.dsg-page) .pv-modal .pv-content { max-height: min(860px, calc(100dvh -
     border-radius: 20px 20px 0 0 !important;
   }
 }
+
+/* ══ Ver sucursal · Plan y Otros pagos ══ */
+body:has(.dsg-page) .pv-modal .pv-pagos { display: flex; flex-direction: column; }
+body:has(.dsg-page) .pv-modal .pv-pago {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 0;
+  border-top: 1px solid color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+}
+body:has(.dsg-page) .pv-modal .pv-pago:first-child { border-top: 0; padding-top: 4px; }
+body:has(.dsg-page) .pv-modal .pv-pago-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+body:has(.dsg-page) .pv-modal .pv-pago-name { font-size: 14px; font-weight: 600; color: var(--sb-on-surface); overflow-wrap: anywhere; }
+body:has(.dsg-page) .pv-modal .pv-pago-sub { font-size: 12px; color: var(--sb-on-surface-variant); }
+body:has(.dsg-page) .pv-modal .pv-pago-obs { font-size: 12px; color: var(--tk-v50, var(--sb-on-surface-variant)); font-style: italic; overflow-wrap: anywhere; }
+body:has(.dsg-page) .pv-modal .pv-pago-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
+body:has(.dsg-page) .pv-modal .pv-pago-monto { font-size: 15px; font-weight: 700; color: var(--sb-on-surface); font-variant-numeric: tabular-nums; white-space: nowrap; }
+body:has(.dsg-page) .pv-modal .pv-pago-st {
+  display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 9999px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+body:has(.dsg-page) .pv-modal .pv-pago-st.is-ok   { background: color-mix(in srgb, var(--sb-primary) 12%, transparent); color: var(--sb-primary); }
+body:has(.dsg-page) .pv-modal .pv-pago-st.is-warn { background: rgba(217, 119, 6, .12); color: #b45309; }
+body:has(.dsg-page) .pv-modal .pv-pago-st.is-bad  { background: rgba(217, 48, 37, .1); color: #c5221f; }
+body:has(.dsg-page) .pv-modal .pv-pago-st.is-off  { background: var(--sb-surface-container); color: var(--sb-on-surface-variant); }
+body:has(.dsg-page) .pv-modal .pv-pago-empty {
+  display: flex; align-items: center; gap: 8px; padding: 6px 0 2px; font-size: 13px; color: var(--sb-on-surface-variant);
+}
+body:has(.dsg-page) .pv-modal .pv-pago-empty .material-symbols-outlined { font-size: 18px; opacity: .7; }
+html.dark body:has(.dsg-page) .pv-modal .pv-pago-st.is-warn { color: #f5b14c; }
+html.dark body:has(.dsg-page) .pv-modal .pv-pago-st.is-bad  { color: #ff8a80; }

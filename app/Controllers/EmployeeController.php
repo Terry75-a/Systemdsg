@@ -372,7 +372,7 @@ class EmployeeController extends BaseController
 
         // Biometria obligatoria: huella o rostro. Al marcar se pide uno de los dos.
         if (!(int) ($user['huella_registrada'] ?? 0) && !(int) ($user['rostro_registrado'] ?? 0)) {
-            $s->setFlashdata('msg', 'Registra tu huella o tu rostro en la seccion Biometria antes de marcar asistencia');
+            $s->setFlashdata('msg', 'Tu administrador aún no registra tu biometría. Contacta a tu administrador para que la registre antes de marcar asistencia.');
             $s->setFlashdata('tipo', 'warning');
             return redirect()->to(base_url('mi-panel'));
         }
@@ -765,58 +765,6 @@ class EmployeeController extends BaseController
         return 2 * $r * asin(sqrt($a));
     }
 
-    /** Límites de la imagen biométrica (bytes binarios). */
-    private const BIO_MAX_BIN   = 3145728;   // 3 MB
-    private const BIO_MAX_B64   = 4194304;   // 4 MB en base64
-    private const BIO_MIN_BIN   = 200;
-    private const BIO_DIRS      = ['evidencias', 'rostros'];
-    private const BIO_MIME      = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-
-    private function saveBioImage(string $dataUrl, string $subdir): string
-    {
-        // Sólo los directorios previstos: nada de traversal.
-        if (! in_array($subdir, self::BIO_DIRS, true)) {
-            return '';
-        }
-
-        $dataUrl = trim($dataUrl);
-        if ($dataUrl === '' || ! preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/i', $dataUrl)) {
-            return '';
-        }
-
-        $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
-        if (strlen($base64) > self::BIO_MAX_B64) {
-            return '';
-        }
-
-        $bin = base64_decode($base64, true);
-        if ($bin === false || strlen($bin) < self::BIO_MIN_BIN || strlen($bin) > self::BIO_MAX_BIN) {
-            return '';
-        }
-
-        // Debe ser una imagen real del tipo declarado (bloquea SVG/HTML embebido).
-        $info = @getimagesizefromstring($bin);
-        $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
-        if (! isset(self::BIO_MIME[$mime])) {
-            return '';
-        }
-
-        $dir = WRITEPATH . 'uploads/' . $subdir;
-        if (! is_dir($dir) && ! @mkdir($dir, 0775, true)) {
-            return '';
-        }
-
-        $name = 'user_' . (int) session()->get('user_id')
-            . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(4))
-            . '.' . self::BIO_MIME[$mime];
-
-        if (@file_put_contents($dir . '/' . $name, $bin) === false) {
-            return '';
-        }
-
-        return $subdir . '/' . $name;
-    }
-
     public function bioSession()
     {
         if ($redirect = $this->checkEmployee()) return $redirect;
@@ -952,72 +900,17 @@ class EmployeeController extends BaseController
         return false;
     }
 
+    /**
+     * La biometria la registra el administrador desde Personal: el
+     * colaborador ya no puede cargar su propia huella.
+     */
     public function guardarHuella()
     {
         if ($redirect = $this->checkEmployee()) return $redirect;
 
-        $userId = (int) session()->get('user_id');
-        $mode   = (string) $this->request->getPost('mode');
-
-        if ($mode === 'sim') {
-            $credId = trim((string) $this->request->getPost('credential_id'));
-            if ($credId === '') {
-                return $this->response->setJSON(['ok' => false, 'msj' => 'No se recibio la huella']);
-            }
-            if (strlen($credId) > 300) $credId = substr($credId, 0, 300);
-
-            $this->credentialModel->clearUser($userId);
-            $this->userModel->update($userId, [
-                'huella_registrada' => 2, // 2 = simulada de prueba, 1 = real (WebAuthn)
-                'huella_fecha'      => date('Y-m-d H:i:s'),
-                'huella_cred_id'    => $credId,
-            ]);
-
-            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella registrada (simulacion de prueba)']);
-        }
-
-        $user = $this->userModel->find($userId);
-        if (!$user) {
-            return $this->response->setJSON(['ok' => false, 'msj' => 'Sesion invalida']);
-        }
-
-        $challenge = $this->takeChallenge();
-        if ($challenge === null) {
-            return $this->response->setJSON(['ok' => false, 'msj' => 'El registro expiro. Vuelve a intentarlo.']);
-        }
-
-        try {
-            $options = $this->webauthn->creationOptions(
-                $challenge,
-                $userId,
-                (string) ($user['name'] ?? ''),
-                (string) ($user['email'] ?? '')
-            );
-            $record = $this->webauthn->verifyAttestation($challenge, $options, $this->request->getPost());
-            $row    = $this->webauthn->toRow($record, $userId);
-
-            if ($this->credentialModel->findByCredentialId($row['credential_id']) !== null) {
-                return $this->response->setJSON(['ok' => false, 'msj' => 'Esa huella ya esta registrada en otra cuenta.']);
-            }
-
-            $this->credentialModel->clearUser($userId);
-            $this->credentialModel->insert($row);
-
-            $this->userModel->update($userId, [
-                'huella_registrada' => 1,
-                'huella_fecha'      => date('Y-m-d H:i:s'),
-                'huella_cred_id'    => $row['credential_id'],
-            ]);
-
-            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella registrada correctamente']);
-        } catch (\Throwable $e) {
-            log_message('error', 'WebAuthn (registro) fallido: ' . $e->getMessage());
-
-            return $this->response->setJSON([
-                'ok'  => false,
-                'msj' => 'No se pudo validar la huella. ' . $e->getMessage(),
-            ]);
-        }
+        return $this->response
+            ->setStatusCode(403)
+            ->setJSON(['ok' => false, 'msj' => 'Solo tu administrador puede registrar tu biometria.']);
     }
 
     /** Comprueba en el servidor la firma de la assertion (huella real). */
@@ -1110,39 +1003,17 @@ class EmployeeController extends BaseController
         ));
     }
 
+    /**
+     * La foto de referencia tambien la carga el administrador desde
+     * Personal: asi nadie puede registrar un rostro que no es el suyo.
+     */
     public function guardarRostro()
     {
         if ($redirect = $this->checkEmployee()) return $redirect;
 
-        $userId = (int) session()->get('user_id');
-
-        $dataUrl = trim($this->request->getPost('imagen') ?? '');
-        $path = '';
-        if ($dataUrl !== '') {
-            $path = $this->saveBioImage($dataUrl, 'rostros');
-        } else {
-            $file = $this->request->getFile('rostro');
-            if ($file && $file->isValid() && $file->getSize() > 0) {
-                $dir = WRITEPATH . 'uploads/rostros';
-                if (!is_dir($dir)) {
-                    @mkdir($dir, 0775, true);
-                }
-                $name = 'user_' . $userId . '_' . date('YmdHis') . '.jpg';
-                $file->move($dir, $name);
-                $path = 'rostros/' . $name;
-            }
-        }
-
-        if ($path === '') {
-            return $this->response->setJSON(['ok' => false, 'msj' => 'No se pudo guardar el rostro']);
-        }
-
-        $this->userModel->update($userId, [
-            'rostro_registrado' => 1,
-            'rostro_fecha'      => date('Y-m-d H:i:s'),
-            'rostro_path'       => $path,
-        ]);
-        return $this->response->setJSON(['ok' => true, 'msj' => 'Rostro registrado correctamente', 'path' => base_url('mi-panel/evidencia/rostros/' . basename($path))]);
+        return $this->response
+            ->setStatusCode(403)
+            ->setJSON(['ok' => false, 'msj' => 'Solo tu administrador puede registrar tu biometria.']);
     }
 
     /**

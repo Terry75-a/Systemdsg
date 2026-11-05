@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
-    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         .att-wrap { display: flex; flex-direction: column; gap: 22px; }

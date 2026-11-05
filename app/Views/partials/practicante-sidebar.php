@@ -1,8 +1,9 @@
 <!-- PRACTICANTE / EMPLEADO SIDEBAR -->
+<script>try{if(localStorage.getItem('devSidebarCollapsed')==='1')document.documentElement.classList.add('sb-collapsed')}catch(e){}</script>
 <aside class="dev-sidebar" id="devSidebar">
     <div class="dev-sidebar-head">
         <a href="<?= base_url('mi-panel') ?>" class="dev-logo">
-            <span class="dev-logo-mark"><img src="<?= base_url('images/dsg-logo.svg') ?>" alt="DSG"></span>
+            <span class="dev-logo-mark"><img src="<?= base_url('images/asisten/asisten-simbolo-app.svg') ?>" alt="Asisten DSG"></span>
             <span class="dev-logo-text"><strong>Mi Panel</strong><small><?= session()->get('user_role') === 'Practicante' ? 'Practicante' : 'Colaborador' ?> · <?= esc(session()->get('user_code') ?: 'DSG Perú') ?></small></span>
         </a>
     </div>
@@ -27,6 +28,25 @@
             <span class="material-symbols-outlined">person</span>
             <span>Mi Perfil</span>
         </a>
+    </nav>
+    <div class="dev-sidebar-tools">
+        <div class="dev-nav-section">Herramientas</div>
+        <button type="button" class="dev-nav-link dev-tool" id="darkModeToggle">
+            <span class="material-symbols-outlined" id="darkModeIcon">dark_mode</span>
+            <span id="darkModeLabel">Modo oscuro</span>
+        </button>
+        <button type="button" class="dev-nav-link dev-tool is-muted" id="sidebarCollapseBtn" data-icons="fixed" aria-label="Colapsar menú" aria-expanded="true">
+            <span class="material-symbols-outlined">chevron_left</span>
+            <span>Colapsar</span>
+        </button>
+        <div class="dev-nav-section dev-tools-sep">Cuenta</div>
+        <a href="<?= base_url('mi-panel') ?>" class="dev-sidebar-user">
+            <span class="dev-sidebar-avatar"><?= esc(session()->get('user_code') !== '' ? mb_strtoupper(mb_substr(session()->get('user_name') ?? 'P', 0, 2)) : '') ?></span>
+            <div>
+                <span class="dev-sidebar-user-name"><?= esc(session()->get('user_name') ?? 'Colaborador') ?></span>
+                <span class="dev-sidebar-user-role"><?= esc(session()->get('user_code') ?: '') ?></span>
+            </div>
+        </a>
         <a href="<?= base_url('') ?>" class="dev-nav-link">
             <span class="material-symbols-outlined">language</span>
             <span>Sitio web</span>
@@ -34,24 +54,6 @@
         <a href="<?= base_url('logout') ?>" class="dev-nav-link">
             <span class="material-symbols-outlined">logout</span>
             <span>Cerrar sesión</span>
-        </a>
-        <div class="dark-toggle-wrap">
-            <button class="dark-toggle" id="darkModeToggle" type="button">
-                <span class="material-symbols-outlined" id="darkModeIcon">dark_mode</span>
-                <span class="dark-toggle-label" id="darkModeLabel">Modo oscuro</span>
-            </button>
-            <div class="dark-toggle-track" id="darkToggleTrack">
-                <div class="dark-toggle-thumb" id="darkToggleThumb"></div>
-            </div>
-        </div>
-    </nav>
-    <div class="dev-sidebar-footer">
-        <a href="<?= base_url('mi-panel') ?>" class="dev-sidebar-user">
-            <span class="dev-sidebar-avatar"><?= esc(session()->get('user_code') !== '' ? mb_strtoupper(mb_substr(session()->get('user_name') ?? 'P', 0, 2)) : '') ?></span>
-            <div>
-                <span class="dev-sidebar-user-name"><?= esc(session()->get('user_name') ?? 'Colaborador') ?></span>
-                <span class="dev-sidebar-user-role"><?= esc(session()->get('user_code') ?: '') ?></span>
-            </div>
         </a>
     </div>
 </aside>
@@ -271,3 +273,4 @@
     if (mobileDarkBtn) mobileDarkBtn.addEventListener('click', toggleDark);
 })();
 </script>
+<script src="<?= base_url('js/sidebar-collapse.js?v=' . filemtime(FCPATH . 'js/sidebar-collapse.js')) ?>"></script>

@@ -73,6 +73,7 @@ window.PDSG_LISTA_CFG = {
     urlEliminar: '<?= base_url('personas/eliminar') ?>',
     urlBorrar: '<?= base_url('personas/borrar') ?>',
     urlDetalle: '<?= base_url('personas/obtenerDetalle') ?>',
+    urlPagosSucursal: '<?= base_url('personas/pagosSucursal') ?>',
     urlPlanes: '<?= base_url('personas/planesDisponibles') ?>',
     urlTipoPlan: '<?= base_url('personas/tipoplan') ?>',
     urlAsignarPlanes: '<?= base_url('personas/Asignarplanes') ?>',

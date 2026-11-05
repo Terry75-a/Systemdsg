@@ -84,10 +84,34 @@ body { font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif; color: #
 .tkl-submit.is-loading .tkl-spin { display: block; }
 .tkl-submit:disabled { cursor: progress; }
 
-.tkl-foot { margin: 24px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.4); }
-.tkl-foot a { color: rgba(255,255,255,.7); text-decoration: underline; text-underline-offset: 2px; }
-.tkl-foot a:hover { color: var(--dsg-light); }
-.tkl-foot span { margin: 0 6px; }
+/* ── pie: dos accesos unidos en una barra con separador ── */
+.tkl-foot {
+  display: flex; width: 100%; margin: 24px 0 0; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12); border-radius: 14px;
+  background: rgba(255,255,255,.05);
+}
+.tkl-foot-btn {
+  flex: 1 1 0; min-width: 0;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 12px; font-size: 12.5px; font-weight: 500; line-height: 1.25;
+  color: rgba(255,255,255,.7); text-decoration: none; text-align: center;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.tkl-foot-btn + .tkl-foot-btn { border-left: 1px solid rgba(255,255,255,.12); }
+.tkl-foot-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tkl-foot-btn i { flex: none; font-size: 11px; color: rgba(255,255,255,.45); transition: color 150ms ease; }
+.tkl-foot-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+.tkl-foot-btn:hover i { color: var(--dsg-light); }
+.tkl-foot-btn:focus-visible { outline: 2px solid var(--dsg-light); outline-offset: -2px; }
+/* Segmento de acento: entra directo al login de asistencias */
+.tkl-foot-btn.is-accent { background: rgba(11,122,79,.3); color: var(--dsg-light); font-weight: 600; }
+.tkl-foot-btn.is-accent i { color: var(--dsg-light); }
+.tkl-foot-btn.is-accent:hover { background: var(--dsg); color: #fff; }
+.tkl-foot-btn.is-accent:hover i { color: #fff; }
+@media (max-width: 420px) {
+  .tkl-foot-btn { padding: 11px 8px; font-size: 11.5px; gap: 6px; }
+  .tkl-foot-btn i { display: none; }
+}
 
 /* ══════════════════════════════════════════════════════════════
    Panel derecho · escena tecnológica

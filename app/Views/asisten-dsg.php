@@ -13,7 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/asisten-landing.css') ?>?v=202610152">
-    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
 </head>
 <body class="mm-landing">
 
@@ -22,7 +23,7 @@
     <nav class="mm-nav" id="mmNav" aria-label="Navegación de Asisten DSG">
         <div class="mm-nav-inner">
             <a href="<?= base_url('asisten-dsg') ?>" class="mm-nav-logo">
-                <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
+                <img src="<?= base_url('images/asisten/asisten-icono-app.svg') ?>" alt="Asisten DSG">
                 <span>Asisten DSG</span>
             </a>
             <div class="mm-nav-links">
@@ -408,7 +409,7 @@
     <div class="mm-footer-main">
         <div class="mm-footer-brand">
             <a href="<?= base_url('asisten-dsg') ?>" class="mm-nav-logo">
-                <img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo">
+                <img src="<?= base_url('images/asisten/asisten-icono-app.svg') ?>" alt="Asisten DSG">
                 <span>Asisten DSG</span>
             </a>
             <p>Control de asistencia del equipo con ubicación en tiempo real: marcación, tardanzas y reportes de planilla en un solo lugar. Herramienta interna de DSG Perú Technology.</p>

@@ -206,6 +206,69 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 .dev-sidebar-user-name { font-size: 13px; font-weight: 500; display: block; }
 .dev-sidebar-user-role { font-size: 11px; color: var(--g-text-secondary); }
 
+/* ── Colapsar / expandir sidebar ─────────────────────────────
+   El botón vive dentro de la cabecera del menú, a la derecha del
+   logo (al colapsar, debajo del logo). El estado se guarda en
+   localStorage (clave: devSidebarCollapsed) y se aplica antes de
+   pintar con un script inline en cada sidebar. */
+.dev-sidebar-head { display: flex; align-items: center; gap: 8px; }
+.dev-sidebar-head .dev-logo { flex: 1 1 auto; min-width: 0; }
+.dev-sidebar-head .dev-logo-text { min-width: 0; }
+.dev-sidebar-head .dev-logo-text strong,
+.dev-sidebar-head .dev-logo-text small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dev-sidebar-collapse {
+  position: static;
+  flex: none;
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--g-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 160ms, color 160ms;
+}
+.dev-sidebar-collapse:hover { background: var(--g-surface-variant); color: var(--g-text); }
+.dev-sidebar-collapse:focus-visible { outline: 2px solid var(--g-primary); outline-offset: 2px; }
+.dev-sidebar-collapse .material-symbols-outlined { font-size: 18px; line-height: 1; }
+.dev-sidebar { transition: width 220ms ease; }
+.dev-main { transition: margin-left 220ms ease; }
+
+/* Estado colapsado — sólo escritorio (en móvil el menú vive
+   fuera de pantalla y se maneja con su propio botón). */
+@media (min-width: 769px) {
+  html.sb-collapsed .dev-sidebar { width: 72px !important; }
+  html.sb-collapsed .dev-main { margin-left: 72px; }
+  html.sb-collapsed footer.footer { left: 72px; }
+
+  html.sb-collapsed .dev-logo { justify-content: center; flex: none; }
+  html.sb-collapsed .dev-logo-text { display: none; }
+  /* colapsado: el botón queda dentro, debajo del logo */
+  html.sb-collapsed .dev-sidebar-head { flex-direction: column; justify-content: center; gap: 6px;
+    height: auto !important; padding: 12px 0 8px !important; }
+  html.sb-collapsed .dev-sidebar-collapse { margin-left: 0; }
+
+  html.sb-collapsed .dev-nav-section { display: none; }
+  html.sb-collapsed .dev-nav-link { justify-content: center; position: relative; }
+  html.sb-collapsed .dev-nav-link > span:not(.material-symbols-outlined):not(.dev-nav-badge) { display: none; }
+  html.sb-collapsed .dev-nav-badge { position: absolute; top: 2px; right: 7px; margin: 0; padding: 1px 5px; font-size: 10px; }
+
+  html.sb-collapsed .dark-toggle-wrap { justify-content: center !important; padding: 8px 10px !important; }
+  html.sb-collapsed .dark-toggle-label,
+  html.sb-collapsed .dark-toggle-track { display: none; }
+
+  html.sb-collapsed .dev-sidebar-user { justify-content: center; padding: 6px 8px !important; }
+  html.sb-collapsed .dev-sidebar-user > div { display: none; }
+}
+@media (max-width: 768px) {
+  .dev-sidebar-collapse { display: none; }
+}
+
 /* ══════════════════════════════════════════════════════════════
    MAIN
    ══════════════════════════════════════════════════════════════ */

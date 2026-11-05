@@ -38,6 +38,22 @@
             </div>
           </div>
 
+          <!-- Plan asignado (lo carga personas-lista.js) -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-card">
+              <div class="pv-card-head"><h6><span class="material-symbols-outlined">workspace_premium</span> Plan</h6><span id="suc_planes_meta"></span></div>
+              <div class="pv-pagos" id="suc_planes"></div>
+            </div>
+          </div>
+
+          <!-- Otros pagos (lo carga personas-lista.js) -->
+          <div class="pdsg-modal-group pv-group">
+            <div class="pv-card">
+              <div class="pv-card-head"><h6><span class="material-symbols-outlined">receipt_long</span> Otros pagos</h6><span id="suc_pagos_meta"></span></div>
+              <div class="pv-pagos" id="suc_pagos"></div>
+            </div>
+          </div>
+
         </div>
       </div>
 

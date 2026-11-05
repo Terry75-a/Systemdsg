@@ -5,7 +5,7 @@
  * - Estáticos (css/js/img/fonts): caché con revalidación en segundo plano.
  * - APIs / SSE / JSON / push / evidencias: siempre red.
  */
-const CACHE = 'dsg-pwa-v3';
+const CACHE = 'dsg-pwa-v4';
 const ESTATICOS = /\.(?:css|js|png|jpg|jpeg|gif|svg|webp|woff2?|ttf|ico)$/i;
 const PUBLICAS = /^\/(login-verde|contacto-demo)?\/?$/;
 

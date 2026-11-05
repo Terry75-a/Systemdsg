@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20260922?v=20260922') ?>">
-    <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
 </head>
 <body>
 
@@ -19,8 +20,8 @@
 <header class="asisten-nav-shell" id="asistenShell">
     <nav class="asisten-nav" aria-label="Navegación de DSG Perú">
         <a href="<?= base_url('asisten-dsg') ?>" class="asisten-logo" aria-label="DSG Perú - Inicio">
-            <span class="asisten-logo-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo"></span>
-            <span class="asisten-logo-text">DSG Perú<small>TECHNOLOGY</small></span>
+            <span class="asisten-logo-mark"><img src="<?= base_url('images/asisten/asisten-icono-app.svg') ?>" alt="Asisten DSG"></span>
+            <span class="asisten-logo-text">Asisten DSG<small>DSG PERÚ TECHNOLOGY</small></span>
         </a>
         <div class="asisten-nav-actions">
             <a href="<?= base_url('login-verde') ?>" class="asisten-link-site">Iniciar sesión</a>
@@ -46,8 +47,8 @@
             <div class="login-card reveal">
                 <div class="login-card-head">
                     <div class="login-brand">
-                        <span class="login-brand-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG Logo"></span>
-                        <span class="login-brand-text">DSG Perú<small>TECHNOLOGY</small></span>
+                        <span class="login-brand-mark"><img src="<?= base_url('images/asisten/asisten-icono-app.svg') ?>" alt="Asisten DSG"></span>
+                        <span class="login-brand-text">Asisten DSG<small>DSG PERÚ TECHNOLOGY</small></span>
                     </div>
                     <a href="<?= base_url('asisten-dsg') ?>" class="login-back" aria-label="Volver al inicio">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
@@ -119,7 +120,7 @@
 
                     <div class="login-foot">
                         <a href="<?= base_url('login-verde') ?>" class="login-foot-link">¿Ya tienes cuenta? Inicia sesión</a>
-                        <a href="<?= base_url('asisten-dsg') ?>" class="login-foot-link">← Volver al sitio principal</a>
+                        <a href="<?= base_url('/') ?>" class="login-foot-link">← Volver al sitio principal</a>
                     </div>
                 </form>
             </div>

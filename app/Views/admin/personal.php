@@ -435,6 +435,88 @@
             body:has(.dev-main) .pf-select-wrap { flex: 1 1 auto; }
             body:has(.dev-main) .pf-select { width: 100%; }
         }
+        /* ── Biometría del personal (la registra el admin) ── */
+        .bio-person-block {
+            border: 1px solid var(--g-border, #26323f); border-radius: 16px;
+            padding: 14px; margin-top: 14px; background: var(--g-surface-variant, rgba(255,255,255,.03));
+        }
+        .bio-person-head { display: flex; align-items: flex-start; gap: 10px; }
+        .bio-person-head > .material-symbols-outlined { color: var(--g-accent, var(--g-primary)); font-size: 20px; margin-top: 2px; }
+        .bio-person-head > div { flex: 1; min-width: 0; }
+        .bio-person-head strong { display: block; font-size: 13.5px; color: var(--g-text); }
+        .bio-person-head small { display: block; font-size: 11.5px; color: var(--g-text-secondary, #a9b6c8); line-height: 1.45; margin-top: 3px; }
+        .bio-person-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .bio-person-cam {
+            position: relative; border-radius: 14px; overflow: hidden; background: #0b0f14;
+            aspect-ratio: 4 / 3; margin-top: 12px;
+        }
+        .bio-person-cam video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .bio-person-cam .bio-p-flip {
+            position: absolute; top: 8px; right: 8px; z-index: 10; width: 34px; height: 34px;
+            border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; border: none;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .bio-person-cam .bio-p-flip:hover { background: rgba(0,0,0,.75); }
+        .bio-person-prev {
+            display: block; width: 100%; max-height: 210px; object-fit: cover;
+            border-radius: 14px; margin-top: 12px; border: 1px solid var(--g-border, #26323f);
+        }
+        .bio-person-msg { font-size: 12px; border-radius: 10px; padding: 9px 11px; margin-top: 10px; display: none; }
+        .bio-person-msg.show { display: block; }
+        .bio-person-msg.is-ok { background: rgba(46,204,113,.1); color: var(--g-success, #2ecc71); }
+        .bio-person-msg.is-err { background: rgba(239,68,68,.1); color: var(--g-error, #ef4444); }
+        .bio-person-note {
+            display: flex; gap: 8px; align-items: flex-start; margin: 14px 0 0;
+            font-size: 11.5px; color: var(--g-text-secondary, #a9b6c8); line-height: 1.5;
+        }
+        .bio-person-note .material-symbols-outlined { font-size: 16px; margin-top: 1px; }
+
+        /* ══ Empleados y Practicantes en dos columnas (pantallas anchas) ══
+           Se oculta Código, Rol, Área, Contrato y Creado como columnas:
+           el código y el área pasan bajo el nombre y el contrato junto a
+           la biometría. En pantallas menores vuelve la tabla completa. */
+        .pc-only, .pc-inline { display: none; }
+        @media (min-width: 1340px) {
+            .personal-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+            .personal-cols .personal-section { min-width: 0; margin-bottom: 24px; }
+            .personal-cols .personal-section-head { flex-direction: column; align-items: stretch; gap: 10px; }
+            .personal-cols .pf-bar { width: 100%; }
+            .personal-cols .pf-search { flex: 1 1 100%; max-width: none; }
+            .personal-cols .pf-input { width: 100%; }
+            .personal-cols .personal-table th:nth-child(2), .personal-cols .personal-table td:nth-child(2),
+            .personal-cols .personal-table th:nth-child(3), .personal-cols .personal-table td:nth-child(3),
+            .personal-cols .personal-table th:nth-child(4), .personal-cols .personal-table td:nth-child(4),
+            .personal-cols .personal-table th:nth-child(6), .personal-cols .personal-table td:nth-child(6),
+            .personal-cols .personal-table th:nth-child(7), .personal-cols .personal-table td:nth-child(7) { display: none; }
+            .personal-cols .pc-inline { display: inline; }
+            body:has(.dev-main) .personal-cols .personal-table-wrap .personal-table { min-width: 0; width: 100%; }
+            body:has(.dev-main) .personal-cols .pf-bar { flex-wrap: wrap; }
+            body:has(.dev-main) .personal-cols .pf-search { flex: 1 1 100%; max-width: none; }
+            body:has(.dev-main) .personal-cols .pf-select-wrap { flex: 1 1 0; min-width: 0; }
+            body:has(.dev-main) .personal-cols .pf-select { width: 100%; }
+            body:has(.dev-main) .personal-cols .pf-clear { flex: none; }
+            .personal-cols .personal-table td:first-child { width: 100%; }
+            .personal-cols .personal-table td:last-child { width: 1%; white-space: nowrap; }
+            .personal-cols .personal-table td[colspan] { display: table-cell; }
+            .personal-cols .pc-only { display: flex; }
+            .personal-cols .personal-user-sub.pc-only { align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+            .personal-cols .personal-user-sub.pc-only .dev-code { font-size: 10px; padding: 1px 7px; }
+            .personal-cols .pc-area { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            /* biometría arriba y contrato abajo */
+            .personal-cols td[data-bio-user] { white-space: nowrap; }
+            .personal-cols td[data-bio-user] .tk-chip-soft { display: flex; width: max-content; margin: 3px 0; }
+            /* acciones en una grilla de 3 × 2 para que entren todas */
+            body:has(.dev-main) .personal-cols .personal-table .personal-actions {
+                display: grid !important; grid-template-columns: repeat(3, 30px); gap: 2px; justify-content: end; flex-wrap: initial;
+            }
+            body:has(.dev-main) .personal-cols .personal-table .personal-actions .dev-btn-icon { width: 30px; height: 30px; }
+            body:has(.dev-main) .personal-cols .personal-table-wrap .personal-table td,
+            body:has(.dev-main) .personal-cols .personal-table-wrap .personal-table th { padding-left: 12px; padding-right: 12px; }
+            body:has(.dev-main) .personal-cols .personal-user-txt { min-width: 0; }
+            body:has(.dev-main) .personal-cols .personal-user-sub,
+            body:has(.dev-main) .personal-cols .personal-user-name { white-space: normal !important; overflow-wrap: anywhere; }
+            body:has(.dev-main) .personal-cols .personal-table td:first-child { min-width: 0; }
+        }
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
@@ -528,6 +610,7 @@
                 ['id' => 'practicantes',  'titulo' => 'Practicantes', 'icono' => 'school', 'lista' => $listaPracticantes, 'vacio' => 'No hay practicantes registrados'],
             ];
         ?>
+        <div class="personal-cols">
         <?php foreach ($seccionesPersonal as $sec):
             $lista            = $sec['lista'];
             $pref             = $sec['id'];
@@ -601,7 +684,7 @@
                                 <th>Código</th>
                                 <th>Rol</th>
                                 <th>Área · cargo</th>
-                                <th>Biometría</th>
+                                <th>Biometría<span class="pc-inline"> · contrato</span></th>
                                 <th>Contrato</th>
                                 <th>Creado</th>
                                 <th class="tk-r">Acciones</th>
@@ -632,6 +715,11 @@
                                                 <div class="personal-user-txt">
                                                     <div class="personal-user-name"><?= esc($name) ?></div>
                                                     <div class="personal-user-sub">DNI <?= esc($emp['dni'] ?? '—') ?><?= !empty($emp['email']) ? ' · ' . esc($emp['email']) : '' ?></div>
+                                                    <div class="personal-user-sub pc-only">
+                                                        <code class="dev-code"><?= esc($emp['personal_code'] ?? '—') ?></code>
+                                                        <?php if (!in_array($role, ['Empleado', 'Practicante'], true)): ?><span class="personal-role <?= $roleClass ?>"><?= esc($role) ?></span><?php endif; ?>
+                                                        <span class="pc-area"><?= esc(($emp['area'] ?? '') ?: '—') ?> · <?= esc(($emp['cargo'] ?? '') ?: '—') ?></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -641,13 +729,17 @@
                                             <div class="personal-user-name"><?= esc(($emp['area'] ?? '') ?: '—') ?></div>
                                             <div class="personal-user-sub"><?= esc(($emp['cargo'] ?? '') ?: '—') ?><?= ($emp['role'] ?? '') === 'Practicante' ? ' · ' . esc(($emp['institucion'] ?? '') ?: '—') . ' · ' . esc(($emp['semestre'] ?? '') ?: '—') : '' ?></div>
                                         </td>
-                                        <td>
+                                        <td data-bio-user="<?= (int) $emp['id'] ?>">
                                             <?php
                                                 $bH = (int) ($emp['huella_registrada'] ?? 0);
                                                 $bR = (int) ($emp['rostro_registrado'] ?? 0);
                                             ?>
                                             <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : ($bH || $bR ? 'tk-chip-warn' : 'tk-chip-bad') ?>">
                                                 <?= $bH && $bR ? 'Completa' : ($bH || $bR ? 'Incompleta' : 'Pendiente') ?>
+                                            </span>
+                                            <?php $ctc = $emp['contract_type'] ?? 'Indefinido'; $cdc = (int) ($emp['contract_duration'] ?? 0); ?>
+                                            <span class="tk-chip-soft pc-only <?= $ctc === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
+                                                <?= $ctc === 'Indefinido' ? 'Indefinido' : ($ctc === 'Meses' ? $cdc . ' mes(es)' : $cdc . ' año(s)') ?>
                                             </span>
                                         </td>
                                         <td>
@@ -674,6 +766,9 @@
                                                 </button>
                                                 <button type="button" class="dev-btn-icon" title="Editar" onclick='openEditModal(<?= json_encode($emp) ?>)'>
                                                     <span class="material-symbols-outlined">edit</span>
+                                                </button>
+                                                <button type="button" class="dev-btn-icon" title="Biometria (foto y huella)" style="color:var(--g-primary);" onclick='openBioPerson(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)'>
+                                                    <span class="material-symbols-outlined">fingerprint</span>
                                                 </button>
                                                 <button type="button" class="dev-btn-icon" title="Eliminar (definitivo)" style="color:var(--g-error);" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'user')">
                                                     <span class="material-symbols-outlined">delete</span>
@@ -735,7 +830,7 @@
                                     $_cd = (int) ($emp['contract_duration'] ?? 0);
                                 ?>
                                 <div class="m-card-chips">
-                                    <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : 'tk-chip-bad' ?>">
+                                    <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : 'tk-chip-bad' ?>" data-bio-user-m="<?= (int) $emp['id'] ?>">
                                         <span class="material-symbols-outlined">fingerprint</span> <?= $bH && $bR ? 'Biometría ✓' : 'Biometría pendiente' ?>
                                     </span>
                                     <span class="tk-chip-soft <?= $_ct === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
@@ -745,6 +840,9 @@
                                 <div class="m-card-actions" onclick="event.stopPropagation()">
                                     <button type="button" class="m-card-btn" title="Nueva contrasena" onclick="openResetPwd(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>')">
                                         <span class="material-symbols-outlined">password</span> Contrasena
+                                    </button>
+                                    <button type="button" class="m-card-btn" title="Biometria (foto y huella)" onclick='openBioPerson(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)'>
+                                        <span class="material-symbols-outlined">fingerprint</span> Biometria
                                     </button>
                                     <button type="button" class="m-card-btn" title="Editar" onclick='openEditModal(<?= json_encode($emp) ?>)'>
                                         <span class="material-symbols-outlined">edit</span> Editar
@@ -761,6 +859,7 @@
             </div>
         </div>
         <?php endforeach; ?>
+        </div><!-- /.personal-cols -->
 
         <div class="personal-section" id="codigos">
             <div class="personal-section-head">
@@ -1120,6 +1219,96 @@
     </div>
 </div>
 
+<!-- Modal: Biometría del personal (la registra el admin) -->
+<div class="dev-modal-overlay" id="bioPersonModal">
+    <div class="dev-modal" style="max-width:470px;">
+        <div class="dev-modal-head">
+            <h3><span class="material-symbols-outlined">fingerprint</span> Biometría de <span id="bioPersonName">—</span></h3>
+            <button type="button" class="dev-btn-icon" onclick="closeBioPerson()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="dev-modal-body">
+            <input type="hidden" id="bioPersonId" value="">
+
+            <!-- Rostro -->
+            <div class="bio-person-block">
+                <div class="bio-person-head">
+                    <span class="material-symbols-outlined">portrait</span>
+                    <div>
+                        <strong>Foto de referencia</strong>
+                        <small>La capturas tú desde este PC o subes la foto de la persona. Así nadie registra un rostro que no es el suyo.</small>
+                    </div>
+                    <span class="tk-chip-soft tk-chip-bad" id="bioRostroChip">Pendiente</span>
+                </div>
+
+                <div class="bio-person-cam" id="bioPersonCamWrap" style="display:none;">
+                    <video id="bioPersonCam" autoplay playsinline muted></video>
+                    <button type="button" class="bio-p-flip" onclick="bioPersonFlip()" title="Voltear camara">
+                        <span class="material-symbols-outlined">flip_camera_ios</span>
+                    </button>
+                    <div style="position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;">
+                        <button type="button" class="dev-btn dev-btn-sm" onclick="bioPersonShot()">
+                            <span class="material-symbols-outlined">camera</span> Capturar
+                        </button>
+                    </div>
+                </div>
+
+                <img class="bio-person-prev" id="bioPersonPrev" style="display:none;" alt="Foto de referencia">
+
+                <div class="bio-person-actions">
+                    <button type="button" class="dev-btn dev-btn-sm" id="bioPersonCamBtn" onclick="bioPersonStartCam()">
+                        <span class="material-symbols-outlined">photo_camera</span> Abrir camara
+                    </button>
+                    <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="document.getElementById('bioPersonFile').click()">
+                        <span class="material-symbols-outlined">upload_file</span> Subir foto
+                    </button>
+                    <input type="file" id="bioPersonFile" accept="image/*" style="display:none;">
+                    <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" id="bioPersonClearBtn" style="display:none;" onclick="bioPersonClearPhoto()">
+                        <span class="material-symbols-outlined">delete</span> Quitar foto
+                    </button>
+                </div>
+
+                <div class="bio-person-msg" id="bioPersonRostroMsg"></div>
+            </div>
+
+            <!-- Huella -->
+            <div class="bio-person-block">
+                <div class="bio-person-head">
+                    <span class="material-symbols-outlined">fingerprint</span>
+                    <div>
+                        <strong>Huella</strong>
+                        <small>La huella real sólo se inscribe desde el dispositivo de la persona (WebAuthn). Aquí sólo se activa o apaga el modo sin lector.</small>
+                    </div>
+                    <span class="tk-chip-soft tk-chip-bad" id="bioHuellaChip">Pendiente</span>
+                </div>
+
+                <div style="font-size:11.5px;color:var(--g-text-secondary,#a9b6c8);margin-top:10px;" id="bioHuellaHint">Aún no se ha habilitado.</div>
+
+                <div class="bio-person-actions">
+                    <button type="button" class="dev-btn dev-btn-sm" id="bioHuellaOnBtn" onclick="bioPersonHuella('on')">
+                        <span class="material-symbols-outlined">fingerprint</span> Activar sin lector
+                    </button>
+                    <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" id="bioHuellaOffBtn" style="display:none;" onclick="bioPersonHuella('off')">
+                        <span class="material-symbols-outlined">block</span> Desactivar
+                    </button>
+                </div>
+
+                <div class="bio-person-msg" id="bioPersonHuellaMsg"></div>
+            </div>
+
+            <p class="bio-person-note">
+                <span class="material-symbols-outlined">info</span>
+                Al marcar asistencia la persona verifica con la cámara o con su lector: nadie más puede marcar por ella.
+            </p>
+        </div>
+        <div class="dev-modal-footer">
+            <button type="button" class="dev-btn" onclick="closeBioPerson()">Cerrar</button>
+            <button type="button" class="dev-btn dev-btn-primary" id="bioPersonSaveBtn" disabled onclick="bioPersonSave()">
+                <span class="material-symbols-outlined">save</span> Guardar foto
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Editar empleado -->
 <div class="dev-modal-overlay" id="editEmployeeModal">
     <div class="dev-modal">
@@ -1304,6 +1493,9 @@
             <button type="button" class="dev-btn dev-btn-danger" id="detailFireBtn">
                 <span class="material-symbols-outlined">person_remove</span> Despedir
             </button>
+            <button type="button" class="dev-btn dev-btn-primary" id="detailBioBtn">
+                <span class="material-symbols-outlined">fingerprint</span> Biometria
+            </button>
             <button type="button" class="dev-btn dev-btn-primary" id="detailEditBtn">
                 <span class="material-symbols-outlined">edit</span> Editar
             </button>
@@ -1470,6 +1662,279 @@ function openResetPwd(userId, name) {
     document.getElementById('resetPwdUserId').value = userId;
     document.querySelector('#resetPwdModal .reset-pwd-name').textContent = name;
     openModal('resetPwdModal');
+}
+
+// ════════════════════════════════════════
+// BIOMETRÍA DEL PERSONAL (la registra el admin)
+// El colaborador ya no puede cargar su propia foto ni su huella.
+// ════════════════════════════════════════
+var BIO_P = { emp: null, stream: null, photo: null, facing: 'user' };
+
+function bioPersonMsg(id, text, ok) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!text) { el.className = 'bio-person-msg'; el.textContent = ''; return; }
+    el.className = 'bio-person-msg show ' + (ok ? 'is-ok' : 'is-err');
+    el.textContent = text;
+}
+
+function bioPersonFotoUrl(emp) {
+    var p = String((emp && emp.rostro_path) || '');
+    if (!p) return '';
+    if (p.indexOf('http') === 0 || p.charAt(0) === '/') return p;
+    return '<?= base_url('admin/evidencia/rostros/') ?>' + p.split('/').pop();
+}
+
+function bioPersonSetPreview(url) {
+    var img = document.getElementById('bioPersonPrev');
+    img.src = url;
+    img.style.display = 'block';
+    document.getElementById('bioPersonCamWrap').style.display = 'none';
+    document.getElementById('bioPersonSaveBtn').disabled = true;
+    document.getElementById('bioPersonClearBtn').style.display = '';
+}
+
+function bioPersonHidePreview() {
+    var img = document.getElementById('bioPersonPrev');
+    img.style.display = 'none';
+    img.removeAttribute('src');
+    document.getElementById('bioPersonSaveBtn').disabled = true;
+    document.getElementById('bioPersonClearBtn').style.display = 'none';
+}
+
+function bioPersonStopCam() {
+    if (BIO_P.stream) {
+        BIO_P.stream.getTracks().forEach(function (t) { t.stop(); });
+        BIO_P.stream = null;
+    }
+    var v = document.getElementById('bioPersonCam');
+    if (v) v.srcObject = null;
+    document.getElementById('bioPersonCamWrap').style.display = 'none';
+}
+
+function bioPersonStartCam() {
+    document.getElementById('bioPersonCamWrap').style.display = '';
+    document.getElementById('bioPersonPrev').style.display = 'none';
+    bioPersonMsg('bioPersonRostroMsg', '', null);
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        bioPersonStopCam();
+        bioPersonMsg('bioPersonRostroMsg', 'Este navegador no permite usar la camara. Usa "Subir foto".', false);
+        return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: BIO_P.facing, width: { ideal: 720 } }, audio: false })
+        .then(function (stream) {
+            BIO_P.stream = stream;
+            document.getElementById('bioPersonCam').srcObject = stream;
+        })
+        .catch(function () {
+            bioPersonStopCam();
+            bioPersonMsg('bioPersonRostroMsg', 'No se pudo abrir la camara. Usa "Subir foto" como alternativa.', false);
+        });
+}
+
+function bioPersonFlip() {
+    if (!BIO_P.stream) return;
+    BIO_P.facing = BIO_P.facing === 'user' ? 'environment' : 'user';
+    bioPersonStopCam();
+    bioPersonStartCam();
+}
+
+function bioPersonShot() {
+    var v = document.getElementById('bioPersonCam');
+    if (!v || !(v.videoWidth > 0)) {
+        bioPersonMsg('bioPersonRostroMsg', 'Espera a que la camara este activa.', false);
+        return;
+    }
+    var c = document.createElement('canvas');
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    BIO_P.photo = c.toDataURL('image/jpeg', 0.85);
+    bioPersonSetPreview(BIO_P.photo);
+    bioPersonStopCam();
+}
+
+document.getElementById('bioPersonFile').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+        BIO_P.photo = rd.result;
+        bioPersonSetPreview(rd.result);
+    };
+    rd.readAsDataURL(f);
+    this.value = '';
+});
+
+function bioPersonClearPhoto() {
+    // Foto elegida pero sin guardar: sólo deshace la vista previa.
+    if (BIO_P.photo) {
+        BIO_P.photo = null;
+        var guardada = !!(BIO_P.emp && Number(BIO_P.emp.rostro_registrado) && BIO_P.emp.rostro_path);
+        if (guardada) bioPersonSetPreview(bioPersonFotoUrl(BIO_P.emp));
+        else bioPersonHidePreview();
+        bioPersonMsg('bioPersonRostroMsg', '', null);
+        return;
+    }
+
+    // Foto ya guardada: la quita del servidor.
+    if (!BIO_P.emp) return;
+    var body = new FormData();
+    body.set('csrf_test_name', '<?= csrf_hash() ?>');
+    body.set('user_id', BIO_P.emp.id);
+    body.set('estado', 'off');
+    fetch('<?= site_url('admin/biometria/rostro') ?>', { method: 'POST', body: body, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            bioPersonMsg('bioPersonRostroMsg', d.msj || (d.ok ? 'Foto eliminada' : 'No se pudo eliminar la foto'), !!d.ok);
+            if (!d.ok) return;
+            BIO_P.emp.rostro_registrado = 0;
+            BIO_P.emp.rostro_path = '';
+            bioPersonHidePreview();
+            var chip = document.getElementById('bioRostroChip');
+            chip.className = 'tk-chip-soft tk-chip-bad';
+            chip.textContent = 'Pendiente';
+            bioPersonRefreshFila();
+        })
+        .catch(function () {
+            bioPersonMsg('bioPersonRostroMsg', 'Error de red. Intentalo de nuevo.', false);
+        });
+}
+
+function bioPersonSave() {
+    if (!BIO_P.photo || !BIO_P.emp) return;
+
+    var btn = document.getElementById('bioPersonSaveBtn');
+    btn.disabled = true;
+
+    var body = new FormData();
+    body.set('csrf_test_name', '<?= csrf_hash() ?>');
+    body.set('user_id', BIO_P.emp.id);
+    body.set('imagen', BIO_P.photo);
+
+    fetch('<?= site_url('admin/biometria/rostro') ?>', { method: 'POST', body: body, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            bioPersonMsg('bioPersonRostroMsg', d.msj || (d.ok ? 'Foto guardada' : 'No se pudo guardar la foto'), !!d.ok);
+            if (!d.ok) { btn.disabled = false; return; }
+
+            BIO_P.photo = null;
+            BIO_P.emp.rostro_registrado = 1;
+            BIO_P.emp.rostro_path = d.path || bioPersonFotoUrl(BIO_P.emp);
+            bioPersonSetPreview(BIO_P.emp.rostro_path);
+
+            var chip = document.getElementById('bioRostroChip');
+            chip.className = 'tk-chip-soft tk-chip-ok';
+            chip.textContent = 'Registrada';
+            bioPersonRefreshFila();
+        })
+        .catch(function () {
+            btn.disabled = false;
+            bioPersonMsg('bioPersonRostroMsg', 'Error de red. Intentalo de nuevo.', false);
+        });
+}
+
+function bioPersonRenderHuella() {
+    var h = Number((BIO_P.emp && BIO_P.emp.huella_registrada) || 0);
+    var chip = document.getElementById('bioHuellaChip');
+    chip.className = 'tk-chip-soft ' + (h === 1 ? 'tk-chip-ok' : (h === 2 ? 'tk-chip-warn' : 'tk-chip-bad'));
+    chip.textContent = h === 1 ? 'Real (WebAuthn)' : (h === 2 ? 'Sin lector' : 'Pendiente');
+
+    document.getElementById('bioHuellaHint').textContent = h === 1
+        ? 'Inscrita por la persona desde su propio dispositivo.'
+        : (h === 2 ? 'Habilitada en modo sin lector: no valida huella real.' : 'Aún no se ha habilitado.');
+
+    document.getElementById('bioHuellaOnBtn').style.display = h ? 'none' : '';
+    document.getElementById('bioHuellaOffBtn').style.display = h ? '' : 'none';
+}
+
+function bioPersonHuella(estado) {
+    if (!BIO_P.emp) return;
+
+    var onBtn = document.getElementById('bioHuellaOnBtn');
+    var offBtn = document.getElementById('bioHuellaOffBtn');
+    onBtn.disabled = true;
+    offBtn.disabled = true;
+
+    var body = new FormData();
+    body.set('csrf_test_name', '<?= csrf_hash() ?>');
+    body.set('user_id', BIO_P.emp.id);
+    body.set('estado', estado);
+
+    fetch('<?= site_url('admin/biometria/huella') ?>', { method: 'POST', body: body, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            onBtn.disabled = false;
+            offBtn.disabled = false;
+            bioPersonMsg('bioPersonHuellaMsg', d.msj || (d.ok ? 'Listo' : 'No se pudo actualizar'), !!d.ok);
+            if (!d.ok) return;
+            BIO_P.emp.huella_registrada = estado === 'on' ? 2 : 0;
+            bioPersonRenderHuella();
+            bioPersonRefreshFila();
+        })
+        .catch(function () {
+            onBtn.disabled = false;
+            offBtn.disabled = false;
+            bioPersonMsg('bioPersonHuellaMsg', 'Error de red. Intentalo de nuevo.', false);
+        });
+}
+
+/** Actualiza el chip de la tabla y de la tarjeta móvil sin recargar. */
+function bioPersonRefreshFila() {
+    var e = BIO_P.emp;
+    if (!e) return;
+    var h = Number(e.huella_registrada) || 0;
+    var r = Number(e.rostro_registrado) || 0;
+    var completo = h > 0 && r > 0;
+
+    var td = document.querySelector('[data-bio-user="' + e.id + '"]');
+    if (td) {
+        var chip = td.querySelector('.tk-chip-soft');
+        if (chip) {
+            chip.className = 'tk-chip-soft ' + (completo ? 'tk-chip-ok' : (h || r ? 'tk-chip-warn' : 'tk-chip-bad'));
+            chip.textContent = completo ? 'Completa' : (h || r ? 'Incompleta' : 'Pendiente');
+        }
+    }
+
+    var mc = document.querySelector('[data-bio-user-m="' + e.id + '"]');
+    if (mc) {
+        mc.className = 'tk-chip-soft ' + (completo ? 'tk-chip-ok' : 'tk-chip-bad');
+        mc.innerHTML = '<span class="material-symbols-outlined">fingerprint</span> ' + (completo ? 'Biometría ✓' : 'Biometría pendiente');
+    }
+}
+
+function openBioPerson(emp) {
+    if (!emp) return;
+    BIO_P.emp = emp;
+    BIO_P.photo = null;
+    BIO_P.facing = 'user';
+    bioPersonStopCam();
+
+    document.getElementById('bioPersonId').value = emp.id;
+    document.getElementById('bioPersonName').textContent = emp.name || 'Sin nombre';
+    bioPersonMsg('bioPersonRostroMsg', '', null);
+    bioPersonMsg('bioPersonHuellaMsg', '', null);
+
+    // Rostro
+    var tieneRostro = !!(Number(emp.rostro_registrado) && emp.rostro_path);
+    var chipR = document.getElementById('bioRostroChip');
+    chipR.className = 'tk-chip-soft ' + (tieneRostro ? 'tk-chip-ok' : 'tk-chip-bad');
+    chipR.textContent = tieneRostro ? 'Registrada' : 'Pendiente';
+    if (tieneRostro) bioPersonSetPreview(bioPersonFotoUrl(emp));
+    else bioPersonHidePreview();
+
+    // Huella
+    bioPersonRenderHuella();
+
+    openModal('bioPersonModal');
+}
+
+function closeBioPerson() {
+    bioPersonStopCam();
+    BIO_P.photo = null;
+    BIO_P.emp = null;
+    closeModal('bioPersonModal');
 }
 
 var EMP_AREAS = [
@@ -1823,6 +2288,7 @@ function openDetailModal(emp) {
     }
 
     document.getElementById('detailEditBtn').onclick = function() { closeDetailModal(); openEditModal(emp); };
+    document.getElementById('detailBioBtn').onclick = function() { closeDetailModal(); openBioPerson(emp); };
 
     var fireBtn = document.getElementById('detailFireBtn');
     var fireAction = '';

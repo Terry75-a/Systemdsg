@@ -282,6 +282,120 @@ class DevController extends BaseController
         ]);
     }
 
+    /**
+     * Registros detrás de cada cifra del resumen (para el modal de «Base de datos»):
+     * ?tipo=rol|asist|inc|code|notif|passkey|push &v=valor (opcional). Máximo 100, los más recientes.
+     */
+    public function datosGrupo()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+        $db   = \Config\Database::connect();
+        $tipo = (string) $this->request->getGet('tipo');
+        $v    = (string) $this->request->getGet('v');
+
+        $q = match ($tipo) {
+            'rol'     => $db->table('users')->select("id, name AS titulo, COALESCE(NULLIF(cargo, ''), NULLIF(area, ''), role) AS sub, COALESCE(email, dni) AS extra, last_login AS fecha")->where('role', $v)->orderBy('last_login', 'DESC'),
+            'asist'   => $db->table('attendance')->select("id, name AS titulo, CONCAT(COALESCE(time_in, '—'), ' → ', COALESCE(time_out, '—')) AS sub, observacion AS extra, date AS fecha")->where('status', $v)->orderBy('date', 'DESC')->orderBy('id', 'DESC'),
+            'inc'     => $db->table('incidents')->select("id, name AS titulo, tipo AS sub, detalle AS extra, fecha")->where('estado', $v)->orderBy('fecha', 'DESC')->orderBy('id', 'DESC'),
+            'code'    => $db->table('codes')->select("id, CONCAT(code, ' · ', COALESCE(name, '')) AS titulo, dni AS sub, used_by AS extra, created AS fecha")->where('status', $v)->orderBy('created', 'DESC'),
+            'notif'   => $db->table('notifications n')->select("n.id, n.titulo, COALESCE(u.name, CONCAT('Usuario ', n.user_id)) AS sub, IF(n.leida, 'Leída', 'Sin leer') AS extra, n.created_at AS fecha")->join('users u', 'u.id = n.user_id', 'left')->orderBy('n.created_at', 'DESC'),
+            'passkey' => $db->table('webauthn_credentials w')->select("w.id, COALESCE(u.name, CONCAT('Usuario ', w.user_id)) AS titulo, COALESCE(w.transports, '') AS sub, CONCAT('Usada ', COALESCE(w.last_used_at, 'nunca')) AS extra, w.created_at AS fecha")->join('users u', 'u.id = w.user_id', 'left')->orderBy('w.created_at', 'DESC'),
+            'push'    => $db->table('push_subscriptions p')->select("p.id, COALESCE(u.name, CONCAT('Usuario ', p.user_id)) AS titulo, SUBSTRING_INDEX(SUBSTRING_INDEX(p.endpoint, '/', 3), '/', -1) AS sub, CONCAT('Visto ', COALESCE(p.last_seen, '—')) AS extra, p.created_at AS fecha")->join('users u', 'u.id = p.user_id', 'left')->orderBy('p.created_at', 'DESC'),
+            default   => null,
+        };
+        if ($q === null) {
+            return $this->response->setStatusCode(400)->setJSON(['ok' => false, 'msj' => 'Categoría no válida']);
+        }
+        $total = (int) (clone $q)->countAllResults(false);
+        $rows  = $q->limit(100)->get()->getResultArray();
+        foreach ($rows as &$r) {
+            foreach (['titulo', 'sub', 'extra'] as $k) {
+                $t = (string) ($r[$k] ?? '');
+                $r[$k] = mb_strlen($t) > 120 ? mb_substr($t, 0, 117) . '…' : $t;
+            }
+        }
+        unset($r);
+        return $this->response->setJSON(['ok' => true, 'total' => $total, 'rows' => $rows]);
+    }
+
+    /**
+     * Detalle de una tabla para el modal de «Base de datos»: estructura, índices,
+     * tamaño y las últimas filas. Las columnas sensibles (contraseñas, llaves,
+     * firmas, tokens) se devuelven ocultas.
+     */
+    public function datosTabla()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+        $db = \Config\Database::connect();
+        $t  = (string) $this->request->getGet('t');
+
+        $info = $db->query(
+            "SELECT table_name AS nombre, engine, table_collation AS collation, auto_increment,
+                    COALESCE(data_length, 0) AS data, COALESCE(index_length, 0) AS idx,
+                    create_time, update_time, table_comment AS comentario
+             FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?",
+            [$t]
+        )->getRowArray();
+        if (! $info) {
+            return $this->response->setStatusCode(404)->setJSON(['ok' => false, 'msj' => 'Tabla no encontrada']);
+        }
+
+        $cols = $db->query(
+            "SELECT column_name AS nombre, column_type AS tipo, is_nullable AS nulo, column_key AS llave,
+                    column_default AS defecto, extra
+             FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ?
+             ORDER BY ordinal_position",
+            [$t]
+        )->getResultArray();
+
+        $indices = $db->query(
+            "SELECT index_name AS nombre, NOT non_unique AS unico,
+                    GROUP_CONCAT(column_name ORDER BY seq_in_index SEPARATOR ', ') AS columnas
+             FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = ?
+             GROUP BY index_name, non_unique ORDER BY index_name = 'PRIMARY' DESC, index_name",
+            [$t]
+        )->getResultArray();
+
+        $relaciones = $db->query(
+            "SELECT column_name AS columna, referenced_table_name AS tabla, referenced_column_name AS ref
+             FROM information_schema.key_column_usage
+             WHERE table_schema = DATABASE() AND table_name = ? AND referenced_table_name IS NOT NULL",
+            [$t]
+        )->getResultArray();
+
+        $filas = (int) $db->table($t)->countAllResults();
+
+        // Últimas filas (por la llave primaria si existe)
+        $pk = null;
+        foreach ($cols as $c) {
+            if ($c['llave'] === 'PRI') { $pk = $c['nombre']; break; }
+        }
+        $q = $db->table($t)->limit(8);
+        if ($pk) $q->orderBy($pk, 'DESC');
+        $muestra = $q->get()->getResultArray();
+
+        $sensible = '/pass|token|secret|hash|credential|public_key|firma_datos|p256dh|auth|clave|codigo_verif/i';
+        foreach ($muestra as &$row) {
+            foreach ($row as $k => $v) {
+                if ($v === null) continue;
+                if (preg_match($sensible, (string) $k)) { $row[$k] = '•••• oculto'; continue; }
+                $v = (string) $v;
+                if (strlen($v) > 80) $row[$k] = mb_substr($v, 0, 77) . '…';
+            }
+        }
+        unset($row);
+
+        return $this->response->setJSON([
+            'ok'         => true,
+            'info'       => $info,
+            'filas'      => $filas,
+            'columnas'   => $cols,
+            'indices'    => $indices,
+            'relaciones' => $relaciones,
+            'muestra'    => $muestra,
+        ]);
+    }
+
     // ════════════════════════════════════════
     // PAGE: Perfil
     // ════════════════════════════════════════

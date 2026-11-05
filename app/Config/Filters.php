@@ -19,10 +19,11 @@ class Filters extends BaseFilters
     {
         parent::__construct();
 
-        // La toolbar de debug solo debe estar habilitada fuera de producción.
-        if (env('CI_ENVIRONMENT') !== 'production') {
-            $this->required['after'][] = 'toolbar';
-        }
+        // Barra de depuración de CodeIgniter (ícono de la llama) desactivada
+        // en todas las pantallas. Para volver a usarla en desarrollo, descomentar:
+        // if (env('CI_ENVIRONMENT') !== 'production') {
+        //     $this->required['after'][] = 'toolbar';
+        // }
 
         // HTTPS forzado únicamente en producción para no romper localhost por HTTP.
         if (env('CI_ENVIRONMENT') === 'production') {

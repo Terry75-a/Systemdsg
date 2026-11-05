@@ -901,3 +901,92 @@ body:has(.dev-main) .tk-hs-bar > i { display: block; height: 100%; border-radius
 body:has(.dev-main) .tk-hs-tbl tr.tk-hs-total td { font-weight: 600; border-top: 2px solid var(--tk-l60); }
 body:has(.dev-main) .tk-hs-note b { color: var(--sb-on-surface); font-weight: 600; }
 body:has(.dev-main) .tk-hs-note { line-height: 1.5; }
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR · réplica de System-Trackin (AppShell)
+   240 px abierto / 64 px colapsado · cabecera h-14 · secciones con
+   título de 10 px · enlaces en píldora de 32 px · pie con borde y
+   bloques «Herramientas» (Tema, Colapsar) y «Cuenta».
+   ══════════════════════════════════════════════════════════════ */
+body:has(.dev-main) .dev-sidebar { display: flex; flex-direction: column; overflow: hidden; }
+body:has(.dev-main) .dev-nav {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 1px; padding: 12px 8px;
+  scrollbar-width: none;
+}
+body:has(.dev-main) .dev-nav::-webkit-scrollbar { display: none; }
+body:has(.dev-main) .dev-nav-section {
+  margin: 0; padding: 14px 10px 4px; font-size: 10px; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--sb-on-surface-variant) 55%, transparent);
+}
+body:has(.dev-main) .dev-nav > .dev-nav-section:first-child { padding-top: 0; }
+body:has(.dev-main) .dev-nav-link {
+  height: 32px; min-height: 32px; padding: 0 10px; gap: 10px; border-radius: 9999px; margin: 0;
+  font-size: 13px; font-weight: 400; color: color-mix(in srgb, var(--sb-on-surface-variant) 75%, transparent);
+  transition: background-color .3s ease, color .3s ease;
+}
+body:has(.dev-main) .dev-nav-link:hover { background: var(--sb-surface-container); color: var(--sb-on-surface); }
+body:has(.dev-main) .dev-nav-link .material-symbols-outlined { font-size: 17px; opacity: .75; transition: transform .25s ease, opacity .25s ease; }
+body:has(.dev-main) .dev-nav-link > span:not(.material-symbols-outlined):not(.dev-nav-badge) {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: transform .3s ease, letter-spacing .3s ease;
+}
+body:has(.dev-main) .dev-nav-link:hover > span:not(.material-symbols-outlined):not(.dev-nav-badge) { transform: translateX(4px); letter-spacing: .02em; }
+body:has(.dev-main) .dev-nav-link.is-active { background: var(--sb-primary); color: var(--sb-on-primary, #fff); font-weight: 500; }
+body:has(.dev-main) .dev-nav-link.is-active .material-symbols-outlined { opacity: 1; transform: scale(1.1); }
+body:has(.dev-main) .dev-nav-link:active .material-symbols-outlined { transform: scale(.9); }
+body:has(.dev-main) .dev-nav-badge { margin-left: auto; height: 18px; min-width: 18px; padding: 0 6px; font-size: 10px; font-weight: 600; line-height: 18px; border-radius: 9999px; }
+
+/* botones del pie con aspecto de enlace */
+body:has(.dev-main) button.dev-nav-link {
+  width: 100%; border: 0; background: none; font-family: inherit; text-align: left; cursor: pointer;
+}
+body:has(.dev-main) button.dev-nav-link:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) .dev-nav form { margin: 0; }
+
+/* pie: Herramientas + Cuenta */
+body:has(.dev-main) .dev-sidebar-tools {
+  flex: none; display: flex; flex-direction: column; gap: 1px; padding: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+}
+body:has(.dev-main) .dev-sidebar-tools .dev-nav-section:first-child { padding-top: 4px; }
+body:has(.dev-main) .dev-sidebar-tools .dev-tools-sep {
+  margin-top: 8px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--sb-outline-variant) 60%, transparent);
+}
+body:has(.dev-main) .dev-tool.is-muted { color: color-mix(in srgb, var(--sb-on-surface-variant) 50%, transparent); }
+body:has(.dev-main) #sidebarCollapseBtn .material-symbols-outlined { transition: transform .2s ease; }
+html.sb-collapsed body:has(.dev-main) #sidebarCollapseBtn .material-symbols-outlined { transform: rotate(180deg); }
+body:has(.dev-main) .dev-sidebar-tools form { margin: 0; }
+/* perfil en «Cuenta» con avatar */
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user {
+  display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 8px; border-radius: 9999px;
+  text-decoration: none; color: var(--sb-on-surface);
+}
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user:hover { background: var(--sb-surface-container); }
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-avatar { width: 26px; height: 26px; flex: none; font-size: 10px; }
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user > :not(.dev-sidebar-avatar) { min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user-name { font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user-role { font-size: 10px; font-weight: 500; color: var(--sb-primary); text-transform: none; }
+
+/* colapsado: 64 px, iconos de 36 px centrados; el activo pasa a cuadrado redondeado */
+@media (min-width: 769px) {
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar { width: 64px !important; }
+  html.sb-collapsed body:has(.dev-main) .dev-main { margin-left: 64px; }
+  html.sb-collapsed body:has(.dev-main) footer.footer { left: 64px; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-head { flex-direction: row; justify-content: center; padding: 0 !important; height: 56px !important; }
+  html.sb-collapsed body:has(.dev-main) .dev-nav { gap: 6px; padding: 12px 0; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools { padding: 8px 0; gap: 6px; align-items: center; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools .dev-nav-section { display: none; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools .dev-tools-sep { display: block; height: 0; width: 36px; margin: 2px 0; padding: 0; font-size: 0; }
+  html.sb-collapsed body:has(.dev-main) .dev-nav-link {
+    width: 36px; height: 36px; min-height: 36px; padding: 0; margin: 0 auto; justify-content: center; border-radius: 9999px;
+  }
+  html.sb-collapsed body:has(.dev-main) .dev-nav-link.is-active { border-radius: 14px; }
+  html.sb-collapsed body:has(.dev-main) .dev-nav-link > span:not(.material-symbols-outlined):not(.dev-nav-badge) { display: none; }
+  html.sb-collapsed body:has(.dev-main) .dev-nav-badge {
+    position: absolute; top: 2px; right: 2px; min-width: 8px; width: 8px; height: 8px; padding: 0; font-size: 0;
+    box-shadow: 0 0 0 2px var(--sb-surface);
+  }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user { width: 36px; height: 36px; min-height: 36px; padding: 0; justify-content: center; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools .dev-sidebar-user > :not(.dev-sidebar-avatar) { display: none; }
+  html.sb-collapsed body:has(.dev-main) .dev-sidebar-tools form { display: flex; justify-content: center; }
+}

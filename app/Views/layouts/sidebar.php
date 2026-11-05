@@ -13,6 +13,7 @@ function pdsgCls(bool $ok): string { return $ok ? ' is-active' : ''; }
 $GLOBALS['__pdsg_seg'] = $seg;
 ?>
 
+<script>try{if(localStorage.getItem('devSidebarCollapsed')==='1')document.documentElement.classList.add('sb-collapsed')}catch(e){}</script>
 <aside class="dev-sidebar" id="devSidebar">
     <div class="dev-sidebar-head">
         <a href="<?= base_url('dashboard') ?>" class="dev-logo">
@@ -78,8 +79,25 @@ $GLOBALS['__pdsg_seg'] = $seg;
                 <span>Configuración</span>
             </a>
         <?php endif; ?>
-
-        <div class="dev-nav-section" style="padding-top:24px;">General</div>
+    </nav>
+    <div class="dev-sidebar-tools">
+        <div class="dev-nav-section">Herramientas</div>
+        <button type="button" class="dev-nav-link dev-tool" onclick="var b=document.getElementById('dsgDarkBtn');if(b)b.click();">
+            <span class="material-symbols-outlined">contrast</span>
+            <span>Tema</span>
+        </button>
+        <button type="button" class="dev-nav-link dev-tool is-muted" id="sidebarCollapseBtn" data-icons="fixed" aria-label="Colapsar menú" aria-expanded="true">
+            <span class="material-symbols-outlined">chevron_left</span>
+            <span>Colapsar</span>
+        </button>
+        <div class="dev-nav-section dev-tools-sep">Cuenta</div>
+        <a href="<?= base_url('perfil') ?>" class="dev-sidebar-user">
+            <span class="dev-sidebar-avatar"><?= esc($ini) ?></span>
+            <span style="min-width:0;">
+                <span class="dev-sidebar-user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= esc($uname) ?></span>
+                <span class="dev-sidebar-user-role"><?= esc($role) ?></span>
+            </span>
+        </a>
         <a href="<?= base_url('') ?>" class="dev-nav-link">
             <span class="material-symbols-outlined">language</span>
             <span>Sitio web</span>
@@ -91,16 +109,6 @@ $GLOBALS['__pdsg_seg'] = $seg;
                 <span>Cerrar sesión</span>
             </button>
         </form>
-    </nav>
-
-    <div class="dev-sidebar-footer">
-        <a href="<?= base_url('perfil') ?>" class="dev-sidebar-user">
-            <span class="dev-sidebar-avatar"><?= esc($ini) ?></span>
-            <span style="min-width:0;">
-                <span class="dev-sidebar-user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= esc($uname) ?></span>
-                <span class="dev-sidebar-user-role"><?= esc($role) ?></span>
-            </span>
-        </a>
     </div>
 </aside>
 
@@ -311,3 +319,4 @@ $GLOBALS['__pdsg_seg'] = $seg;
     });
 })();
 </script>
+<script src="<?= base_url('js/sidebar-collapse.js?v=' . filemtime(FCPATH . 'js/sidebar-collapse.js')) ?>"></script>

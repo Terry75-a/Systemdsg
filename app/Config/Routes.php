@@ -64,6 +64,8 @@ $routes->group('dios', ['filter' => 'dev'], static function ($routes) {
     $routes->get('auditoria', 'DevController::auditoria');
     $routes->get('sesiones', 'DevController::sesiones');
     $routes->get('datos', 'DevController::datos');
+    $routes->get('datos/tabla', 'DevController::datosTabla');
+    $routes->get('datos/grupo', 'DevController::datosGrupo');
     $routes->get('perfil', 'DevController::perfil');
     $routes->post('update-password', 'DevController::updatePassword');
     $routes->post('create-admin', 'DevController::createAdmin');
@@ -126,6 +128,10 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('end-practicante', 'AdminController::endPracticante');
     $routes->post('create-code', 'AdminController::createCode');
     $routes->post('delete-code', 'AdminController::deleteCode');
+
+    // Biometría del personal: la registra el admin (el colaborador ya no)
+    $routes->post('biometria/rostro', 'AdminController::biometriaRostro');
+    $routes->post('biometria/huella', 'AdminController::biometriaHuella');
 
     // Admin Horarios
     $routes->post('create-schedule', 'AdminController::createSchedule');
@@ -276,6 +282,7 @@ $routes->group('personas', ['filter' => 'auth'], function ($routes) {
     
     $routes->get('obtenerNombrePersona', 'PersonasController::obtenerNombrePersona');
      $routes->get('obtenerDetalle', 'PersonasController::obtenerDetalle');
+    $routes->get('pagosSucursal/(:num)', 'PersonasController::pagosSucursal/$1');
 
     // Rutas POST (Aquí se arregla tu AJAX de Asignarplanes)
     $routes->post('Asignarplanes', 'PersonasController::Asignarplanes');

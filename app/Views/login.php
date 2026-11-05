@@ -65,11 +65,17 @@
                 <span class="tkl-spin" aria-hidden="true"></span>
             </button>
 
-            <p class="tkl-foot">
-                <a href="<?= base_url('/') ?>">Volver al sitio principal</a>
-                <span>·</span>
-                <a href="<?= base_url('asisten-dsg') ?>">Asistencia del personal</a>
-            </p>
+            <!-- Accesos rápidos: dos botones unidos en una barra, con separador -->
+            <nav class="tkl-foot" aria-label="Accesos rápidos">
+                <a class="tkl-foot-btn" href="<?= base_url('/') ?>">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    <span class="tkl-foot-label">Volver al sitio principal</span>
+                </a>
+                <a class="tkl-foot-btn is-accent" href="<?= base_url('login-verde') ?>">
+                    <i class="fa-solid fa-fingerprint" aria-hidden="true"></i>
+                    <span class="tkl-foot-label">Asistencia del personal</span>
+                </a>
+            </nav>
         </form>
     </section>
 

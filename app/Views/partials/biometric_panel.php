@@ -3,7 +3,6 @@
     $bRostro = (int) ($bioRostro ?? 0);
     $bRostroPath = (string) ($bioRostroPath ?? '');
     $bCredId = (string) ($bioHuellaCredId ?? '');
-    $bCompleto = $bHuella > 0 && $bRostro > 0;
 
     // Contexto de marcado: aprovecha la pagina para saber si se marca salida
     // y cual es la hora de salida esperada (para detectar salida anticipada)
@@ -19,27 +18,6 @@
     $userScheduleId   = (int) ($userScheduleId ?? 0);
 ?>
 <style>
-.bio-card {
-    background: var(--g-surface, #1b2430); border: 1px solid var(--g-border, #26323f);
-    border-radius: var(--g-radius, 16px); padding: 18px; margin-bottom: 18px;
-}
-.bio-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.bio-head .material-symbols-outlined { color: var(--g-accent, #4f8cff); font-size: 22px; }
-.bio-head h3 { margin: 0; font-size: 15px; font-weight: 700; font-family: var(--g-font-display, inherit); }
-.bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.bio-item {
-    border: 1px dashed var(--g-border, #26323f); border-radius: 14px; padding: 14px;
-    display: flex; flex-direction: column; gap: 8px;
-}
-.bio-item-ok { border-style: solid; border-color: rgba(46,204,113,.35); background: rgba(46,204,113,.06); }
-.bio-item-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
-.bio-item-label .material-symbols-outlined { font-size: 17px; }
-.bio-ok { color: var(--g-success, #2ecc71); }
-.bio-no { color: var(--g-error, #ef4444); }
-.bio-item-hint { font-size: 11.5px; color: var(--g-text-secondary, #a9b6c8); line-height: 1.45; }
-.bio-thumb { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(46,204,113,.35); }
-.bio-note { font-size: 11.5px; color: var(--g-text-secondary, #a9b6c8); margin-top: 12px; display: flex; gap: 6px; align-items: center; }
-@media (max-width: 640px) { .bio-grid { grid-template-columns: 1fr; } }
 
 /* Modal propio del partial (evita depender de clases de la pagina) */
 .bio-modal {
@@ -81,84 +59,6 @@
 .bio-msg-ok { background: rgba(46,204,113,.1); color: var(--g-success, #2ecc71); }
 .bio-msg-err { background: rgba(239,68,68,.1); color: var(--g-error, #ef4444); }
 </style>
-
-<div class="bio-card">
-    <div class="bio-head">
-        <span class="material-symbols-outlined">fingerprint</span>
-        <h3>Biometria obligatoria</h3>
-        <?php if ($bCompleto): ?><span class="dev-badge dev-badge-green">Completa</span>
-        <?php elseif ($bHuella || $bRostro): ?><span class="dev-badge dev-badge-amber">Parcial</span>
-        <?php else: ?><span class="dev-badge dev-badge-red">Pendiente</span><?php endif; ?>
-    </div>
-    <div class="bio-grid">
-        <div class="bio-item <?= $bHuella ? 'bio-item-ok' : '' ?>">
-            <div class="bio-item-label">
-                <span class="material-symbols-outlined <?= $bHuella ? 'bio-ok' : 'bio-no' ?>"><?= $bHuella ? 'check_circle' : 'radio_button_unchecked' ?></span>
-                <span><?= $bHuella ? 'Huella registrada' : 'Registrar huella' ?></span>
-            </div>
-            <?php if ($bHuella): ?>
-                <div class="bio-item-hint"><?= $bHuella === 2 ? 'Registrada (simulacion de prueba).' : 'Usara tu lector biometrico (celular/PC).' ?></div>
-                <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="bioEnrollHuella(1)"><span class="material-symbols-outlined">refresh</span> Re-registrar</button>
-            <?php else: ?>
-                <div class="bio-item-hint">Tu celular o PC pedira tu huella (o rostro con Face ID).</div>
-                <button type="button" class="dev-btn dev-btn-sm" onclick="bioEnrollHuella()"><span class="material-symbols-outlined">fingerprint</span> Registrar huella</button>
-                <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="bioSimHuella()">Probar sin lector (simulacion)</button>
-            <?php endif; ?>
-        </div>
-        <div class="bio-item <?= $bRostro ? 'bio-item-ok' : '' ?>">
-            <div class="bio-item-label">
-                <span class="material-symbols-outlined <?= $bRostro ? 'bio-ok' : 'bio-no' ?>"><?= $bRostro ? 'check_circle' : 'radio_button_unchecked' ?></span>
-                <span>Rostro (facial)</span>
-            </div>
-            <?php if ($bRostro): ?>
-                <?php if ($bRostroPath): ?><img src="<?= esc(base_url('mi-panel/evidencia/' . $bRostroPath)) ?>" alt="rostro" class="bio-thumb"><?php endif; ?>
-                <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="bioEnrollRostro()"><span class="material-symbols-outlined">refresh</span> Actualizar foto</button>
-            <?php else: ?>
-                <div class="bio-item-hint">Activa la camara, pon el rostro frente a ella y captura la foto.</div>
-                <button type="button" class="dev-btn dev-btn-sm" onclick="bioEnrollRostro()"><span class="material-symbols-outlined">photo_camera</span> Capturar rostro</button>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php if (!$bCompleto): ?>
-        <div class="bio-note"><span class="material-symbols-outlined" style="font-size:16px;">lock</span> Registra tu huella o tu rostro; al marcar se te pedirá cualquiera de los dos.</div>
-    <?php endif; ?>
-</div>
-
-<!-- Modal: capturar rostro (camara) -->
-<div class="bio-modal" id="bioRostroModal">
-    <div class="bio-dialog">
-        <div class="bio-dialog-head">
-            <h3><span class="material-symbols-outlined">portrait</span> Capturar rostro</h3>
-            <button class="bio-x" onclick="bioCloseRostro()"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="bio-dialog-body">
-            <div class="bio-cam-wrap" id="bioCamWrap">
-                <video id="bioCam" autoplay playsinline muted></video>
-                <button type="button" class="bio-cam-flip" id="bioCamFlip" onclick="bioFlipCam('bioCam')" title="Voltear cámara">
-                    <span class="material-symbols-outlined">flip_camera_ios</span>
-                </button>
-                <div class="bio-cam-err" id="bioCamErr" style="display:none;">
-                    No se pudo abrir la camara.<br>Usa el boton "Subir foto" como alternativa.
-                </div>
-                <div class="bio-shot" id="bioShot">
-                    <button type="button" class="dev-btn dev-btn-sm" onclick="bioTakeShot()"><span class="material-symbols-outlined">camera</span> Capturar</button>
-                </div>
-            </div>
-            <img class="bio-prev" id="bioShotPrev" style="display:none;" alt="captura">
-            <div class="bio-state-msg" id="bioRostroMsg"></div>
-            <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
-                <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" onclick="bioUploadRostro()"><span class="material-symbols-outlined">upload_file</span> Subir foto</button>
-                <input type="file" id="bioRostroFile" accept="image/*" style="display:none;">
-            </div>
-        </div>
-        <div class="bio-dialog-foot">
-            <button type="button" class="dev-btn dev-btn-outline" onclick="bioCloseRostro()">Cancelar</button>
-            <button type="button" class="dev-btn dev-btn-primary" id="bioRostroSave" disabled onclick="bioSaveRostro()">
-                <span class="material-symbols-outlined">check</span> Guardar rostro
-            </button>
-        </div>
-    </div>
-</div>
 
 <!-- Modal: verificar biometria antes de marcar -->
 <div class="bio-modal" id="bioCheckModal">
@@ -306,6 +206,7 @@
     }
     function msg(id, text, ok) {
         var el = $(id);
+        if (!el) return;
         el.textContent = text;
         el.className = 'bio-state-msg show ' + (ok ? 'bio-msg-ok' : 'bio-msg-err');
     }
@@ -363,116 +264,15 @@
         window.__bioState.pendingEvidencia = url;
     }
 
-    // ── Registro de huella (WebAuthn) ──────────────────────────
-    window.bioEnrollHuella = function (again) {
-        msg('bioRostroMsg', '', true);
-        fetch('<?= site_url('mi-panel/bio-session') ?>?fresh=1', { credentials: 'same-origin' })
-            .then(function (r) { return r.json(); })
-            .then(function (d) {
-                if (!d.ok) { alert(d.msj || 'Error'); return; }
-                if (!window.PublicKeyCredential || !window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
-                    if (!again) bioSimHuella();
-                    else alert('Tu navegador no expone un lector biometrico. Usa la opcion "Probar sin lector".');
-                    return;
-                }
-                window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (avail) {
-                    if (!avail) {
-                        if (!again) bioSimHuella();
-                        else alert('No hay autenticador biometrico (lector de huella/Face ID) disponible. Usa "Probar sin lector".');
-                        return;
-                    }
-                    navigator.credentials.create({
-                        publicKey: {
-                            challenge: b64ToU8(d.challenge),
-                            rp: { id: location.hostname, name: 'DSG Peru' },
-                            user: { id: b64ToU8(d.userHandle), name: d.userEmail || d.userName, displayName: d.userName },
-                            pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-                            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required' },
-                            timeout: 60000
-                        }
-                    }).then(function (cred) {
-                        var resp = cred.response;
-                        var body = new FormData();
-                        body.set('credential_id', u8ToB64(cred.rawId));
-                        body.set('type', cred.type || 'public-key');
-                        body.set('clientDataJSON', u8ToB64(new Uint8Array(resp.clientDataJSON)));
-                        body.set('attestationObject', u8ToB64(new Uint8Array(resp.attestationObject)));
-                        body.set('transports', JSON.stringify(typeof resp.getTransports === 'function' ? resp.getTransports() : []));
-                        body.set('mode', 'realkey');
-                        fetchPost('<?= site_url('mi-panel/guardar-huella') ?>', body).then(function (res) {
-                            msg('bioRostroMsg', res.msj || 'Huella registrada', !!res.ok);
-                            alert(res.msj || 'Huella registrada');
-                            if (res.ok) location.reload();
-                        }).catch(function () {
-                            msg('bioRostroMsg', 'Error de red al registrar la huella.', false);
-                        });
-                    }).catch(function () {
-                        msg('bioRostroMsg', 'No se pudo registrar la huella. Prueba la opcion "Probar sin lector".', false);
-                    });
-                });
-            });
-    };
-    window.bioSimHuella = function () {
-        var body = new FormData();
-        body.set('credential_id', 'sim-' + Math.random().toString(36).slice(2));
-        body.set('mode', 'sim');
-        fetchPost('<?= site_url('mi-panel/guardar-huella') ?>', body).then(function (res) {
-            alert(res.msj || 'Huella registrada');
-            if (res.ok) location.reload();
-        });
-    };
-
-    // ── Registro de rostro ─────────────────────────────────────
-    window.bioEnrollRostro = function () {
-        $('bioRostroModal').classList.add('c-open');
-        $('bioShotPrev').style.display = 'none';
-        $('bioCamWrap').style.display = '';
-        $('bioRostroSave').disabled = true;
-        window.__bioState.pendingEvidencia = '';
-        startCam($('bioCam'), $('bioCamErr')).catch(function () {});
-    };
-    window.bioTakeShot = function () {
-        snap($('bioCam'), $('bioShotPrev'), $('bioCamWrap'), $('bioRostroSave'));
-    };
-    window.bioUploadRostro = function () { $('bioRostroFile').click(); };
-    $('bioRostroFile').addEventListener('change', function () {
-        var f = this.files && this.files[0];
-        if (!f) return;
-        var rd = new FileReader();
-        rd.onload = function () {
-            window.__bioState.pendingEvidencia = rd.result;
-            $('bioShotPrev').src = rd.result; $('bioShotPrev').style.display = 'block';
-            $('bioCamWrap').style.display = 'none';
-            $('bioRostroSave').disabled = false;
-        };
-        rd.readAsDataURL(f);
-    });
-    window.bioSaveRostro = function () {
-        var url = window.__bioState.pendingEvidencia;
-        if (!url) { msg('bioRostroMsg', 'Captura o sube una foto primero.', false); return; }
-        var body = new FormData();
-        body.set('imagen', url);
-        fetchPost('<?= site_url('mi-panel/guardar-rostro') ?>', body).then(function (res) {
-            msg('bioRostroMsg', res.msj || 'Rostro guardado', !!res.ok);
-            if (res.ok) setTimeout(function () { location.reload(); }, 900);
-        }).catch(function () {
-            msg('bioRostroMsg', 'Error de red al guardar.', false);
-        });
-    };
     // ── Verificacion al marcar: huella O rostro ────────────────
     var B = window.__bioState;
-
-    window.bioCloseRostro = function () {
-        $('bioRostroModal').classList.remove('c-open');
-        if (window.__bioState.stream) { window.__bioState.stream.getTracks().forEach(function (t) { t.stop(); }); window.__bioState.stream = null; }
-    };
 
     // Abre el modal biométrico (huella/rostro) al marcar asistencia
     window.openBioCheckModal = function () {
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
         if (!tH && !tR) {
-            alert('Registra tu huella o tu rostro en la seccion Biometria antes de marcar asistencia.');
+            alert('Aún no tienes biometría registrada. Contacta a tu administrador para que la registre antes de marcar asistencia.');
             return;
         }
         B.humino_huellaOk = false;
@@ -514,7 +314,7 @@
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
         if (!tH && !tR) {
-            alert('Registra tu huella o tu rostro en la seccion Biometria antes de marcar asistencia.');
+            alert('Aún no tienes biometría registrada. Contacta a tu administrador para que la registre antes de marcar asistencia.');
             return;
         }
         // Horario asignado al usuario
