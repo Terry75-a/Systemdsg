@@ -17,7 +17,7 @@ $GLOBALS['__pdsg_seg'] = $seg;
 <aside class="dev-sidebar" id="devSidebar">
     <div class="dev-sidebar-head">
         <a href="<?= base_url('dashboard') ?>" class="dev-logo">
-            <span class="dev-logo-mark"><img src="<?= base_url('images/logo_3.1.png') ?>" alt="DSG"></span>
+            <span class="dev-logo-mark"><img src="<?= base_url('images/dsg-logo.svg') ?>" alt="DSG"></span>
             <span class="dev-logo-text"><strong>Admin Panel</strong><small>DSG Perú</small></span>
         </a>
     </div>
@@ -30,6 +30,7 @@ $GLOBALS['__pdsg_seg'] = $seg;
     <?php endif; ?>
 
     <nav class="dev-nav">
+        <div class="dev-nav-section">General</div>
         <a href="<?= base_url('dashboard') ?>" class="dev-nav-link<?= pdsgCls(pdsgSeg('dashboard')) ?>">
             <span class="material-symbols-outlined">home</span>
             <span>Inicio</span>
@@ -61,7 +62,7 @@ $GLOBALS['__pdsg_seg'] = $seg;
         </a>
 
         <?php if ($isAdmin): ?>
-            <div class="dev-nav-section" style="padding-top:24px;">Administración</div>
+            <div class="dev-nav-section">Administración</div>
             <a href="<?= base_url('permisos') ?>" class="dev-nav-link<?= pdsgCls(pdsgSeg('permisos')) ?>">
                 <span class="material-symbols-outlined">admin_panel_settings</span>
                 <span>Permisos</span>
@@ -82,9 +83,9 @@ $GLOBALS['__pdsg_seg'] = $seg;
     </nav>
     <div class="dev-sidebar-tools">
         <div class="dev-nav-section">Herramientas</div>
-        <button type="button" class="dev-nav-link dev-tool" onclick="var b=document.getElementById('dsgDarkBtn');if(b)b.click();">
-            <span class="material-symbols-outlined">contrast</span>
-            <span>Tema</span>
+        <button type="button" class="dev-nav-link dev-tool" id="darkModeToggle" onclick="var b=document.getElementById('dsgDarkBtn');if(b)b.click();">
+            <span class="material-symbols-outlined" id="darkModeIcon">dark_mode</span>
+            <span id="darkModeLabel">Modo oscuro</span>
         </button>
         <button type="button" class="dev-nav-link dev-tool is-muted" id="sidebarCollapseBtn" data-icons="fixed" aria-label="Colapsar menú" aria-expanded="true">
             <span class="material-symbols-outlined">chevron_left</span>
@@ -292,6 +293,8 @@ $GLOBALS['__pdsg_seg'] = $seg;
    así que se escucha al documento (event delegation). */
     var isDark = localStorage.getItem('devDarkMode') === 'true';
     var desktopDark = document.getElementById('dsgDarkBtn');
+    var darkIcon = document.getElementById('darkModeIcon');
+    var darkLabel = document.getElementById('darkModeLabel');
 
     function applyDark(dark) {
         if (dark) {
@@ -301,6 +304,8 @@ $GLOBALS['__pdsg_seg'] = $seg;
             document.documentElement.classList.remove('dark');
             if (desktopDark) desktopDark.classList.remove('is-on');
         }
+        if (darkIcon) darkIcon.textContent = dark ? 'light_mode' : 'dark_mode';
+        if (darkLabel) darkLabel.textContent = dark ? 'Modo claro' : 'Modo oscuro';
     }
 
     applyDark(isDark);
