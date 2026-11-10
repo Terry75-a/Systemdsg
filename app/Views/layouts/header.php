@@ -47,6 +47,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/dashboard/tk-sistema.css?v=' . filemtime(FCPATH . 'css/dashboard/tk-sistema.css')) ?>">
+    <!-- Rediseño total estilo System-Trackin (capa final, solo diseño) -->
+    <link rel="stylesheet" href="<?= base_url('css/dashboard/tk2.css?v=' . filemtime(FCPATH . 'css/dashboard/tk2.css')) ?>">
 
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="shortcut icon" href="<?= base_url('images/logo_circular.png')?>" >
@@ -62,6 +64,6 @@
     </style>
 </head>
 
-<body>
+<body class="tk2">
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">

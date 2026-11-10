@@ -1,0 +1,647 @@
+/* ═════════════════════════════════════════════════════════════════════
+   tk2.css · Rediseño total del Panel de clientes con el sistema de diseño
+   de System-Trackin (tokens «sb», StatGrid, chips sbf-*, tablas, Pill,
+   botones redondos con rebote, diálogos HeroUI). Es la ÚLTIMA capa:
+   solo cambia la apariencia; no toca IDs, nombres ni comportamiento.
+   ═════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Tokens (mismos valores de src/app/globals.css de Trackin) ── */
+body.tk2 {
+  --sb-surface: #ffffff;
+  --sb-surface-container-low: #fbfbfc;
+  --sb-surface-container: #f6f6f7;
+  --sb-surface-container-high: #ececee;
+  --sb-surface-container-highest: #e1e1e4;
+  --sb-on-surface: #161618;
+  --sb-on-surface-variant: #18181b;
+  --sb-muted: #71717a;
+  --sb-outline: #a1a1aa;
+  --sb-outline-variant: #e4e4e7;
+  --sb-primary: #078a04;
+  --sb-on-primary: #ffffff;
+  --sb-primary-soft: color-mix(in oklab, #09ae04 12%, transparent);
+  --sb-lime: #bedf3c;
+  --sb-late: #e34948;
+  --sb-late-soft: color-mix(in oklab, #e34948 12%, transparent);
+  --sb-ontime: #2a78d6;
+  --sb-ontime-soft: color-mix(in oklab, #2a78d6 12%, transparent);
+  --page-bg: #f4f6f1;
+  --tk2-line: color-mix(in oklab, var(--sb-outline-variant) 70%, transparent);
+  --tk2-line-soft: color-mix(in oklab, var(--sb-outline-variant) 45%, transparent);
+  --tk2-shadow: 0 1px 2px rgba(16, 24, 16, .04);
+  --tk2-pop: 0 24px 64px -24px rgba(0, 0, 0, .35);
+  --tk2-ease: cubic-bezier(.38, .49, 0, 2);
+  --tk2-font: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+html.dark body.tk2 {
+  --sb-surface: #0a0a0b;
+  --sb-surface-container-low: #101013;
+  --sb-surface-container: #17171a;
+  --sb-surface-container-high: #1f1f23;
+  --sb-surface-container-highest: #27272b;
+  --sb-on-surface: #f4f4f5;
+  --sb-on-surface-variant: #e4e4e7;
+  --sb-muted: #a1a1aa;
+  --sb-outline: #3f3f46;
+  --sb-outline-variant: #27272b;
+  --sb-primary: #4fd24a;
+  --sb-on-primary: #0a0a0b;
+  --sb-primary-soft: color-mix(in oklab, #4fd24a 16%, transparent);
+  --sb-late: #e66767;
+  --sb-late-soft: color-mix(in oklab, #e66767 18%, transparent);
+  --sb-ontime: #3987e5;
+  --sb-ontime-soft: color-mix(in oklab, #3987e5 18%, transparent);
+  --page-bg: #000000;
+  --tk2-line: #27272b;
+  --tk2-line-soft: #1f1f23;
+  --tk2-shadow: none;
+  --tk2-pop: 0 24px 64px -24px rgba(0, 0, 0, .9);
+}
+
+/* ── 2. Lienzo, tipografía y barra superior ── */
+body.tk2,
+body.tk2 .dev-main,
+body.tk2 .dsg-page,
+body.tk2 .dev-content,
+body.tk2 #main-wrapper { background: var(--page-bg) !important; }
+body.tk2, body.tk2 :is(button, input, select, textarea, table, h1, h2, h3, h4, h5, h6, p, span, label, a) { font-family: var(--tk2-font) !important; }
+body.tk2 .material-symbols-outlined { font-family: "Material Symbols Outlined" !important; }
+body.tk2 :is(.fa, .fa-solid, .fa-regular, .fa-brands, .fas, .far, .fab) { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; }
+body.tk2 { color: var(--sb-on-surface); -webkit-font-smoothing: antialiased; }
+body.tk2 .dev-topbar { background: transparent !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; }
+body.tk2 .tk-shell-title { font-size: 15px !important; font-weight: 600 !important; letter-spacing: -.01em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk-shell-hello { font-size: 12px !important; font-weight: 500 !important; color: var(--sb-muted) !important; }
+body.tk2 :is(.dsg-dark-btn, .dsg-notification-btn) {
+  width: 36px !important; height: 36px !important; border-radius: 9999px !important;
+  background: var(--sb-surface) !important; border: 1px solid var(--tk2-line) !important; color: var(--sb-on-surface) !important;
+}
+body.tk2 footer.dev-footer, body.tk2 .footer, body.tk2 .dsg-footer { background: transparent !important; border: 0 !important; color: var(--sb-muted) !important; font-size: 11px !important; }
+
+/* ── 3. Encabezado de página (PageTitle) ── */
+body.tk2 :is(.tk2-title, .pdsg-page-head) {
+  display: flex !important; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px;
+  margin: 0 0 16px !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important;
+}
+body.tk2 :is(.tk2-title h2, .pdsg-page-title) {
+  margin: 0 !important; font-size: 20px !important; font-weight: 600 !important; letter-spacing: -.025em !important;
+  line-height: 1.25 !important; color: var(--sb-on-surface) !important;
+}
+body.tk2 :is(.tk2-title p, .pdsg-page-sub) {
+  margin: 2px 0 0 !important; font-size: 12px !important; font-weight: 600 !important; color: var(--sb-on-surface-variant) !important; opacity: .7;
+}
+body.tk2 .tk2-title-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+body.tk2 .tk2-page { display: flex; flex-direction: column; gap: 16px; }
+body.tk2 .tk2-page > .tk2-title { margin: 0 !important; }
+
+/* ── 4. Botones (Button de HeroUI con el «respiro» de EduconectaV2) ── */
+body.tk2 :is(.tk2-btn, .pdsg-add-btn, .btn-primary, .btn-success, .pdsg-btn-save, .mf-btn-primary, .mf-btn, .swal2-confirm, .swal2-cancel, .swal2-deny, .btn-secondary, .btn-light, .btn-outline-secondary, .btn-danger) {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 6px;
+  height: 36px; padding: 0 16px !important; border-radius: 9999px !important;
+  font-size: 13px !important; font-weight: 500 !important; line-height: 1 !important; white-space: nowrap;
+  box-shadow: none !important; cursor: pointer; text-decoration: none !important;
+  transition: padding 400ms var(--tk2-ease), background-color 125ms, color 125ms, opacity 125ms, transform 125ms !important;
+  -webkit-tap-highlight-color: transparent;
+}
+body.tk2 :is(.tk2-btn, .pdsg-add-btn, .btn-primary, .btn-success, .pdsg-btn-save, .mf-btn-primary, .swal2-confirm):not(:disabled):hover { padding-inline: 18px !important; }
+body.tk2 :is(.tk2-btn, .pdsg-add-btn, .btn, .mf-btn, .swal2-styled):not(:disabled):active { transform: scale(.97) !important; }
+body.tk2 :is(.tk2-btn-primary, .pdsg-add-btn, .btn-primary, .btn-success, .pdsg-btn-save, .mf-btn-primary, .swal2-confirm) {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; border: 1px solid transparent !important;
+}
+body.tk2 :is(.tk2-btn-primary, .pdsg-add-btn, .btn-primary, .btn-success, .pdsg-btn-save, .mf-btn-primary, .swal2-confirm):hover { background: color-mix(in oklab, var(--sb-primary) 88%, #000) !important; color: var(--sb-on-primary) !important; }
+body.tk2 :is(.tk2-btn-ghost, .btn-secondary, .btn-light, .btn-outline-secondary, .mf-btn-ghost, .swal2-cancel) {
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; border: 1px solid var(--tk2-line) !important;
+}
+body.tk2 :is(.tk2-btn-ghost, .btn-secondary, .btn-light, .btn-outline-secondary, .mf-btn-ghost, .swal2-cancel):hover { background: var(--sb-surface-container-high) !important; }
+body.tk2 :is(.btn-danger, .swal2-deny) { background: var(--sb-late) !important; color: #fff !important; border: 1px solid transparent !important; }
+body.tk2 :is(.tk2-btn, .pdsg-add-btn) .material-symbols-outlined { font-size: 18px; }
+body.tk2 :is(.tk2-btn, .pdsg-add-btn) i { font-size: 12px; }
+
+/* ── 5. Métricas (StatGrid: celdas unidas por líneas de 1px) ── */
+body.tk2 .tk2-stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; overflow: hidden;
+  border-radius: 16px; background: var(--tk2-line-soft); border: 1px solid var(--tk2-line-soft);
+}
+body.tk2 .tk2-stat {
+  display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--sb-surface);
+  animation: tk2-in 500ms cubic-bezier(.1, .8, 0, 1) both;
+}
+body.tk2 .tk2-stat:nth-child(2) { animation-delay: 40ms; }
+body.tk2 .tk2-stat:nth-child(3) { animation-delay: 80ms; }
+body.tk2 .tk2-stat > .material-symbols-outlined { font-size: 18px; color: var(--sb-muted); transition: color .2s; }
+body.tk2 .tk2-stat:hover > .material-symbols-outlined { color: var(--sb-primary); }
+body.tk2 .tk2-stat-label { margin: 0; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted); }
+body.tk2 .tk2-stat-value { margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--sb-on-surface); font-variant-numeric: tabular-nums; }
+/* las métricas que ya existen en otras pantallas (tk-stat) toman el mismo aspecto */
+body.tk2 .tk-stats { gap: 1px !important; border-radius: 16px !important; overflow: hidden; background: var(--tk2-line-soft) !important; border: 1px solid var(--tk2-line-soft) !important; box-shadow: none !important; }
+body.tk2 .tk-stat { background: var(--sb-surface) !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 20px !important; }
+body.tk2 .tk-stat-lbl { font-size: 10px !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted) !important; }
+body.tk2 .tk-stat-val { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -.02em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk-stat-ico { background: transparent !important; color: var(--sb-muted) !important; }
+
+/* ── 6. Barra de filtros: chips sbf-chip + buscador sbf-search ── */
+body.tk2 .tk2-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+body.tk2 :is(.tk2-chips, .pdsg-tabs) {
+  display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px !important;
+  padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important;
+}
+body.tk2 :is(.tk2-chip, .pdsg-tab) {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 6px;
+  height: 32px !important; padding: 0 14px !important; border-radius: 9999px !important;
+  font-size: 12px !important; font-weight: 500 !important; line-height: 1 !important; white-space: nowrap;
+  border: 1.5px solid var(--sb-outline-variant) !important; background: transparent !important; color: var(--sb-on-surface-variant) !important;
+  box-shadow: none !important; cursor: pointer;
+  transition: padding 400ms var(--tk2-ease), background-color 125ms, color 125ms, border-color 125ms !important;
+}
+body.tk2 :is(.tk2-chip, .pdsg-tab):hover { background: var(--sb-surface-container) !important; border-color: var(--sb-on-surface-variant) !important; padding-inline: 16px !important; }
+body.tk2 :is(.tk2-chip, .pdsg-tab):active { transform: scale(.97); }
+body.tk2 :is(.tk2-chip, .pdsg-tab).is-active {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; border-color: transparent !important;
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--sb-primary) 45%, transparent) !important;
+}
+body.tk2 .pdsg-tab::after, body.tk2 .pdsg-tab::before { display: none !important; }
+body.tk2 .pdsg-tab-count {
+  min-width: 20px; height: 18px; padding: 0 6px !important; border-radius: 9999px !important; display: inline-grid; place-items: center;
+  font-size: 10px !important; font-weight: 600 !important; background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface) !important;
+}
+body.tk2 .pdsg-tab.is-active .pdsg-tab-count { background: color-mix(in oklab, var(--sb-on-primary) 22%, transparent) !important; color: var(--sb-on-primary) !important; }
+
+body.tk2 .tk2-search,
+body.tk2 .pdsg-search-wrap .input-group {
+  display: flex !important; align-items: center; gap: 8px; height: 44px; padding: 0 16px !important; width: 100%; max-width: 384px;
+  background: var(--sb-surface) !important; border-radius: 24px !important; border: 1.5px solid var(--tk2-line) !important;
+  transition: box-shadow .3s ease, border-color .3s ease; margin: 0; cursor: text;
+}
+body.tk2 .tk2-search:hover, body.tk2 .pdsg-search-wrap .input-group:hover { box-shadow: 0 2px 12px -4px rgba(0, 0, 0, .08); }
+body.tk2 .tk2-search:focus-within, body.tk2 .pdsg-search-wrap .input-group:focus-within {
+  border-color: var(--sb-primary) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sb-primary) 12%, transparent), 0 8px 32px -8px color-mix(in srgb, var(--sb-primary) 18%, transparent) !important;
+}
+body.tk2 .tk2-search > .material-symbols-outlined { font-size: 18px; opacity: .45; }
+body.tk2 .tk2-search input,
+body.tk2 .pdsg-search-wrap .input-group input {
+  flex: 1; min-width: 0; height: 100% !important; padding: 0 !important; background: transparent !important; border: 0 !important;
+  outline: 0 !important; box-shadow: none !important; font-size: 14px !important; color: var(--sb-on-surface) !important;
+}
+body.tk2 :is(.tk2-search, .pdsg-search-wrap) input::placeholder { color: var(--sb-on-surface-variant); opacity: .4; }
+body.tk2 .pdsg-search-wrap .input-group-text { background: transparent !important; border: 0 !important; padding: 0 !important; opacity: .45; }
+body.tk2 .tk2-search-clear { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: inherit; opacity: .45; cursor: pointer; }
+body.tk2 .tk2-search-clear:hover { opacity: 1; background: var(--sb-surface-container); }
+body.tk2 .tk2-search-clear[hidden] { display: none; }
+body.tk2 .tk2-search-clear .material-symbols-outlined { font-size: 16px; }
+
+/* ── 7. Tarjetas (Card) ── */
+body.tk2 :is(.tk2-card, .pdsg-card, .pdsg-table-card, .card) {
+  background: var(--sb-surface) !important; border: 1px solid var(--tk2-line-soft) !important;
+  border-radius: 16px !important; box-shadow: var(--tk2-shadow) !important;
+}
+body.tk2 .tk2-card { overflow: hidden; animation: tk2-table-in 500ms cubic-bezier(.37, 1.42, .37, 1); transform-origin: top; }
+
+/* ── 8. Tablas (Table/Th/Tr/Td de Trackin) ── */
+body.tk2 .pdsg-table-wrap { overflow-x: auto; padding: 0 !important; }
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table, .dev-content .dataTable) {
+  width: 100%; border-collapse: collapse !important; margin: 0 !important; background: transparent !important; font-size: 12px !important;
+}
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) thead th {
+  padding: 10px 12px !important; background: transparent !important; border: 0 !important; border-bottom: 1px solid var(--tk2-line) !important;
+  font-size: 10px !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  color: var(--sb-muted) !important; box-shadow: none !important;
+}
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) thead th:first-child { padding-left: 16px !important; }
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) tbody td {
+  padding: 10px 12px !important; background: transparent !important; border: 0 !important; border-bottom: 1px solid var(--tk2-line-soft) !important;
+  vertical-align: middle; color: color-mix(in oklab, var(--sb-on-surface) 85%, transparent) !important; box-shadow: none !important;
+}
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) tbody td:first-child { padding-left: 16px !important; }
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) tbody tr:last-child td { border-bottom: 0 !important; }
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) tbody tr { background: transparent !important; transition: background-color .15s; }
+body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) tbody tr:hover > td { background: var(--sb-surface-container-low) !important; }
+body.tk2 .pdsg-th-center, body.tk2 .pdsg-td-center { text-align: center !important; }
+body.tk2 .pdsg-th-end, body.tk2 .pdsg-td-end { text-align: right !important; }
+body.tk2 .tk2-table tbody tr { animation: tk2-in 450ms cubic-bezier(.1, .8, 0, 1) both; }
+body.tk2 .pdsg-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace !important; font-size: 12px; letter-spacing: .02em; }
+body.tk2 .pdsg-user { display: inline-flex; align-items: center; gap: 10px; }
+body.tk2 .pdsg-user-name { font-size: 13px !important; font-weight: 500 !important; color: var(--sb-on-surface) !important; }
+body.tk2 .pdsg-avatar {
+  width: 32px !important; height: 32px !important; flex: 0 0 32px; display: grid !important; place-items: center; border-radius: 9999px !important;
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; border: 0 !important;
+  font-size: 11px !important; font-weight: 700 !important; letter-spacing: .02em;
+}
+
+/* Pill (estado): verde lleno = activo; gris = inactivo */
+body.tk2 :is(.pdsg-chip, .pv-pago-st) {
+  display: inline-flex !important; align-items: center; gap: 5px; height: 20px; padding: 0 10px !important; border-radius: 9999px !important;
+  font-size: 10px !important; font-weight: 600 !important; line-height: 1; border: 0 !important; box-shadow: none !important;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface-variant) !important;
+}
+body.tk2 .pdsg-chip-on { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+body.tk2 .pdsg-chip .ms-dot, body.tk2 .pdsg-chip > i.fa-circle { width: 5px !important; height: 5px !important; border-radius: 9999px; background: currentColor !important; font-size: 0 !important; display: inline-block; opacity: .9; }
+
+/* Acciones: botones de ícono redondos (tertiary / danger-soft) */
+body.tk2 .pdsg-actions { display: inline-flex !important; justify-content: flex-end; gap: 4px !important; }
+body.tk2 :is(.pdsg-action, .pdsg-suc-btn) {
+  width: 32px !important; height: 32px !important; min-width: 32px; padding: 0 !important; display: inline-grid !important; place-items: center;
+  border-radius: 9999px !important; border: 0 !important; box-shadow: none !important; cursor: pointer;
+  background: transparent !important; color: var(--sb-on-surface-variant) !important; font-size: 13px !important;
+  transition: background-color .15s, color .15s, transform .12s !important;
+}
+body.tk2 :is(.pdsg-action, .pdsg-suc-btn) > span { display: none !important; }
+body.tk2 :is(.pdsg-action, .pdsg-suc-btn):hover { background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface) !important; }
+body.tk2 :is(.pdsg-action, .pdsg-suc-btn):active { transform: scale(.92); }
+body.tk2 :is(.pdsg-action-danger, .pdsg-suc-btn-del) { background: var(--sb-late-soft) !important; color: var(--sb-late) !important; }
+body.tk2 :is(.pdsg-action-danger, .pdsg-suc-btn-del):hover { background: var(--sb-late) !important; color: #fff !important; }
+body.tk2 :is(.pdsg-action-on, .pdsg-suc-btn-on) { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+
+/* Paginación */
+body.tk2 .pdsg-pagination { display: flex !important; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px !important; border-top: 1px solid var(--tk2-line-soft) !important; background: transparent !important; }
+body.tk2 .pdsg-pagination[hidden] { display: none !important; }
+body.tk2 .pdsg-summary { font-size: 11px !important; font-weight: 600 !important; color: var(--sb-muted) !important; }
+body.tk2 .pdsg-pages { display: flex; align-items: center; gap: 4px; }
+body.tk2 :is(.pdsg-page, .pdsg-page-nav) {
+  height: 30px; min-width: 30px; padding: 0 10px !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 9999px !important; border: 1.5px solid var(--sb-outline-variant) !important; background: transparent !important;
+  font-size: 11px !important; font-weight: 600 !important; color: var(--sb-on-surface-variant) !important; box-shadow: none !important;
+}
+body.tk2 :is(.pdsg-page, .pdsg-page-nav):not(:disabled):hover { background: var(--sb-surface-container) !important; }
+body.tk2 .pdsg-page.is-active { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; border-color: transparent !important; }
+body.tk2 .pdsg-page-nav:disabled { opacity: .35; }
+
+/* Vacío */
+body.tk2 :is(.tk2-empty, .pdsg-empty) { padding: 48px 16px !important; text-align: center; color: var(--sb-muted) !important; font-size: 12px; font-weight: 600; }
+body.tk2 :is(.tk2-empty, .pdsg-empty) .material-symbols-outlined { display: block; margin: 0 auto 8px; font-size: 28px; opacity: .5; }
+body.tk2 :is(.tk2-empty, .pdsg-empty) p { margin: 0; }
+body.tk2 .pdsg-empty[hidden] { display: none !important; }
+
+/* Celular: filas como lista de Trackin (una por cliente, sin tarjetas flotantes) */
+@media (max-width: 767.98px) {
+  body.tk2 .tk2-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body.tk2 .tk2-stat { padding: 14px 12px; gap: 8px; }
+  body.tk2 .tk2-stat-value { font-size: 18px; }
+  body.tk2 .tk2-stat-label { font-size: 9px; letter-spacing: .05em; }
+  body.tk2 .tk2-search { max-width: none; }
+  body.tk2 .tk2-toolbar { flex-direction: column; align-items: stretch; }
+  body.tk2 .tk2-title { align-items: flex-start; }
+  body.tk2 .tk2-title-actions { width: 100%; }
+  body.tk2 .tk2-title-actions .tk2-btn { flex: 1; }
+  body.tk2 .pdsg-mcard {
+    margin: 0 !important; padding: 12px 16px !important; border: 0 !important; border-bottom: 1px solid var(--tk2-line-soft) !important;
+    border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
+  }
+  body.tk2 .pdsg-mcard:last-child { border-bottom: 0 !important; }
+  body.tk2 .pdsg-mlist { padding: 0 !important; gap: 0 !important; }
+  body.tk2 .pdsg-mcard-detail { padding: 3px 0 !important; border: 0 !important; }
+  body.tk2 .pdsg-mcard-label { font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: .05em; color: var(--sb-muted) !important; }
+  body.tk2 .pdsg-mcard-val { font-size: 12px !important; color: var(--sb-on-surface) !important; }
+  body.tk2 .pdsg-mcard-actions { padding-top: 6px !important; border: 0 !important; }
+}
+
+/* ── 9. Campos de formulario (h-10, rounded-xl, foco verde) ── */
+body.tk2 :is(.form-control, .form-select, .pdsg-input, .mf-input, .dataTables_filter input, .dataTables_length select):not(.tk2-search input) {
+  min-height: 40px; border-radius: 12px !important; border: 1px solid var(--sb-outline-variant) !important;
+  background-color: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important;
+  font-size: 13px !important; font-weight: 500; box-shadow: none !important; transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+body.tk2 :is(.form-control, .form-select, .pdsg-input, .mf-input):focus {
+  border-color: var(--sb-primary) !important; background-color: var(--sb-surface) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sb-primary) 12%, transparent) !important; outline: 0 !important;
+}
+body.tk2 :is(.form-control, .pdsg-input, .mf-input)::placeholder { color: var(--sb-muted) !important; opacity: .7; }
+body.tk2 :is(.form-control, .form-select, .pdsg-input):disabled, body.tk2 .form-control[readonly] { opacity: .7; }
+body.tk2 :is(.form-label, .pdsg-field-label, .mf-f > label) { font-size: 11px !important; font-weight: 600 !important; color: var(--sb-on-surface-variant) !important; margin-bottom: 6px !important; }
+body.tk2 .text-danger { color: var(--sb-late) !important; }
+html.dark body.tk2 input[type="date"] { color-scheme: dark; }
+body.tk2 .form-check-input:checked { background-color: var(--sb-primary) !important; border-color: var(--sb-primary) !important; }
+
+/* ── 10. Ventanas (Modal de HeroUI: rounded-3xl, encabezado con ícono, pie con botones redondos) ── */
+body.tk2 .modal-backdrop.show { opacity: 1 !important; background: rgba(10, 10, 11, .45) !important; backdrop-filter: blur(4px); }
+body.tk2 :is(.modal-content, .pdsg-modal-content, .pdsg-add-modal-content, .mf-content) {
+  background: var(--sb-surface) !important; color: var(--sb-on-surface) !important; border: 1px solid var(--tk2-line-soft) !important;
+  border-radius: 24px !important; box-shadow: var(--tk2-pop) !important; overflow: hidden;
+}
+body.tk2 .modal.fade .modal-dialog { transform: translateY(12px) scale(.98); transition: transform .35s cubic-bezier(.34, 1.25, .64, 1), opacity .2s; }
+body.tk2 .modal.show .modal-dialog { transform: none; }
+body.tk2 :is(.modal-header, .mf-head) { border-bottom: 1px solid var(--tk2-line-soft) !important; background: transparent !important; padding: 18px 22px !important; }
+body.tk2 :is(.modal-title, .mf-head h5, .pdsg-modal-name) { font-size: 16px !important; font-weight: 600 !important; letter-spacing: -.015em; color: var(--sb-on-surface) !important; }
+body.tk2 :is(.modal-footer, .mf-foot) { border-top: 1px solid var(--tk2-line-soft) !important; background: transparent !important; padding: 14px 22px !important; gap: 8px; }
+body.tk2 :is(.mf-icon, .pdsg-modal-avatar) { border-radius: 12px !important; background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; border: 0 !important; }
+body.tk2 :is(.btn-close, .pdsg-modal-close, .mf-close) {
+  width: 32px !important; height: 32px !important; border-radius: 9999px !important; opacity: 1 !important; box-shadow: none !important;
+  background-color: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; border: 0 !important; display: inline-grid; place-items: center;
+}
+body.tk2 :is(.pdsg-modal-close, .mf-close):hover, body.tk2 .btn-close:hover { background-color: var(--sb-surface-container-high) !important; }
+html.dark body.tk2 .btn-close { filter: invert(1); }
+body.tk2 :is(.pdsg-modal-group, .mf-sec, .pv-card, .pv-group) {
+  background: var(--sb-surface-container-low) !important; border: 1px solid var(--tk2-line-soft) !important; border-radius: 16px !important; box-shadow: none !important;
+}
+body.tk2 :is(.mf-sec-title, .pdsg-modal-group-title) { font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted) !important; }
+body.tk2 :is(.pdsg-modal-scroll, .mf-scroll, .mf-body) { scrollbar-width: none; }
+body.tk2 :is(.pdsg-modal-scroll, .mf-scroll, .mf-body)::-webkit-scrollbar { display: none; }
+
+/* Confirmaciones (SweetAlert2 con el aspecto de ConfirmDialog) */
+body.tk2 .swal2-popup {
+  border-radius: 24px !important; padding: 24px !important; background: var(--sb-surface) !important; color: var(--sb-on-surface) !important;
+  border: 1px solid var(--tk2-line-soft) !important; box-shadow: var(--tk2-pop) !important; font-family: var(--tk2-font) !important;
+}
+body.tk2 .swal2-title { font-size: 17px !important; font-weight: 600 !important; letter-spacing: -.015em; color: var(--sb-on-surface) !important; }
+body.tk2 .swal2-html-container { font-size: 13px !important; color: var(--sb-on-surface-variant) !important; }
+body.tk2 .swal2-actions { gap: 8px; }
+body.tk2 .swal2-styled { margin: 0 !important; }
+body.tk2 .swal2-container.swal2-backdrop-show { background: rgba(10, 10, 11, .45) !important; backdrop-filter: blur(4px); }
+
+/* ── 11. Formulario Nuevo / Editar cliente (dentro de la ventana) ── */
+body.tk2.pe-frame { background: var(--page-bg) !important; }
+body.tk2 .tk2-persona .pf-shell { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+body.tk2 .tk2-persona .pf-top {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: 0 0 16px !important; padding: 12px 16px !important; border-radius: 0 0 20px 20px !important;
+  background: color-mix(in oklab, var(--sb-surface) 86%, transparent) !important; backdrop-filter: blur(14px);
+  border: 1px solid var(--tk2-line-soft) !important; border-top: 0 !important; box-shadow: var(--tk2-shadow) !important;
+}
+body.tk2 .tk2-persona .pf-back {
+  width: 36px; height: 36px; flex: 0 0 36px; display: grid !important; place-items: center; border-radius: 9999px !important;
+  background: var(--sb-surface-container) !important; color: var(--sb-on-surface) !important; border: 0 !important; text-decoration: none;
+}
+body.tk2 .tk2-persona .pf-back:hover { background: var(--sb-surface-container-high) !important; }
+body.tk2 .tk2-persona .pf-top-title { flex: 1; min-width: 160px; }
+body.tk2 .tk2-persona .pf-crumb { font-size: 11px !important; font-weight: 600 !important; color: var(--sb-muted) !important; }
+body.tk2 .tk2-persona .pf-crumb i { font-size: 8px; margin: 0 4px; opacity: .6; }
+body.tk2 .tk2-persona .pf-top h1 { margin: 0 !important; font-size: 18px !important; font-weight: 600 !important; letter-spacing: -.02em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk2-persona .pf-steps { display: flex !important; gap: 6px !important; padding: 0 !important; background: none !important; border: 0 !important; }
+body.tk2 .tk2-persona .pf-steps a {
+  display: inline-flex !important; align-items: center; gap: 6px; height: 32px; padding: 0 14px 0 6px !important; border-radius: 9999px !important;
+  border: 1.5px solid var(--sb-outline-variant) !important; background: transparent !important; color: var(--sb-on-surface-variant) !important;
+  font-size: 12px !important; font-weight: 500 !important; text-decoration: none; box-shadow: none !important;
+  transition: padding 400ms var(--tk2-ease), background-color 125ms, color 125ms !important;
+}
+body.tk2 .tk2-persona .pf-steps a b {
+  width: 20px; height: 20px; display: grid; place-items: center; border-radius: 9999px; font-size: 10px;
+  background: var(--sb-surface-container-high) !important; color: var(--sb-on-surface) !important;
+}
+body.tk2 .tk2-persona .pf-steps a:hover { background: var(--sb-surface-container) !important; padding-right: 16px !important; }
+body.tk2 .tk2-persona .pf-steps a.is-on { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; border-color: transparent !important; }
+body.tk2 .tk2-persona .pf-steps a.is-on b { background: color-mix(in oklab, var(--sb-on-primary) 22%, transparent) !important; color: var(--sb-on-primary) !important; }
+body.tk2 .tk2-persona .pf-save { height: 38px !important; }
+
+/* dos columnas: secciones a la izquierda, ficha en vivo fija a la derecha */
+body.tk2 .tk2-form { display: grid !important; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; padding: 0 16px !important; }
+body.tk2 .tk2-form-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+body.tk2 .tk2-form-aside { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 10px; }
+body.tk2 .tk2-aside-kicker { margin: 0; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted); }
+
+/* búsqueda por DNI: tarjeta principal */
+body.tk2 .tk2-persona .pf-hero {
+  display: block !important; padding: 22px !important; border-radius: 20px !important; border: 1px solid var(--tk2-line-soft) !important;
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--sb-lime) 22%, transparent), transparent 55%),
+    radial-gradient(90% 120% at 100% 100%, color-mix(in oklab, var(--sb-primary) 10%, transparent), transparent 60%),
+    var(--sb-surface) !important;
+  box-shadow: var(--tk2-shadow) !important;
+}
+body.tk2 .tk2-persona .pf-kicker {
+  display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 9999px;
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; font-size: 11px !important; font-weight: 600 !important;
+}
+body.tk2 .tk2-persona .pf-hero-main h2 { margin: 10px 0 2px !important; font-size: 22px !important; font-weight: 600 !important; letter-spacing: -.03em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk2-persona .pf-hero-main > p { margin: 0 0 16px !important; font-size: 12px !important; font-weight: 600; color: var(--sb-muted) !important; }
+body.tk2 .tk2-persona .pf-lookup .pdsg-input {
+  height: 56px !important; min-height: 56px !important; padding: 0 130px 0 48px !important; border-radius: 9999px !important;
+  font-size: 18px !important; font-weight: 600 !important; letter-spacing: .1em; background-color: var(--sb-surface) !important;
+  border: 1.5px solid var(--tk2-line) !important;
+}
+body.tk2 .tk2-persona .pf-lookup .pdsg-input:focus { border-color: var(--sb-primary) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--sb-primary) 12%, transparent), 0 8px 32px -8px color-mix(in srgb, var(--sb-primary) 18%, transparent) !important; }
+body.tk2 .tk2-persona .pdsg-btn-search {
+  border-radius: 9999px !important; background: var(--sb-on-surface) !important; color: var(--sb-surface) !important; border: 0 !important;
+  font-size: 13px !important; font-weight: 600 !important; display: inline-flex !important; align-items: center; gap: 6px; z-index: 6 !important;
+}
+body.tk2 .tk2-persona .pf-lookup .pdsg-btn-search { top: 8px !important; right: 8px !important; height: 40px !important; padding: 0 18px !important; }
+body.tk2 .tk2-persona .pdsg-btn-search:hover { opacity: .88; }
+
+/* secciones: tarjeta con encabezado (ícono · título · ayuda) y rejilla de campos */
+body.tk2 .tk2-persona .pf-sec {
+  display: block !important; padding: 0 !important; margin: 0 !important; border: 1px solid var(--tk2-line-soft) !important; border-radius: 20px !important;
+  background: var(--sb-surface) !important; box-shadow: var(--tk2-shadow) !important; overflow: hidden; scroll-margin-top: 84px;
+}
+body.tk2 .tk2-persona .pf-sec + .pf-sec { border-top: 1px solid var(--tk2-line-soft) !important; }
+body.tk2 .tk2-persona .pf-sec::before, body.tk2 .tk2-persona .pf-sec::after { display: none !important; }
+body.tk2 .tk2-persona .pf-sec-side {
+  display: grid !important; grid-template-columns: 36px 1fr; column-gap: 12px; align-items: center;
+  padding: 16px 20px !important; border-bottom: 1px solid var(--tk2-line-soft) !important; position: static !important; background: transparent !important;
+}
+body.tk2 .tk2-persona .pf-num {
+  grid-row: span 2; width: 36px; height: 36px; display: grid !important; place-items: center; border-radius: 12px !important;
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; font-size: 0 !important; border: 0 !important;
+}
+body.tk2 .tk2-persona .pf-num .material-symbols-outlined { font-size: 19px !important; }
+body.tk2 .tk2-persona .pf-sec-side h3 { margin: 0 !important; font-size: 14px !important; font-weight: 600 !important; letter-spacing: -.01em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk2-persona .pf-sec-side h3 small { margin-left: 6px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant); }
+body.tk2 .tk2-persona .pf-sec-side p { margin: 0 !important; font-size: 12px !important; font-weight: 500; color: var(--sb-muted) !important; }
+body.tk2 .tk2-persona .pf-sec-card { padding: 18px 20px 20px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+body.tk2 .tk2-persona .pf-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px !important; }
+body.tk2 .tk2-persona .pf-full { grid-column: 1 / -1; }
+body.tk2 .tk2-persona .pf-sub { margin-top: 4px; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted) !important; }
+body.tk2 .tk2-persona .pe-lookup:not(.pf-lookup) .pdsg-input { padding-right: 112px !important; }
+
+/* ficha en vivo: tarjeta negra con acento lima (como las tarjetas de Trackin) */
+body.tk2 .tk2-form-aside .pf-card {
+  display: flex !important; flex-direction: column; gap: 10px; padding: 18px !important; border-radius: 20px !important; position: relative; overflow: hidden;
+  background: #0b0b0b !important; color: #fff !important; border: 1px solid #1f1f23 !important; box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .6) !important;
+}
+body.tk2 .tk2-form-aside .pf-card::after {
+  content: ""; position: absolute; right: -40px; top: -40px; width: 150px; height: 150px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(190, 223, 60, .35), transparent 65%); pointer-events: none;
+}
+body.tk2 .tk2-form-aside .pf-card-avatar { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--sb-lime) !important; color: #0b0b0b !important; font-weight: 700; position: relative; z-index: 1; }
+body.tk2 .tk2-form-aside .pf-card-info b { color: #fff !important; font-size: 15px; font-weight: 600; }
+body.tk2 .tk2-form-aside .pf-card-info span { color: rgba(255, 255, 255, .55) !important; }
+body.tk2 .tk2-form-aside .pf-card-meta li { color: rgba(255, 255, 255, .78) !important; }
+body.tk2 .tk2-form-aside .pf-card-meta i { color: var(--sb-lime) !important; }
+body.tk2 .tk2-form-aside .pf-card-bar { height: 6px; border-radius: 9999px; background: rgba(255, 255, 255, .12) !important; overflow: hidden; }
+body.tk2 .tk2-form-aside .pf-card-bar i { background: linear-gradient(90deg, #09ae04, var(--sb-lime)) !important; }
+body.tk2 .tk2-form-aside .pf-card-pct { color: rgba(255, 255, 255, .55) !important; }
+body.tk2 .tk2-aside-tips { display: flex; flex-direction: column; gap: 2px; padding: 6px; border-radius: 16px; background: var(--sb-surface); border: 1px solid var(--tk2-line-soft); }
+body.tk2 .tk2-aside-tips p { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 8px; border-radius: 10px; font-size: 11.5px; line-height: 1.45; font-weight: 500; color: var(--sb-on-surface-variant); }
+body.tk2 .tk2-aside-tips p:hover { background: var(--sb-surface-container-low); }
+body.tk2 .tk2-aside-tips .material-symbols-outlined { font-size: 16px; color: var(--sb-primary); flex: 0 0 auto; margin-top: 1px; }
+
+/* sucursales dentro del formulario */
+body.tk2 .tk2-persona #contenedorSucursales { border-radius: 20px !important; border: 1px solid var(--tk2-line-soft) !important; background: var(--sb-surface) !important; padding: 16px 20px !important; box-shadow: var(--tk2-shadow) !important; }
+body.tk2 .tk2-persona .pdsg-suc-table thead th { font-size: 10px !important; text-transform: uppercase; letter-spacing: .08em; color: var(--sb-muted) !important; border-bottom: 1px solid var(--tk2-line) !important; background: transparent !important; }
+body.tk2 .tk2-persona .pdsg-suc-table td { border-bottom: 1px solid var(--tk2-line-soft) !important; background: transparent !important; color: var(--sb-on-surface) !important; }
+body.tk2 .tk2-persona .pf-foot { padding: 14px 16px !important; background: transparent !important; border: 0 !important; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 11px; font-weight: 600; color: var(--sb-muted); }
+
+@media (max-width: 879.98px) {
+  body.tk2 .tk2-form { grid-template-columns: minmax(0, 1fr); padding: 0 10px !important; }
+  body.tk2 .tk2-form-aside { position: static; order: -1; }
+  body.tk2 .tk2-aside-tips, body.tk2 .tk2-aside-kicker { display: none; }
+}
+@media (max-width: 575.98px) {
+  body.tk2 .tk2-persona .pf-grid { grid-template-columns: minmax(0, 1fr); }
+  body.tk2 .tk2-persona .pf-top { gap: 10px; }
+  body.tk2 .tk2-persona .pf-steps { order: 3; width: 100%; }
+  body.tk2 .tk2-persona .pf-steps a { flex: 1; justify-content: center; }
+  body.tk2 .tk2-persona .pf-lookup .pdsg-input { font-size: 16px !important; padding-right: 110px !important; }
+  body.tk2 .tk2-persona .pf-hero-main h2 { font-size: 19px !important; }
+  body.tk2 .tk2-form-aside .pf-card { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  body.tk2 .tk2-form-aside .pf-card-meta { display: none !important; }
+  body.tk2 .tk2-form-aside .pf-card-bar { flex: 1 0 100%; }
+}
+
+/* ── 12. Movimiento (réplica de las animaciones de Trackin) ── */
+@keyframes tk2-in { from { opacity: 0; filter: blur(10px); transform: translateY(-12px); } to { opacity: 1; filter: blur(0); transform: none; } }
+@keyframes tk2-table-in { from { opacity: 0; transform: scaleY(.6); } to { opacity: 1; transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  body.tk2 *, body.tk2 *::before, body.tk2 *::after { animation: none !important; transition: none !important; }
+}
+
+/* ── 13. Ventana del formulario de cliente: más ancha para las dos columnas ── */
+body.tk2 #modalPersonaAdd .pdsg-add-dialog {
+  max-width: min(1180px, calc(100vw - 32px)) !important; width: min(1180px, calc(100vw - 32px)) !important;
+  margin-left: auto !important; margin-right: auto !important;
+}
+body.tk2 #modalPersonaAdd .pdsg-add-modal-content { background: var(--page-bg) !important; }
+
+/* ── 14. Formulario de cliente en celular: pantalla completa (antes quedaba como hoja de 150 px abajo) ── */
+@media (max-width: 767.98px) {
+  body.tk2 #modalPersonaAdd.modal.show { padding: 0 !important; align-items: stretch !important; }
+  body.tk2 #modalPersonaAdd.modal .modal-dialog,
+  body.tk2 #modalPersonaAdd .pdsg-add-dialog {
+    width: 100vw !important; max-width: 100vw !important; height: 100dvh !important; max-height: 100dvh !important;
+    margin: 0 !important; align-items: stretch !important; display: flex !important;
+  }
+  body.tk2 #modalPersonaAdd .modal-content,
+  body.tk2 #modalPersonaAdd .pdsg-add-modal-content {
+    height: 100% !important; max-height: 100% !important; flex: 1 1 auto !important;
+    border-radius: 0 !important; border: 0 !important; box-shadow: none !important;
+  }
+  body.tk2 #modalPersonaAdd .pdsg-add-frame { flex: 1 1 auto !important; height: 100% !important; min-height: 0; }
+  body.tk2 #modalPersonaAdd.modal.fade .modal-dialog { transform: translateY(24px); }
+  body.tk2 #modalPersonaAdd.modal.show .modal-dialog { transform: none; }
+
+  /* dentro del formulario: barra superior compacta y fija, sin huecos laterales */
+  body.tk2.pe-frame { padding: 0 0 calc(16px + env(safe-area-inset-bottom)) !important; }
+  body.tk2 .tk2-persona { padding: 0 !important; }
+  body.tk2 .tk2-persona .pf-top {
+    border-radius: 0 0 18px 18px !important; padding: calc(10px + env(safe-area-inset-top)) 12px 10px !important; margin-bottom: 12px !important;
+    display: grid !important; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 8px 10px !important;
+  }
+  body.tk2 .tk2-persona .pf-top h1 { font-size: 16px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.tk2 .tk2-persona .pf-back { grid-row: 1; grid-column: 1; }
+  body.tk2 .tk2-persona .pf-top-title { grid-row: 1; grid-column: 2; min-width: 0; }
+  body.tk2 .tk2-persona .pf-save { grid-row: 1; grid-column: 3; height: 36px !important; padding: 0 14px !important; font-size: 12px !important; }
+  body.tk2 .tk2-persona .pf-steps { grid-row: 2; grid-column: 1 / -1; order: 0; width: 100%; }
+  body.tk2 .tk2-persona .pf-steps a { flex: 1; justify-content: center; }
+  body.tk2 .tk2-form { padding: 0 12px !important; gap: 12px; }
+  body.tk2 .tk2-persona .pf-hero { padding: 16px !important; border-radius: 18px !important; }
+  body.tk2 .tk2-persona .pf-sec, body.tk2 .tk2-persona #contenedorSucursales { border-radius: 18px !important; }
+  body.tk2 .tk2-persona .pf-sec-side { padding: 14px 16px !important; }
+  body.tk2 .tk2-persona .pf-sec-card { padding: 14px 16px 16px !important; }
+  /* la ficha en vivo pasa a una franja compacta arriba de la búsqueda */
+  body.tk2 .tk2-form-aside .pf-card { flex-direction: row !important; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 14px !important; border-radius: 18px !important; }
+  body.tk2 .tk2-form-aside .pf-card-avatar { width: 40px; height: 40px; }
+  body.tk2 .tk2-form-aside .pf-card-info { flex: 1; min-width: 0; }
+  body.tk2 .tk2-form-aside .pf-card-meta { display: none !important; }
+  body.tk2 .tk2-form-aside .pf-card-bar { flex: 1 0 100%; margin: 0 !important; }
+  body.tk2 .tk2-form-aside .pf-card-pct { flex: 1 0 100%; }
+  body.tk2 .tk2-persona .pf-foot { justify-content: center; text-align: center; }
+  body.tk2 .tk2-persona .pf-foot-hint { display: none; }
+}
+
+/* ── 15. Modo oscuro: contraste de textos, botones y superficies claras heredadas ── */
+html.dark body.tk2 { color: var(--sb-on-surface) !important; }
+/* textos que venían en azul marino de la plantilla (#111c2d) o grises tenues */
+html.dark body.tk2 :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .text-dark, .text-body, .text-black, .dsg-cfm-title, .modal-title, .card-title) { color: var(--sb-on-surface) !important; }
+html.dark body.tk2 :is(.text-muted, .text-secondary, .text-body-secondary, .form-text, small.text-muted, .dsg-cfm-msg, .pf-foot-hint, .pe-required-note) { color: #b4b4bb !important; }
+html.dark body.tk2 :is(p, li, label, td, dd, dt, .form-label) { color: inherit; }
+html.dark body.tk2 :is(li, p):not([class*="text-"]) { color: color-mix(in oklab, var(--sb-on-surface) 88%, transparent); }
+html.dark body.tk2 .text-muted * { color: inherit; }
+
+/* superficies blancas o claras de Bootstrap que quedaban sin pasar a oscuro */
+html.dark body.tk2 :is(.bg-white, .bg-light, .bg-body, .bg-body-tertiary, .config-section-box, .list-group-item, .dropdown-menu, .popover, .toast, .accordion-item, .accordion-button, .input-group-text, .page-link, .nav-tabs .nav-link.active) {
+  background-color: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important; border-color: var(--tk2-line) !important;
+}
+html.dark body.tk2 :is(.card, .card-body, .card-header, .card-footer) { background-color: var(--sb-surface) !important; color: var(--sb-on-surface) !important; border-color: var(--tk2-line-soft) !important; }
+html.dark body.tk2 .dropdown-item { color: var(--sb-on-surface) !important; }
+html.dark body.tk2 .dropdown-item:hover { background: var(--sb-surface-container-high) !important; }
+html.dark body.tk2 hr { border-color: var(--tk2-line) !important; opacity: 1; }
+html.dark body.tk2 .border, html.dark body.tk2 [class*="border-"]:not([class*="border-0"]) { border-color: var(--tk2-line) !important; }
+
+/* insignias y fondos «suaves» claros: versión translúcida para fondo negro */
+html.dark body.tk2 :is(.badge-soft-success, .bg-success-subtle, .bg-soft-success, .bg-light-success) { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+html.dark body.tk2 :is(.badge-soft-danger, .bg-danger-subtle, .bg-soft-danger, .bg-light-danger) { background: var(--sb-late-soft) !important; color: #ff8f8f !important; }
+html.dark body.tk2 :is(.badge-soft-warning, .bg-warning-subtle, .bg-soft-warning, .bg-light-warning) { background: color-mix(in oklab, #ffae1f 16%, transparent) !important; color: #ffc766 !important; }
+html.dark body.tk2 :is(.badge-soft-info, .badge-soft-primary, .bg-info-subtle, .bg-primary-subtle, .bg-soft-primary, .bg-light-primary, .bg-light-info) { background: var(--sb-ontime-soft) !important; color: #7cb6ff !important; }
+html.dark body.tk2 .text-success { color: var(--sb-primary) !important; }
+html.dark body.tk2 .text-danger { color: #ff8f8f !important; }
+html.dark body.tk2 .text-warning { color: #ffc766 !important; }
+html.dark body.tk2 :is(.text-info, .text-primary) { color: #7cb6ff !important; }
+/* íconos dentro de mosaicos de color (notificaciones, tarjetas de resumen) */
+html.dark body.tk2 [style*="background"][class*="rounded"] > .material-symbols-outlined.filled,
+html.dark body.tk2 .material-symbols-outlined.filled { filter: brightness(1.15); }
+html.dark body.tk2 :is([style*="background: #fff"], [style*="background:#fff"], [style*="background-color: #fff"], [style*="background-color:#fff"], [style*="background: white"], [style*="background-color: white"]) { background-color: var(--sb-surface-container-low) !important; }
+
+/* botones: texto negro sobre el verde claro del modo oscuro; rojo más profundo para el blanco */
+html.dark body.tk2 :is(.btn-primary, .btn-success, .tk2-btn-primary, .pdsg-add-btn, .pdsg-btn-save, .mf-btn-primary, .swal2-confirm),
+html.dark body.tk2 :is(.btn-primary, .btn-success, .tk2-btn-primary, .pdsg-add-btn, .pdsg-btn-save, .mf-btn-primary, .swal2-confirm) :is(span, i, b) { color: #0a0a0b !important; }
+html.dark body.tk2 :is(.btn-danger, .swal2-deny, .pdsg-action-danger:hover, .pdsg-suc-btn-del:hover, .dsg-cfm-ok, [class*="cfm"][class*="danger"], .is-danger) { background-color: #c43c3c !important; color: #fff !important; border-color: transparent !important; }
+html.dark body.tk2 :is(.btn-danger, .swal2-deny, .dsg-cfm-ok, .is-danger) :is(span, i) { color: #fff !important; }
+html.dark body.tk2 :is(.btn-outline-primary, .btn-outline-success) { color: var(--sb-primary) !important; border-color: color-mix(in oklab, var(--sb-primary) 50%, transparent) !important; background: transparent !important; }
+html.dark body.tk2 :is(.btn-outline-danger) { color: #ff8f8f !important; border-color: color-mix(in oklab, #ff8f8f 45%, transparent) !important; background: transparent !important; }
+html.dark body.tk2 :is(.btn-outline-secondary, .btn-outline-dark, .btn-link) { color: var(--sb-on-surface) !important; }
+
+/* chips y contadores de Planes / Tipos de plan */
+html.dark body.tk2 .tp-category { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+html.dark body.tk2 .tp-category > span, html.dark body.tk2 .tp-category > i { color: var(--sb-primary) !important; }
+html.dark body.tk2 .tp-category .pdsg-tab-count { background: var(--sb-primary) !important; color: #0a0a0b !important; }
+html.dark body.tk2 .pdsg-tab:not(.is-active) .pdsg-tab-count { background: var(--sb-surface-container-highest) !important; color: var(--sb-on-surface) !important; }
+
+/* formulario de cliente */
+html.dark body.tk2 .tk2-persona .pf-kicker, html.dark body.tk2 .pf-kicker { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+html.dark body.tk2 .pf-kicker i { color: var(--sb-primary) !important; }
+html.dark body.tk2 .tk2-persona .pdsg-btn-search { background: #f4f4f5 !important; color: #0a0a0b !important; }
+html.dark body.tk2 .tk2-persona .pdsg-btn-search :is(i, span) { color: #0a0a0b !important; }
+html.dark body.tk2 :is(.form-control, .form-select, .pdsg-input, .mf-input)::placeholder { color: #8b8b94 !important; opacity: 1; }
+html.dark body.tk2 .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d4d4d8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important; }
+html.dark body.tk2 .form-check-input:not(:checked) { background-color: var(--sb-surface-container-high) !important; border-color: var(--sb-outline) !important; }
+
+/* tablas, paginación y acciones en oscuro */
+html.dark body.tk2 :is(.pdsg-table, .tk2-table, .dev-content table.table) thead th { color: #a1a1aa !important; }
+html.dark body.tk2 .pdsg-action { color: #d4d4d8 !important; }
+html.dark body.tk2 .pdsg-action-danger, html.dark body.tk2 .pdsg-suc-btn-del { color: #ff8f8f !important; }
+html.dark body.tk2 :is(.pdsg-page, .pdsg-page-nav) { color: #d4d4d8 !important; border-color: var(--sb-outline) !important; }
+html.dark body.tk2 .pdsg-page.is-active { color: #0a0a0b !important; border-color: transparent !important; }
+html.dark body.tk2 .tk2-stat > .material-symbols-outlined { color: #a1a1aa; }
+
+/* el formulario (persona-editor.css) redefinía el verde a #1b7a42: se restauran los tokens de Trackin */
+body.tk2 .tk2-persona, body.tk2 .tk2-persona .pdsg-persona-page, body.tk2.pe-frame .pdsg-persona-page {
+  --sb-primary: #078a04; --sb-on-primary: #ffffff; --sb-primary-soft: color-mix(in oklab, #09ae04 12%, transparent);
+  --pe-accent: #078a04; --pe-accent-soft: color-mix(in oklab, #09ae04 12%, transparent);
+}
+html.dark body.tk2 .tk2-persona, html.dark body.tk2 .tk2-persona .pdsg-persona-page, html.dark body.tk2.pe-frame .pdsg-persona-page {
+  --sb-primary: #4fd24a; --sb-on-primary: #0a0a0b; --sb-primary-soft: color-mix(in oklab, #4fd24a 16%, transparent);
+  --pe-accent: #4fd24a; --pe-accent-soft: color-mix(in oklab, #4fd24a 16%, transparent);
+  --sb-surface: #0a0a0b; --sb-surface-container-low: #101013; --sb-surface-container: #17171a; --sb-surface-container-high: #1f1f23;
+  --sb-on-surface: #f4f4f5; --sb-on-surface-variant: #e4e4e7; --sb-outline-variant: #27272b;
+}
+
+/* Configuración: tarjetas blancas propias de la pantalla */
+html.dark body.tk2 :is(.config-card-outer, .config-item-card, .config-section-box) {
+  background: var(--sb-surface) !important; border-color: var(--tk2-line-soft) !important; box-shadow: none !important; color: var(--sb-on-surface) !important;
+}
+html.dark body.tk2 .config-item-card { background: var(--sb-surface-container-low) !important; }
+html.dark body.tk2 .config-item-card:hover { background: var(--sb-surface-container) !important; }
+
+/* Notificaciones: mosaicos de íconos con fondo «subtle» */
+html.dark body.tk2 :is(.bg-secondary-subtle, .bg-soft-secondary, .bg-light-secondary, .badge-soft-secondary) { background: var(--sb-surface-container-high) !important; color: #d4d4d8 !important; }
+html.dark body.tk2 .text-secondary .material-symbols-outlined { color: #d4d4d8 !important; }
+html.dark body.tk2 .text-danger .material-symbols-outlined { color: #ff8f8f !important; }
+html.dark body.tk2 .text-warning .material-symbols-outlined { color: #ffc766 !important; }
+html.dark body.tk2 .text-primary .material-symbols-outlined { color: #7cb6ff !important; }
+html.dark body.tk2 .text-success .material-symbols-outlined { color: var(--sb-primary) !important; }
+
+/* Modo claro: colores de la plantilla demasiado tenues sobre blanco */
+html:not(.dark) body.tk2 .text-warning, html:not(.dark) body.tk2 .text-warning .material-symbols-outlined, html:not(.dark) body.tk2 .btn-outline-warning { color: #a85d00 !important; }
+html:not(.dark) body.tk2 .btn-outline-warning { border-color: color-mix(in oklab, #a85d00 45%, transparent) !important; }
+html:not(.dark) body.tk2 .text-success, html:not(.dark) body.tk2 .text-success .material-symbols-outlined { color: #078a04 !important; }
+html:not(.dark) body.tk2 :is(.text-primary, .text-info), html:not(.dark) body.tk2 :is(.text-primary, .text-info) .material-symbols-outlined { color: #1d63c4 !important; }
+html:not(.dark) body.tk2 .text-danger .material-symbols-outlined { color: #c62828 !important; }
+html:not(.dark) body.tk2 .pdsg-mcard-val.is-muted { color: #71717a !important; }
+html:not(.dark) body.tk2 .pf-foot-hint { color: #71717a !important; }

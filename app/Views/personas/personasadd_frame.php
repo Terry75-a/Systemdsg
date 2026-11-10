@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-panel.css?v=' . filemtime(FCPATH . 'css/index/components/dev-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/dev-dark.css?v=' . filemtime(FCPATH . 'css/index/components/dev-dark.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/dashboard/panel-dsg.css?v=' . filemtime(FCPATH . 'css/dashboard/panel-dsg.css')) ?>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -27,7 +28,7 @@
     </style>
 </head>
 
-<body class="dev-main pe-frame">
+<body class="dev-main pe-frame tk2">
     <div class="body-wrapper">
         <?= view('personas/personasadd', [
             'persona'       => $persona ?? null,

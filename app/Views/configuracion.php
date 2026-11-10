@@ -153,12 +153,7 @@
                             <input class="form-check-input" type="checkbox" name="bloqueo_inactivos" checked>
                         </div>
                     </div>
-<<<<<<< HEAD
-<!-- Item 3: Accesos directos de administración -->
-=======
-
-                    <!-- Item 3: Tus accesos directos que ya tenías en tu vista -->
->>>>>>> c2a5d3843ea14f5d07db7b1883fdad0e83af8a4e
+                    <!-- Item 3: Accesos directos de administración -->
                     <div class="mt-4 mb-2">
                         <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">Accesos rápidos de administración</span>
                     </div>

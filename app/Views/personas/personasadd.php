@@ -3,7 +3,8 @@
 
 <link rel="stylesheet" href="<?= base_url('css/dashboard/persona-editor.css?v=' . filemtime(FCPATH . 'css/dashboard/persona-editor.css')) ?>">
 <link rel="stylesheet" href="<?= base_url('css/dashboard/tk-persona.css?v=' . filemtime(FCPATH . 'css/dashboard/tk-persona.css')) ?>">
-<div class="container-fluid px-2 pdsg-persona-page">
+<link rel="stylesheet" href="<?= base_url('css/dashboard/tk2.css?v=' . filemtime(FCPATH . 'css/dashboard/tk2.css')) ?>">
+<div class="container-fluid px-2 pdsg-persona-page tk2-persona">
 
     <!-- Mensajes flash -->
     <?php if (session()->getFlashdata('success')): ?>
@@ -50,7 +51,8 @@
                     </button>
                 </header>
 
-                <div class="pf-body">
+                <div class="pf-body tk2-form">
+                <div class="tk2-form-main">
                     <!-- ═══ Inicio: búsqueda por DNI + ficha en vivo ═══ -->
                     <section class="pf-hero">
                         <div class="pf-hero-main">
@@ -81,25 +83,11 @@
                         </div>
 
                         </div>
-                        <aside class="pf-card" aria-live="polite">
-                            <span class="pf-card-avatar" id="pfAv">?</span>
-                            <div class="pf-card-info">
-                                <b id="pfName">Sin nombre aún</b>
-                                <span id="pfDoc">DNI —</span>
-                            </div>
-                            <ul class="pf-card-meta">
-                                <li><i class="fa-solid fa-phone"></i><span id="pfTel">—</span></li>
-                                <li><i class="fa-regular fa-envelope"></i><span id="pfMail">—</span></li>
-                                <li><i class="fa-regular fa-building"></i><span id="pfBiz">Sin empresa</span></li>
-                            </ul>
-                            <div class="pf-card-bar"><i id="pfBar"></i></div>
-                            <span class="pf-card-pct" id="pfPct">0 % completo</span>
-                        </aside>
                     </section>
 
                     <!-- ═══ Persona ═══ -->
                     <section class="pf-sec" id="pf-identidad">
-                        <div class="pf-sec-side"><span class="pf-num">01</span><h3>Identidad</h3><p>Nombre completo tal como figura en el DNI.</p></div>
+                        <div class="pf-sec-side"><span class="pf-num" data-n="01"><span class="material-symbols-outlined" aria-hidden="true">badge</span></span><h3>Identidad</h3><p>Nombre completo tal como figura en el DNI.</p></div>
                         <div class="pf-sec-card"><div class="pf-grid">
                         <div class="pf-f">
                             <label for="nombre" class="pdsg-field-label">Nombre(s) <span class="text-danger">*</span></label>
@@ -133,7 +121,7 @@
                         </div></div>
                     </section>
                     <section class="pf-sec" id="pe-personal">
-                        <div class="pf-sec-side"><span class="pf-num">02</span><h3>Contacto</h3><p>Cómo comunicarte con el cliente.</p></div>
+                        <div class="pf-sec-side"><span class="pf-num" data-n="02"><span class="material-symbols-outlined" aria-hidden="true">call</span></span><h3>Contacto</h3><p>Cómo comunicarte con el cliente.</p></div>
                         <div class="pf-sec-card"><div class="pf-grid">
                         <div class="pf-f">
                             <label for="telefono" class="pdsg-field-label">Teléfono</label>
@@ -165,7 +153,7 @@
                         </div></div>
                     </section>
                     <section class="pf-sec">
-                        <div class="pf-sec-side"><span class="pf-num">03</span><h3>Domicilio</h3><p>Dirección personal del cliente.</p></div>
+                        <div class="pf-sec-side"><span class="pf-num" data-n="03"><span class="material-symbols-outlined" aria-hidden="true">home_pin</span></span><h3>Domicilio</h3><p>Dirección personal del cliente.</p></div>
                         <div class="pf-sec-card"><div class="pf-grid">
                         <div class="pf-f pf-full">
                             <label for="direccion_rep" class="pdsg-field-label">Dirección Personal</label>
@@ -206,7 +194,7 @@
 
                     <!-- ═══ Empresa ═══ -->
                     <section class="pf-sec" id="pf-empresa">
-                        <div class="pf-sec-side"><span class="pf-num">04</span><h3>Empresa <small>Opcional</small></h3><p>Solo si el cliente factura con RUC. La razón social y la dirección fiscal se completan solas.</p></div>
+                        <div class="pf-sec-side"><span class="pf-num" data-n="04"><span class="material-symbols-outlined" aria-hidden="true">domain</span></span><h3>Empresa <small>Opcional</small></h3><p>Solo si el cliente factura con RUC. La razón social y la dirección fiscal se completan solas.</p></div>
                         <div class="pf-sec-card" id="pe-business"><div class="pf-grid">
                         <div class="pe-lookup pf-f pf-full">
                             <label for="ruc" class="pdsg-field-label">RUC</label>
@@ -392,6 +380,29 @@
                     </div>
                 </div>
 
+                </div>
+                <aside class="tk2-form-aside">
+                    <p class="tk2-aside-kicker">Ficha en vivo</p>
+                    <aside class="pf-card" aria-live="polite">
+                            <span class="pf-card-avatar" id="pfAv">?</span>
+                            <div class="pf-card-info">
+                                <b id="pfName">Sin nombre aún</b>
+                                <span id="pfDoc">DNI —</span>
+                            </div>
+                            <ul class="pf-card-meta">
+                                <li><i class="fa-solid fa-phone"></i><span id="pfTel">—</span></li>
+                                <li><i class="fa-regular fa-envelope"></i><span id="pfMail">—</span></li>
+                                <li><i class="fa-regular fa-building"></i><span id="pfBiz">Sin empresa</span></li>
+                            </ul>
+                            <div class="pf-card-bar"><i id="pfBar"></i></div>
+                            <span class="pf-card-pct" id="pfPct">0 % completo</span>
+                        </aside>
+                    <div class="tk2-aside-tips">
+                        <p><span class="material-symbols-outlined">bolt</span><span>Escribe el DNI y pulsa <b>Buscar</b>: los nombres llegan de RENIEC.</span></p>
+                        <p><span class="material-symbols-outlined">domain</span><span>Con RUC se completan la razón social y la dirección fiscal.</span></p>
+                        <p><span class="material-symbols-outlined">save</span><span>Guarda cuando quieras desde la barra superior.</span></p>
+                    </div>
+                </aside>
                 </div>
 
                 <footer class="pf-foot">

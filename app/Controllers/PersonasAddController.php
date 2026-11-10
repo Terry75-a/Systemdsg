@@ -125,7 +125,8 @@ public function index($id = null)
                     'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
                 ],
                 'http_errors' => false,
-                'timeout' => 10,
+                'timeout' => 25,
+                'connect_timeout' => 8,
                 'allow_redirects' => true, // ← sigue redirecciones 301/302
             ]);
 
@@ -193,7 +194,8 @@ public function index($id = null)
                     'Authorization' => '3d524a53c110e4c22463b10ed32cef9d',
                 ],
                 'http_errors' => false,
-                'timeout' => 10,
+                'timeout' => 25,
+                'connect_timeout' => 8,
                 'allow_redirects' => true, // ← sigue redirecciones 301/302
             ]);
 
