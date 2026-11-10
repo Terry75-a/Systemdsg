@@ -645,3 +645,189 @@ html:not(.dark) body.tk2 :is(.text-primary, .text-info), html:not(.dark) body.tk
 html:not(.dark) body.tk2 .text-danger .material-symbols-outlined { color: #c62828 !important; }
 html:not(.dark) body.tk2 .pdsg-mcard-val.is-muted { color: #71717a !important; }
 html:not(.dark) body.tk2 .pf-foot-hint { color: #71717a !important; }
+
+/* ═════ 16. Calendario (FullCalendar) con el diseño de Trackin ═════ */
+/* los íconos de FullCalendar usan su propia fuente (la regla general de DM Sans los rompía) */
+body.tk2 .fc .fc-icon { font-family: "fcicons" !important; }
+
+body.tk2 .tk2-cal { display: flex; flex-direction: column; gap: 16px; }
+body.tk2 .tk2-cal > .pdsg-page-head { margin: 0 !important; }
+body.tk2 .tkc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+
+/* tarjeta principal */
+body.tk2 .tk2-cal .cal-card { padding: 0 !important; overflow: hidden; }
+body.tk2 .tk2-cal .cal-toolbar {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 14px 18px !important; margin: 0 !important; border-bottom: 1px solid var(--tk2-line-soft) !important; background: transparent !important;
+}
+body.tk2 .tk2-cal .cal-chip {
+  display: inline-flex !important; align-items: center; gap: 8px; height: 32px; padding: 0 6px 0 12px !important; border-radius: 9999px !important;
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; border: 0 !important; font-size: 12px !important; font-weight: 600 !important;
+}
+body.tk2 .tk2-cal .cal-chip > i, body.tk2 .tk2-cal .cal-chip > span { color: inherit !important; }
+body.tk2 .tk2-cal .cal-chip .pdsg-tab-count { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+body.tk2 .tk2-cal .cal-legend { display: flex !important; align-items: center; gap: 6px 14px; flex-wrap: wrap; font-size: 11px !important; font-weight: 600 !important; color: var(--sb-muted) !important; }
+body.tk2 .tk2-cal .cal-dot { width: 8px !important; height: 8px !important; border-radius: 9999px !important; margin-right: -8px; box-shadow: none !important; }
+body.tk2 .tk2-cal .cal-dot-a { background: var(--tkc-a) !important; }
+body.tk2 .tk2-cal .cal-dot-b { background: var(--tkc-b) !important; }
+body.tk2 .tk2-cal .cal-dot-c { background: var(--tkc-c) !important; }
+body.tk2 { --tkc-a: #078a04; --tkc-b: #d97706; --tkc-c: #2a78d6; }
+html.dark body.tk2 { --tkc-a: #4fd24a; --tkc-b: #fbbf24; --tkc-c: #60a5fa; }
+body.tk2 #calendar { padding: 14px 18px 18px !important; margin: 0 !important; background: transparent !important; }
+
+/* barra de FullCalendar: flechas redondas, «Hoy» como chip, vistas como selector segmentado */
+body.tk2 .tk2-cal .fc .fc-toolbar.fc-header-toolbar { margin: 0 0 14px !important; gap: 10px; flex-wrap: wrap; }
+body.tk2 .tk2-cal .fc .fc-toolbar-title {
+  font-size: 20px !important; font-weight: 600 !important; letter-spacing: -.025em; color: var(--sb-on-surface) !important; text-transform: none !important;
+}
+body.tk2 .tk2-cal .fc .fc-toolbar-title::first-letter { text-transform: uppercase; }
+body.tk2 .tk2-cal .fc .fc-button {
+  height: 34px; min-width: 34px; padding: 0 12px !important; border-radius: 9999px !important; box-shadow: none !important; outline: 0;
+  background: transparent !important; color: var(--sb-on-surface) !important; border: 1.5px solid var(--sb-outline-variant) !important;
+  font-size: 12px !important; font-weight: 600 !important; text-transform: none !important; display: inline-flex !important; align-items: center; justify-content: center;
+  transition: background-color .15s, color .15s, padding 400ms var(--tk2-ease) !important;
+}
+body.tk2 .tk2-cal .fc .fc-button:hover { background: var(--sb-surface-container) !important; }
+body.tk2 .tk2-cal .fc .fc-button:active { transform: scale(.96); }
+body.tk2 .tk2-cal .fc .fc-button:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--sb-primary) 25%, transparent) !important; }
+body.tk2 .tk2-cal .fc .fc-prev-button, body.tk2 .tk2-cal .fc .fc-next-button { width: 34px; padding: 0 !important; border-radius: 9999px !important; margin: 0 2px 0 0 !important; }
+body.tk2 .tk2-cal .fc .fc-prev-button .fc-icon, body.tk2 .tk2-cal .fc .fc-next-button .fc-icon { font-size: 1.15em; color: var(--sb-on-surface) !important; }
+body.tk2 .tk2-cal .fc .fc-toolbar-chunk:first-child .fc-button-group { gap: 4px; }
+body.tk2 .tk2-cal .fc .fc-today-button { margin-left: 6px !important; padding: 0 14px !important; }
+body.tk2 .tk2-cal .fc .fc-today-button:disabled { opacity: 1 !important; background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; border-color: transparent !important; }
+/* selector de vistas (Mes · Semana · Día · Lista) */
+body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button-group {
+  padding: 3px; gap: 2px; border-radius: 9999px; background: var(--sb-surface-container); border: 1px solid var(--tk2-line-soft);
+}
+body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button { height: 28px; border: 0 !important; border-radius: 9999px !important; color: var(--sb-on-surface-variant) !important; padding: 0 14px !important; }
+body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button:hover { background: var(--sb-surface-container-high) !important; }
+body.tk2 .tk2-cal .fc .fc-button-primary.fc-button-active:not(:disabled),
+body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button.fc-button-active {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; border-color: transparent !important;
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--sb-primary) 45%, transparent) !important;
+}
+
+/* rejilla: líneas finas, sin bordes duros */
+body.tk2 .tk2-cal .fc { --fc-border-color: var(--tk2-line-soft); --fc-page-bg-color: transparent; --fc-neutral-bg-color: var(--sb-surface-container-low); --fc-today-bg-color: transparent; }
+body.tk2 .tk2-cal .fc .fc-scrollgrid { border: 1px solid var(--tk2-line-soft) !important; border-radius: 16px; overflow: hidden; }
+body.tk2 .tk2-cal .fc :is(.fc-scrollgrid td, .fc-scrollgrid th, .fc-daygrid-day, .fc-col-header-cell, .fc-timegrid-slot, .fc-timegrid-col) { border-color: var(--tk2-line-soft) !important; }
+body.tk2 .tk2-cal .fc .fc-scrollgrid > tbody > tr > td, body.tk2 .tk2-cal .fc .fc-scrollgrid > thead > tr > th { border-right: 0 !important; }
+body.tk2 .tk2-cal .fc .fc-col-header { background: var(--sb-surface-container-low) !important; }
+body.tk2 .tk2-cal .fc .fc-col-header-cell { background: transparent !important; padding: 10px 0 !important; border-left: 0 !important; border-right: 0 !important; }
+body.tk2 .tk2-cal .fc .fc-col-header-cell-cushion {
+  font-size: 10px !important; font-weight: 700 !important; letter-spacing: .1em; text-transform: uppercase; color: var(--sb-muted) !important; text-decoration: none !important;
+}
+body.tk2 .tk2-cal .fc .fc-daygrid-day { background: var(--sb-surface) !important; transition: background-color .15s; cursor: pointer; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day:hover { background: var(--sb-surface-container-low) !important; }
+body.tk2 .tk2-cal .fc .fc-day-sat, body.tk2 .tk2-cal .fc .fc-day-sun { background: color-mix(in oklab, var(--sb-surface-container-low) 70%, var(--sb-surface)) !important; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day-frame { min-height: 96px !important; padding: 6px !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day-top { flex-direction: row !important; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day-number {
+  width: 28px; height: 28px; padding: 0 !important; display: grid !important; place-items: center; border-radius: 9999px;
+  font-size: 12px !important; font-weight: 600 !important; color: var(--sb-on-surface) !important; text-decoration: none !important; background: transparent !important;
+}
+body.tk2 .tk2-cal .fc .fc-day-other .fc-daygrid-day-number { color: var(--sb-muted) !important; opacity: .45; }
+body.tk2 .tk2-cal .fc .fc-day-other { background: var(--sb-surface-container-low) !important; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day.fc-day-today { background: var(--sb-primary-soft) !important; box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--sb-primary) 55%, transparent) !important; }
+body.tk2 .tk2-cal .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; box-shadow: 0 4px 10px -4px color-mix(in oklab, var(--sb-primary) 60%, transparent);
+}
+body.tk2 .tk2-cal .fc .fc-highlight { background: color-mix(in oklab, var(--sb-primary) 10%, transparent) !important; }
+
+/* eventos: píldoras suaves con barra de color por tipo */
+body.tk2 .tk2-cal .fc .fc-event {
+  margin: 2px 2px 0 !important; padding: 3px 8px !important; border-radius: 8px !important; border: 0 !important; box-shadow: none !important;
+  border-left: 3px solid var(--tkc-ev) !important; background: color-mix(in oklab, var(--tkc-ev) 13%, var(--sb-surface)) !important;
+  color: var(--sb-on-surface) !important; font-size: 11px !important; font-weight: 600 !important; transition: transform .12s, background-color .15s;
+}
+body.tk2 .tk2-cal .fc .fc-event:hover { background: color-mix(in oklab, var(--tkc-ev) 22%, var(--sb-surface)) !important; transform: translateY(-1px); }
+body.tk2 .tk2-cal .fc .fc-event :is(.fc-event-main, .fc-event-title, .fc-event-time) { color: var(--sb-on-surface) !important; font-weight: 600; }
+body.tk2 .tk2-cal .fc .fc-event .fc-event-time { opacity: .7; font-weight: 500; }
+body.tk2 .tk2-cal .fc .fc-daygrid-event-dot { border-color: var(--tkc-ev) !important; }
+body.tk2 .tk2-cal .fc .cal-ev-a { --tkc-ev: var(--tkc-a); }
+body.tk2 .tk2-cal .fc .cal-ev-b { --tkc-ev: var(--tkc-b); }
+body.tk2 .tk2-cal .fc .cal-ev-c { --tkc-ev: var(--tkc-c); }
+body.tk2 .tk2-cal .fc .fc-daygrid-more-link { font-size: 11px !important; font-weight: 600 !important; color: var(--sb-primary) !important; padding: 2px 6px; border-radius: 9999px; }
+body.tk2 .tk2-cal .fc .fc-daygrid-more-link:hover { background: var(--sb-primary-soft) !important; }
+body.tk2 .tk2-cal .fc .fc-popover { background: var(--sb-surface) !important; border: 1px solid var(--tk2-line-soft) !important; border-radius: 16px !important; box-shadow: var(--tk2-pop) !important; overflow: hidden; }
+body.tk2 .tk2-cal .fc .fc-popover-header { background: var(--sb-surface-container-low) !important; color: var(--sb-on-surface) !important; padding: 8px 12px !important; font-weight: 600; }
+
+/* semana / día */
+body.tk2 .tk2-cal .fc .fc-timegrid-slot { height: 2.6em !important; }
+body.tk2 .tk2-cal .fc .fc-timegrid-slot-label-cushion, body.tk2 .tk2-cal .fc .fc-timegrid-axis-cushion { font-size: 10px !important; font-weight: 600 !important; color: var(--sb-muted) !important; text-transform: uppercase; }
+body.tk2 .tk2-cal .fc .fc-timegrid-col.fc-day-today { background: color-mix(in oklab, var(--sb-primary) 6%, transparent) !important; }
+body.tk2 .tk2-cal .fc .fc-timegrid-now-indicator-line { border-color: var(--sb-late) !important; border-width: 2px 0 0 !important; }
+body.tk2 .tk2-cal .fc .fc-timegrid-now-indicator-arrow { border-color: var(--sb-late) !important; border-top-color: transparent !important; border-bottom-color: transparent !important; }
+body.tk2 .tk2-cal .fc .fc-timegrid-event { border-radius: 10px !important; padding: 4px 6px !important; }
+
+/* lista */
+body.tk2 .tk2-cal .fc .fc-list { border: 1px solid var(--tk2-line-soft) !important; border-radius: 16px; overflow: hidden; }
+body.tk2 .tk2-cal .fc .fc-list-day-cushion { background: var(--sb-surface-container-low) !important; padding: 10px 14px !important; }
+body.tk2 .tk2-cal .fc :is(.fc-list-day-text, .fc-list-day-side-text) { font-size: 12px !important; font-weight: 700 !important; color: var(--sb-on-surface) !important; text-decoration: none !important; }
+body.tk2 .tk2-cal .fc .fc-list-event td { background: var(--sb-surface) !important; border-color: var(--tk2-line-soft) !important; padding: 10px 14px !important; }
+body.tk2 .tk2-cal .fc .fc-list-event:hover td { background: var(--sb-surface-container-low) !important; }
+body.tk2 .tk2-cal .fc :is(.fc-list-event-title, .fc-list-event-title a) { color: var(--sb-on-surface) !important; font-size: 13px; font-weight: 600; text-decoration: none !important; }
+body.tk2 .tk2-cal .fc .fc-list-event-time { color: var(--sb-muted) !important; font-size: 12px; font-weight: 600; }
+body.tk2 .tk2-cal .fc .fc-list-event-dot { border-color: var(--tkc-ev, var(--sb-primary)) !important; }
+body.tk2 .tk2-cal .fc .fc-list-empty { background: var(--sb-surface) !important; }
+body.tk2 .tk2-cal .fc .fc-list-empty-cushion { color: var(--sb-muted) !important; font-weight: 600; font-size: 13px; }
+
+/* panel lateral */
+body.tk2 .tkc-side { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 12px; }
+body.tk2 .tkc-today {
+  display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 20px; position: relative; overflow: hidden;
+  background: #0b0b0b; color: #fff; border: 1px solid #1f1f23; box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .6);
+}
+body.tk2 .tkc-today::after { content: ""; position: absolute; right: -40px; top: -50px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(190, 223, 60, .35), transparent 65%); pointer-events: none; }
+body.tk2 .tkc-today-day { width: 56px; height: 56px; flex: 0 0 56px; display: grid; place-items: center; border-radius: 16px; background: var(--sb-lime); color: #0b0b0b; font-size: 26px; font-weight: 700; letter-spacing: -.03em; position: relative; z-index: 1; }
+body.tk2 .tkc-today p { margin: 0; position: relative; z-index: 1; color: #fff !important; }
+body.tk2 .tkc-today-week { font-size: 15px; font-weight: 600; }
+body.tk2 .tkc-today-month { font-size: 12px; color: rgba(255, 255, 255, .6) !important; }
+body.tk2 .tkc-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; border-radius: 16px; overflow: hidden; background: var(--tk2-line-soft); border: 1px solid var(--tk2-line-soft); }
+body.tk2 .tkc-stat { display: flex; flex-direction: column; gap: 4px; padding: 12px; background: var(--sb-surface); }
+body.tk2 .tkc-stat .material-symbols-outlined { font-size: 18px; color: var(--tkc-ev); }
+body.tk2 .tkc-stat b { font-size: 20px; font-weight: 700; letter-spacing: -.02em; color: var(--sb-on-surface); line-height: 1.1; }
+body.tk2 .tkc-stat small { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--sb-muted); }
+body.tk2 .tkc-a { --tkc-ev: var(--tkc-a); } body.tk2 .tkc-b { --tkc-ev: var(--tkc-b); } body.tk2 .tkc-c { --tkc-ev: var(--tkc-c); }
+body.tk2 .tkc-stats-note { margin: -4px 4px 0; font-size: 11px; font-weight: 600; color: var(--sb-muted); text-transform: none; }
+body.tk2 .tkc-upcoming { border-radius: 20px; background: var(--sb-surface); border: 1px solid var(--tk2-line-soft); overflow: hidden; }
+body.tk2 .tkc-up-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--tk2-line-soft); }
+body.tk2 .tkc-up-head h3 { margin: 0 !important; font-size: 14px !important; font-weight: 600 !important; color: var(--sb-on-surface) !important; }
+body.tk2 .tkc-up-count { min-width: 22px; height: 20px; padding: 0 7px; display: inline-grid; place-items: center; border-radius: 9999px; background: var(--sb-surface-container-high); color: var(--sb-on-surface); font-size: 11px; font-weight: 700; }
+body.tk2 .tkc-up-list { list-style: none; margin: 0; padding: 6px; display: flex; flex-direction: column; gap: 2px; max-height: 420px; overflow: auto; scrollbar-width: none; }
+body.tk2 .tkc-up-item { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; cursor: pointer; transition: background-color .15s; }
+body.tk2 .tkc-up-item:hover, body.tk2 .tkc-up-item:focus-visible { background: var(--sb-surface-container-low); outline: 0; }
+body.tk2 .tkc-up-date { width: 42px; height: 46px; flex: 0 0 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; background: color-mix(in oklab, var(--tkc-ev) 14%, var(--sb-surface)); color: var(--tkc-ev); }
+body.tk2 .tkc-up-date b { font-size: 16px; line-height: 1; font-weight: 700; }
+body.tk2 .tkc-up-date small { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+body.tk2 .tkc-up-main { display: flex; flex-direction: column; min-width: 0; }
+body.tk2 .tkc-up-title { font-size: 13px; font-weight: 600; color: var(--sb-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.tk2 .tkc-up-meta { font-size: 11px; font-weight: 600; color: var(--sb-muted); }
+body.tk2 .tkc-up-empty { padding: 26px 12px; text-align: center; font-size: 12px; font-weight: 600; color: var(--sb-muted); line-height: 1.5; }
+body.tk2 .tkc-up-empty .material-symbols-outlined { display: block; margin: 0 auto 6px; font-size: 26px; opacity: .6; }
+
+@media (max-width: 1199.98px) {
+  body.tk2 .tkc-layout { grid-template-columns: minmax(0, 1fr); }
+  body.tk2 .tkc-side { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.tk2 .tkc-today, body.tk2 .tkc-stats, body.tk2 .tkc-stats-note { grid-column: 1; }
+  body.tk2 .tkc-upcoming { grid-column: 2; grid-row: 1 / span 3; }
+}
+@media (max-width: 767.98px) {
+  body.tk2 .tkc-side { display: flex; }
+  body.tk2 .tk2-cal .cal-toolbar { padding: 12px 14px !important; }
+  body.tk2 #calendar { padding: 12px !important; }
+  body.tk2 .tk2-cal .fc .fc-toolbar.fc-header-toolbar { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk { display: flex !important; align-items: center; justify-content: center; min-width: 0; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:nth-child(2) { grid-row: 1; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:first-child { grid-row: 2; justify-content: space-between; flex-wrap: nowrap; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:first-child .fc-button-group { display: inline-flex !important; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child { grid-row: 3; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button-group { display: flex !important; width: 100%; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button { flex: 1 1 0; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-title { font-size: 18px !important; }
+  body.tk2 .tk2-cal .fc .fc-toolbar-chunk:last-child .fc-button { padding: 0 9px !important; font-size: 11px !important; }
+  body.tk2 .tk2-cal .fc .fc-daygrid-day-frame { min-height: 58px !important; padding: 3px !important; }
+  body.tk2 .tk2-cal .fc .fc-daygrid-day-number { width: 24px; height: 24px; font-size: 11px !important; }
+  body.tk2 .tk2-cal .fc .fc-event { font-size: 9.5px !important; padding: 1px 4px !important; }
+  body.tk2 .tk2-cal .fc .fc-col-header-cell-cushion { font-size: 9px !important; letter-spacing: .04em; }
+}

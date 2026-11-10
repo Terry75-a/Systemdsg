@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="<?= base_url('css/dashboard/calendario.css?v=' . filemtime(FCPATH . 'css/dashboard/calendario.css')) ?>">
-<main class="cal-page">
+<main class="cal-page tk2-cal">
     <div class="pdsg-page-head">
         <div>
             <h1 class="pdsg-page-title">Calendario</h1>
@@ -12,17 +12,45 @@
 
     <div id="calNotice" class="alert alert-success" role="status" hidden></div>
 
-    <section class="pdsg-card cal-card" aria-label="Calendario de eventos">
-        <div class="cal-toolbar">
-            <div class="cal-chip"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span>Agenda</span><span class="pdsg-tab-count" id="calCount" aria-live="polite">0</span></div>
-            <div class="cal-legend" aria-hidden="true">
-                <span class="cal-dot cal-dot-a"></span> Reuniones
-                <span class="cal-dot cal-dot-b"></span> Vencimientos
-                <span class="cal-dot cal-dot-c"></span> Tareas
+    <div class="tkc-layout">
+        <section class="pdsg-card cal-card" aria-label="Calendario de eventos">
+            <div class="cal-toolbar">
+                <div class="cal-chip"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span>Agenda</span><span class="pdsg-tab-count" id="calCount" aria-live="polite">0</span></div>
+                <div class="cal-legend" aria-hidden="true">
+                    <span class="cal-dot cal-dot-a"></span> Reuniones
+                    <span class="cal-dot cal-dot-b"></span> Vencimientos
+                    <span class="cal-dot cal-dot-c"></span> Tareas
+                </div>
             </div>
-        </div>
-        <div id="calendar"></div>
-    </section>
+            <div id="calendar"></div>
+        </section>
+
+        <!-- Panel lateral (solo lectura): resumen y próximos eventos del calendario -->
+        <aside class="tkc-side" aria-label="Resumen de la agenda">
+            <div class="tkc-today">
+                <span class="tkc-today-day" id="tkcHoyDia">–</span>
+                <div>
+                    <p class="tkc-today-week" id="tkcHoySemana">Hoy</p>
+                    <p class="tkc-today-month" id="tkcHoyMes">–</p>
+                </div>
+            </div>
+
+            <div class="tkc-stats">
+                <div class="tkc-stat tkc-a"><span class="material-symbols-outlined">groups</span><b id="tkcNa">0</b><small>Reuniones</small></div>
+                <div class="tkc-stat tkc-b"><span class="material-symbols-outlined">event_busy</span><b id="tkcNb">0</b><small>Vencimientos</small></div>
+                <div class="tkc-stat tkc-c"><span class="material-symbols-outlined">task_alt</span><b id="tkcNc">0</b><small>Tareas</small></div>
+            </div>
+            <p class="tkc-stats-note" id="tkcRango">En la vista actual</p>
+
+            <div class="tkc-upcoming">
+                <div class="tkc-up-head">
+                    <h3>Próximos eventos</h3>
+                    <span class="tkc-up-count" id="tkcUpCount">0</span>
+                </div>
+                <ul class="tkc-up-list" id="tkcUpList"></ul>
+            </div>
+        </aside>
+    </div>
 </main>
 
 <!-- Modal: crear / editar evento -->
@@ -521,6 +549,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
+    window.dsgCalendar = calendar; /* lo lee el panel lateral (solo lectura) */
+    document.dispatchEvent(new CustomEvent('dsg:calendar-ready'));
     updateCount();
 
     if (typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -529,4 +559,61 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+</script>
+
+<script>
+/* Panel lateral del calendario: solo lee los eventos y los muestra (no crea ni cambia nada) */
+(function () {
+    var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var TIPO = { a: 'Reunión', b: 'Vencimiento', c: 'Tarea' };
+    var $ = function (id) { return document.getElementById(id); };
+    var esc = function (t) { var d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; };
+    var hoy = new Date();
+    $('tkcHoyDia').textContent = hoy.getDate();
+    $('tkcHoySemana').textContent = DIAS[hoy.getDay()];
+    $('tkcHoyMes').textContent = MESES[hoy.getMonth()] + ' de ' + hoy.getFullYear();
+
+    function hhmm(d) { return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+    function pintar() {
+        var cal = window.dsgCalendar; if (!cal) return;
+        var evs = cal.getEvents();
+        var v = cal.view, n = { a: 0, b: 0, c: 0 };
+        evs.forEach(function (e) {
+            if (e.start && e.start >= v.activeStart && e.start < v.activeEnd) {
+                var t = (e.extendedProps && e.extendedProps.type) || 'a'; n[t] = (n[t] || 0) + 1;
+            }
+        });
+        $('tkcNa').textContent = n.a; $('tkcNb').textContent = n.b; $('tkcNc').textContent = n.c;
+        $('tkcRango').textContent = 'En la vista actual · ' + v.title;
+        var desde = new Date(); desde.setHours(0, 0, 0, 0);
+        var prox = evs.filter(function (e) { return e.start && e.start >= desde; })
+                      .sort(function (x, y) { return x.start - y.start; });
+        $('tkcUpCount').textContent = prox.length;
+        if (!prox.length) {
+            $('tkcUpList').innerHTML = '<li class="tkc-up-empty"><span class="material-symbols-outlined">event_available</span>No hay eventos próximos.<br>Toca un día para agregar uno.</li>';
+            return;
+        }
+        $('tkcUpList').innerHTML = prox.slice(0, 6).map(function (e) {
+            var t = (e.extendedProps && e.extendedProps.type) || 'a';
+            var hora = e.extendedProps && e.extendedProps.hadTime ? hhmm(e.start) : 'Todo el día';
+            return '<li class="tkc-up-item tkc-' + t + '" data-id="' + esc(e.id) + '" tabindex="0" role="button">' +
+                '<span class="tkc-up-date"><b>' + e.start.getDate() + '</b><small>' + MESES[e.start.getMonth()].slice(0, 3) + '</small></span>' +
+                '<span class="tkc-up-main"><span class="tkc-up-title">' + esc(e.title) + '</span>' +
+                '<span class="tkc-up-meta">' + TIPO[t] + ' · ' + hora + '</span></span></li>';
+        }).join('');
+    }
+    function enlazar() {
+        var cal = window.dsgCalendar; if (!cal) return;
+        ['eventsSet', 'datesSet', 'eventChange', 'eventAdd', 'eventRemove'].forEach(function (n) { cal.on(n, function () { setTimeout(pintar, 0); }); });
+        pintar();
+    }
+    /* al tocar un próximo evento, se va a su fecha en el calendario */
+    $('tkcUpList').addEventListener('click', function (ev) {
+        var li = ev.target.closest('.tkc-up-item'); if (!li || !window.dsgCalendar) return;
+        var e = window.dsgCalendar.getEventById(li.getAttribute('data-id')); if (e) window.dsgCalendar.gotoDate(e.start);
+    });
+    $('tkcUpList').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { var li = ev.target.closest('.tkc-up-item'); if (li) li.click(); } });
+    if (window.dsgCalendar) enlazar(); else document.addEventListener('dsg:calendar-ready', enlazar);
+})();
 </script>
