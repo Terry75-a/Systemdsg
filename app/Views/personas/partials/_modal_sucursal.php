@@ -32,9 +32,12 @@
                                     <input type="text" class="form-control" id="codigo_cliente_sucursal" name="codigo_cliente_sucursal" placeholder="Ej: 0000070" required>
                                 </div>
                                 <div class="mf-f">
-                                    <label for="representante_sucursal">Representante <span class="mf-req">*</span></label>
-                                    <input type="text" class="form-control" id="representante_sucursal" name="representante_sucursal" placeholder="Ej: Juan Pérez" required>
-                                </div>
+                                 <label for="representante_sucursal">Representante <span class="mf-req">*</span></label>
+                                     <input type="text" class="form-control" id="representante_sucursal"
+                                       name="representante_sucursal" placeholder="Ej: Juan Pérez"
+                                              list="listaRepresentantes" autocomplete="off" required>
+                                        <datalist id="listaRepresentantes"></datalist>
+                                      </div>
                                 <div class="mf-f">
                                     <label for="estado_label">Estado</label>
                                     <select class="form-select" id="estado_label" name="estado_label">

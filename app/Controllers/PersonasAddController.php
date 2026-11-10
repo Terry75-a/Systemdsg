@@ -633,5 +633,68 @@ if (strpos((string)$indice, 'existing_') === 0) {
             ]);
         }
     }
+
+    public function buscarRepresentantes()
+{
+    $this->response->setHeader('Content-Type', 'application/json');
+
+    $q = trim((string) $this->request->getGet('q'));
+
+    if (mb_strlen($q) < 2) {
+        return $this->response->setJSON([]);
+    }
+
+    // Representantes de sucursales ya registradas
+    $sucursales = $this->db->table('empresa_sucursales')
+        ->select('representante')
+        ->like('representante', $q)
+        ->where('representante !=', '')
+        ->groupBy('representante')
+        ->orderBy('representante', 'ASC')
+        ->limit(8)
+        ->get()->getResultArray();
+
+    $lista = array_column($sucursales, 'representante');
+
+    // También personas (nombre + apellidos)
+    $personas = $this->db->table('personas')
+        ->select("CONCAT_WS(' ', nombre, apellido_paterno, apellido_materno) AS nombre_completo", false)
+        ->groupStart()
+            ->like('nombre', $q)
+            ->orLike('apellido_paterno', $q)
+            ->orLike('apellido_materno', $q)
+        ->groupEnd()
+        ->limit(8)
+        ->get()->getResultArray();
+
+    foreach ($personas as $p) {
+        $lista[] = $p['nombre_completo'];
+    }
+
+    $lista = array_values(array_unique(array_filter($lista)));
+
+    return $this->response->setJSON(array_slice($lista, 0, 10));
+}
+
+public function pagosSucursal()
+{
+    $idSucursal = $this->request->getGet('id_sucursal');
+    $tipoPago   = (int) ($this->request->getGet('tipo') ?: 1);
+
+    if (!$idSucursal || !is_numeric($idSucursal)) {
+        return $this->response->setJSON([]);
+    }
+
+    $rows = $this->db->table('pagos p')
+        ->select('p.*, pl.nombre_plan, tp.nombre_tipo')
+        ->join('planes pl', 'pl.id_plan = p.id_plan', 'left')
+        ->join('tipo_plan tp', 'tp.id_tipo_plan = p.id_tipo_plan', 'left')
+        ->where('p.id_sucursal', (int) $idSucursal)
+        ->where('p.id_tipo_pago', $tipoPago)
+        ->orderBy('p.created_at', 'DESC')
+        ->get()->getResultArray();
+
+    return $this->response->setJSON($rows);
+}
 }
 

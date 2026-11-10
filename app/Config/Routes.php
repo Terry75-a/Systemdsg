@@ -288,9 +288,11 @@ $routes->group('personas', ['filter' => 'auth'], function ($routes) {
     $routes->post('Asignarplanes', 'PersonasController::Asignarplanes');
     $routes->post('buscar-dni', 'PersonasAddController::buscarDni');
     $routes->post('buscar-ruc', 'PersonasAddController::buscarRuc');
+    $routes->get('buscarRepresentantes', 'PersonasAddController::buscarRepresentantes');
     
     // Otras rutas
     $routes->match(['GET', 'POST'], 'eliminar/(:num)', 'PersonasController::eliminar/$1');
+    $routes->get('pagosSucursal', 'PersonasAddController::pagosSucursal');
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -380,3 +382,4 @@ $routes->post('personas/borrar/(:num)', 'PersonasAddController::borrar/$1', ['fi
 $routes->get('notificaciones', 'NotificacionesController::index', ['filter' => 'auth']);
 $routes->get('notificaciones/alertas', 'NotificacionesController::alertas', ['filter' => 'auth']);
 $routes->get('notificaciones/enviar-correos', 'NotificacionesController::enviarCorreosPendientes', ['filter' => 'auth']);
+

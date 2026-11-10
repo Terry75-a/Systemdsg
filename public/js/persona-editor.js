@@ -27,12 +27,6 @@ function obtenerModalPlan() {
 }
 
 const tablaSuc = document.getElementById('tablaSucursales');
-if (tablaSuc) {
-    tablaSuc.addEventListener('click', function (e) {
-        if (!e.target.closest('.btn-asignar-tipo-pagos')) return;
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPago')).show();
-    });
-}
 
 // ════════════════════════════════════════════════════
 // BÚSQUEDA POR DNI
@@ -550,6 +544,8 @@ if (modalSucEl) {
     });
 }
 
+
+
 // ════════════════════════════════════════════════════
 // ASIGNAR PLAN DESDE SUCURSALES
 // ════════════════════════════════════════════════════
@@ -570,6 +566,7 @@ if (tablaSuc) {
         if (lblCliente) lblCliente.textContent = nombreSucursal;
 
         cargarPlanesYTipos();
+        cargarPagosSucursal(idSucursal, 1, 'modalPlan')
 
         const modalPlan = obtenerModalPlan();
         if (modalPlan) modalPlan.show();
@@ -794,6 +791,7 @@ if (tablaSuc) {
         if (formP) formP.reset();
 
         document.getElementById('pagoIdSucursal').value = idSucursal;
+         cargarPagosSucursal(idSucursal, 2, 'modalPago');
 
         const modalPago = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPago'));
         modalPago.show();
@@ -959,6 +957,133 @@ function pdsgToastPlan(tipo, titulo, mensaje) {
         });
     }
 })();
+// ════════════════════════════════════════════════════
+// AUTOCOMPLETAR REPRESENTANTE
+// ════════════════════════════════════════════════════
+(function () {
+    const input = document.getElementById('representante_sucursal');
+    const datalist = document.getElementById('listaRepresentantes');
+    if (!input || !datalist) return;
+
+    let timer = null;
+    let controller = null;
+
+    input.addEventListener('input', function () {
+        const q = this.value.trim();
+        clearTimeout(timer);
+
+        if (q.length < 2) {
+            datalist.innerHTML = '';
+            return;
+        }
+
+        // Debounce: espera 250 ms después de dejar de escribir
+        timer = setTimeout(async () => {
+            if (controller) controller.abort();
+            controller = new AbortController();
+
+            try {
+                const res = await fetch(
+                    `${BASE_URL}personas/buscarRepresentantes?q=${encodeURIComponent(q)}`,
+                    {
+                        signal: controller.signal,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    }
+                );
+                const nombres = await res.json();
+
+                datalist.innerHTML = '';
+                nombres.forEach(nombre => {
+                    const opt = document.createElement('option');
+                    opt.value = nombre;
+                    datalist.appendChild(opt);
+                });
+            } catch (e) {
+                if (e.name !== 'AbortError') console.error('Error autocompletar:', e);
+            }
+        }, 250);
+    });
+})();
+// ════════════════════════════════════════════════════
+// LISTA DE PAGOS YA REGISTRADOS (Plan = tipo 1, Otros pagos = tipo 2)
+// ════════════════════════════════════════════════════
+function escH(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, m =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+function obtenerContenedorPagos(modalId) {
+    let cont = document.getElementById(modalId + 'Historial');
+    if (cont) return cont;
+    const body = document.querySelector(`#${modalId} .mf-body, #${modalId} .modal-body`);
+    if (!body) return null;
+    cont = document.createElement('section');
+    cont.id = modalId + 'Historial';
+    cont.className = 'mf-sec';
+    body.insertBefore(cont, body.firstChild);
+    return cont;
+}
+
+async function cargarPagosSucursal(idSucursal, tipoPago, modalId) {
+    const cont = obtenerContenedorPagos(modalId);
+    if (!cont) return;
+
+    if (!idSucursal || !/^\d+$/.test(String(idSucursal))) {
+        cont.innerHTML = '';
+        return;
+    }
+
+    cont.innerHTML = '<div class="text-muted small py-2">Cargando registros…</div>';
+
+    try {
+        const res = await fetch(
+            `${BASE_URL}personas/pagosSucursal?id_sucursal=${idSucursal}&tipo=${tipoPago}`,
+            { headers: { 'X-Requested-With': 'XMLHttpRequest' } }
+        );
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const pagos = await res.json();
+
+        const titulo = tipoPago === 1 ? 'Planes asignados' : 'Pagos registrados';
+
+        if (!Array.isArray(pagos) || !pagos.length) {
+            cont.innerHTML = `
+                <h3 class="mf-sec-title"><span class="material-symbols-outlined">history</span> ${titulo}</h3>
+                <div class="text-muted small py-2">Aún no hay registros para esta sucursal.</div>`;
+            return;
+        }
+
+        const filas = pagos.map(p => {
+            const nombre = tipoPago === 1
+                ? `${escH(p.nombre_plan || '—')} · ${escH(p.nombre_tipo || '')}`
+                : escH(p.concepto || '—');
+            const activo = String(p.estado) === '1';
+            return `
+                <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+                    <div>
+                        <div class="fw-semibold">${nombre}</div>
+                        <div class="text-muted small">
+                            Vence: ${escH(p.fecha_de_vencimiento || '—')}
+                            ${p.correo_notificacion ? ' · ' + escH(p.correo_notificacion) : ''}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-semibold">S/ ${Number(p.precio || 0).toFixed(2)}</div>
+                        <span class="pdsg-chip ${activo ? 'pdsg-chip-on' : 'pdsg-chip-off'}">${activo ? 'Activo' : 'Inactivo'}</span>
+                    </div>
+                </div>`;
+        }).join('');
+
+        cont.innerHTML = `
+            <h3 class="mf-sec-title">
+                <span class="material-symbols-outlined">history</span> ${titulo}
+                <span class="pdsg-chip pdsg-chip-on ms-2">${pagos.length}</span>
+            </h3>
+            <div style="max-height:180px;overflow:auto">${filas}</div>`;
+    } catch (e) {
+        console.error('Error cargando pagos:', e);
+        cont.innerHTML = '<div class="text-danger small py-2">No se pudo cargar el historial.</div>';
+    }
+}
 
 // ════════════════════════════════════════════════════
 // INICIALIZACIÓN GLOBAL
