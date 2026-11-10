@@ -62,6 +62,7 @@
                             <div class="input-group">
                                 <input type="text"
                                        id="dni"
+                                       autocomplete="off" inputmode="numeric"
                                        name="dni"
                                        class="form-control pdsg-input"
                                        maxlength="8"
@@ -212,6 +213,7 @@
                             <div class="input-group">
                                 <input type="text"
                                        id="ruc"
+                                       autocomplete="off" inputmode="numeric"
                                        name="ruc"
                                        class="form-control pdsg-input"
                                        value="<?= old('ruc', isset($empresa) ? (is_array($empresa) ? $empresa['ruc'] : $empresa->ruc) : '') ?>"

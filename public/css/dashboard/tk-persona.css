@@ -101,7 +101,7 @@ html.dark .pdsg-persona-page {
   background-repeat: no-repeat !important; background-position: 16px center !important;
 }
 .pdsg-persona-page .pf-lookup .pdsg-btn-search {
-  position: absolute !important; right: 8px; top: 8px; height: 40px !important; padding: 0 18px !important; z-index: 3;
+  position: absolute !important; right: 8px; top: 8px; height: 40px !important; padding: 0 18px !important; z-index: 6 !important;
 }
 .pf-lookup #alertaDni:not(:empty) { margin-top: 8px !important; font-size: 12px; }
 
@@ -178,7 +178,7 @@ html.dark .pdsg-persona-page {
 /* RUC con búsqueda (misma pieza que el DNI, en tamaño normal) */
 .pdsg-persona-page .pf-sec-card .pe-lookup .input-group { flex-wrap: nowrap !important; position: relative; }
 .pdsg-persona-page .pf-sec-card .pe-lookup .pdsg-input { padding-right: 120px !important; border-radius: 12px !important; }
-.pdsg-persona-page .pf-sec-card .pe-lookup .pdsg-btn-search { position: absolute !important; right: 5px; top: 5px; height: 34px !important; padding: 0 14px !important; z-index: 3; }
+.pdsg-persona-page .pf-sec-card .pe-lookup .pdsg-btn-search { position: absolute !important; right: 5px; top: 5px; height: 34px !important; padding: 0 14px !important; z-index: 6 !important; }
 .pdsg-persona-page .pdsg-btn-search {
   border-radius: 9999px !important; border: 0 !important; background: var(--pf-text) !important; color: var(--pf-surface) !important;
   font-size: 12.5px !important; font-weight: 600 !important; display: inline-flex !important; align-items: center; gap: 6px;
