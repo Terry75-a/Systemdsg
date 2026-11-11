@@ -20,9 +20,14 @@
         <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">filter_list</span><div><p class="tk-stat-lbl">Mostrando</p><p class="tk-stat-val" id="plStatShown">—</p></div></div>
     </section>
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de planes">
-        <div class="tp-toolbar">
-            <div class="tp-category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Todos los planes</span><span class="pdsg-tab-count" id="plCount" aria-live="polite">—</span></div>
-            <label class="tp-search" for="plSearch"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="plSearch" placeholder="Buscar plan…" aria-label="Buscar plan"></label>
+        <div class="tk2-toolbar tp-toolbar">
+            <div class="tk2-chips">
+                <div class="tp-category"><span class="material-symbols-outlined" aria-hidden="true">layers</span><span>Todos los planes</span><span class="pdsg-tab-count" id="plCount" aria-live="polite">—</span></div>
+            </div>
+            <label class="tk2-search tp-search" for="plSearch">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <input type="search" id="plSearch" placeholder="Buscar plan…" aria-label="Buscar plan">
+            </label>
         </div>
         <div class="pdsg-table-wrap">
             <table id="tablplanes" class="pdsg-table" style="width:100%">

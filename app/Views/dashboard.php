@@ -8,6 +8,15 @@ $totalUsuarios  = (int) ($totalUsuarios ?? 0);
 $pctNuevos      = $totalClientes > 0 ? round($nuevosClientes / $totalClientes * 100, 1) : 0;
 $mesesEs        = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
+$nombreSesion = trim((string) (session()->get('nombre') ?? session()->get('username') ?? 'Usuario'));
+$primerNombre = explode(' ', $nombreSesion)[0] ?: $nombreSesion;
+$horaActual   = (int) date('G');
+$saludo       = match (true) {
+    $horaActual >= 6 && $horaActual < 12  => 'Buenos días',
+    $horaActual >= 12 && $horaActual < 19 => 'Buenas tardes',
+    default                               => 'Buenas noches',
+};
+
 $accesos = [
     ['personas',     'groups',          'Clientes',          'Gestión de personas'],
     ['personasadd',  'person_add',      'Registrar persona', 'Nuevo cliente'],
@@ -36,21 +45,32 @@ if (!$esAdmin) {
 
 <div class="tk-dash tk-sys">
 
-    <!-- PageTitle -->
-    <div class="tk-title">
-        <div>
-            <h1>Panel de control</h1>
-            <p>Resumen de clientes, planes y accesos de DSG Perú · <?= esc(ucfirst($mesesEs[(int) date('n')])) ?> <?= date('Y') ?>.</p>
+    <!-- Hero de bienvenida -->
+    <section class="tk-dash-hero" aria-labelledby="dashHeroTitle">
+        <div class="tk-dash-hero-copy">
+            <span class="tk-dash-hero-eyebrow">
+                <span class="material-symbols-outlined" aria-hidden="true">space_dashboard</span>
+                Panel de control · <?= esc(ucfirst($mesesEs[(int) date('n')])) ?> <?= date('Y') ?>
+            </span>
+            <h1 id="dashHeroTitle"><?= esc($saludo) ?>, <?= esc($primerNombre) ?></h1>
+            <p>Resumen de clientes, planes y accesos de DSG Perú. Todo lo importante, en un solo lugar.</p>
+            <div class="tk-dash-hero-actions">
+                <a href="<?= base_url('personas') ?>" class="tk2-btn tk2-btn-ghost">
+                    <span class="material-symbols-outlined" aria-hidden="true">groups</span>
+                    <span>Ver clientes</span>
+                </a>
+                <a href="<?= base_url('personasadd') ?>" class="tk2-btn tk2-btn-primary">
+                    <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
+                    <span>Registrar persona</span>
+                </a>
+            </div>
         </div>
-        <div class="tk-title-actions">
-            <a href="<?= base_url('personas') ?>" class="dev-btn dev-btn-sm">
-                <span class="material-symbols-outlined">groups</span> Ver clientes
-            </a>
-            <a href="<?= base_url('personasadd') ?>" class="dev-btn dev-btn-primary dev-btn-sm">
-                <span class="material-symbols-outlined">person_add</span> Registrar persona
-            </a>
+        <div class="tk-dash-hero-art" aria-hidden="true">
+            <span class="tk-dash-orbit tk-dash-orbit-1"></span>
+            <span class="tk-dash-orbit tk-dash-orbit-2"></span>
+            <span class="material-symbols-outlined tk-dash-hero-icon">monitoring</span>
         </div>
-    </div>
+    </section>
 
     <!-- KPIs (StatGrid) -->
     <section class="tk-stats <?= $esAdmin ? 'tk-stats-5' : 'tk-stats-4' ?>">

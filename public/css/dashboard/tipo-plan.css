@@ -380,3 +380,97 @@ html.dark #tpModal .tp-modal-icon, html.dark #plModal .tp-modal-icon { color: #8
   .pl-page #tablplanes .pl-price { font-size: 12px; }
   .pl-page #tablplanes .pdsg-action { width: 28px; height: 28px; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Planes · Tipos de plan · acabado tk2 (barra, chip, orden, fichas)
+   ══════════════════════════════════════════════════════════════ */
+body.tk2 .tp-page .tp-toolbar { padding: 12px 16px !important; border-bottom: 1px solid var(--tk2-line-soft) !important; gap: 12px; }
+body.tk2 .tp-page .tp-category {
+  height: 32px; padding: 0 6px 0 12px; gap: 8px; border-radius: 9999px;
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important;
+  box-shadow: none !important; font-size: 12px; font-weight: 500;
+}
+body.tk2 .tp-page .tp-category > .material-symbols-outlined { font-size: 16px; }
+body.tk2 .tp-page .tp-category .pdsg-tab-count { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+
+/* una sola flecha junto al título de la columna activa */
+body.tk2 .tp-page table.dataTable thead > tr > th::before,
+body.tk2 .tp-page table.dataTable thead > tr > th::after { display: none !important; content: none !important; }
+body.tk2 .tp-page table.dataTable thead > tr > th.sorting_asc::after,
+body.tk2 .tp-page table.dataTable thead > tr > th.sorting_desc::after {
+  display: inline-block !important; position: static !important; content: "▲" !important;
+  margin-left: 4px; vertical-align: 2px; font-size: 8px; line-height: 1; color: var(--sb-muted); opacity: .8;
+}
+body.tk2 .tp-page table.dataTable thead > tr > th.sorting_desc::after { content: "▼" !important; }
+body.tk2 .tp-page table.dataTable thead > tr > th:is(.sorting, .sorting_asc, .sorting_desc) { padding-right: 12px !important; }
+
+/* ── Fichas de Planes en tablet y celular ── */
+@media (max-width: 991.98px) {
+  body.tk2 .pl-page .pdsg-table-wrap { overflow: visible !important; }
+  body.tk2 .pl-page #tablplanes { display: block !important; width: 100% !important; min-width: 0 !important; }
+  body.tk2 .pl-page #tablplanes thead { display: none !important; }
+  body.tk2 .pl-page #tablplanes tbody { display: flex; flex-direction: column; min-width: 0; }
+  body.tk2 .pl-page #tablplanes tbody tr {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; min-width: 0;
+    grid-template-areas: "code name actions" "vig vig price";
+    gap: 6px 10px; padding: 14px 16px !important;
+    border-bottom: 1px solid var(--tk2-line-soft) !important;
+  }
+  body.tk2 .pl-page #tablplanes tbody tr:last-child { border-bottom: 0 !important; }
+  body.tk2 .pl-page #tablplanes tbody tr:hover { background: var(--sb-surface-container-low) !important; }
+  body.tk2 .pl-page #tablplanes tbody tr:hover td { background: transparent !important; }
+  body.tk2 .pl-page #tablplanes tbody td {
+    display: flex !important; flex-direction: column; justify-content: center;
+    height: auto !important; width: auto !important; min-width: 0 !important;
+    padding: 0 !important; border: 0 !important; background: transparent !important; text-align: left !important;
+  }
+  body.tk2 .pl-page #tablplanes tbody td.tp-code { grid-area: code; align-items: flex-start; }
+  body.tk2 .pl-page #tablplanes tbody td:nth-child(2) { grid-area: name; }
+  body.tk2 .pl-page #tablplanes tbody td.pl-vig {
+    grid-area: vig; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 4px 8px;
+    padding-top: 2px !important; white-space: normal;
+  }
+  body.tk2 .pl-page #tablplanes tbody td.tp-price { grid-area: price; align-items: flex-end; }
+  body.tk2 .pl-page #tablplanes tbody td.tp-actions-cell { grid-area: actions; align-items: flex-end; }
+  body.tk2 .pl-page #tablplanes .tp-name { gap: 8px; min-width: 0; }
+  body.tk2 .pl-page #tablplanes .tp-name-txt { min-width: 0; }
+  body.tk2 .pl-page #tablplanes .tp-type-icon { display: inline-grid !important; width: 32px; height: 32px; }
+  body.tk2 .pl-page #tablplanes .tp-name-txt small { max-width: 100%; }
+  body.tk2 .pl-page #tablplanes .pl-vig-txt { display: inline; }
+  body.tk2 .pl-page #tablplanes .pl-st { margin-top: 0; }
+  body.tk2 .pl-page #tablplanes .pl-price { font-size: 13px; }
+  body.tk2 .pl-page .tp-table-footer { padding: 12px 14px; }
+}
+
+/* ── Fichas de Tipos de plan en celular ── */
+@media (max-width: 767.98px) {
+  body.tk2 .tp-page:not(.pl-page) .pdsg-table-wrap { overflow: visible !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes { display: block !important; width: 100% !important; min-width: 0 !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes thead { display: none !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody { display: flex; flex-direction: column; min-width: 0; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody tr {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; min-width: 0;
+    grid-template-areas: "code name actions"; align-items: center;
+    gap: 8px 10px; padding: 14px 16px !important;
+    border-bottom: 1px solid var(--tk2-line-soft) !important;
+  }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody tr:last-child { border-bottom: 0 !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody tr:hover { background: var(--sb-surface-container-low) !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody tr:hover td { background: transparent !important; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody td {
+    display: flex !important; flex-direction: column; justify-content: center;
+    height: auto !important; width: auto !important; min-width: 0 !important;
+    padding: 0 !important; border: 0 !important; background: transparent !important; text-align: left !important;
+  }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody td.tp-code { grid-area: code; align-items: flex-start; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody td:nth-child(2) { grid-area: name; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes tbody td.tp-actions-cell { grid-area: actions; align-items: flex-end; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes .tp-name { gap: 8px; min-width: 0; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes .tp-name-txt { min-width: 0; }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes .tp-name-txt b,
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes .tp-name-txt small {
+    display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  body.tk2 .tp-page:not(.pl-page) #tablaplanes .tp-type-icon { display: inline-grid !important; width: 30px; height: 30px; }
+  body.tk2 .tp-page:not(.pl-page) .tp-table-footer { padding: 12px 14px; }
+}

@@ -322,4 +322,69 @@ html.dark #usModal .tp-modal-icon, html.dark #usEditModal .tp-modal-icon, html.d
   #usModal .tp-modal-cancel:hover, #usEditModal .tp-modal-cancel:hover, #usPermModal .tp-modal-cancel:hover { background: var(--tp-modal-soft); color: var(--tp-modal-text); }
   #usModal .tp-modal-save, #usEditModal .tp-modal-save, #usPermModal .tp-modal-save { background: var(--tp-accent, #1b7a42); color: #fff; border: 0; }
   #usModal .tp-modal-save:hover, #usEditModal .tp-modal-save:hover, #usPermModal .tp-modal-save:hover { background: #15653a; }
+}
+
+/* ══ Tabla y barra de Usuarios con los tokens de tk2 ══ */
+body.tk2 .us-page .us-category {
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important;
+  padding: 0 6px 0 12px; height: 32px; border-radius: 9999px; font-size: 12px; font-weight: 500;
+}
+body.tk2 .us-page .us-category .material-symbols-outlined { font-size: 16px; }
+body.tk2 .us-page .us-category .pdsg-tab-count { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+body.tk2 .us-page .us-role-tag {
+  display: inline-flex; align-items: center; height: 20px; padding: 0 9px; border-radius: 9999px;
+  background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant);
+  font-size: 10.5px; font-weight: 600; white-space: nowrap;
+}
+body.tk2 .us-page .us-badge-on { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+body.tk2 .us-page .us-badge-off { background: var(--sb-surface-container-high) !important; color: var(--sb-muted) !important; }
+
+/* indicadores de orden: solo la flecha del orden activo, junto al título */
+body.tk2 .us-page #tablaUsuarios thead th { position: relative; cursor: pointer; }
+body.tk2 .us-page #tablaUsuarios thead th.sorting_disabled { cursor: default; }
+body.tk2 .us-page #tablaUsuarios thead th::before,
+body.tk2 .us-page #tablaUsuarios thead th::after { display: none !important; }
+body.tk2 .us-page #tablaUsuarios thead th.sorting_asc::after,
+body.tk2 .us-page #tablaUsuarios thead th.sorting_desc::after {
+  display: inline-block !important; margin-left: 4px; vertical-align: 2px;
+  font-size: 8px; line-height: 1; color: var(--sb-muted); opacity: .8;
+}
+body.tk2 .us-page #tablaUsuarios thead th.sorting_asc::after { content: "▲"; }
+body.tk2 .us-page #tablaUsuarios thead th.sorting_desc::after { content: "▼"; }
+
+/* Celular y tablet: cada fila es una ficha, sin scroll horizontal */
+@media (max-width: 991.98px) {
+  body.tk2 .us-page .us-toolbar { padding: 14px !important; gap: 10px; }
+  body.tk2 .us-page .pdsg-table-wrap { overflow: visible !important; }
+  body.tk2 .us-page #tablaUsuarios { display: block !important; width: 100% !important; min-width: 0 !important; }
+  body.tk2 .us-page #tablaUsuarios thead { display: none !important; }
+  body.tk2 .us-page #tablaUsuarios tbody { display: flex; flex-direction: column; min-width: 0; }
+  body.tk2 .us-page #tablaUsuarios tbody tr {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; min-width: 0;
+    grid-template-areas: "user status" "person person" "contact contact" "role actions";
+    gap: 5px 10px; padding: 14px 16px !important; border-bottom: 1px solid var(--tk2-line-soft) !important;
+  }
+  body.tk2 .us-page #tablaUsuarios tbody tr:last-child { border-bottom: 0 !important; }
+  body.tk2 .us-page #tablaUsuarios tbody td {
+    display: flex !important; flex-direction: column; justify-content: center; align-items: stretch;
+    width: auto !important; min-width: 0 !important; height: auto !important;
+    padding: 0 !important; border: 0 !important; text-align: left !important; background: transparent !important;
+  }
+  body.tk2 .us-page #tablaUsuarios tbody td.us-code { display: none !important; }
+  body.tk2 .us-page .us-user-cell { grid-area: user; }
+  body.tk2 .us-page .us-status-cell { grid-area: status; text-align: right !important; }
+  body.tk2 .us-page .us-person-cell { grid-area: person; padding-top: 2px !important; }
+  body.tk2 .us-page .us-contact-cell { grid-area: contact; }
+  body.tk2 .us-page .us-contact-email { font-size: 12px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  body.tk2 .us-page .us-rol-cell { grid-area: role; align-self: center; }
+  body.tk2 .us-page .us-actions-cell { grid-area: actions; justify-self: end; }
+  body.tk2 .us-page #tablaUsuarios tbody td:is(.us-person-cell, .us-rol-cell) { align-items: flex-start; }
+  body.tk2 .us-page #tablaUsuarios tbody td:is(.us-status-cell, .us-actions-cell) { align-items: flex-end; }
+  body.tk2 .us-page .us-actions-cell .pdsg-actions { gap: 4px !important; }
+  body.tk2 .us-page .us-user-name { font-size: 14px; }
+  body.tk2 .us-page .us-person-name { font-size: 12.5px; }
+  body.tk2 .us-page .us-person-dni, body.tk2 .us-page .us-user-id { font-size: 10.5px; }
+  body.tk2 .us-page .us-table-footer { padding: 12px 14px; }
+}
+
 @media (prefers-reduced-motion: reduce) { #usModal, #usModal *, #usEditModal, #usEditModal *, #usPermModal, #usPermModal * { transition: none !important; animation: none !important; } }

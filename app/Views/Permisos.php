@@ -13,9 +13,14 @@
     <div id="peNotice" class="alert alert-success" role="status" hidden></div>
 
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de permisos">
-        <div class="pe-toolbar">
-            <div class="pe-category"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>Todos los permisos</span><span class="pdsg-tab-count" id="peCount" aria-live="polite">0</span></div>
-            <label class="pe-search" for="peSearch"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="peSearch" placeholder="Buscar por rol, módulo…" aria-label="Buscar permiso"></label>
+        <div class="tk2-toolbar pe-toolbar">
+            <div class="tk2-chips">
+                <div class="pe-category"><span class="material-symbols-outlined" aria-hidden="true">verified_user</span><span>Todos los permisos</span><span class="pdsg-tab-count" id="peCount" aria-live="polite">0</span></div>
+            </div>
+            <label class="tk2-search pe-search" for="peSearch">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <input type="search" id="peSearch" placeholder="Buscar por rol, módulo…" aria-label="Buscar permiso">
+            </label>
         </div>
         <div class="pdsg-table-wrap">
             <table id="tablaPermisos" class="pdsg-table" style="width:100%">
@@ -171,6 +176,10 @@ const CSRF_HASH = '<?= csrf_hash() ?>';
 
 let tablaPermisos;
 
+const peEsc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+}[ch]));
+
 $(document).ready(function () {
     tablaPermisos = $('#tablaPermisos').DataTable({
         autoWidth: false,
@@ -189,7 +198,14 @@ $(document).ready(function () {
         },
         columns: [
             { data: 'id_permiso', className: 'pe-code' },
-            { data: 'rol_nombre', className: 'pe-rol' },
+            {
+                data: 'rol_nombre',
+                className: 'pe-rol',
+                render: function (data, type, row) {
+                    if (type !== 'display') return row.rol_nombre || '';
+                    return '<span class="pe-role-tag">' + peEsc(row.rol_nombre || 'Sin rol') + '</span>';
+                }
+            },
             { data: 'menu_nombre', className: 'pe-menu' },
             {
                 data: 'read',

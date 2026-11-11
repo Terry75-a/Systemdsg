@@ -19,9 +19,14 @@ $menusPayload = array_map(static fn($menu) => [
     <div id="usNotice" class="alert alert-success" role="status" hidden></div>
 
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de usuarios">
-        <div class="us-toolbar">
-            <div class="us-category"><i class="fa-solid fa-users" aria-hidden="true"></i><span>Todos los usuarios</span><span class="pdsg-tab-count" id="usCount" aria-live="polite">0</span></div>
-            <label class="us-search" for="usSearch"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="usSearch" placeholder="Buscar usuario, nombre, email…" aria-label="Buscar usuario"></label>
+        <div class="tk2-toolbar us-toolbar">
+            <div class="tk2-chips">
+                <div class="us-category"><span class="material-symbols-outlined" aria-hidden="true">group</span><span>Todos los usuarios</span><span class="pdsg-tab-count" id="usCount" aria-live="polite">0</span></div>
+            </div>
+            <label class="tk2-search us-search" for="usSearch">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <input type="search" id="usSearch" placeholder="Buscar usuario, nombre, email…" aria-label="Buscar usuario">
+            </label>
         </div>
         <div class="pdsg-table-wrap">
             <table id="tablaUsuarios" class="pdsg-table" style="width:100%">
@@ -291,7 +296,12 @@ $(document).ready(function () {
             },
             {
                 data: 'rol_nombre',
-                className: 'us-rol-cell'
+                className: 'us-rol-cell',
+                render: function (data, type, row) {
+                    const rol = escapeHtml(row.rol_nombre || 'Sin rol');
+                    if (type !== 'display') return row.rol_nombre || '';
+                    return '<span class="us-role-tag">' + rol + '</span>';
+                }
             },
             {
                 data: 'estado',
@@ -342,10 +352,10 @@ $(document).ready(function () {
     // --- Helpers (global scope para onclick inline) ---
     window.escapeHtml = function (value) {
         return String(value ?? '')
-            .replace(/&/g, '&')
-            .replace(/</g, '<')
-            .replace(/>/g, '>')
-            .replace(/"/g, '"')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     };
     window.buildAlert = function (type, content) {

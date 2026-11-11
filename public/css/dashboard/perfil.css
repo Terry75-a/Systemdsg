@@ -70,8 +70,8 @@
   position: absolute;
   right: -4px;
   bottom: -4px;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 2px solid var(--g-surface, #fff);
   background: var(--g-primary, #161618);
@@ -79,7 +79,7 @@
   display: grid;
   place-items: center;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   padding: 0;
   transition: background 160ms ease, transform 160ms ease;
 }
@@ -184,4 +184,28 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .pf-page * { animation: none !important; transition: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Perfil · acabado tk2 (estado y botón de foto con tokens)
+   ══════════════════════════════════════════════════════════════ */
+body.tk2 .pf-page .pf-status {
+  background: var(--sb-primary-soft) !important;
+  color: var(--sb-primary) !important;
+  font-weight: 600;
+}
+body.tk2 .pf-page .pf-status.is-off {
+  background: var(--sb-late-soft) !important;
+  color: var(--sb-late) !important;
+}
+body.tk2 .pf-page .pf-avatar-btn {
+  background: var(--sb-primary) !important;
+  color: var(--sb-on-primary) !important;
+  border-color: var(--sb-surface) !important;
+}
+body.tk2 .pf-page .pf-avatar-btn:hover {
+  background: color-mix(in oklab, var(--sb-primary) 86%, #000) !important;
+}
+html.dark body.tk2 .pf-page .pf-avatar-btn:hover {
+  background: color-mix(in oklab, var(--sb-primary) 86%, #fff) !important;
 }

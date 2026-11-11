@@ -280,3 +280,69 @@ html.dark #peModal .tp-modal-icon, html.dark #peEditModal .tp-modal-icon { color
   #peModal .form-control, #peEditModal .form-control { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { #peModal, #peModal *, #peEditModal, #peEditModal * { transition: none !important; animation: none !important; } }
+
+/* ══ Lista de Permisos con los tokens de tk2 ══ */
+body.tk2 .pe-page .pe-category {
+  background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important;
+  height: 32px; padding: 0 6px 0 12px; border-radius: 9999px; font-size: 12px; font-weight: 500;
+}
+body.tk2 .pe-page .pe-category .material-symbols-outlined { font-size: 16px; }
+body.tk2 .pe-page .pe-category .pdsg-tab-count { background: var(--sb-primary) !important; color: var(--sb-on-primary) !important; }
+body.tk2 .pe-page .pe-role-tag {
+  display: inline-flex; align-items: center; height: 20px; padding: 0 9px; border-radius: 9999px;
+  background: var(--sb-surface-container-high); color: var(--sb-on-surface-variant);
+  font-size: 10.5px; font-weight: 600; white-space: nowrap;
+}
+body.tk2 .pe-page .pe-menu { color: var(--sb-on-surface) !important; font-weight: 500; }
+body.tk2 .pe-page .pe-badge-on { background: var(--sb-primary-soft) !important; color: var(--sb-primary) !important; }
+body.tk2 .pe-page .pe-badge-off { background: var(--sb-surface-container-high) !important; color: var(--sb-muted) !important; }
+body.tk2 .pe-page #tablaPermisos tbody td { height: 44px !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+
+/* indicadores de orden: solo la flecha del orden activo, junto al título */
+body.tk2 .pe-page #tablaPermisos thead th { position: relative; cursor: pointer; }
+body.tk2 .pe-page #tablaPermisos thead th.sorting_disabled { cursor: default; }
+body.tk2 .pe-page #tablaPermisos thead th::before,
+body.tk2 .pe-page #tablaPermisos thead th::after { display: none !important; }
+body.tk2 .pe-page #tablaPermisos thead th.sorting_asc::after,
+body.tk2 .pe-page #tablaPermisos thead th.sorting_desc::after {
+  display: inline-block !important; margin-left: 4px; vertical-align: 2px;
+  font-size: 8px; line-height: 1; color: var(--sb-muted); opacity: .8;
+}
+body.tk2 .pe-page #tablaPermisos thead th.sorting_asc::after { content: "▲"; }
+body.tk2 .pe-page #tablaPermisos thead th.sorting_desc::after { content: "▼"; }
+
+/* Celular y tablet: matriz de permisos como ficha */
+@media (max-width: 991.98px) {
+  body.tk2 .pe-page .pe-toolbar { padding: 14px !important; gap: 10px; }
+  body.tk2 .pe-page .pdsg-table-wrap { overflow: visible !important; }
+  body.tk2 .pe-page #tablaPermisos { display: block !important; width: 100% !important; min-width: 0 !important; }
+  body.tk2 .pe-page #tablaPermisos thead { display: none !important; }
+  body.tk2 .pe-page #tablaPermisos tbody { display: flex; flex-direction: column; min-width: 0; }
+  body.tk2 .pe-page #tablaPermisos tbody tr {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); min-width: 0;
+    gap: 6px 8px; padding: 12px 16px !important; border-bottom: 1px solid var(--tk2-line-soft) !important;
+  }
+  body.tk2 .pe-page #tablaPermisos tbody tr:last-child { border-bottom: 0 !important; }
+  body.tk2 .pe-page #tablaPermisos tbody td {
+    display: flex !important; flex-direction: column; justify-content: center;
+    height: auto !important; width: auto !important; min-width: 0 !important;
+    padding: 0 !important; border: 0 !important; background: transparent !important; text-align: left !important;
+  }
+  body.tk2 .pe-page #tablaPermisos tbody td.pe-code { display: none !important; }
+  body.tk2 .pe-page .pe-rol { grid-column: 1 / span 3; align-items: flex-start; }
+  body.tk2 .pe-page .pe-actions-cell { grid-column: 4; align-items: flex-end !important; }
+  body.tk2 .pe-page .pe-menu { grid-column: 1 / -1; align-items: flex-start; }
+  body.tk2 .pe-page .pe-menu::before {
+    content: "Módulo"; margin-bottom: 1px; font-size: 9px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--sb-muted);
+  }
+  body.tk2 .pe-page .pe-perm-cell { align-items: center; gap: 3px; }
+  body.tk2 .pe-page .pe-perm-cell::before {
+    font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sb-muted);
+  }
+  body.tk2 .pe-page #tablaPermisos tbody td.pe-perm-cell:nth-of-type(4)::before { content: "Ver"; }
+  body.tk2 .pe-page #tablaPermisos tbody td.pe-perm-cell:nth-of-type(5)::before { content: "Crear"; }
+  body.tk2 .pe-page #tablaPermisos tbody td.pe-perm-cell:nth-of-type(6)::before { content: "Editar"; }
+  body.tk2 .pe-page #tablaPermisos tbody td.pe-perm-cell:nth-of-type(7)::before { content: "Eliminar"; }
+  body.tk2 .pe-page .pe-table-footer { padding: 12px 14px; }
+}

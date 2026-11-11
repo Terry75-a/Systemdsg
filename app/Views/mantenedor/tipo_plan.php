@@ -19,9 +19,14 @@
         <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">new_releases</span><div><p class="tk-stat-lbl">Último agregado</p><p class="tk-stat-val tp-stat-txt" id="tpStatLast">—</p></div></div>
     </section>
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de tipos de plan">
-        <div class="tp-toolbar">
-            <div class="tp-category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Todos los tipos</span><span class="pdsg-tab-count" id="tpCount" aria-live="polite">—</span></div>
-            <label class="tp-search" for="tpSearch"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="tpSearch" placeholder="Buscar tipo de plan…" aria-label="Buscar tipo de plan"></label>
+        <div class="tk2-toolbar tp-toolbar">
+            <div class="tk2-chips">
+                <div class="tp-category"><span class="material-symbols-outlined" aria-hidden="true">category</span><span>Todos los tipos</span><span class="pdsg-tab-count" id="tpCount" aria-live="polite">—</span></div>
+            </div>
+            <label class="tk2-search tp-search" for="tpSearch">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <input type="search" id="tpSearch" placeholder="Buscar tipo de plan…" aria-label="Buscar tipo de plan">
+            </label>
         </div>
         <div class="pdsg-table-wrap">
             <table id="tablaplanes" class="pdsg-table" style="width:100%">
