@@ -2,7 +2,7 @@
     "name": "Asisten DSG",
     "short_name": "Asisten",
     "description": "Marca tu asistencia, revisa tu horario e incidencias desde tu celular.",
-    "start_url": "./mi-panel",
+    "start_url": "./login-verde",
     "scope": "./",
     "display": "standalone",
     "orientation": "portrait",

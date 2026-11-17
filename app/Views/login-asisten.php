@@ -10,9 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20260922?v=20260922') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20261112') ?>">
     <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
     <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
+    <?= view('partials/pwa-head') ?>
 </head>
 <body>
 
@@ -239,10 +240,8 @@
 })();
 </script>
 
-<footer style="text-align:center;padding:18px 16px 26px;font-size:12.5px;color:#8a8a8a;">&copy; <?= date('Y') ?> DSG Peru Technology · <a href="<?= base_url('asisten-dsg') ?>" style="color:inherit;">Asistencia del personal</a></footer>
+<footer style="text-align:center;padding:18px 16px 26px;font-size:12.5px;font-weight:700;color:#6F6F6F;">&copy; <?= date('Y') ?> DSG Peru Technology · <a href="<?= base_url('asisten-dsg') ?>" style="color:inherit;">Asistencia del personal</a></footer>
 <?= view('partials/pwa-js') ?>
 
 </body>
 </html>
-<!-- PWA -->
-    <?= view('partials/pwa-head') ?>
