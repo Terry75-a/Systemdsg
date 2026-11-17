@@ -403,6 +403,8 @@ class AdminController extends AdminBaseController
             'sch_dias'          => 'permit_empty|max_length[100]',
             'sch_hora_entrada'  => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
             'sch_hora_salida'   => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
+            'sch_hora_entrada2' => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
+            'sch_hora_salida2'  => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
             'sch_tolerancia'    => 'permit_empty|integer|greater_than_equal_to[0]|less_than_equal_to[120]',
         ], 'admin/horarios')) {
             return $redirect;
@@ -415,6 +417,15 @@ class AdminController extends AdminBaseController
         $salida     = $this->request->getPost('sch_hora_salida') ?: '17:00';
         $tolerancia = (int) ($this->request->getPost('sch_tolerancia') ?: 10);
         if (!in_array($tipo, ['Practicante', 'Empleado'], true)) $tipo = 'Empleado';
+
+        // Segundo turno opcional (jornada partida / doble turno)
+        $segundo = $this->segundoTurno($entrada, $salida);
+        if (is_string($segundo)) {
+            $s->setFlashdata('msg', $segundo);
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('admin/horarios'));
+        }
+
         $this->scheduleModel->insert([
             'admin_id'      => $adminId,
             'nombre'        => $nombre,
@@ -422,6 +433,8 @@ class AdminController extends AdminBaseController
             'dias'          => $dias,
             'hora_entrada'  => $entrada,
             'hora_salida'   => $salida,
+            'hora_entrada2' => $segundo[0],
+            'hora_salida2'  => $segundo[1],
             'tolerancia'    => $tolerancia,
             'estado'        => 'Activo',
         ]);
@@ -458,18 +471,66 @@ class AdminController extends AdminBaseController
         $tolerancia = (int) ($this->request->getPost('sch_tolerancia') ?: 10);
         $estado     = $this->request->getPost('sch_estado') ?? 'Activo';
         if (!in_array($tipo, ['Practicante', 'Empleado'], true)) $tipo = 'Empleado';
+
+        // Segundo turno opcional (jornada partida / doble turno)
+        $segundo = $this->segundoTurno($entrada, $salida);
+        if (is_string($segundo)) {
+            $s->setFlashdata('msg', $segundo);
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('admin/horarios'));
+        }
+
         $this->scheduleModel->update($schId, [
-            'nombre'       => $nombre,
-            'tipo'         => $tipo,
-            'dias'         => $dias,
-            'hora_entrada' => $entrada,
-            'hora_salida'  => $salida,
-            'tolerancia'   => $tolerancia,
-            'estado'       => $estado,
+            'nombre'        => $nombre,
+            'tipo'          => $tipo,
+            'dias'          => $dias,
+            'hora_entrada'  => $entrada,
+            'hora_salida'   => $salida,
+            'hora_entrada2' => $segundo[0],
+            'hora_salida2'  => $segundo[1],
+            'tolerancia'    => $tolerancia,
+            'estado'        => $estado,
         ]);
         $s->setFlashdata('msg', 'Horario actualizado');
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('admin/horarios'));
+    }
+
+    /**
+     * Normaliza y valida el segundo turno (doble turno / jornada partida).
+     *
+     * Devuelve [entrada2, salida2] —con NULL cuando no hay segundo turno—
+     * o un mensaje de error cuando el par está incompleto o mal ordenado.
+     *
+     * @return array{0: ?string, 1: ?string}|string
+     */
+    private function segundoTurno(string $entrada, string $salida)
+    {
+        $e2 = trim((string) $this->request->getPost('sch_hora_entrada2'));
+        $s2 = trim((string) $this->request->getPost('sch_hora_salida2'));
+
+        if ($e2 === '' && $s2 === '') {
+            return [null, null];
+        }
+        if ($e2 === '' || $s2 === '') {
+            return 'El segundo turno necesita hora de entrada y hora de salida (o déjalas vacías)';
+        }
+
+        $e2 = substr($e2, 0, 5);
+        $s2 = substr($s2, 0, 5);
+
+        if (!preg_match('/^([01][0-9]|2[0-3]):[0-5][0-9]$/', $e2) || !preg_match('/^([01][0-9]|2[0-3]):[0-5][0-9]$/', $s2)) {
+            return 'La hora del segundo turno no es válida (usa el formato HH:MM)';
+        }
+
+        if (strtotime($e2) < strtotime(substr($salida, 0, 5))) {
+            return 'El segundo turno debe empezar cuando termina el primero (o después)';
+        }
+        if (strtotime($s2) <= strtotime($e2)) {
+            return 'La salida del segundo turno debe ser posterior a su entrada';
+        }
+
+        return [$e2, $s2];
     }
 
     public function deleteSchedule()

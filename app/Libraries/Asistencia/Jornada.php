@@ -102,6 +102,125 @@ class Jornada
         return strtotime($hora) + $tol * 60;
     }
 
+    /**
+     * Bloques de la jornada (jornada partida / doble turno).
+     *
+     * [[entrada, salida]] cuando el horario es de un solo turno y
+     * [[entrada, salida], [entrada2, salida2]] cuando tiene el segundo
+     * bloque (08→13 + 16→20). Un bloque incompleto se descarta.
+     *
+     * @return array<int, array{0: string, 1: string}>
+     */
+    public static function bloques(?array $schedule): array
+    {
+        if (!$schedule) {
+            return [];
+        }
+
+        $bloques = [];
+        $e1 = trim((string) ($schedule['hora_entrada'] ?? ''));
+        $s1 = trim((string) ($schedule['hora_salida'] ?? ''));
+        if ($e1 !== '' && $s1 !== '') {
+            $bloques[] = [$e1, $s1];
+        }
+
+        $e2 = trim((string) ($schedule['hora_entrada2'] ?? ''));
+        $s2 = trim((string) ($schedule['hora_salida2'] ?? ''));
+        if ($e2 !== '' && $s2 !== '') {
+            $bloques[] = [$e2, $s2];
+        }
+
+        return $bloques;
+    }
+
+    /** ¿Tiene doble turno (segundo bloque completo)? */
+    public static function esDobleTurno(?array $schedule): bool
+    {
+        return count(self::bloques($schedule)) > 1;
+    }
+
+    /** Minutos programados al día: suma de todos los bloques. */
+    public static function minutosJornada(?array $schedule): int
+    {
+        $min = 0;
+        foreach (self::bloques($schedule) as [$e, $s]) {
+            $min += self::minutosEntre($e, $s);
+        }
+
+        return $min;
+    }
+
+    /** Hora de salida prevista del día (el último bloque). */
+    public static function salidaFinal(?array $schedule): string
+    {
+        $bloques = self::bloques($schedule);
+        if ($bloques === []) {
+            return (string) ($schedule['hora_salida'] ?? '');
+        }
+
+        return $bloques[count($bloques) - 1][1];
+    }
+
+    /**
+     * Minutos trabajados dentro de un tramo marcado, descontando el
+     * descanso del doble turno.
+     *
+     * Ejemplo: 08:00 → 20:00 con bloques 08→13 y 16→20 = 12 h en el reloj
+     * menos 3 h de descanso = 9 h reales.
+     *
+     * Si el horario tiene un solo turno, o el tramo cruza la medianoche,
+     * devuelve la diferencia simple (el descanso no aplica).
+     */
+    public static function minutosTrabajados(string $desde, string $hasta, ?array $schedule): int
+    {
+        $total = self::minutosEntre($desde, $hasta);
+        $bloques = self::bloques($schedule);
+
+        if (count($bloques) < 2 || $total <= 0) {
+            return $total;
+        }
+
+        [$e1, $s1] = $bloques[0];
+        [$e2]      = $bloques[1];
+
+        // Descanso entre bloques: sólo si está bien ordenado y no cruza
+        // la medianoche (los turnos nocturnos no lo tocamos).
+        $ini = strtotime('2000-01-01 ' . $desde);
+        $fin = strtotime('2000-01-01 ' . $hasta);
+        $brkIni = strtotime('2000-01-01 ' . $s1);
+        $brkFin = strtotime('2000-01-01 ' . $e2);
+        if ($ini === false || $fin === false || $brkIni === false || $brkFin === false) {
+            return $total;
+        }
+        if ($fin < $ini || $brkFin <= $brkIni) {
+            return $total;
+        }
+
+        $solape = min($fin, $brkFin) - max($ini, $brkIni);
+        if ($solape > 0) {
+            $total -= (int) round($solape / 60);
+        }
+
+        return max(0, $total);
+    }
+
+    /** Minutos entre dos horas 'HH:MM[:SS]' (0 si no se pueden leer). */
+    public static function minutosEntre(string $desde, string $hasta): int
+    {
+        $a = strtotime('2000-01-01 ' . trim($desde));
+        $b = strtotime('2000-01-01 ' . trim($hasta));
+        if ($a === false || $b === false) {
+            return 0;
+        }
+
+        $seg = $b - $a;
+        if ($seg < 0) {
+            $seg += 24 * 3600; // turno nocturno
+        }
+
+        return (int) round($seg / 60);
+    }
+
     /** ¿La jornada de esa fecha ya terminó (para poder cerrar el día)? */
     public static function diaCerrado(?array $schedule, string $fecha, ?string $ahora = null): bool
     {
@@ -113,7 +232,7 @@ class Jornada
             return false;
         }
 
-        $salida = (string) ($schedule['hora_salida'] ?? '17:00');
+        $salida = self::salidaFinal($schedule) ?: '17:00';
         $finDia = strtotime($salida) + 60 * 60; // 1 hora de gracia
 
         return strtotime($ahora ?? date('H:i:s')) > $finDia;

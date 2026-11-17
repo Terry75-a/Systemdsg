@@ -5,8 +5,10 @@ namespace App\Libraries\Asistencia;
  * Resumen de HORAS por persona para /admin/horas.
  *
  * Por cada integrante del equipo calcula, en un rango de fechas:
- *   · horas reales trabajadas (entrada → salida)
- *   · horas programadas según su horario (días laborables − festivos)
+ *   · horas reales trabajadas (entrada → salida, descontando el descanso
+ *     cuando el horario tiene doble turno / jornada partida)
+ *   · horas programadas según su horario (días laborables − festivos,
+ *     sumando los bloques del horario)
  *   · saldo (reales − programadas): extra o pendiente
  *   · tardanzas, faltas y jornadas sin salida
  *
@@ -80,7 +82,7 @@ class HorasQuery
         $sinSalida = 0;
 
         $jornadaMin = $this->jornadaMinutos($horario);
-        $salidaPlan = $horario ? (string) ($horario['hora_salida'] ?? '') : '';
+        $salidaPlan = $horario ? \App\Libraries\Asistencia\Jornada::salidaFinal($horario) : '';
 
         foreach ($marcaciones as $m) {
             $estado = (string) ($m['status'] ?? '');
@@ -102,7 +104,8 @@ class HorasQuery
             }
 
             if ($tout !== '') {
-                $horasTrab += $this->diferenciaMinutos($tin, $tout);
+                // Doble turno: se descuenta el descanso entre bloques
+                $horasTrab += \App\Libraries\Asistencia\Jornada::minutosTrabajados($tin, $tout, $horario);
                 continue;
             }
 
@@ -122,8 +125,12 @@ class HorasQuery
                     $min = 0;
                 }
                 if ($min > 0 && $min <= 24 * 60) {
-                    $horasTrab += $min;
-                    $estimadas++;
+                    // En doble turno el tramo incluye el descanso: se descuenta
+                    $min = \App\Libraries\Asistencia\Jornada::minutosTrabajados($tin, $salidaPlan, $horario);
+                    if ($min > 0) {
+                        $horasTrab += $min;
+                        $estimadas++;
+                    }
                 }
             }
         }
@@ -177,20 +184,10 @@ class HorasQuery
         return $t;
     }
 
-    /** Minutos de jornada diaria del horario. 0 si no hay horario. */
+    /** Minutos de jornada diaria del horario (suma de bloques). 0 si no hay horario. */
     private function jornadaMinutos(?array $horario): int
     {
-        if (! $horario) {
-            return 0;
-        }
-        $e = (string) ($horario['hora_entrada'] ?? '');
-        $s = (string) ($horario['hora_salida'] ?? '');
-        if ($e === '' || $s === '') {
-            return 0;
-        }
-        $min = $this->diferenciaMinutos($e, $s);
-
-        return $min > 0 ? $min : 0;
+        return \App\Libraries\Asistencia\Jornada::minutosJornada($horario);
     }
 
     /** Minutos entre dos horas 'HH:MM[:SS]' (con cruce de medianoche). */
@@ -293,17 +290,20 @@ class HorasQuery
         return array_flip(array_unique($tokens));
     }
 
-    /** Texto legible del horario: 'Lun - Vie · 08:00 → 17:00'. */
+    /** Texto legible del horario: 'Lun - Vie · 08:00 → 13:00 · 16:00 → 20:00'. */
     private function horarioTexto(?array $horario): string
     {
         if (! $horario) {
             return 'Sin horario';
         }
-        $e = substr((string) ($horario['hora_entrada'] ?? ''), 0, 5);
-        $s = substr((string) ($horario['hora_salida'] ?? ''), 0, 5);
         $d = trim((string) ($horario['dias'] ?? ''));
+        $txt = $d !== '' ? $d : '—';
 
-        return trim(($d !== '' ? $d : '—') . ' · ' . ($e ?: '?') . ' → ' . ($s ?: '?'));
+        foreach (\App\Libraries\Asistencia\Jornada::bloques($horario) as [$e, $s]) {
+            $txt .= ' · ' . (substr($e, 0, 5) ?: '?') . ' → ' . (substr($s, 0, 5) ?: '?');
+        }
+
+        return $txt;
     }
 
     // ══════════════════════════════════════════════

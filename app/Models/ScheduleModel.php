@@ -12,6 +12,7 @@ class ScheduleModel extends Model
 
     protected $allowedFields = [
         'admin_id', 'nombre', 'tipo', 'dias', 'hora_entrada', 'hora_salida',
+        'hora_entrada2', 'hora_salida2',
         'tolerancia', 'estado',
     ];
 

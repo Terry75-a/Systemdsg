@@ -51,6 +51,13 @@
         .hr-chip { background: var(--g-surface-variant); border: 1px solid var(--g-border); border-radius: 9px; padding: 4px 10px; font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; font-weight: 600; color: var(--g-text); }
         .hr-arrow { color: var(--g-text-disabled); font-size: 12px; }
 
+        /* ── Doble turno (jornada partida): bloques + horas del día ── */
+        .hr-turnos { display: inline-flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+        .hr-turno { display: inline-flex; align-items: center; gap: 6px; }
+        .hr-turno + .hr-turno::before { content: "•"; color: var(--g-text-disabled); font-size: 11px; }
+        .hr-hours { display: block; font-size: 11.5px; font-weight: 700; color: var(--g-text-secondary); margin-top: 5px; }
+        .hr-break { font-size: 11.5px; color: var(--g-text-secondary); }
+
         /* ── Botón integrantes ── */
         .hr-int-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--g-primary-light); color: var(--g-primary); border: 1px solid var(--g-primary); padding: 6px 13px; border-radius: 50px; font-family: var(--g-font); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: none; }
         .hr-int-btn:hover { background: var(--g-primary); color: #fff; }
@@ -329,6 +336,28 @@
         }
         .hr-modal-body > .hr-sec-label:first-child { margin-top: 0; }
 
+        /* ── Doble turno / jornada partida ── */
+        .hr-hint {
+            margin: 0; font-size: 11.5px; line-height: 1.6;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 80%, transparent);
+            background: color-mix(in srgb, var(--sb-on-surface-variant) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--sb-outline-variant) 45%, transparent);
+            border-radius: 12px; padding: 10px 12px;
+        }
+        .hr-hint b { color: var(--sb-on-surface); font-weight: 600; }
+        .hr-break-box {
+            min-height: 42px; display: flex; align-items: center; padding: 0 12px;
+            border: 1px dashed color-mix(in srgb, var(--sb-outline-variant) 75%, transparent);
+            border-radius: 12px; font-size: 12.5px; font-weight: 600;
+            color: color-mix(in srgb, var(--sb-on-surface-variant) 75%, transparent);
+            background: var(--sb-surface);
+        }
+        .hr-break-box.on {
+            border-style: solid; border-color: color-mix(in srgb, var(--sb-primary) 45%, transparent);
+            color: var(--sb-primary);
+            background: color-mix(in srgb, var(--sb-primary) 7%, var(--sb-surface));
+        }
+
         /* Opciones de tipo: dos mitades con el icono en cuadro tintado */
         .hr-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .hr-choice-opt {
@@ -474,6 +503,13 @@
         $tipo = $sch['tipo'] ?? 'Empleado';
         $cands = array_values(array_filter($personalAll, fn($u) => ($u['role'] ?? '') === $tipo));
         $assignedIds = array_map(fn($u) => (int) ($u['id'] ?? 0), $scheduleUsers[$sid] ?? []);
+        // Segundo turno opcional (doble turno / jornada partida)
+        $entrada2 = trim((string) ($sch['hora_entrada2'] ?? ''));
+        $salida2  = trim((string) ($sch['hora_salida2'] ?? ''));
+        $hay2do   = $entrada2 !== '' && $salida2 !== '';
+        $entrada2 = $hay2do ? substr($entrada2, 0, 5) : '';
+        $salida2  = $hay2do ? substr($salida2, 0, 5) : '';
+        $minJorn = \App\Libraries\Asistencia\Jornada::minutosJornada($sch);
         $schData[] = [
             'id'        => $sid,
             'nombre'    => $sch['nombre'] ?? '',
@@ -481,6 +517,10 @@
             'dias'      => $sch['dias'] ?? 'Lun - Vie',
             'entrada'   => substr($sch['hora_entrada'] ?? '08:00', 0, 5),
             'salida'    => substr($sch['hora_salida'] ?? '17:00', 0, 5),
+            'entrada2'  => $entrada2,
+            'salida2'   => $salida2,
+            'doble'     => $hay2do,
+            'horas'     => $minJorn > 0 ? number_format($minJorn / 60, (int) ($minJorn % 60) ? 2 : 0, ',', '') : '',
             'tolerancia'=> (int) ($sch['tolerancia'] ?? 10),
             'estado'    => $sch['estado'] ?? 'Activo',
             'total'     => count($assignedIds),
@@ -600,11 +640,23 @@
                                     </td>
                                     <td><?= esc($s['dias']) ?></td>
                                     <td>
-                                        <span class="hr-chips">
-                                            <span class="hr-chip"><?= esc($s['entrada']) ?></span>
-                                            <span class="hr-arrow">→</span>
-                                            <span class="hr-chip"><?= esc($s['salida']) ?></span>
+                                        <span class="hr-turnos">
+                                            <span class="hr-turno hr-chips">
+                                                <span class="hr-chip"><?= esc($s['entrada']) ?></span>
+                                                <span class="hr-arrow">→</span>
+                                                <span class="hr-chip"><?= esc($s['salida']) ?></span>
+                                            </span>
+                                            <?php if (!empty($s['doble'])): ?>
+                                                <span class="hr-turno hr-chips">
+                                                    <span class="hr-chip"><?= esc($s['entrada2']) ?></span>
+                                                    <span class="hr-arrow">→</span>
+                                                    <span class="hr-chip"><?= esc($s['salida2']) ?></span>
+                                                </span>
+                                            <?php endif; ?>
                                         </span>
+                                        <?php if (!empty($s['horas'])): ?>
+                                            <span class="hr-hours"><?= esc($s['horas']) ?> h al día<?= !empty($s['doble']) ? ' · doble turno' : '' ?></span>
+                                        <?php endif; ?>
                                     </td>
                                     <td><?= esc($s['tolerancia']) ?> min</td>
                                     <td>
@@ -614,7 +666,7 @@
                                     </td>
                                     <td><span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span></td>
                                     <td class="dev-table-actions" onclick="event.stopPropagation()">
-                                        <button class="dev-btn-icon" title="Editar" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>')">
+                                        <button class="dev-btn-icon" title="Editar" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="dev-btn-icon" title="Integrantes" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
@@ -660,11 +712,23 @@
                                 <p><strong>Dias:</strong> <?= esc($s['dias']) ?></p>
                                 <p>
                                     <strong>Horario:</strong>
-                                    <span class="hr-chips">
-                                        <span class="hr-chip"><?= esc($s['entrada']) ?></span>
-                                        <span class="hr-arrow">→</span>
-                                        <span class="hr-chip"><?= esc($s['salida']) ?></span>
+                                    <span class="hr-turnos">
+                                        <span class="hr-turno hr-chips">
+                                            <span class="hr-chip"><?= esc($s['entrada']) ?></span>
+                                            <span class="hr-arrow">→</span>
+                                            <span class="hr-chip"><?= esc($s['salida']) ?></span>
+                                        </span>
+                                        <?php if (!empty($s['doble'])): ?>
+                                            <span class="hr-turno hr-chips">
+                                                <span class="hr-chip"><?= esc($s['entrada2']) ?></span>
+                                                <span class="hr-arrow">→</span>
+                                                <span class="hr-chip"><?= esc($s['salida2']) ?></span>
+                                            </span>
+                                        <?php endif; ?>
                                     </span>
+                                    <?php if (!empty($s['horas'])): ?>
+                                        <span class="hr-hours"><?= esc($s['horas']) ?> h al día<?= !empty($s['doble']) ? ' · doble turno' : '' ?></span>
+                                    <?php endif; ?>
                                 </p>
                                 <p><strong>Tolerancia:</strong> <?= esc($s['tolerancia']) ?> min</p>
                                 <p style="margin-bottom:0;">
@@ -674,7 +738,7 @@
                                 </p>
                             </div>
                             <div class="dev-table-card-actions">
-                                <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>')">
+                                <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario?"}'>
@@ -762,6 +826,30 @@
                     </div>
                 </div>
 
+                <span class="hr-sec-label">Segundo turno <span style="text-transform:none;letter-spacing:0;">(opcional · doble turno)</span></span>
+                <div class="hr-modal-grid">
+                    <div class="hr-time-row dev-field--full">
+                        <div class="dev-field">
+                            <label for="sch_hora_entrada2">Entrada 2</label>
+                            <input type="time" id="sch_hora_entrada2" name="sch_hora_entrada2">
+                        </div>
+                        <span class="hr-time-sep" aria-hidden="true">→</span>
+                        <div class="dev-field">
+                            <label for="sch_hora_salida2">Salida 2</label>
+                            <input type="time" id="sch_hora_salida2" name="sch_hora_salida2">
+                        </div>
+                        <div class="dev-field hr-field-tol">
+                            <label>Descanso</label>
+                            <div class="hr-break-box" id="hrPvBreak">—</div>
+                        </div>
+                    </div>
+                    <p class="hr-hint dev-field--full">
+                        Jornada partida: el personal marca <b>una entrada</b> al inicio y <b>una salida</b> al final,
+                        y las horas se cuentan descontando el descanso. Déjalo vacío si el horario es de un solo bloque.
+                        Ejemplos: empleado <b>08:00 → 13:00 + 16:00 → 20:00</b> · practicante <b>09:00 → 13:00 + 15:00 → 17:00</b> (6 h).
+                    </p>
+                </div>
+
                 <span class="hr-sec-label">Vista previa</span>
                 <div class="hr-preview" aria-live="polite">
                     <span class="hr-preview-ic" id="hrPvIcon"><span class="material-symbols-outlined">work</span></span>
@@ -775,6 +863,8 @@
                             <span id="hrPvHora">--:-- → --:--</span>
                             <i class="hr-dot"></i>
                             <span id="hrPvTol">10 min</span>
+                            <i class="hr-dot" id="hrPvDotHrs"></i>
+                            <span id="hrPvHoras"></span>
                         </div>
                     </div>
                 </div>
@@ -828,6 +918,14 @@
                     <div class="dev-field">
                         <label for="edit_sch_hora_salida">Hora salida</label>
                         <input type="time" id="edit_sch_hora_salida" name="sch_hora_salida" required>
+                    </div>
+                    <div class="dev-field">
+                        <label for="edit_sch_hora_entrada2">Entrada 2 <span style="font-weight:400;text-transform:none;letter-spacing:0;">(doble turno)</span></label>
+                        <input type="time" id="edit_sch_hora_entrada2" name="sch_hora_entrada2">
+                    </div>
+                    <div class="dev-field">
+                        <label for="edit_sch_hora_salida2">Salida 2 <span style="font-weight:400;text-transform:none;letter-spacing:0;">(doble turno)</span></label>
+                        <input type="time" id="edit_sch_hora_salida2" name="sch_hora_salida2">
                     </div>
                     <div class="dev-field">
                         <label for="edit_sch_tolerancia">Tolerancia (min)</label>
@@ -914,6 +1012,14 @@
                     <div class="detail-value"><code id="schDetailSalida">-</code></div>
                 </div>
                 <div class="detail-field">
+                    <div class="detail-label">Turno 2 <span style="text-transform:none;letter-spacing:0;font-weight:400;">(opcional)</span></div>
+                    <div class="detail-value"><code id="schDetailTurno2">Sin doble turno</code></div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Horas al día</div>
+                    <div class="detail-value" id="schDetailHoras">-</div>
+                </div>
+                <div class="detail-field">
                     <div class="detail-label">Tolerancia</div>
                     <div class="detail-value" id="schDetailTolerancia">-</div>
                 </div>
@@ -962,12 +1068,36 @@ function initials(n) {
     return String(n || '?').trim().split(/\s+/).map(function(w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
 }
 
-function openEditModal(id, nombre, tipo, dias, entrada, salida, tolerancia, estado) {
+// ── Utilidades de jornada (minutos / formato de horas) ──
+function hrMins(a, b) {
+    if (!a || !b) return 0;
+    var pa = String(a).split(':'), pb = String(b).split(':');
+    var x = (parseInt(pa[0], 10) || 0) * 60 + (parseInt(pa[1], 10) || 0);
+    var y = (parseInt(pb[0], 10) || 0) * 60 + (parseInt(pb[1], 10) || 0);
+    var d = y - x;
+    if (d < 0) d += 1440;
+    return d;
+}
+function hrFmt(m) {
+    if (!m) return '';
+    var h = Math.floor(m / 60), r = m % 60;
+    return (h ? h + ' h' : '') + (r ? (h ? ' ' : '') + r + ' min' : '');
+}
+/** Minutos del día = primer bloque + segundo bloque (si existe). */
+function hrTotalDia(sch) {
+    var t = hrMins(sch.entrada, sch.salida);
+    if (sch.entrada2 && sch.salida2) t += hrMins(sch.entrada2, sch.salida2);
+    return t;
+}
+
+function openEditModal(id, nombre, tipo, dias, entrada, salida, tolerancia, estado, entrada2, salida2) {
     document.getElementById('edit_sch_id').value = id;
     document.getElementById('edit_sch_nombre').value = nombre;
     document.getElementById('edit_sch_dias').value = dias;
     document.getElementById('edit_sch_hora_entrada').value = entrada;
     document.getElementById('edit_sch_hora_salida').value = salida;
+    document.getElementById('edit_sch_hora_entrada2').value = entrada2 || '';
+    document.getElementById('edit_sch_hora_salida2').value = salida2 || '';
     document.getElementById('edit_sch_tolerancia').value = tolerancia;
     document.getElementById('edit_sch_estado').value = estado;
     var pick = document.getElementById('hrTipoEdit');
@@ -1029,6 +1159,8 @@ document.getElementById('createModal').addEventListener('click', function(e) {
         dias:   document.getElementById('sch_dias'),
         ent:    document.getElementById('sch_hora_entrada'),
         sal:    document.getElementById('sch_hora_salida'),
+        ent2:   document.getElementById('sch_hora_entrada2'),
+        sal2:   document.getElementById('sch_hora_salida2'),
         tol:    document.getElementById('sch_tolerancia')
     };
     var pv = {
@@ -1037,9 +1169,15 @@ document.getElementById('createModal').addEventListener('click', function(e) {
         icon:   document.getElementById('hrPvIcon'),
         dias:   document.getElementById('hrPvDias'),
         hora:   document.getElementById('hrPvHora'),
-        tol:    document.getElementById('hrPvTol')
+        tol:    document.getElementById('hrPvTol'),
+        horas:  document.getElementById('hrPvHoras'),
+        dotHrs: document.getElementById('hrPvDotHrs'),
+        brk:    document.getElementById('hrPvBreak')
     };
+
     function txt(el, v) { if (el) el.textContent = v; }
+    function val(x) { return (x && x.value) ? x.value : ''; }
+
     function pintar() {
         var sel  = form.querySelector('input[name="sch_tipo"]:checked');
         var tipo = sel ? sel.value : 'Empleado';
@@ -1050,8 +1188,28 @@ document.getElementById('createModal').addEventListener('click', function(e) {
             pv.icon.innerHTML = '<span class="material-symbols-outlined">' + (prac ? 'school' : 'work') + '</span>';
         }
         txt(pv.dias, f.dias && f.dias.value.trim() ? f.dias.value.trim() : 'Sin días');
-        txt(pv.hora, (f.ent && f.ent.value ? f.ent.value : '--:--') + ' → ' + (f.sal && f.sal.value ? f.sal.value : '--:--'));
+
+        var e1 = val(f.ent), s1 = val(f.sal), e2 = val(f.ent2), s2 = val(f.sal2);
+        var hay2 = !!(e2 && s2);
+        txt(pv.hora, (e1 || '--:--') + ' → ' + (s1 || '--:--') + (hay2 ? '  ·  ' + e2 + ' → ' + s2 : ''));
         txt(pv.tol, (f.tol && f.tol.value ? f.tol.value : '0') + ' min');
+
+        // horas del día = suma de los bloques
+        var total = hrMins(e1, s1) + (hay2 ? hrMins(e2, s2) : 0);
+        txt(pv.horas, total ? hrFmt(total) + ' al día' : '');
+        if (pv.dotHrs) pv.dotHrs.style.display = total ? '' : 'none';
+
+        // descanso entre bloques
+        if (pv.brk) {
+            if (hay2) {
+                var brk = hrMins(s1, e2);
+                pv.brk.textContent = brk > 0 ? s1 + ' → ' + e2 + ' (' + hrFmt(brk) + ')' : 'Sin descanso';
+                pv.brk.classList.add('on');
+            } else {
+                pv.brk.textContent = '—';
+                pv.brk.classList.remove('on');
+            }
+        }
     }
     form.addEventListener('input', pintar);
     form.addEventListener('change', pintar);
@@ -1131,6 +1289,11 @@ function openScheduleDetail(sch) {
     document.getElementById('schDetailDias').textContent = sch.dias || 'Lun - Vie';
     document.getElementById('schDetailEntrada').textContent = sch.entrada || '08:00';
     document.getElementById('schDetailSalida').textContent = sch.salida || '17:00';
+    document.getElementById('schDetailTurno2').textContent =
+        (sch.entrada2 && sch.salida2) ? (sch.entrada2 + ' → ' + sch.salida2) : 'Sin doble turno';
+    var totDia = hrTotalDia(sch);
+    document.getElementById('schDetailHoras').textContent =
+        totDia ? hrFmt(totDia) + (sch.doble ? ' · doble turno' : '') : '-';
     document.getElementById('schDetailTolerancia').textContent = (sch.tolerancia || 10) + ' min';
     var tipoEl = document.getElementById('schDetailTipo');
     tipoEl.textContent = isPract ? 'Practicantes' : 'Empleados';
@@ -1141,7 +1304,7 @@ function openScheduleDetail(sch) {
     estadoEl.style.color = isActive ? 'var(--g-success)' : 'var(--g-text-secondary)';
     document.getElementById('schDetailEditBtn').onclick = function() {
         closeScheduleDetail();
-        openEditModal(sch.id, sch.nombre, sch.tipo, sch.dias, sch.entrada, sch.salida, sch.tolerancia, sch.estado);
+        openEditModal(sch.id, sch.nombre, sch.tipo, sch.dias, sch.entrada, sch.salida, sch.tolerancia, sch.estado, sch.entrada2 || '', sch.salida2 || '');
     };
     document.getElementById('scheduleDetailOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
