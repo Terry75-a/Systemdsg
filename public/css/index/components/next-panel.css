@@ -240,7 +240,7 @@ input[type="submit"] {
 }
 .dev-nav-section {
   font-size: 10.5px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--g-text-disabled);
   padding: 14px 8px 5px;
   letter-spacing: 0.05em;
@@ -251,7 +251,7 @@ input[type="submit"] {
   padding: 0 8px;
   gap: 10px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--g-text-secondary);
   margin-bottom: 1px;
   align-items: center;
@@ -447,7 +447,7 @@ body:has(.dev-main) .dev-stats-grid .dev-stat-card:hover .dev-stat-icon {
 }
 body:has(.dev-main) .dev-stats-grid .dev-stat-label {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--g-text-disabled);
@@ -548,7 +548,7 @@ body:has(.dev-main) .aud-stats .aud-stat > div:last-child > span,
 body:has(.dev-main) .personal-stats .personal-stat-label {
   display: block;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--g-text-disabled);
@@ -615,7 +615,7 @@ body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head {
 body:has(.dev-main) .dev-card:has(> .dev-recent-list) .dev-card-head h2,
 body:has(.dev-main) .dev-card:has(.dash-link-grid) .dev-card-head h2 {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--g-text-disabled);
@@ -698,11 +698,13 @@ body:has(.dev-main) .dev-recent-name {
 }
 body:has(.dev-main) .dev-recent-meta {
   font-size: 12px;
+  font-weight: 700;
   color: var(--g-text-disabled);
   margin-top: 2px;
 }
 body:has(.dev-main) .dev-recent-time {
   font-size: 10px;
+  font-weight: 700;
   color: var(--g-text-disabled);
   white-space: nowrap;
 }
@@ -712,6 +714,7 @@ body:has(.dev-main) .dev-recent-list .dev-empty {
   padding: 32px 16px;
   gap: 12px;
   font-size: 13px;
+  font-weight: 700;
   color: var(--g-text-secondary);
 }
 body:has(.dev-main) .dev-recent-list .dev-empty .material-symbols-outlined {
@@ -774,6 +777,7 @@ body:has(.dev-main) .dash-link-text {
 body:has(.dev-main) .dash-link:hover .dash-link-text { color: var(--sb-primary); }
 body:has(.dev-main) .dash-link-text span {
   font-size: 11px;
+  font-weight: 700;
   color: color-mix(in srgb, var(--g-text-secondary) 50%, transparent);
   margin-top: 2px;
   white-space: nowrap;
@@ -1030,6 +1034,7 @@ html.dark .dev-sidebar-footer {
   border-color: #262626;
 }
 html.dark .dev-nav-link {
+  font-weight: 700;
   color: #a1a1aa;
 }
 html.dark .dev-nav-link:hover {
@@ -1089,6 +1094,7 @@ html.dark .dtable th,
 html.dark .personal-table th {
   background: #111111;
   border-bottom-color: #262626;
+  font-weight: 700;
   color: #a1a1aa;
 }
 html.dark .dev-table td,
@@ -1139,6 +1145,7 @@ html.dark .dev-mobile-nav {
   border-color: #262626;
 }
 html.dark .dev-mobile-nav a {
+  font-weight: 700;
   color: #a1a1aa;
 }
 html.dark .dev-mobile-nav a:hover {

@@ -34,10 +34,10 @@ html.dark .dev-sidebar-head { background: #000000; }
 html.dark .dev-sidebar-footer { background: #000000; }
 
 /* ── Nav Links ── */
-html.dark .dev-nav-link { color: #9aa0a6; }
+html.dark .dev-nav-link { font-weight: 700; color: #9aa0a6; }
 html.dark .dev-nav-link:hover { background: #1a1a1a; color: #e8eaed; }
 html.dark .dev-nav-link.is-active { background: #0d2818; color: #34a853; }
-html.dark .dev-nav-section { color: #5f6368; }
+html.dark .dev-nav-section { font-weight: 700; color: #5f6368; }
 html.dark .dev-nav-badge { background: #34a853; }
 
 /* ── Sidebar User ── */
@@ -64,13 +64,13 @@ html.dark .dev-stat-icon.si-red { background: #2d1210; color: #ea4335; }
 /* ── Tables ── */
 html.dark .dev-table-wrap { border-color: #2a2a2a; background: #0a0a0a; }
 html.dark .dev-table { background: #0a0a0a; }
-html.dark .dev-table th { color: #9aa0a6; border-bottom-color: #2a2a2a; background: #0a0a0a; }
+html.dark .dev-table th { font-weight: 700; color: #9aa0a6; border-bottom-color: #2a2a2a; background: #0a0a0a; }
 html.dark .dev-table td { border-bottom-color: #2a2a2a; color: #e8eaed; }
 html.dark .dev-table tbody tr:hover td { background: rgba(52, 168, 83, 0.08); }
 html.dark .dev-table tbody tr:active td { background: rgba(52, 168, 83, 0.12); }
 
 /* ── Personal Table ── */
-html.dark .personal-table th { background: #0a0a0a; border-bottom-color: #2a2a2a; color: #9aa0a6; }
+html.dark .personal-table th { background: #0a0a0a; border-bottom-color: #2a2a2a; font-weight: 700; color: #9aa0a6; }
 html.dark .personal-table td { color: #e8eaed; }
 html.dark .personal-table tbody tr:hover td { background: rgba(52, 168, 83, 0.08); }
 
@@ -82,7 +82,7 @@ html.dark .dev-field textarea {
   border-color: #333333;
   color: #e8eaed;
 }
-html.dark .dev-field input::placeholder { color: #5f6368; }
+html.dark .dev-field input::placeholder { font-weight: 600; color: #5f6368; }
 html.dark .dev-field input:focus,
 html.dark .dev-field select:focus,
 html.dark .dev-field textarea:focus {
@@ -93,7 +93,7 @@ html.dark .dev-field textarea:focus {
 /* ── Buttons ── */
 html.dark .dev-btn-primary { background: #34a853; color: #000000; }
 html.dark .dev-btn-primary:hover { background: #2d9249; }
-html.dark .dev-btn-outline { background: transparent; border-color: #333333; color: #9aa0a6; }
+html.dark .dev-btn-outline { background: transparent; border-color: #333333; font-weight: 700; color: #9aa0a6; }
 html.dark .dev-btn-outline:hover { background: #0d2818; border-color: #34a853; color: #34a853; }
 html.dark .dev-btn-text { color: #34a853; }
 html.dark .dev-btn-text:hover { background: #0d2818; }
@@ -105,7 +105,7 @@ html.dark .dev-btn-icon-danger { color: #5f6368; }
 html.dark .dev-btn-icon-danger:hover { color: #ea4335; background: #2d1210; }
 
 /* ── Mobile Card Buttons ── */
-html.dark .mobile-card-btn { background: #1a1a1a; color: #9aa0a6; }
+html.dark .mobile-card-btn { background: #1a1a1a; font-weight: 700; color: #9aa0a6; }
 html.dark .mobile-card-btn:hover { background: #222222; color: #e8eaed; }
 html.dark .mobile-card-btn-danger { color: #ea4335; background: #2d1210; }
 html.dark .mobile-card-btn-danger:hover { background: #3d1a17; }
@@ -142,14 +142,14 @@ html.dark .dev-code:hover { background: #12351f; }
 
 /* ── Status ── */
 html.dark .dev-status.is-active { color: #34a853; }
-html.dark .dev-status.is-used { color: #5f6368; }
+html.dark .dev-status.is-used { font-weight: 700; color: #5f6368; }
 
 /* ── Recent Items ── */
 html.dark .dev-recent-item:hover { background: #1a1a1a; }
 html.dark .dev-recent-avatar { background: #0d2818; color: #34a853; }
 
 /* ── Empty State ── */
-html.dark .dev-empty { color: #5f6368; }
+html.dark .dev-empty { font-weight: 700; color: #5f6368; }
 html.dark .dev-empty .material-symbols-outlined { color: #6b7280; }
 
 /* ── Profile ── */
@@ -165,13 +165,13 @@ html.dark .dev-fab:hover { background: #2d9249; }
 
 /* ── Mobile Nav ── */
 html.dark .dev-mobile-nav { background: #0a0a0a; border-color: #2a2a2a; }
-html.dark .dev-mobile-nav a { color: #9aa0a6; }
+html.dark .dev-mobile-nav a { font-weight: 700; color: #9aa0a6; }
 html.dark .dev-mobile-nav a:hover { background: #1a1a1a; color: #e8eaed; }
 html.dark .dev-mobile-nav a.is-active { background: #0d2818; color: #34a853; }
 
 /* ── Mobile Modal ── */
 html.dark .dev-mobile-modal { background: #34a853; }
-html.dark .dev-mobile-modal-link { color: #9aa0a6; }
+html.dark .dev-mobile-modal-link { font-weight: 700; color: #9aa0a6; }
 html.dark .dev-mobile-modal-link:hover { background: #1a1a1a; color: #e8eaed; }
 html.dark .dev-mobile-modal-link.is-active { background: #0d2818; color: #34a853; }
 
@@ -202,7 +202,7 @@ html.dark .dark-toggle-wrap { background: #1a1a1a; }
   color: var(--g-text-secondary);
   font-family: var(--g-font);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   transition: color 200ms;
 }
 .dark-toggle:hover { color: var(--g-text); }

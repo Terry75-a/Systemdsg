@@ -7,8 +7,8 @@
   --l-surface: #FFFFFF;
   --l-border: #DCEBE2;
   --l-text: #1E2B25;
-  --l-muted: #5F7A6D;
-  --l-faint: #93ACA0;
+  --l-muted: #52705F;
+  --l-faint: #7C9A8C;
   --l-accent: #2E7D5B;
   --l-deep: #1C5B40;
   --l-ink: #10231A;
@@ -276,7 +276,7 @@ a.btn-green:hover, a.btn-green:focus { color: #ffffff; }
 }
 .login-brand-text small {
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.2em;
   color: var(--l-faint);
 }
@@ -287,7 +287,7 @@ a.btn-green:hover, a.btn-green:focus { color: #ffffff; }
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--l-faint);
@@ -322,6 +322,7 @@ a.btn-green:hover, a.btn-green:focus { color: #ffffff; }
 }
 .login-sub {
   font-size: 15px;
+  font-weight: 600;
   color: var(--l-muted);
   margin: 0 0 24px;
   line-height: 1.6;
@@ -349,7 +350,7 @@ a.btn-green:hover, a.btn-green:focus { color: #ffffff; }
   background: transparent;
   font-family: var(--l-font);
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--l-muted);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
@@ -416,7 +417,7 @@ a.btn-green:hover, a.btn-green:focus { color: #ffffff; }
   box-sizing: border-box;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.field-wrap input::placeholder { color: var(--l-faint); }
+.field-wrap input::placeholder { color: var(--l-faint); font-weight: 600; }
 .field-wrap input:focus {
   outline: none;
   border-color: var(--l-accent);
@@ -484,7 +485,7 @@ a.btn-login:hover { color: #ffffff; }
 }
 .login-foot-link {
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--l-muted);
   text-decoration: none;
   transition: color 0.15s ease;
@@ -492,6 +493,7 @@ a.btn-login:hover { color: #ffffff; }
 .login-foot-link:hover { color: var(--l-deep); }
 .login-foot-help {
   font-size: 12.5px;
+  font-weight: 700;
   color: var(--l-faint);
 }
 

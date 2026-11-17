@@ -119,6 +119,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 }
 .dev-logo-text small {
   font-size: 11px;
+  font-weight: 700;
   color: var(--g-text-secondary);
 }
 
@@ -131,7 +132,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 }
 .dev-nav-section {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--g-text-secondary);
   padding: 16px 12px 8px;
   text-transform: uppercase;
@@ -144,7 +145,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   padding: 10px 12px;
   border-radius: 24px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--g-text-secondary);
   text-decoration: none;
   transition: background 200ms, color 200ms;
@@ -204,7 +205,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   font-family: var(--g-font-display);
 }
 .dev-sidebar-user-name { font-size: 13px; font-weight: 500; display: block; }
-.dev-sidebar-user-role { font-size: 11px; color: var(--g-text-secondary); }
+.dev-sidebar-user-role { font-size: 11px; font-weight: 700; color: var(--g-text-secondary); }
 
 /* ── Colapsar / expandir sidebar ─────────────────────────────
    El botón vive dentro de la cabecera del menú, a la derecha del
@@ -226,6 +227,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   border: 0;
   border-radius: 50%;
   background: transparent;
+  font-weight: 700;
   color: var(--g-text-secondary);
   display: flex;
   align-items: center;
@@ -300,6 +302,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 .dev-topbar h1 strong { font-weight: 600; }
 .dev-topbar p {
   font-size: 14px;
+  font-weight: 700;
   color: var(--g-text-secondary);
   margin: 4px 0 0;
 }
@@ -358,7 +361,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 .dev-stat-icon.si-accent { background: var(--g-primary-light); color: var(--g-primary); }
 .dev-stat-icon.si-amber { background: var(--g-warning-light); color: #e37400; }
 .dev-stat-icon.si-red { background: var(--g-error-light); color: var(--g-error); }
-.dev-stat-label { font-size: 13px; color: var(--g-text-secondary); margin-bottom: 4px; }
+.dev-stat-label { font-size: 13px; font-weight: 700; color: var(--g-text-secondary); margin-bottom: 4px; }
 .dev-stat-value {
   font-size: 28px;
   font-weight: 600;
@@ -422,7 +425,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   text-align: left;
   padding: 14px 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--g-text-secondary);
   border-bottom: 1px solid var(--g-border);
   background: var(--g-surface);
@@ -472,10 +475,11 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 }
 .dev-status .material-symbols-outlined { font-size: 18px; }
 .dev-status.is-active { color: var(--g-success); }
-.dev-status.is-used { color: var(--g-text-disabled); }
+.dev-status.is-used { font-weight: 700; color: var(--g-text-disabled); }
 .dev-empty {
   text-align: center;
   padding: 64px 24px;
+  font-weight: 700;
   color: var(--g-text-secondary);
   font-size: 14px;
 }
@@ -514,9 +518,9 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 }
 .dev-recent-info { flex: 1; min-width: 0; }
 .dev-recent-name { font-size: 14px; font-weight: 500; }
-.dev-recent-meta { font-size: 12px; color: var(--g-text-secondary); }
+.dev-recent-meta { font-size: 12px; font-weight: 700; color: var(--g-text-secondary); }
 .dev-recent-right { text-align: right; }
-.dev-recent-time { font-size: 12px; color: var(--g-text-secondary); }
+.dev-recent-time { font-size: 12px; font-weight: 700; color: var(--g-text-secondary); }
 
 /* ── Grids ── */
 .dev-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -536,7 +540,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 .dev-field label {
   display: block;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--g-text-secondary);
   margin-bottom: 6px;
 }
@@ -560,7 +564,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   padding: 12px 14px;
   resize: vertical;
 }
-.dev-field input::placeholder { color: var(--g-text-disabled); }
+.dev-field input::placeholder { font-weight: 600; color: var(--g-text-disabled); }
 .dev-field input:focus,
 .dev-field select:focus,
 .dev-field textarea:focus {
@@ -686,6 +690,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   border: none;
   border-radius: 50%;
   background: transparent;
+  font-weight: 700;
   color: var(--g-text-secondary);
   cursor: pointer;
   display: flex;
@@ -750,7 +755,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
 }
 .dev-modal-item-info { flex: 1; min-width: 0; }
 .dev-modal-item-title { font-size: 14px; font-weight: 500; color: var(--g-text); }
-.dev-modal-item-meta { font-size: 12px; color: var(--g-text-secondary); margin-top: 2px; }
+.dev-modal-item-meta { font-size: 12px; font-weight: 700; color: var(--g-text-secondary); margin-top: 2px; }
 
 /* ══════════════════════════════════════════════════════════════
    PROFILE
@@ -777,7 +782,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   font-family: var(--g-font-display);
 }
 .dev-profile-name { font-size: 18px; font-weight: 500; font-family: var(--g-font-display); }
-.dev-profile-role { font-size: 13px; color: var(--g-text-secondary); }
+.dev-profile-role { font-size: 13px; font-weight: 700; color: var(--g-text-secondary); }
 .dev-profile-fields { display: flex; flex-direction: column; }
 .dev-profile-field {
   display: flex;
@@ -786,7 +791,7 @@ body:has(.dev-main) .material-symbols-outlined.filled {
   padding: 10px 0;
 }
 .dev-profile-field:last-child { border-bottom: none; }
-.dev-profile-label { font-size: 13px; color: var(--g-text-secondary); }
+.dev-profile-label { font-size: 13px; font-weight: 700; color: var(--g-text-secondary); }
 .dev-profile-value { font-size: 14px; font-weight: 500; }
 
 /* ══════════════════════════════════════════════════════════════
@@ -825,7 +830,7 @@ body:has(.dev-main) .personal-stat-icon { border-radius: 12px; }
   border-bottom: 1px solid var(--g-border);
   color: var(--g-text-secondary);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   padding: 14px 20px;
 }
 .personal-table td { padding: 16px 20px; }
@@ -856,6 +861,7 @@ body:has(.dev-main) .personal-stat-icon { border-radius: 12px; }
   height: 44px;
   border-radius: 50%;
   text-decoration: none;
+  font-weight: 700;
   color: var(--g-text-secondary);
   transition: background 200ms;
 }
@@ -912,7 +918,7 @@ body:has(.dev-main) .personal-stat-icon { border-radius: 12px; }
   text-decoration: none;
   color: var(--g-text-secondary);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   opacity: 0;
 }
 .dev-mobile-modal-link:hover { background: var(--g-surface-variant); color: var(--g-text); }
@@ -933,6 +939,7 @@ body:has(.dev-main) .personal-stat-icon { border-radius: 12px; }
   border-radius: 50%;
   border: none;
   background: var(--g-surface);
+  font-weight: 700;
   color: var(--g-text-secondary);
   cursor: pointer;
   align-items: center;

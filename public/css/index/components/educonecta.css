@@ -253,7 +253,7 @@ input[type="submit"] {
   height: 36px;
   padding: 2px 16px;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--sb-on-surface-variant);
@@ -285,6 +285,7 @@ input[type="submit"] {
 }
 .dev-nav-link {
   border-radius: 24px;
+  font-weight: 700;
   color: var(--g-text-secondary);
 }
 .dev-nav-link:hover {
@@ -430,6 +431,7 @@ body:has(.dev-main) .dev-stats-grid > *:nth-child(n + 5) { animation-delay: 160m
 .role-empleado,
 .role-practicante {
   background: var(--sb-surface-container-high) !important;
+  font-weight: 700;
   color: var(--g-text-secondary) !important;
 }
 .detail-cover,
@@ -481,7 +483,7 @@ body:has(.dev-main) tr:active td,
 .att-estado.present i { background: var(--g-success) !important; }
 .att-estado.late { color: var(--g-warning) !important; }
 .att-estado.late i { background: var(--g-warning) !important; }
-.att-estado.no_exit { color: var(--g-text-secondary) !important; }
+.att-estado.no_exit { font-weight: 700; color: var(--g-text-secondary) !important; }
 .att-estado.no_exit i { background: var(--g-text-disabled) !important; }
 
 .badge.present { color: var(--g-success) !important; }
@@ -491,7 +493,7 @@ body:has(.dev-main) tr:active td,
 /* el modal de detalle pinta el estado con colores del JS */
 #attDetailStatus[style*="16a34a"] { color: var(--g-success) !important; }
 #attDetailStatus[style*="d97706"] { color: var(--g-warning) !important; }
-#attDetailStatus[style*="2563eb"] { color: var(--g-text-secondary) !important; }
+#attDetailStatus[style*="2563eb"] { font-weight: 700; color: var(--g-text-secondary) !important; }
 
 /* 12.8 · colores sueltos fuera de paleta */
 /* botón "copiar código": success sólido → primario negro */
@@ -504,7 +506,7 @@ body:has(.dev-main) tr:active td,
 /* barra apilada de incidencias: la revisión pasa a neutro
    (leyenda: pendiente=ámbar, revisión=gris, resto=semánticos) */
 .in-bar-gap { background: var(--g-text-disabled) !important; }
-.in-legend span:nth-child(2) { color: var(--g-text-secondary) !important; }
+.in-legend span:nth-child(2) { font-weight: 700; color: var(--g-text-secondary) !important; }
 .in-legend span:nth-child(2) i { background: var(--g-text-disabled) !important; }
 .in-legend .lg-p { color: var(--g-warning) !important; }
 

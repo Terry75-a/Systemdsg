@@ -137,5 +137,8 @@ _modules/*
 # Visual Studio Code
 .vscode/
 
+# Claude Code
+.claude/
+
 /results/
 /phpunit*.xml
