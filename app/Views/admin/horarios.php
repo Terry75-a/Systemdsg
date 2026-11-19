@@ -690,7 +690,7 @@
                                     $isPract = ($s['tipo'] ?? '') === 'Practicante';
                                     $detail = htmlspecialchars(json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
                                 ?>
-                                    <tr onclick="openScheduleDetail(JSON.parse(<?= $detail ?>))"
+                                    <tr class="hr-row-click" tabindex="0" role="button" aria-label="Ver detalle de <?= esc($s['nombre'], 'attr') ?>" onclick="openScheduleDetail(<?= (int) $s['id'] ?>)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openScheduleDetail(<?= (int) $s['id'] ?>)}"
                                         data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>"
                                         data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
                                         <td>
@@ -763,7 +763,7 @@
                             $isActive = ($s['estado'] ?? '') === 'Activo';
                             $isPract = ($s['tipo'] ?? '') === 'Practicante';
                         ?>
-                            <div class="dev-table-card" data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>" data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
+                            <div class="dev-table-card hr-row-click" onclick="openScheduleDetail(<?= (int) $s['id'] ?>)" data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>" data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
                                 <div class="dev-table-card-header">
                                     <strong><?= esc($s['nombre']) ?></strong>
                                     <span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span>
@@ -798,12 +798,12 @@
                                     </p>
                                     <p><strong>Tolerancia:</strong> <?= esc($s['tolerancia']) ?> min</p>
                                     <p style="margin-bottom:0;">
-                                        <button type="button" class="hr-int-btn" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
+                                        <button type="button" class="hr-int-btn" onclick="event.stopPropagation(); openIntegrantes(<?= (int) $s['id'] ?>)">
                                             <span class="material-symbols-outlined">group</span> <?= (int) $s['total'] ?> integrantes
                                         </button>
                                     </p>
                                 </div>
-                                <div class="dev-table-card-actions">
+                                <div class="dev-table-card-actions" onclick="event.stopPropagation()">
                                     <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>', '<?= esc($s['jornada']) ?>')">
                                         <span class="material-symbols-outlined">edit</span>
                                     </button>
@@ -1077,63 +1077,109 @@
 
 <!-- Modal · Detalle -->
 <div class="dev-modal-overlay" id="scheduleDetailOverlay" onclick="if(event.target===this)closeScheduleDetail()">
-    <div class="dev-modal" style="max-width:440px;">
-        <div class="dev-modal-head">
-            <h3><span class="material-symbols-outlined">schedule</span> <span id="schDetailName">-</span></h3>
-            <button type="button" class="dev-btn-icon" onclick="closeScheduleDetail()"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="dev-modal-body">
-            <div class="detail-who">
-                <div class="detail-avatar" id="schDetailAvatar" style="background:var(--g-primary);">
-                    <span class="material-symbols-outlined" style="font-size:26px;">schedule</span>
-                </div>
-                <div class="detail-sub" id="schDetailDias">-</div>
-            </div>
-            <div class="detail-grid">
-                <div class="detail-field">
-                    <div class="detail-label">Tipo</div>
-                    <div class="detail-value" id="schDetailTipo">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Integrantes</div>
-                    <div class="detail-value" id="schDetailCount">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Hora entrada</div>
-                    <div class="detail-value"><code id="schDetailEntrada">-</code></div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Hora salida</div>
-                    <div class="detail-value"><code id="schDetailSalida">-</code></div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Turno 2 <span style="text-transform:none;letter-spacing:0;font-weight:400;">(opcional)</span></div>
-                    <div class="detail-value"><code id="schDetailTurno2">Sin doble turno</code></div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Horas al día</div>
-                    <div class="detail-value" id="schDetailHoras">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Tolerancia</div>
-                    <div class="detail-value" id="schDetailTolerancia">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Estado</div>
-                    <div class="detail-value" id="schDetailEstado">-</div>
+    <div class="dev-modal sd-modal" role="dialog" aria-modal="true" aria-labelledby="sdName">
+        <div class="sd-head">
+            <div class="sd-ico"><span class="material-symbols-outlined" id="sdIco">work</span></div>
+            <div class="sd-title">
+                <small id="sdKicker">Detalle del horario</small>
+                <h3 id="sdName">-</h3>
+                <div class="sd-tags">
+                    <span class="sd-tag" id="sdTipo">Empleados</span>
+                    <span class="sd-tag" id="sdJornada">Full time</span>
+                    <span class="sd-tag" id="sdEstado">Activo</span>
                 </div>
             </div>
+            <button type="button" class="sd-x" onclick="closeScheduleDetail()" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <div class="dev-modal-footer">
-            <button type="button" class="dev-btn dev-btn-text" onclick="closeScheduleDetail()">
-                <span class="material-symbols-outlined">close</span> Cerrar
-            </button>
-            <button type="button" class="dev-btn dev-btn-primary" id="schDetailEditBtn">
-                <span class="material-symbols-outlined">edit</span> Editar
-            </button>
+        <div class="sd-body">
+            <div class="sd-sec">
+                <div class="sd-cap">Días de trabajo <span id="sdDiasTxt"></span></div>
+                <div class="sd-week" id="sdWeek"></div>
+            </div>
+            <div class="sd-sec">
+                <div class="sd-cap">Turnos</div>
+                <div class="sd-turnos" id="sdTurnos"></div>
+                <div class="sd-line" id="sdLine"><div class="sd-line-track"></div></div>
+                <div class="sd-line-scale"><span>06:00</span><span>10:00</span><span>14:00</span><span>18:00</span><span>22:00</span></div>
+            </div>
+            <div class="sd-kpis">
+                <div class="sd-kpi"><span class="material-symbols-outlined">schedule</span><b id="sdHoras">-</b><small>Horas al día</small></div>
+                <div class="sd-kpi"><span class="material-symbols-outlined">timer</span><b id="sdTol">-</b><small>Tolerancia</small></div>
+                <div class="sd-kpi"><span class="material-symbols-outlined">date_range</span><b id="sdSemana">-</b><small>Horas a la semana</small></div>
+            </div>
+            <div class="sd-sec">
+                <div class="sd-cap">Integrantes <span id="sdCount"></span></div>
+                <div class="sd-people" id="sdPeople"></div>
+            </div>
+        </div>
+        <div class="sd-foot">
+            <button type="button" class="dev-btn" id="sdIntBtn"><span class="material-symbols-outlined">group_add</span> Integrantes</button>
+            <button type="button" class="dev-btn dev-btn-primary" id="sdEditBtn"><span class="material-symbols-outlined">edit</span> Editar horario</button>
         </div>
     </div>
 </div>
+<style>
+    .hr-row-click { cursor: pointer; }
+    .hr-row-click:focus-visible { outline: 2px solid var(--ab-lime, #1b7a42); outline-offset: -2px; }
+    .sd-modal { max-width: 560px !important; width: calc(100% - 32px); padding: 0 !important; overflow: hidden; border-radius: 28px !important; }
+    .sd-head { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; padding: 22px 22px 18px; background: #141414; color: #fff; }
+    .sd-ico { width: 52px; height: 52px; border-radius: 50%; background: var(--ab-lime, #1b7a42); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+    .sd-ico .material-symbols-outlined { font-size: 26px; }
+    .sd-title small { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .sd-title h3 { margin: 3px 0 10px; font-size: 21px; font-weight: 800; letter-spacing: -.025em; line-height: 1.2; color: #fff; }
+    .sd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sd-tag { padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,.1); color: rgba(255,255,255,.9); }
+    .sd-tag.on { background: var(--ab-lime, #1b7a42); color: #fff; }
+    .sd-tag.off { background: #5a2323; color: #ffb4b4; }
+    .sd-x { width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(255,255,255,.1); color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+    .sd-x:hover { background: rgba(255,255,255,.2); }
+    .sd-body { padding: 18px 22px 6px; display: grid; gap: 18px; max-height: calc(100vh - 260px); overflow-y: auto; }
+    .sd-cap { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--lm-faint, #73767d); margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
+    .sd-cap span { text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--lm-muted, #5c5f66); }
+    .sd-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .sd-day { height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700;
+              background: var(--lm-canvas, #f3f4f6); color: var(--lm-faint, #73767d); }
+    .sd-day.on { background: var(--ab-lime, #1b7a42); color: #fff; }
+    .sd-turnos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .sd-turno { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 14px; background: var(--lm-canvas, #f3f4f6); font-size: 13px; font-weight: 600; color: var(--lm-ink, #141414); }
+    .sd-turno b { font-size: 15px; font-variant-numeric: tabular-nums; }
+    .sd-turno small { color: var(--lm-muted, #5c5f66); font-weight: 600; }
+    .sd-line { position: relative; height: 14px; }
+    .sd-line-track { position: absolute; inset: 4px 0; border-radius: 999px; background: var(--lm-line, #eceef1); }
+    .sd-line i { position: absolute; top: 0; height: 14px; border-radius: 999px; background: var(--ab-lime, #1b7a42); }
+    .sd-line i + i { background: #141414; }
+    html.dark .sd-line i + i { background: #e4e4e7; }
+    .sd-line-scale { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10.5px; color: var(--lm-faint, #73767d); font-variant-numeric: tabular-nums; }
+    .sd-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .sd-kpi { border-radius: 18px; background: var(--lm-canvas, #f3f4f6); padding: 12px 14px; display: grid; gap: 2px; }
+    .sd-kpi .material-symbols-outlined { font-size: 18px; color: var(--ab-lime, #1b7a42); }
+    .sd-kpi b { font-size: 19px; font-weight: 800; letter-spacing: -.02em; color: var(--lm-ink, #141414); }
+    .sd-kpi small { font-size: 11.5px; color: var(--lm-muted, #5c5f66); font-weight: 600; }
+    .sd-people { display: grid; gap: 6px; }
+    .sd-person { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 6px 0; }
+    .sd-av { width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--ab-lime, #1b7a42) 14%, transparent); color: var(--ab-lime, #1b7a42); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+    .sd-person b { display: block; font-size: 13.5px; color: var(--lm-ink, #141414); }
+    .sd-person small { font-size: 12px; color: var(--lm-muted, #5c5f66); }
+    .sd-empty { font-size: 13px; color: var(--lm-muted, #5c5f66); padding: 10px 12px; border-radius: 14px; background: var(--lm-canvas, #f3f4f6); }
+    .sd-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 22px 20px; border-top: 1px solid var(--lm-line, #eceef1); flex-wrap: wrap; }
+    @media (max-width: 768px) {
+        /* Celular: hoja inferior que mide lo que su contenido, sin espacio vacío */
+        #scheduleDetailOverlay { align-items: flex-end !important; }
+        #scheduleDetailOverlay .sd-modal {
+            width: 100% !important; max-width: none !important; height: auto !important; max-height: 92vh !important;
+            align-self: flex-end !important; margin: 0 !important; flex-direction: column;
+            border-radius: 28px 28px 0 0 !important;
+        }
+        #scheduleDetailOverlay .sd-body { max-height: none; flex: 1 1 auto; min-height: 0; }
+        #scheduleDetailOverlay .sd-foot { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+    }
+    @media (max-width: 560px) {
+        .sd-kpis { grid-template-columns: 1fr 1fr 1fr; }
+        .sd-kpi { padding: 10px; } .sd-kpi b { font-size: 16px; }
+        .sd-day { height: 36px; font-size: 11.5px; }
+        .sd-foot .dev-btn { flex: 1; justify-content: center; }
+    }
+</style>
 
 <script>
 var SCHEDULES = JSON.parse('<?= $intJson ?>');
@@ -1469,32 +1515,70 @@ document.getElementById('integrantesModal').addEventListener('click', function(e
     if (e.target === this) closeIntegrantes();
 });
 
-function openScheduleDetail(sch) {
-    var isActive = (sch.estado || '') === 'Activo';
-    var isPract = sch.tipo === 'Practicante';
-    document.getElementById('schDetailName').textContent = sch.nombre || '-';
-    document.getElementById('schDetailDias').textContent = sch.dias || 'Lun - Vie';
-    document.getElementById('schDetailEntrada').textContent = sch.entrada || '08:00';
-    document.getElementById('schDetailSalida').textContent = sch.salida || '17:00';
-    document.getElementById('schDetailTurno2').textContent =
-        (sch.entrada2 && sch.salida2) ? (sch.entrada2 + ' → ' + sch.salida2) : 'Sin doble turno';
-    var totDia = hrTotalDia(sch);
-    document.getElementById('schDetailHoras').textContent =
-        totDia ? hrFmt(totDia) + (sch.doble ? ' · doble turno' : '') : '-';
-    document.getElementById('schDetailTolerancia').textContent = (sch.tolerancia || 10) + ' min';
-    var tipoEl = document.getElementById('schDetailTipo');
-    tipoEl.textContent = isPract ? 'Practicantes' : 'Empleados';
-    tipoEl.style.color = isPract ? 'var(--g-primary)' : 'var(--g-success)';
-    document.getElementById('schDetailCount').textContent = (sch.total || 0) + ' integrantes';
-    var estadoEl = document.getElementById('schDetailEstado');
-    estadoEl.textContent = isActive ? 'Activo' : 'Inactivo';
-    estadoEl.style.color = isActive ? 'var(--g-success)' : 'var(--g-text-secondary)';
-    document.getElementById('schDetailEditBtn').onclick = function() {
+var SD_DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+function sdDiasActivos(txt) {
+    var t = (txt || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    var claves = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+    var on = [false, false, false, false, false, false, false];
+    if (!t || t.indexOf('todos') !== -1) return on.map(function () { return true; });
+    t.split(/[,y]+/).forEach(function (parte) {
+        var r = parte.split('-').map(function (x) { return claves.indexOf(x.trim().slice(0, 3)); });
+        if (r.length === 2 && r[0] !== -1 && r[1] !== -1) {
+            for (var i = r[0]; ; i = (i + 1) % 7) { on[i] = true; if (i === r[1]) break; }
+        } else if (r[0] !== -1) { on[r[0]] = true; }
+    });
+    return on;
+}
+function sdPct(h) { var p = h.split(':'); var m = (+p[0]) * 60 + (+p[1] || 0); return Math.max(0, Math.min(100, (m - 360) / (960) * 100)); }
+function openScheduleDetail(id) {
+    var sch = (typeof id === 'object') ? id : SCHEDULES.find(function (s) { return s.id === id; });
+    if (!sch) return;
+    var isActive = (sch.estado || '') === 'Activo', isPract = sch.tipo === 'Practicante';
+    document.getElementById('sdName').textContent = sch.nombre || '-';
+    document.getElementById('sdIco').textContent = isPract ? 'school' : 'work';
+    document.getElementById('sdTipo').textContent = isPract ? 'Practicantes' : 'Empleados';
+    document.getElementById('sdJornada').textContent = hrNombreJornada(sch.jornada) + (sch.doble ? ' · doble turno' : '');
+    var est = document.getElementById('sdEstado');
+    est.textContent = isActive ? 'Activo' : 'Inactivo'; est.className = 'sd-tag ' + (isActive ? 'on' : 'off');
+
+    var on = sdDiasActivos(sch.dias), nDias = on.filter(Boolean).length;
+    document.getElementById('sdDiasTxt').textContent = '· ' + (sch.dias || '-') + ' (' + nDias + (nDias === 1 ? ' día)' : ' días)');
+    document.getElementById('sdWeek').innerHTML = SD_DIAS.map(function (d, i) { return '<div class="sd-day' + (on[i] ? ' on' : '') + '">' + d + '</div>'; }).join('');
+
+    var turnos = [[sch.entrada, sch.salida]];
+    if (sch.entrada2 && sch.salida2) turnos.push([sch.entrada2, sch.salida2]);
+    document.getElementById('sdTurnos').innerHTML = turnos.map(function (t, i) {
+        return '<span class="sd-turno"><small>Turno ' + (i + 1) + '</small><b>' + hrEsc(t[0]) + '</b>→<b>' + hrEsc(t[1]) + '</b><small>' + hrFmt(hrMins(t[0], t[1])) + '</small></span>';
+    }).join('');
+    var line = document.getElementById('sdLine');
+    line.querySelectorAll('i').forEach(function (x) { x.remove(); });
+    turnos.forEach(function (t) {
+        var i = document.createElement('i'), a = sdPct(t[0]), b = sdPct(t[1]);
+        i.style.left = a + '%'; i.style.width = Math.max(2, b - a) + '%'; i.title = t[0] + ' → ' + t[1];
+        line.appendChild(i);
+    });
+
+    var tot = hrTotalDia(sch);
+    document.getElementById('sdHoras').textContent = tot ? hrFmt(tot) : '-';
+    document.getElementById('sdTol').textContent = (sch.tolerancia || 10) + ' min';
+    document.getElementById('sdSemana').textContent = tot ? hrFmt(tot * nDias) : '-';
+
+    var asignados = (sch.cands || []).filter(function (u) { return (sch.assigned || []).indexOf(u.id) !== -1; });
+    document.getElementById('sdCount').textContent = '· ' + asignados.length + (asignados.length === 1 ? ' persona' : ' personas');
+    document.getElementById('sdPeople').innerHTML = asignados.length
+        ? asignados.map(function (u) {
+            return '<div class="sd-person"><span class="sd-av">' + initials(u.name) + '</span><div><b>' + hrEsc(u.name || 'Sin nombre') + '</b><small>' + hrEsc(u.cargo || '—') + (u.code ? ' · ' + hrEsc(u.code) : '') + '</small></div></div>';
+        }).join('')
+        : '<div class="sd-empty">Todavía no hay personal asignado a este horario.</div>';
+
+    document.getElementById('sdEditBtn').onclick = function () {
         closeScheduleDetail();
-        openEditModal(sch.id, sch.nombre, sch.tipo, sch.dias, sch.entrada, sch.salida, sch.tolerancia, sch.estado, sch.entrada2 || '', sch.salida2 || '');
+        openEditModal(sch.id, sch.nombre, sch.tipo, sch.dias, sch.entrada, sch.salida, sch.tolerancia, sch.estado, sch.entrada2 || '', sch.salida2 || '', sch.jornada);
     };
+    document.getElementById('sdIntBtn').onclick = function () { closeScheduleDetail(); openIntegrantes(sch.id); };
     document.getElementById('scheduleDetailOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
+    setTimeout(function () { document.querySelector('#scheduleDetailOverlay .sd-x').focus(); }, 50);
 }
 function closeScheduleDetail() {
     document.getElementById('scheduleDetailOverlay').classList.remove('active');

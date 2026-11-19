@@ -436,11 +436,99 @@ class DevController extends BaseController
     public function perfil()
     {
         if ($redir = $this->guardDev()) return $redir;
-        $dev = $this->userModel->findDev();
+        $dev = $this->currentDev();
         if (!$dev) {
             $dev = ['name' => 'Superadmin', 'dni' => '00000000', 'email' => '', 'role' => 'Dev', 'admin_code' => 'DEV-001', 'created' => '-', 'last_login' => null];
         }
-        return view('dev-perfil', ['user' => $dev]);
+        $db  = \Config\Database::connect();
+        $uid = (int) ($dev['id'] ?? 0);
+        $sesiones = $uid > 0
+            ? $db->table('session_log')->select('evento, ip, creado')->where('user_id', $uid)->orderBy('id', 'DESC')->limit(6)->get()->getResultArray()
+            : [];
+        $logins30 = $uid > 0
+            ? $db->table('session_log')->where('user_id', $uid)->where('evento', 'login')->where('creado >=', date('Y-m-d H:i:s', strtotime('-30 days')))->countAllResults()
+            : 0;
+        $stats = [
+            'admins'   => $db->table('users')->where('role', 'Admin')->countAllResults(),
+            'personal' => $db->table('users')->whereIn('role', ['Empleado', 'Practicante'])->countAllResults(),
+            'logins30' => $logins30,
+        ];
+        return view('dev-perfil', ['user' => $dev, 'sesiones' => $sesiones, 'stats' => $stats]);
+    }
+
+    /** Cuenta Dev de la sesión actual (si hubiera más de una, se edita la propia). */
+    protected function currentDev(): ?array
+    {
+        $id = (int) session()->get('user_id');
+        if ($id > 0) {
+            $u = $this->userModel->find($id);
+            if ($u && ($u['role'] ?? '') === 'Dev') {
+                return $u;
+            }
+        }
+        return $this->userModel->findDev();
+    }
+
+    /** Guarda los datos de la cuenta del desarrollador: nombre, correo y DNI. */
+    public function updateProfile()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+        $s   = session();
+        $dev = $this->currentDev();
+        $back = redirect()->to(base_url('dios/perfil'));
+        $fail = function (string $msg) use ($s, $back) {
+            $s->setFlashdata('msg', $msg);
+            $s->setFlashdata('tipo', 'warning');
+            return $back->withInput();
+        };
+        if (!$dev || empty($dev['id'])) {
+            $s->setFlashdata('msg', 'No se encontró la cuenta de desarrollador');
+            $s->setFlashdata('tipo', 'danger');
+            return $back;
+        }
+
+        $name  = trim(preg_replace('/\s+/u', ' ', (string) $this->request->getPost('name')));
+        $email = mb_strtolower(trim((string) $this->request->getPost('email')));
+        $dni   = trim((string) $this->request->getPost('dni'));
+
+        if ($name === '' || mb_strlen($name) < 3 || mb_strlen($name) > 80) {
+            return $fail('El nombre debe tener entre 3 y 80 caracteres');
+        }
+        if (!preg_match('/^[\p{L}\p{M}0-9 .\'-]+$/u', $name)) {
+            return $fail('El nombre solo puede tener letras, números, espacios, puntos, apóstrofos y guiones');
+        }
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 120) {
+            return $fail('Ingresa un correo electrónico válido');
+        }
+        if (!preg_match('/^\d{8}$/', $dni)) {
+            return $fail('El DNI debe tener exactamente 8 dígitos');
+        }
+        $id = (int) $dev['id'];
+        if ($this->userModel->where('email', $email)->where('id !=', $id)->countAllResults() > 0) {
+            return $fail('Ese correo ya lo usa otra cuenta');
+        }
+        if ($this->userModel->where('dni', $dni)->where('id !=', $id)->countAllResults() > 0) {
+            return $fail('Ese DNI ya lo usa otra cuenta');
+        }
+
+        $cambios = array_filter([
+            'name'  => $name  !== ($dev['name'] ?? '')  ? $name  : null,
+            'email' => $email !== ($dev['email'] ?? '') ? $email : null,
+            'dni'   => $dni   !== ($dev['dni'] ?? '')   ? $dni   : null,
+        ], static fn ($v) => $v !== null);
+
+        if (!$cambios) {
+            $s->setFlashdata('msg', 'No hubo cambios que guardar');
+            $s->setFlashdata('tipo', 'success');
+            return $back;
+        }
+
+        $this->userModel->update($id, $cambios);
+        $s->set(['user_name' => $name, 'user_email' => $email, 'user_dni' => $dni]);
+
+        $s->setFlashdata('msg', 'Datos de la cuenta guardados correctamente');
+        $s->setFlashdata('tipo', 'success');
+        return $back;
     }
 
     public function updatePassword()
@@ -467,7 +555,7 @@ class DevController extends BaseController
             return redirect()->to(base_url('dios/perfil'));
         }
 
-        $dev = $this->userModel->findDev();
+        $dev = $this->currentDev();
         if (!$dev || !password_verify($current, $dev['password'])) {
             $s->setFlashdata('msg', 'La contraseña actual es incorrecta');
             $s->setFlashdata('tipo', 'danger');

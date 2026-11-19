@@ -70,6 +70,7 @@ $routes->group('dios', ['filter' => 'dev'], static function ($routes) {
     $routes->get('datos/grupo', 'DevController::datosGrupo');
     $routes->get('perfil', 'DevController::perfil');
     $routes->post('update-password', 'DevController::updatePassword');
+    $routes->post('update-profile', 'DevController::updateProfile');
     $routes->post('create-admin', 'DevController::createAdmin');
     $routes->post('update-admin', 'DevController::updateAdmin');
     $routes->post('delete-admin', 'DevController::deleteAdmin');

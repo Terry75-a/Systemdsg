@@ -54,10 +54,15 @@
             <span>Colapsar</span>
         </button>
         <div class="dev-nav-section dev-tools-sep">Cuenta</div>
-        <a href="<?= base_url('dios/perfil') ?>" class="dev-sidebar-user">
-            <span class="dev-sidebar-avatar">DV</span>
+        <?php $sbName = (string) (session()->get('user_name') ?: 'Superadmin'); $sbParts = preg_split('/\s+/u', trim($sbName)); $sbIni = mb_strtoupper(mb_substr($sbParts[0] ?? 'D', 0, 1) . (count($sbParts) > 1 ? mb_substr(end($sbParts), 0, 1) : mb_substr($sbParts[0] ?? 'V', 1, 1))); ?>
+        <a href="<?= base_url('dios/perfil') ?>" class="dev-nav-link <?= ($activePage ?? '') === 'perfil' ? 'is-active' : '' ?>">
+            <span class="material-symbols-outlined">person</span>
+            <span>Mi perfil</span>
+        </a>
+        <a href="<?= base_url('dios/perfil') ?>" class="dev-sidebar-user" title="<?= esc($sbName) ?>">
+            <span class="dev-sidebar-avatar"><?= esc($sbIni) ?></span>
             <div>
-                <span class="dev-sidebar-user-name">Superadmin</span>
+                <span class="dev-sidebar-user-name"><?= esc($sbName) ?></span>
                 <span class="dev-sidebar-user-role">Desarrollador</span>
             </div>
         </a>
