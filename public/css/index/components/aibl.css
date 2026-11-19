@@ -1,0 +1,292 @@
+/* ══════════════════════════════════════════════════════════════
+   AIBL · tema visual de Asisten DSG (noviembre 2026)
+   Inspirado en el panel "Health Records" de referencia: lienzo gris
+   neutro, tarjetas blancas muy redondeadas, acento verde DSG con
+   negro, botones negros tipo píldora, menú lateral angosto sólo con
+   íconos circulares y títulos de dos pesos (línea fina + negrita).
+
+   Se carga DESPUÉS de lumen.css (y de tk-panel.css en el panel del
+   colaborador). Sólo cambia la piel: no toca estructura, datos ni
+   comportamiento. Para volver al tema anterior basta con quitar el
+   <link> a este archivo.
+   ══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --ab-lime: #1b7a42;        /* acento principal: verde DSG (el del logo) */
+  --ab-lime-2: #bfe3cc;      /* verde DSG claro */
+  --ab-lime-soft: #e6f4ea;   /* verde DSG muy suave: chips, hover */
+  --ab-lime-ink: #15633a;    /* texto sobre verde suave */
+  --ab-on-lime: #ffffff;     /* texto e íconos sobre el verde */
+  --ab-black: #141414;
+  --ab-black-2: #262626;
+
+  /* Se reasignan los tokens de lumen: todo el sistema hereda la paleta */
+  --lm-bg: #e6e8eb;
+  --lm-canvas: #f3f4f6;
+  --lm-card: #ffffff;
+  --lm-ink: #141414;
+  --lm-ink-2: #2a2a2a;
+  --lm-muted: #5c5f66;
+  --lm-faint: #73767d;
+  --lm-line: #eceef1;
+  --lm-line-2: #e2e4e8;
+  --lm-primary: #141414;          /* botones principales: negros */
+  --lm-primary-hover: #2e2e2e;
+  --lm-lilac: var(--ab-lime);     /* tarjeta destacada: lima */
+  --lm-lilac-soft: var(--ab-lime-soft);
+  --lm-lilac-2: var(--ab-lime-2);
+  --lm-lilac-ink: var(--ab-lime-ink);
+  --lm-lime: #eceef1;             /* tarjeta secundaria: gris claro */
+  --lm-lime-strong: var(--ab-lime);
+  --lm-lime-ink: #2a2a2a;
+  --lm-r-xl: 30px;
+  --lm-r-lg: 24px;
+  --lm-r-md: 16px;
+  --lm-shadow: 0 1px 2px rgba(17, 17, 17, .04), 0 8px 24px -18px rgba(17, 17, 17, .18);
+}
+html.dark {
+  --ab-lime: #22924f;
+  --ab-lime-2: #143a24;
+  --ab-lime-soft: #0d2818;
+  --ab-lime-ink: #4ade80;
+  --ab-on-lime: #ffffff;
+  --lm-bg: #050505;
+  --lm-canvas: #0c0c0d;
+  --lm-card: #161618;
+  --lm-ink: #f1f1f1;
+  --lm-ink-2: #d6d6d8;
+  --lm-muted: #a3a3a8;
+  --lm-faint: #8c8c93;
+  --lm-line: #26262a;
+  --lm-line-2: #303035;
+  --lm-primary: #1b7a42;          /* en oscuro el botón principal es verde DSG */
+  --lm-primary-hover: #22924f;
+  --lm-lilac: #1b7a42;
+  --lm-lilac-soft: #0d2818;
+  --lm-lilac-2: #143a24;
+  --lm-lilac-ink: #4ade80;
+  --lm-lime: #222226;
+  --lm-lime-ink: #e4e4e7;
+}
+
+html body:has(.dev-main) {
+  --tk-ontime: var(--ab-black);
+  --tk-late: #d64545;
+  --sb-on-primary: #ffffff;
+  --tk-ring: 0 0 0 4px color-mix(in srgb, var(--ab-lime) 55%, transparent);
+}
+html.dark body:has(.dev-main) { --tk-ontime: var(--ab-lime); --sb-on-primary: #ffffff; }
+
+/* ── 1 · Menú lateral angosto: sólo íconos circulares (escritorio) ── */
+@media (min-width: 769px) {
+  html body:has(.dev-main) .dev-sidebar {
+    width: 80px !important; top: 14px; left: 14px; bottom: 14px;
+    border-radius: 30px !important; padding: 4px 0;
+    overflow: visible !important;
+  }
+  html body:has(.dev-main) .dev-main { margin: 14px 14px 14px 108px !important; border-radius: 30px; }
+  html body:has(.dev-main) footer.footer { left: 108px; }
+
+  html body:has(.dev-main) .dev-sidebar-head { padding: 18px 0 8px !important; display: flex; justify-content: center; flex-direction: column; align-items: center; }
+  html body:has(.dev-main) .dev-logo { justify-content: center; flex: none; }
+  html body:has(.dev-main) .dev-logo-text,
+  html body:has(.dev-main) .dev-nav-section,
+  html body:has(.dev-main) #sidebarCollapseBtn,
+  html body:has(.dev-main) .dev-sidebar-collapse { display: none !important; }
+  html body:has(.dev-main) .dev-logo-mark {
+    width: 46px !important; height: 46px !important; border-radius: 50% !important;
+    background: var(--ab-black) !important; display: inline-flex; align-items: center; justify-content: center;
+  }
+  html body:has(.dev-main) .dev-logo-mark img { width: 26px; height: 26px; }
+
+  html body:has(.dev-main) .dev-nav,
+  html body:has(.dev-main) .dev-sidebar-tools {
+    padding: 8px 0 !important; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    border: 0 !important; overflow: visible !important;
+  }
+  html body:has(.dev-main) .dev-nav { margin-top: 10px; }
+  html body:has(.dev-main) .dev-sidebar-tools { padding-bottom: 18px !important; }
+
+  html body:has(.dev-main) .dev-nav-link {
+    position: relative; width: 46px !important; height: 46px !important; padding: 0 !important; margin: 0 !important;
+    justify-content: center !important; gap: 0 !important;
+    border-radius: 50% !important; border: 1px solid var(--lm-line-2) !important;
+    background: var(--lm-card) !important; color: var(--lm-ink) !important;
+  }
+  html body:has(.dev-main) .dev-nav-link .material-symbols-outlined { font-size: 20px !important; opacity: 1 !important; margin: 0 !important; }
+  html body:has(.dev-main) .dev-nav-link:hover { background: var(--lm-canvas) !important; }
+  html body:has(.dev-main) .dev-nav-link.is-active {
+    background: var(--ab-lime) !important; border-color: var(--ab-lime) !important; color: var(--ab-on-lime) !important;
+  }
+  html body:has(.dev-main) .dev-nav-link.is-active .material-symbols-outlined { color: var(--ab-on-lime) !important; font-variation-settings: 'FILL' 1; }
+
+  /* La etiqueta del enlace aparece como globo negro al pasar el mouse */
+  html body:has(.dev-main) .dev-nav-link > span:not(.material-symbols-outlined):not(.dev-nav-badge) {
+    display: block !important; position: absolute; left: 58px; top: 50%; transform: translateY(-50%);
+    white-space: nowrap; padding: 6px 12px; border-radius: 999px;
+    background: var(--ab-black); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0;
+    opacity: 0; pointer-events: none; transition: opacity .15s ease; z-index: 50;
+  }
+  html body:has(.dev-main) .dev-nav-link:hover > span:not(.material-symbols-outlined):not(.dev-nav-badge) { opacity: 1; }
+  html body:has(.dev-main) .dev-nav-badge {
+    position: absolute !important; top: -3px; right: -3px; margin: 0 !important;
+    min-width: 18px !important; height: 18px !important; padding: 0 5px !important; font-size: 10px !important;
+    background: var(--ab-black) !important; color: var(--ab-lime) !important; border: 2px solid var(--lm-card);
+  }
+
+  html body:has(.dev-main) .dev-sidebar-user {
+    width: 46px; height: 46px; padding: 0 !important; justify-content: center !important;
+    border-radius: 50% !important; background: transparent !important;
+  }
+  html body:has(.dev-main) .dev-sidebar-user > div { display: none !important; }
+  html body:has(.dev-main) .dev-sidebar-avatar {
+    width: 46px !important; height: 46px !important; font-size: 13px !important; font-weight: 800 !important;
+    background: var(--ab-lime) !important; color: var(--ab-on-lime) !important;
+  }
+  html body:has(.dev-main) .dark-toggle-wrap { justify-content: center !important; padding: 0 !important; }
+  html body:has(.dev-main) :is(.dark-toggle-label, .dark-toggle-track) { display: none !important; }
+}
+
+/* ── 2 · Cabecera: título de dos pesos con insignia lima ─────── */
+html body:has(.dev-main) .dev-topbar { padding: 30px 34px 14px !important; }
+html body:has(.dev-main) .dev-topbar h1 {
+  display: inline-flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;
+  font-size: 34px !important; line-height: 1.05; font-weight: 700 !important; letter-spacing: -.035em !important;
+  color: var(--lm-ink) !important;
+}
+html body:has(.dev-main) .dev-topbar h1::before {
+  content: "Asisten DSG"; flex-basis: 100%;
+  font-size: 30px; font-weight: 300; letter-spacing: -.03em; color: var(--lm-faint);
+}
+html body:has(.dev-main) .dev-topbar h1::after {
+  content: "✱"; display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; margin-bottom: 2px;
+  background: var(--ab-lime); color: var(--ab-on-lime); font-size: 22px; font-weight: 700;
+}
+html body:has(.dev-main) .dev-topbar p { margin-top: 8px !important; font-size: 13px !important; color: var(--lm-muted) !important; }
+html body:has(.dev-main) .dev-content { padding: 8px 34px 34px !important; }
+
+/* Controles de la cabecera como píldoras blancas */
+html body:has(.dev-main) .dev-topbar :is(.dash-date, .tk-date, .dev-topbar-actions > *:not(.dev-btn-primary)) {
+  border-radius: 999px !important;
+}
+html body:has(.dev-main) .dev-topbar .dash-date { background: var(--lm-card) !important; border: 1px solid var(--lm-line-2); color: var(--lm-ink-2) !important; }
+
+/* ── 3 · Tarjetas: título con cuadrito lima, como en la referencia ── */
+html body:has(.dev-main) :is(.tk-card, .dev-card, .hr-block, .dev-table-wrap, .card, .tk-stats-card, .personal-card, .cfg-card, .ad-block) {
+  border-radius: var(--lm-r-lg) !important; box-shadow: var(--lm-shadow) !important;
+}
+html body:has(.dev-main) :is(.tk-card-head h3, .dev-card-head h2, .card-head h2, .tk-h3, .dash-sec-head h2) {
+  display: inline-flex; align-items: center; gap: 10px;
+}
+html body:has(.dev-main) :is(.tk-card-head h3, .dev-card-head h2, .card-head h2, .tk-h3)::before {
+  content: ""; width: 12px; height: 12px; flex: none; border-radius: 4px; background: var(--ab-lime);
+}
+html body:has(.dev-main) .dash-sec-head h2 { color: var(--lm-ink) !important; font-size: 12px !important; }
+html body:has(.dev-main) .dash-sec-head h2::before {
+  content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--ab-lime);
+}
+
+/* Dashboard del admin (bloques "hy"): cuadrito lima y barras negro/lima */
+html body:has(.dev-main) .hy-head > span:first-child,
+html body:has(.dev-main) .hy-block-head :is(h2, h3) { display: inline-flex; align-items: center; gap: 9px; }
+html body:has(.dev-main) .hy-head > span:first-child::before,
+html body:has(.dev-main) .hy-block-head :is(h2, h3)::before {
+  content: ""; width: 11px; height: 11px; flex: none; border-radius: 3px; background: var(--ab-lime);
+}
+html body:has(.dev-main) .hy-block-head:not(:has(h2, h3))::before {
+  content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px; background: var(--ab-lime); margin-right: 9px; vertical-align: -1px;
+}
+html body:has(.dev-main) .hy-card { border-radius: var(--lm-r-lg) !important; }
+html body:has(.dev-main) .hy-bar { height: 10px !important; border-radius: 999px !important; }
+html body:has(.dev-main) .hy-bar > i { border-radius: 999px !important; }
+html body:has(.dev-main) .hy-bar > i.is-ok { background: var(--ab-lime) !important; }
+html.dark body:has(.dev-main) .hy-bar > i.is-ok { background: var(--ab-lime) !important; }
+html body:has(.dev-main) .hy-dot.is-ok { background: var(--ab-lime) !important; }
+
+/* Indicadores: blancos con cifra grande; el 1º lima, el último negro */
+html body:has(.dev-main) .tk-stat { border-radius: var(--lm-r-lg) !important; min-height: 108px; }
+html body:has(.dev-main) .tk-stat-val { font-size: 30px !important; font-weight: 700 !important; letter-spacing: -.04em !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:nth-child(1) { background: var(--ab-lime) !important; }
+html body:has(.dev-main) .dev-content .tk-stats > .tk-stat:nth-child(1) .tk-stat-val { color: #ffffff !important; }
+html body:has(.dev-main) .dev-content .tk-stats > .tk-stat:nth-child(1) .tk-stat-lbl { color: rgba(255, 255, 255, .8) !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:nth-child(2) { background: var(--lm-card) !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:nth-child(2) .tk-stat-ico { background: var(--lm-canvas) !important; border: 1px solid var(--lm-line) !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:nth-child(1) .tk-stat-ico { background: rgba(255, 255, 255, .18) !important; color: #ffffff !important; border-color: transparent !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:last-child:not(:nth-child(-n+2)) { background: var(--ab-black) !important; }
+html body:has(.dev-main) .dev-content .tk-stats > .tk-stat:last-child:not(:nth-child(-n+2)) .tk-stat-val { color: #ffffff !important; }
+html body:has(.dev-main) .dev-content .tk-stats > .tk-stat:last-child:not(:nth-child(-n+2)) .tk-stat-lbl { color: rgba(255, 255, 255, .72) !important; }
+html body:has(.dev-main) .tk-stats > .tk-stat:last-child:not(:nth-child(-n+2)) .tk-stat-ico { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; border-radius: 50% !important; }
+html.dark body:has(.dev-main) .tk-stats > .tk-stat:last-child:not(:nth-child(-n+2)) { background: #000 !important; box-shadow: inset 0 0 0 1px var(--lm-line-2) !important; }
+
+/* ── 4 · Botones y filtros: negro y lima ─────────────────────── */
+html body:has(.dev-main) :is(.dev-btn-primary, .hr-new, .perm-save, .rp-export, .tk-btn-primary) {
+  background: var(--lm-primary) !important; color: var(--sb-on-primary, #fff) !important;
+}
+html body:has(.dev-main) :is(.dev-btn-primary, .hr-new, .perm-save, .rp-export, .tk-btn-primary) .material-symbols-outlined { color: var(--ab-lime) !important; }
+html.dark body:has(.dev-main) :is(.dev-btn-primary, .hr-new, .perm-save, .rp-export, .tk-btn-primary) .material-symbols-outlined { color: #ffffff !important; }
+html body:has(.dev-main) :is(.tk-chip.active, .hr-pill.on, .att-chip.is-active, .att-chip.on) {
+  background: var(--ab-black) !important; color: #fff !important; border-color: var(--ab-black) !important;
+}
+html.dark body:has(.dev-main) :is(.tk-chip.active, .hr-pill.on, .att-chip.is-active, .att-chip.on) { background: var(--ab-lime) !important; color: #ffffff !important; border-color: var(--ab-lime) !important; }
+html body:has(.dev-main) .dev-btn-icon:hover { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; }
+
+/* Estados: presente / a tiempo en lima, tardanza ámbar, falta rojo */
+html body:has(.dev-main) :is(.dev-badge-green, .tk-chip-ok, .tk-st-present, .tk-st-ok, .att-estado.present, .badge.present, .tk-st-on, .hr-tag-emp) {
+  background: var(--ab-lime-soft) !important; color: var(--ab-lime-ink) !important;
+}
+html body:has(.dev-main) :is(.tk-chip-blue, .tk-st-justified, .att-estado.no_exit, .hr-tag-pract, .tk-chip-neutral) {
+  background: #eceef1 !important; color: #2a2a2a !important;
+}
+html.dark body:has(.dev-main) :is(.tk-chip-blue, .tk-st-justified, .att-estado.no_exit, .hr-tag-pract, .tk-chip-neutral) { background: #26262a !important; color: #e4e4e7 !important; }
+
+/* Tablas: avatar lima y hover suave */
+html body:has(.dev-main) :is(.tk-cell-av, .personal-avatar, .int-av) { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; }
+html body:has(.dev-main) :is(.dev-table, .tk-table-hover, .tk-tbl) tbody tr:hover td { background: color-mix(in srgb, var(--ab-lime-soft) 70%, transparent) !important; }
+
+/* Banner del día: negro con enlace lima */
+html body:has(.dev-main) .tk-banner { background: var(--ab-black) !important; }
+html body:has(.dev-main) .tk-banner-link { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; font-weight: 700; }
+
+/* Barras de gráficos: negras con la destacada en lima */
+html body:has(.dev-main) :is(.tk-bar, .tk-bar-blue) { background: var(--ab-black) !important; border-radius: 999px !important; }
+html.dark body:has(.dev-main) :is(.tk-bar, .tk-bar-blue) { background: #e4e4e7 !important; }
+html body:has(.dev-main) :is(.tk-bar:last-child, .tk-bar.is-today, .tk-bar.is-max) { background: var(--ab-lime) !important; }
+
+/* Recorrido del día: puntos lima con número negro */
+html body:has(.dev-main) :is(.tk-station-ico, .tk-station .tk-station-dot) { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; }
+html body:has(.dev-main) :is(.tk-station-line span, .tk-station-line) { background: var(--ab-lime) !important; }
+
+/* Colaborador: tarjeta "Marcar asistencia" en lima */
+html body:has(.dev-main) .tk-card.tk-mark { background: var(--ab-lime) !important; }
+html body:has(.dev-main) .tk-card.tk-mark :is(h3, .tk-mark-time, .tk-mark-sec) { color: #ffffff !important; }
+html body:has(.dev-main) .tk-card.tk-mark :is(h3, .tk-mark-time) + p,
+html body:has(.dev-main) .tk-card.tk-mark .tk-mark-head p { color: rgba(255, 255, 255, .88) !important; }
+html body:has(.dev-main) .tk-card.tk-mark .tk-mark-head p strong { color: #ffffff !important; }
+
+/* Formularios: foco con anillo lima */
+html body:has(.dev-main) :is(.dev-field input, .dev-field select, .dev-field textarea):focus { border-color: var(--ab-black) !important; }
+
+/* ── 5 · Celular: cápsula negra con el activo en lima ────────── */
+@media (max-width: 768px) {
+  html body:has(.dev-main) .dev-topbar { padding: 20px 16px 8px !important; }
+  html body:has(.dev-main) .dev-topbar h1 { font-size: 26px !important; }
+  html body:has(.dev-main) .dev-topbar h1::before { font-size: 22px; }
+  html body:has(.dev-main) .dev-topbar h1::after { width: 32px; height: 32px; font-size: 17px; }
+  html body:has(.dev-main) .dev-content { padding: 6px 16px 110px !important; }
+  html body:has(.dev-main) .dev-mobile-nav { background: var(--ab-black) !important; }
+  html body:has(.dev-main) .dev-mobile-nav a.is-active { background: var(--ab-lime) !important; color: var(--ab-on-lime) !important; }
+}
+
+/* ── 6 · Login de asistencias ────────────────────────────────── */
+body:has(.login-page) {
+  --l-bg: #e6e8eb; --l-accent: #141414; --l-deep: #2e2e2e; --l-ink: #141414;
+  --l-soft: #e6f4ea; --l-glow: rgba(27, 122, 66, .18);
+  --lm-lilac: #bfe3cc; --lm-lilac-soft: #e6f4ea; --lm-lime: #eceef1; --lm-lime-strong: #9fd8b2;
+}
+body:has(.login-page) .login-brand-mark { background: #141414 !important; border-radius: 50% !important; }
+body:has(.login-page) :is(.login-btn, button[type="submit"]) { background: #141414 !important; color: #fff !important; border-radius: 999px !important; }
+body:has(.login-page) :is(.login-btn, button[type="submit"]):hover { background: #2e2e2e !important; }
+body:has(.login-page) :is(.login-btn, button[type="submit"]) :is(i, .material-symbols-outlined) { color: #9fd8b2 !important; }
+body:has(.login-page) .login-right { background: #f3f4f6 !important; border-radius: 30px !important; }

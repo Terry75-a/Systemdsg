@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20261112') ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/login-lumen.css?v=' . filemtime(FCPATH . 'css/index/components/login-lumen.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/aibl.css?v=' . filemtime(FCPATH . 'css/index/components/aibl.css')) ?>">
     <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
     <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
     <?= view('partials/pwa-head') ?>

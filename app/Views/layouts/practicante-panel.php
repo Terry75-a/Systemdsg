@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
     <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-panel.css?v=' . filemtime(FCPATH . 'css/index/components/tk-panel.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/aibl.css?v=' . filemtime(FCPATH . 'css/index/components/aibl.css')) ?>">
 </head>
 <body>
 <div class="dev-layout">
