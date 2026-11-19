@@ -42,15 +42,17 @@ class FaltaService
         $generadas = 0;
 
         foreach ($users as $user) {
-            $scheduleId = (int) ($user['schedule_id'] ?? 0);
-            if ($scheduleId <= 0 || ! isset($schedules[$scheduleId])) {
-                continue;
+            // Puede tener varios horarios (L-V, sábado…): se usa el que cubre este día
+            $sc = null;
+            foreach (\App\Libraries\Asistencia\HorariosPersona::ids($user) as $scheduleId) {
+                if (isset($schedules[$scheduleId])
+                    && $this->esDiaLaborable((string) ($schedules[$scheduleId]['dias'] ?? ''), $hoyNombre)) {
+                    $sc = $schedules[$scheduleId];
+                    break;
+                }
             }
-            $sc = $schedules[$scheduleId];
-
-            // Día laborable según el string "Lun - Vie" / "Lun, Mié" / "Lunes a Viernes"
-            if (! $this->esDiaLaborable((string) ($sc['dias'] ?? ''), $hoyNombre)) {
-                continue;
+            if ($sc === null) {
+                continue; // sin horario o hoy no le toca
             }
 
             // Festivo global o del admin

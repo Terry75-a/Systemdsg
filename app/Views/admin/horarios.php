@@ -195,6 +195,28 @@
         .hr-pill.on b { opacity: .9; }
         .hr-pill:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--sb-surface), 0 0 0 4px var(--sb-primary); }
 
+        /* ── Grupos full time / part time ── */
+        .hr-grupo { margin-top: 22px; }
+        .hr-grupo-head { display: flex; align-items: center; gap: 12px; margin: 0 2px 10px; }
+        .hr-grupo-head h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: var(--sb-on-surface, inherit); display: flex; align-items: center; gap: 8px; }
+        .hr-grupo-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--g-text-secondary); }
+        .hr-grupo-n { font-size: 11.5px; font-weight: 600; padding: 2px 9px; border-radius: 50px; background: var(--sb-surface-container-high, #eee); color: var(--g-text-secondary); }
+        .hr-grupo-ic { width: 36px; height: 36px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+        .hr-grupo-ic .material-symbols-outlined { font-size: 20px; }
+        .hr-grupo-full .hr-grupo-ic { background: color-mix(in srgb, var(--g-success) 14%, transparent); color: var(--g-success); }
+        .hr-grupo-part .hr-grupo-ic { background: color-mix(in srgb, #e37400 14%, transparent); color: #e37400; }
+        .hr-grupo-vacio { display: flex; align-items: center; gap: 10px; padding: 18px 20px; font-size: 13px; color: var(--g-text-secondary); }
+        .hr-grupo-vacio .material-symbols-outlined { font-size: 20px; opacity: .7; }
+        .hr-jornada-auto { margin: 8px 0 0; font-size: 12px; color: var(--g-text-secondary); display: flex; gap: 6px; align-items: flex-start; }
+        .hr-jornada-auto .material-symbols-outlined { font-size: 15px; margin-top: 1px; }
+        .hr-jornada-auto.aviso { color: #b06000; }
+
+        /* Integrantes con varios horarios */
+        .int-otro { display: flex; align-items: center; gap: 4px; margin-top: 3px; font-size: 11.5px; color: var(--g-success); }
+        .int-otro .material-symbols-outlined { font-size: 14px; color: inherit; }
+        .int-otro.choca { color: #b06000; }
+        .int-item.int-bloq { opacity: .6; cursor: not-allowed; }
+
         /* ── Bloque de la tabla ── */
         .hr-block {
             background: color-mix(in srgb, var(--sb-outline-variant) 20%, transparent);
@@ -491,6 +513,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
 
@@ -498,6 +522,13 @@
     $personalAll = $personal ?? [];
     $schData = [];
     $tipoLabels = ['Practicante' => 'Practicantes', 'Empleado' => 'Empleados'];
+    // Para avisar en «Integrantes» qué otros horarios tiene cada persona
+    $schPorId = [];
+    $diasPorId = [];
+    foreach (($schedules ?? []) as $x) {
+        $schPorId[(int) $x['id']]  = $x;
+        $diasPorId[(int) $x['id']] = \App\Libraries\Asistencia\Jornada::diasDeSemana($x);
+    }
     foreach (($schedules ?? []) as $sch) {
         $sid = (int) ($sch['id'] ?? 0);
         $tipo = $sch['tipo'] ?? 'Empleado';
@@ -514,6 +545,7 @@
             'id'        => $sid,
             'nombre'    => $sch['nombre'] ?? '',
             'tipo'      => $tipo,
+            'jornada'   => \App\Libraries\Asistencia\Jornada::jornada($sch),
             'dias'      => $sch['dias'] ?? 'Lun - Vie',
             'entrada'   => substr($sch['hora_entrada'] ?? '08:00', 0, 5),
             'salida'    => substr($sch['hora_salida'] ?? '17:00', 0, 5),
@@ -524,10 +556,22 @@
             'tolerancia'=> (int) ($sch['tolerancia'] ?? 10),
             'estado'    => $sch['estado'] ?? 'Activo',
             'total'     => count($assignedIds),
-            'cands'     => array_map(fn($u) => [
-                'id' => (int) $u['id'], 'name' => $u['name'] ?? '',
-                'cargo' => $u['cargo'] ?? '', 'code' => $u['personal_code'] ?? '',
-            ], $cands),
+            'cands'     => array_map(function ($u) use ($sid, $schPorId, $diasPorId) {
+                $otros = [];
+                foreach (\App\Libraries\Asistencia\HorariosPersona::ids($u) as $oid) {
+                    if ($oid === $sid || ! isset($schPorId[$oid])) continue;
+                    $otros[] = [
+                        'nombre' => (string) ($schPorId[$oid]['nombre'] ?? ''),
+                        'dias'   => (string) ($schPorId[$oid]['dias'] ?? ''),
+                        'choca'  => (bool) array_intersect($diasPorId[$sid] ?? [], $diasPorId[$oid] ?? []),
+                    ];
+                }
+                return [
+                    'id' => (int) $u['id'], 'name' => $u['name'] ?? '',
+                    'cargo' => $u['cargo'] ?? '', 'code' => $u['personal_code'] ?? '',
+                    'otros' => $otros,
+                ];
+            }, $cands),
             'assigned'  => array_values(array_unique($assignedIds)),
         ];
     }
@@ -568,17 +612,23 @@
             $horariosEmp   = 0;
             $horariosPract = 0;
             $totalIntegra  = 0;
+            // Separación principal: full time / part time
+            $grupos = [
+                'full' => ['titulo' => 'Full time', 'sub' => 'Jornada completa · 8 h o más al día', 'icon' => 'work_history', 'filas' => []],
+                'part' => ['titulo' => 'Part time', 'sub' => 'Jornada parcial · menos de 8 h al día', 'icon' => 'timelapse', 'filas' => []],
+            ];
             foreach ($schData as $row) {
                 if (($row['tipo'] ?? '') === 'Practicante') { $horariosPract++; } else { $horariosEmp++; }
                 $totalIntegra += (int) ($row['total'] ?? 0);
+                $grupos[$row['jornada'] === 'part' ? 'part' : 'full']['filas'][] = $row;
             }
         ?>
 
 
         <section class="tk-stats tk-stats-4">
             <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">schedule</span><div><p class="tk-stat-lbl">Horarios</p><p class="tk-stat-val"><?= $totalHorarios ?></p></div></div>
-            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">work</span><div><p class="tk-stat-lbl">De empleados</p><p class="tk-stat-val"><?= $horariosEmp ?></p></div></div>
-            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">school</span><div><p class="tk-stat-lbl">De practicantes</p><p class="tk-stat-val"><?= $horariosPract ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">work_history</span><div><p class="tk-stat-lbl">Full time</p><p class="tk-stat-val"><?= count($grupos['full']['filas']) ?></p></div></div>
+            <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">timelapse</span><div><p class="tk-stat-lbl">Part time</p><p class="tk-stat-val"><?= count($grupos['part']['filas']) ?></p></div></div>
             <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">group</span><div><p class="tk-stat-lbl">Integrantes</p><p class="tk-stat-val"><?= $totalIntegra ?></p></div></div>
         </section>
 
@@ -603,43 +653,130 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="dev-table-wrap hr-block">
-                <table class="dev-table" id="hrTabla">
-                        <thead>
-                            <tr>
-                                <th>Horario</th>
-                                <th>Tipo</th>
-                                <th>Dias</th>
-                                <th>Hora</th>
-                                <th>Tolerancia</th>
-                                <th>Integrantes</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($schData as $sd):
-                                $s = $sch = $sd;
-                                $isActive = ($s['estado'] ?? '') === 'Activo';
-                                $isPract = ($s['tipo'] ?? '') === 'Practicante';
-                                $detail = htmlspecialchars(json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
-                            ?>
-                                <tr onclick="openScheduleDetail(JSON.parse(<?= $detail ?>))"
-                                    data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>"
-                                    data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
-                                    <td>
-                                        <div class="sch-name">
-                                            <strong><?= esc($s['nombre']) ?></strong>
-                                        </div>
+            <?php foreach ($grupos as $gKey => $g): ?>
+            <section class="hr-grupo hr-grupo-<?= $gKey ?>" data-grupo="<?= $gKey ?>">
+                <header class="hr-grupo-head">
+                    <span class="hr-grupo-ic"><span class="material-symbols-outlined"><?= $g['icon'] ?></span></span>
+                    <div>
+                        <h2><?= esc($g['titulo']) ?> <b class="hr-grupo-n"><?= count($g['filas']) ?></b></h2>
+                        <p><?= esc($g['sub']) ?></p>
+                    </div>
+                </header>
+                <?php if (empty($g['filas'])): ?>
+                    <div class="hr-block hr-grupo-vacio">
+                        <span class="material-symbols-outlined">schedule</span>
+                        Aún no hay horarios <?= esc(mb_strtolower($g['titulo'])) ?>. Créalo con «Nuevo horario» y elige <b><?= esc($g['titulo']) ?></b>.
+                    </div>
+                <?php else: ?>
+                <div class="dev-table-wrap hr-block">
+                    <table class="dev-table hr-tabla">
+                            <thead>
+                                <tr>
+                                    <th>Horario</th>
+                                    <th>Tipo</th>
+                                    <th>Dias</th>
+                                    <th>Hora</th>
+                                    <th>Tolerancia</th>
+                                    <th>Integrantes</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($g['filas'] as $sd):
+                                    $s = $sch = $sd;
+                                    $isActive = ($s['estado'] ?? '') === 'Activo';
+                                    $isPract = ($s['tipo'] ?? '') === 'Practicante';
+                                    $detail = htmlspecialchars(json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
+                                ?>
+                                    <tr onclick="openScheduleDetail(JSON.parse(<?= $detail ?>))"
+                                        data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>"
+                                        data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
+                                        <td>
+                                            <div class="sch-name">
+                                                <strong><?= esc($s['nombre']) ?></strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="hr-tag <?= $isPract ? 'hr-tag-pract' : 'hr-tag-emp' ?>">
+                                                <span class="material-symbols-outlined"><?= $isPract ? 'school' : 'work' ?></span>
+                                                <?= esc($tipoLabels[$s['tipo'] ?? 'Empleado'] ?? 'Empleados') ?>
+                                            </span>
+                                        </td>
+                                        <td><?= esc($s['dias']) ?></td>
+                                        <td>
+                                            <span class="hr-turnos">
+                                                <span class="hr-turno hr-chips">
+                                                    <span class="hr-chip"><?= esc($s['entrada']) ?></span>
+                                                    <span class="hr-arrow">→</span>
+                                                    <span class="hr-chip"><?= esc($s['salida']) ?></span>
+                                                </span>
+                                                <?php if (!empty($s['doble'])): ?>
+                                                    <span class="hr-turno hr-chips">
+                                                        <span class="hr-chip"><?= esc($s['entrada2']) ?></span>
+                                                        <span class="hr-arrow">→</span>
+                                                        <span class="hr-chip"><?= esc($s['salida2']) ?></span>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </span>
+                                            <?php if (!empty($s['horas'])): ?>
+                                                <span class="hr-hours"><?= esc($s['horas']) ?> h al día<?= !empty($s['doble']) ? ' · doble turno' : '' ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?= esc($s['tolerancia']) ?> min</td>
+                                        <td>
+                                            <button type="button" class="hr-int-btn" onclick="event.stopPropagation(); openIntegrantes(<?= (int) $s['id'] ?>)">
+                                                <span class="material-symbols-outlined">group</span> <?= (int) $s['total'] ?>
+                                            </button>
+                                        </td>
+                                        <td><span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span></td>
+                                        <td class="dev-table-actions" onclick="event.stopPropagation()">
+                                            <button class="dev-btn-icon" title="Editar" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>', '<?= esc($s['jornada']) ?>')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="dev-btn-icon" title="Integrantes" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
+                                                <span class="material-symbols-outlined">group_add</span>
+                                            </button>
+                                            <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario? Se desasignarán sus integrantes."}'>
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
+                                                <button type="submit" class="dev-btn-icon dev-btn-danger" title="Eliminar">
+                                                    <span class="material-symbols-outlined">delete</span>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <tr class="hr-vacio-row" style="display:none;">
+                                    <td colspan="8" class="hr-vacio">
+                                        <span class="material-symbols-outlined">search_off</span>
+                                        Ningún horario coincide con la búsqueda
                                     </td>
-                                    <td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="dev-table-mobile">
+                        <?php foreach ($g['filas'] as $s):
+                            $isActive = ($s['estado'] ?? '') === 'Activo';
+                            $isPract = ($s['tipo'] ?? '') === 'Practicante';
+                        ?>
+                            <div class="dev-table-card" data-tipo="<?= esc($s['tipo'] ?? 'Empleado') ?>" data-busca="<?= esc(mb_strtolower(trim(($s['nombre'] ?? '') . ' ' . ($s['tipo'] ?? '') . ' ' . ($s['dias'] ?? '')))) ?>">
+                                <div class="dev-table-card-header">
+                                    <strong><?= esc($s['nombre']) ?></strong>
+                                    <span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span>
+                                </div>
+                                <div class="dev-table-card-body">
+                                    <p style="margin-top:0;">
                                         <span class="hr-tag <?= $isPract ? 'hr-tag-pract' : 'hr-tag-emp' ?>">
                                             <span class="material-symbols-outlined"><?= $isPract ? 'school' : 'work' ?></span>
                                             <?= esc($tipoLabels[$s['tipo'] ?? 'Empleado'] ?? 'Empleados') ?>
                                         </span>
-                                    </td>
-                                    <td><?= esc($s['dias']) ?></td>
-                                    <td>
+                                    </p>
+                                    <p><strong>Dias:</strong> <?= esc($s['dias']) ?></p>
+                                    <p>
+                                        <strong>Horario:</strong>
                                         <span class="hr-turnos">
                                             <span class="hr-turno hr-chips">
                                                 <span class="hr-chip"><?= esc($s['entrada']) ?></span>
@@ -657,101 +794,32 @@
                                         <?php if (!empty($s['horas'])): ?>
                                             <span class="hr-hours"><?= esc($s['horas']) ?> h al día<?= !empty($s['doble']) ? ' · doble turno' : '' ?></span>
                                         <?php endif; ?>
-                                    </td>
-                                    <td><?= esc($s['tolerancia']) ?> min</td>
-                                    <td>
-                                        <button type="button" class="hr-int-btn" onclick="event.stopPropagation(); openIntegrantes(<?= (int) $s['id'] ?>)">
-                                            <span class="material-symbols-outlined">group</span> <?= (int) $s['total'] ?>
+                                    </p>
+                                    <p><strong>Tolerancia:</strong> <?= esc($s['tolerancia']) ?> min</p>
+                                    <p style="margin-bottom:0;">
+                                        <button type="button" class="hr-int-btn" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
+                                            <span class="material-symbols-outlined">group</span> <?= (int) $s['total'] ?> integrantes
                                         </button>
-                                    </td>
-                                    <td><span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span></td>
-                                    <td class="dev-table-actions" onclick="event.stopPropagation()">
-                                        <button class="dev-btn-icon" title="Editar" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                        <button class="dev-btn-icon" title="Integrantes" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
-                                            <span class="material-symbols-outlined">group_add</span>
-                                        </button>
-                                        <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario? Se desasignarán sus integrantes."}'>
-                                            <?= csrf_field() ?>
-                                            <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
-                                            <button type="submit" class="dev-btn-icon dev-btn-danger" title="Eliminar">
-                                                <span class="material-symbols-outlined">delete</span>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                            <tr id="hrVacio" style="display:none;">
-                                <td colspan="8" class="hr-vacio">
-                                    <span class="material-symbols-outlined">search_off</span>
-                                    Ningún horario coincide con la búsqueda
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="dev-table-mobile">
-                    <?php foreach ($schData as $s):
-                        $isActive = ($s['estado'] ?? '') === 'Activo';
-                        $isPract = ($s['tipo'] ?? '') === 'Practicante';
-                    ?>
-                        <div class="dev-table-card">
-                            <div class="dev-table-card-header">
-                                <strong><?= esc($s['nombre']) ?></strong>
-                                <span class="dev-badge <?= $isActive ? 'dev-badge-green' : 'dev-badge-red' ?>"><?= $isActive ? 'Activo' : 'Inactivo' ?></span>
-                            </div>
-                            <div class="dev-table-card-body">
-                                <p style="margin-top:0;">
-                                    <span class="hr-tag <?= $isPract ? 'hr-tag-pract' : 'hr-tag-emp' ?>">
-                                        <span class="material-symbols-outlined"><?= $isPract ? 'school' : 'work' ?></span>
-                                        <?= esc($tipoLabels[$s['tipo'] ?? 'Empleado'] ?? 'Empleados') ?>
-                                    </span>
-                                </p>
-                                <p><strong>Dias:</strong> <?= esc($s['dias']) ?></p>
-                                <p>
-                                    <strong>Horario:</strong>
-                                    <span class="hr-turnos">
-                                        <span class="hr-turno hr-chips">
-                                            <span class="hr-chip"><?= esc($s['entrada']) ?></span>
-                                            <span class="hr-arrow">→</span>
-                                            <span class="hr-chip"><?= esc($s['salida']) ?></span>
-                                        </span>
-                                        <?php if (!empty($s['doble'])): ?>
-                                            <span class="hr-turno hr-chips">
-                                                <span class="hr-chip"><?= esc($s['entrada2']) ?></span>
-                                                <span class="hr-arrow">→</span>
-                                                <span class="hr-chip"><?= esc($s['salida2']) ?></span>
-                                            </span>
-                                        <?php endif; ?>
-                                    </span>
-                                    <?php if (!empty($s['horas'])): ?>
-                                        <span class="hr-hours"><?= esc($s['horas']) ?> h al día<?= !empty($s['doble']) ? ' · doble turno' : '' ?></span>
-                                    <?php endif; ?>
-                                </p>
-                                <p><strong>Tolerancia:</strong> <?= esc($s['tolerancia']) ?> min</p>
-                                <p style="margin-bottom:0;">
-                                    <button type="button" class="hr-int-btn" onclick="openIntegrantes(<?= (int) $s['id'] ?>)">
-                                        <span class="material-symbols-outlined">group</span> <?= (int) $s['total'] ?> integrantes
+                                    </p>
+                                </div>
+                                <div class="dev-table-card-actions">
+                                    <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>', '<?= esc($s['jornada']) ?>')">
+                                        <span class="material-symbols-outlined">edit</span>
                                     </button>
-                                </p>
+                                    <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario?"}'>
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
+                                        <button type="submit" class="dev-btn-icon dev-btn-danger">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="dev-table-card-actions">
-                                <button class="dev-btn-icon" onclick="openEditModal(<?= (int) $s['id'] ?>, '<?= esc($s['nombre'], 'attr') ?>', '<?= esc($s['tipo']) ?>', '<?= esc($s['dias'], 'attr') ?>', '<?= esc($s['entrada']) ?>', '<?= esc($s['salida']) ?>', <?= (int) $s['tolerancia'] ?>, '<?= empty($s['estado']) ? '' : esc($s['estado']) ?>', '<?= esc($s['entrada2']) ?>', '<?= esc($s['salida2']) ?>')">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </button>
-                                <form action="<?= site_url('admin/delete-schedule') ?>" method="POST" style="display:inline;" data-confirm-delete='{"message":"¿Eliminar este horario?"}'>
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="sch_id" value="<?= (int) $s['id'] ?>">
-                                    <button type="submit" class="dev-btn-icon dev-btn-danger">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
+            <?php endforeach; ?>
             <?php endif; ?>
 
     </div>
@@ -786,6 +854,21 @@
                         <span class="hr-choice-tx">Empleado<small>Horario para empleados</small></span>
                     </label>
                 </div>
+
+                <span class="hr-sec-label">Jornada</span>
+                <div class="hr-choice" id="hrJornadaPick">
+                    <label class="hr-choice-opt">
+                        <input type="radio" name="sch_jornada" value="full">
+                        <span class="hr-choice-ic"><span class="material-symbols-outlined">work_history</span></span>
+                        <span class="hr-choice-tx">Full time<small>8 h o más al día</small></span>
+                    </label>
+                    <label class="hr-choice-opt">
+                        <input type="radio" name="sch_jornada" value="part">
+                        <span class="hr-choice-ic"><span class="material-symbols-outlined">timelapse</span></span>
+                        <span class="hr-choice-tx">Part time<small>Menos de 8 h al día</small></span>
+                    </label>
+                </div>
+                <p class="hr-jornada-auto" id="hrJornadaAuto"><span class="material-symbols-outlined">auto_awesome</span><span>Se marca sola cuando pongas las horas. Puedes cambiarla.</span></p>
 
                 <span class="hr-sec-label">Turno</span>
                 <div class="hr-modal-grid">
@@ -902,6 +985,17 @@
                         <span class="material-symbols-outlined">work</span> Empleado
                     </label>
                 </div>
+                <div class="hr-seg" id="hrJornadaEdit" style="margin-bottom:6px;">
+                    <label class="hr-seg-btn">
+                        <input type="radio" name="sch_jornada" value="full">
+                        <span class="material-symbols-outlined">work_history</span> Full time
+                    </label>
+                    <label class="hr-seg-btn">
+                        <input type="radio" name="sch_jornada" value="part">
+                        <span class="material-symbols-outlined">timelapse</span> Part time
+                    </label>
+                </div>
+                <p class="hr-jornada-auto" id="hrJornadaEditAuto" style="margin:0 0 12px;"></p>
                 <div class="dev-form-grid">
                     <div class="dev-field">
                         <label for="edit_sch_nombre">Nombre</label>
@@ -1064,6 +1158,78 @@ var SCHEDULES = JSON.parse('<?= $intJson ?>');
     });
 })();
 
+// ── Jornada: full time / part time, detectada por las horas del día ──
+var HR_HORAS_FULL = <?= (int) \App\Libraries\Asistencia\Jornada::HORAS_FULL ?>;
+function hrDetectar(e1, s1, e2, s2) {
+    var t = hrMins(e1, s1) + ((e2 && s2) ? hrMins(e2, s2) : 0);
+    return { min: t, jornada: t <= 0 ? '' : (t >= HR_HORAS_FULL * 60 ? 'full' : 'part') };
+}
+function hrNombreJornada(j) { return j === 'part' ? 'Part time' : 'Full time'; }
+function hrMarcar(pick, cls, valor) {
+    pick.querySelectorAll(cls).forEach(function(c) {
+        var r = c.querySelector('input');
+        r.checked = (r.value === valor);
+        c.classList.toggle('on', r.checked);
+    });
+}
+function hrAviso(el, det, elegida) {
+    if (!el) return;
+    el.classList.remove('aviso');
+    if (!det.min) {
+        el.innerHTML = '<span class="material-symbols-outlined">auto_awesome</span><span>Se marca sola cuando pongas las horas. Puedes cambiarla.</span>';
+        return;
+    }
+    var h = hrFmt(det.min) + ' al día';
+    if (elegida && elegida !== det.jornada) {
+        el.classList.add('aviso');
+        el.innerHTML = '<span class="material-symbols-outlined">info</span><span>Tiene ' + h + ', lo normal sería <b>' + hrNombreJornada(det.jornada) + '</b>. Lo dejaste como <b>' + hrNombreJornada(elegida) + '</b>.</span>';
+    } else {
+        el.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Detectado: ' + h + ' → <b>' + hrNombreJornada(det.jornada) + '</b>.</span>';
+    }
+}
+(function() {
+    var form = document.getElementById('createScheduleForm');
+    var pick = document.getElementById('hrJornadaPick');
+    if (!form || !pick) return;
+    var manual = false;
+    function v(id) { var x = document.getElementById(id); return x ? x.value : ''; }
+    function actualizar() {
+        var det = hrDetectar(v('sch_hora_entrada'), v('sch_hora_salida'), v('sch_hora_entrada2'), v('sch_hora_salida2'));
+        if (!manual && det.jornada) hrMarcar(pick, '.hr-choice-opt', det.jornada);
+        var sel = pick.querySelector('input:checked');
+        hrAviso(document.getElementById('hrJornadaAuto'), det, sel ? sel.value : '');
+    }
+    pick.addEventListener('change', function(e) {
+        if (e.target.name !== 'sch_jornada') return;
+        manual = true;
+        hrMarcar(pick, '.hr-choice-opt', e.target.value);
+        actualizar();
+    });
+    form.addEventListener('input', function(e) { if (/hora/.test(e.target.name || '')) actualizar(); });
+    actualizar();
+})();
+function hrJornadaEditAviso() {
+    var pick = document.getElementById('hrJornadaEdit');
+    var det = hrDetectar(
+        document.getElementById('edit_sch_hora_entrada').value, document.getElementById('edit_sch_hora_salida').value,
+        document.getElementById('edit_sch_hora_entrada2').value, document.getElementById('edit_sch_hora_salida2').value);
+    var sel = pick.querySelector('input:checked');
+    hrAviso(document.getElementById('hrJornadaEditAuto'), det, sel ? sel.value : '');
+}
+(function() {
+    var pick = document.getElementById('hrJornadaEdit');
+    if (!pick) return;
+    pick.addEventListener('change', function(e) {
+        if (e.target.name !== 'sch_jornada') return;
+        hrMarcar(pick, '.hr-seg-btn', e.target.value);
+        hrJornadaEditAviso();
+    });
+    ['edit_sch_hora_entrada', 'edit_sch_hora_salida', 'edit_sch_hora_entrada2', 'edit_sch_hora_salida2'].forEach(function(id) {
+        var x = document.getElementById(id);
+        if (x) x.addEventListener('input', hrJornadaEditAviso);
+    });
+})();
+
 function initials(n) {
     return String(n || '?').trim().split(/\s+/).map(function(w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
 }
@@ -1090,7 +1256,7 @@ function hrTotalDia(sch) {
     return t;
 }
 
-function openEditModal(id, nombre, tipo, dias, entrada, salida, tolerancia, estado, entrada2, salida2) {
+function openEditModal(id, nombre, tipo, dias, entrada, salida, tolerancia, estado, entrada2, salida2, jornada) {
     document.getElementById('edit_sch_id').value = id;
     document.getElementById('edit_sch_nombre').value = nombre;
     document.getElementById('edit_sch_dias').value = dias;
@@ -1106,6 +1272,12 @@ function openEditModal(id, nombre, tipo, dias, entrada, salida, tolerancia, esta
         r.checked = (r.value === tipo);
         c.classList.toggle('on', r.checked);
     });
+    document.getElementById('hrJornadaEdit').querySelectorAll('.hr-seg-btn').forEach(function(c) {
+        var r = c.querySelector('input');
+        r.checked = (r.value === (jornada || ''));
+        c.classList.toggle('on', r.checked);
+    });
+    hrJornadaEditAviso();
     document.getElementById('editModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -1183,7 +1355,8 @@ document.getElementById('createModal').addEventListener('click', function(e) {
         var tipo = sel ? sel.value : 'Empleado';
         var prac = tipo === 'Practicante';
         txt(pv.nombre, f.nombre && f.nombre.value.trim() ? f.nombre.value.trim() : 'Nuevo horario');
-        txt(pv.tipo, prac ? 'Practicantes' : 'Empleados');
+        var jSel = form.querySelector('input[name="sch_jornada"]:checked');
+        txt(pv.tipo, (prac ? 'Practicantes' : 'Empleados') + (jSel ? ' · ' + hrNombreJornada(jSel.value) : ''));
         if (pv.icon) {
             pv.icon.innerHTML = '<span class="material-symbols-outlined">' + (prac ? 'school' : 'work') + '</span>';
         }
@@ -1218,24 +1391,25 @@ document.getElementById('createModal').addEventListener('click', function(e) {
 
 // ── Buscador + filtros por tipo (admin/usuarios) ──
 (function() {
-    var tabla = document.getElementById('hrTabla');
-    if (!tabla) return;
+    var grupos = Array.prototype.slice.call(document.querySelectorAll('.hr-grupo'));
+    if (!grupos.length) return;
     var input = document.getElementById('hrSearch');
     var pills = Array.prototype.slice.call(document.querySelectorAll('#hrFiltros .hr-pill'));
-    var filas = Array.prototype.slice.call(tabla.querySelectorAll('tbody tr:not(#hrVacio)'));
-    var vacio = document.getElementById('hrVacio');
     var tipo  = '';
     function aplicar() {
         var q = (((input && input.value) || '').trim()).toLowerCase();
-        var visibles = 0;
-        filas.forEach(function(f) {
-            var okTipo = !tipo || f.getAttribute('data-tipo') === tipo;
-            var okTxt  = !q || (f.getAttribute('data-busca') || '').indexOf(q) !== -1;
-            var ok = okTipo && okTxt;
-            f.style.display = ok ? '' : 'none';
-            if (ok) visibles++;
+        grupos.forEach(function(g) {
+            var visibles = 0;
+            g.querySelectorAll('.hr-tabla tbody tr:not(.hr-vacio-row), .dev-table-card').forEach(function(f) {
+                var okTipo = !tipo || f.getAttribute('data-tipo') === tipo;
+                var okTxt  = !q || (f.getAttribute('data-busca') || '').indexOf(q) !== -1;
+                var ok = okTipo && okTxt;
+                f.style.display = ok ? '' : 'none';
+                if (ok && f.tagName === 'TR') visibles++;
+            });
+            var vacio = g.querySelector('.hr-vacio-row');
+            if (vacio) vacio.style.display = visibles ? 'none' : '';
         });
-        if (vacio) vacio.style.display = visibles ? 'none' : '';
     }
     if (input) input.addEventListener('input', aplicar);
     pills.forEach(function(p) {
@@ -1248,6 +1422,9 @@ document.getElementById('createModal').addEventListener('click', function(e) {
     });
 })();
 
+function hrEsc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+}
 function openIntegrantes(id) {
     var sch = SCHEDULES.find(function(s) { return s.id === id; });
     if (!sch) return;
@@ -1263,10 +1440,19 @@ function openIntegrantes(id) {
     } else {
         list.innerHTML = sch.cands.map(function(u) {
             var on = sch.assigned.indexOf(u.id) !== -1;
-            return '<label class="int-item ' + (isPract ? '' : 'emp') + '">'
-                 + '<input type="checkbox" name="sch_users[]" value="' + u.id + '"' + (on ? ' checked' : '') + '>'
+            var otros = u.otros || [];
+            var choque = otros.filter(function(o) { return o.choca; })[0];
+            var bloqueado = !on && !!choque;
+            var nota = '';
+            if (choque) {
+                nota = '<small class="int-otro choca"><span class="material-symbols-outlined">block</span>Ya tiene «' + hrEsc(choque.nombre) + '» los mismos días</small>';
+            } else if (otros.length) {
+                nota = '<small class="int-otro"><span class="material-symbols-outlined">event_repeat</span>También en: ' + otros.map(function(o) { return '«' + hrEsc(o.nombre) + '» (' + hrEsc(o.dias) + ')'; }).join(', ') + '</small>';
+            }
+            return '<label class="int-item ' + (isPract ? '' : 'emp') + (bloqueado ? ' int-bloq' : '') + '">'
+                 + '<input type="checkbox" name="sch_users[]" value="' + u.id + '"' + (on ? ' checked' : '') + (bloqueado ? ' disabled' : '') + '>'
                  + '<div class="int-av">' + initials(u.name) + '</div>'
-                 + '<div class="int-main"><b>' + (u.name || 'Sin nombre') + '</b><span>' + (u.cargo || '—') + ' · ' + (u.code || '') + '</span></div>'
+                 + '<div class="int-main"><b>' + hrEsc(u.name || 'Sin nombre') + '</b><span>' + hrEsc(u.cargo || '—') + ' · ' + hrEsc(u.code || '') + '</span>' + nota + '</div>'
                  + '</label>';
         }).join('');
     }

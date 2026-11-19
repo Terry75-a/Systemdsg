@@ -107,6 +107,8 @@ class AuthController extends BaseController
     // Guarda en sesión: logged_in, ids, códigos (ADMIN-XXX / EMPL-XXX / PRCT-XXX), empresa y rol
     private function setSessionUser(array $u): void
     {
+        // El rol sale de la tabla `roles` (users.id_rol); si no, de users.role
+        $u['role'] = \App\Libraries\Asistencia\Roles::deUsuario($u);
         session()->regenerate(true);
         session()->set([
             'logged_in'      => true,
@@ -114,6 +116,7 @@ class AuthController extends BaseController
             'user_name'      => $u['name'],
             'user_email'     => $u['email'],
             'user_role'      => $u['role'] ?? 'Empleado',
+            'user_id_rol'    => \App\Libraries\Asistencia\Roles::idDe($u['role']),
             'user_dni'       => $u['dni'] ?? '',
             'user_code'      => $u['personal_code'] ?? ($u['admin_code'] ?? ''),
             'user_admin_code' => $u['admin_code'] ?? '',
@@ -196,7 +199,7 @@ class AuthController extends BaseController
             $this->userModel->updateLastLogin($found['id']);
             $this->setSessionUser($found);
 
-            $role = $found['role'] ?? 'Empleado';
+            $role = session()->get('user_role') ?? 'Empleado';
             return redirect()->to(base_url($this->homeFor($role)));
         }
 
@@ -249,7 +252,7 @@ class AuthController extends BaseController
             $this->userModel->updateLastLogin($user['id']);
             $this->setSessionUser($user);
 
-            $role = $user['role'] ?? 'Empleado';
+            $role = session()->get('user_role') ?? 'Empleado';
             return redirect()->to(base_url($this->homeFor($role)));
         }
 
@@ -284,7 +287,7 @@ class AuthController extends BaseController
         $this->userModel->updateLastLogin($found['id']);
         $this->setSessionUser($found);
 
-        $role = $found['role'] ?? 'Empleado';
+        $role = session()->get('user_role') ?? 'Empleado';
         return redirect()->to(base_url($this->homeFor($role)));
     }
 

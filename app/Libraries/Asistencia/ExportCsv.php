@@ -22,7 +22,7 @@ class ExportCsv
     {
         $salida = "\xEF\xBB\xBF";
         $salida .= implode(self::SEPARADOR, [
-            'Fecha', 'Nombre', 'DNI', 'Entrada', 'Salida',
+            'Fecha', 'Nombre', 'DNI', '1a entrada', '1a salida', '2a entrada', '2a salida', 'Turnos',
             'Estado', 'Observacion', 'Lat', 'Lng', 'IP',
         ]) . "\r\n";
 
@@ -31,8 +31,12 @@ class ExportCsv
                 $f['date'] ?? '',
                 $f['name'] ?? '',
                 $f['dni'] ?? '',
+                // Doble turno: las 4 marcas. Un solo turno: entrada y salida en el 1er par.
                 substr((string) ($f['time_in'] ?? ''), 0, 5),
-                substr((string) ($f['time_out'] ?? ''), 0, 5),
+                substr((string) (! empty($f['doble']) ? ($f['time_out1'] ?? '') : ($f['time_out'] ?? '')), 0, 5),
+                ! empty($f['doble']) ? substr((string) ($f['time_in2'] ?? ''), 0, 5) : '',
+                ! empty($f['doble']) ? substr((string) ($f['time_out'] ?? ''), 0, 5) : '',
+                ! empty($f['doble']) ? 'Doble' : 'Uno',
                 self::ESTADOS[(string) ($f['status'] ?? '')] ?? ($f['status'] ?? ''),
                 $f['observacion'] ?? '',
                 $f['lat'] ?? '',

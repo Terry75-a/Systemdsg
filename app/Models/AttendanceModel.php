@@ -11,7 +11,7 @@ class AttendanceModel extends Model
     protected $useAutoIncrement = true;
 
     protected $allowedFields = [
-        'admin_id', 'user_id', 'name', 'dni', 'date', 'time_in', 'time_out',
+        'admin_id', 'user_id', 'name', 'dni', 'date', 'time_in', 'time_out1', 'time_in2', 'time_out',
         'status', 'observacion', 'evidencia', 'lat', 'lng', 'ip', 'geo_ok',
     ];
 

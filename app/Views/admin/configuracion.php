@@ -322,6 +322,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'configuracion']) ?>
@@ -575,6 +577,21 @@
                         </div>
                     <?php endif; ?>
                 </section>
+
+                <!-- Zona de peligro: borrar datos de la empresa -->
+                <?php $cd = $conteoDatos ?? []; ?>
+                <section class="tk-card tk-ovh cfg-danger">
+                    <div class="tk-card-head">
+                        <div><h3>Zona de peligro</h3><p>Borra datos de tu empresa para empezar de cero. No se puede deshacer.</p></div>
+                        <span class="tk-chip-soft cfg-danger-chip">Irreversible</span>
+                    </div>
+                    <div class="cfg-danger-body">
+                        <p>Eliges qué borrar: personal, asistencias y horas, incidencias, horarios o notificaciones. Tu cuenta, la configuración, los festivos y los datos de otras empresas no se tocan.</p>
+                        <button type="button" class="dev-btn cfg-danger-btn" id="btn-borrar-datos">
+                            <span class="material-symbols-outlined">delete_forever</span> Borrar datos
+                        </button>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
@@ -618,6 +635,133 @@
         </div>
     </div>
 
+    <div class="dev-modal-overlay" id="modal-borrar">
+        <div class="dev-modal">
+            <div class="dev-modal-head">
+                <h2><span class="material-symbols-outlined">delete_forever</span> Borrar datos de la empresa</h2>
+                <button type="button" class="dev-modal-close" data-mc aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form action="<?= site_url('admin/borrar-datos') ?>" method="POST" id="form-borrar" autocomplete="off">
+                <?= csrf_field() ?>
+                <div class="dev-modal-body">
+                    <div class="cfg-del-warn">
+                        <span class="material-symbols-outlined">warning</span>
+                        <span>Lo que marques se borra para siempre, con sus fotos. Si lo necesitas, exporta antes los reportes.</span>
+                    </div>
+                    <p class="cfg-del-label">¿Qué quieres borrar?</p>
+                    <label class="cfg-del-opt">
+                        <input type="checkbox" name="categorias[]" value="personal" data-del="personal">
+                        <span class="material-symbols-outlined cfg-del-ico">group</span>
+                        <span class="cfg-del-txt"><b>Personal</b><span>Empleados y practicantes, con su biometría (rostro y huella). Borra también todas sus asistencias e incidencias.</span></span>
+                        <span class="cfg-del-count"><?= (int) ($cd['personal'] ?? 0) ?></span>
+                    </label>
+                    <label class="cfg-del-opt">
+                        <input type="checkbox" name="categorias[]" value="asistencias" data-del="asistencias">
+                        <span class="material-symbols-outlined cfg-del-ico">schedule</span>
+                        <span class="cfg-del-txt"><b>Asistencias y horas</b><span>Todas las marcaciones, su auditoría y las fotos de evidencia. Las horas se calculan de aquí.</span></span>
+                        <span class="cfg-del-count"><?= (int) ($cd['asistencias'] ?? 0) ?></span>
+                    </label>
+                    <label class="cfg-del-opt">
+                        <input type="checkbox" name="categorias[]" value="incidencias" data-del="incidencias">
+                        <span class="material-symbols-outlined cfg-del-ico">report</span>
+                        <span class="cfg-del-txt"><b>Incidencias</b><span>Tardanzas, faltas, justificaciones y sus fotos.</span></span>
+                        <span class="cfg-del-count"><?= (int) ($cd['incidencias'] ?? 0) ?></span>
+                    </label>
+                    <label class="cfg-del-opt">
+                        <input type="checkbox" name="categorias[]" value="horarios" data-del="horarios">
+                        <span class="material-symbols-outlined cfg-del-ico">calendar_month</span>
+                        <span class="cfg-del-txt"><b>Horarios</b><span>Los horarios de la empresa. Al personal que quede se le quita el horario asignado.</span></span>
+                        <span class="cfg-del-count"><?= (int) ($cd['horarios'] ?? 0) ?></span>
+                    </label>
+                    <label class="cfg-del-opt">
+                        <input type="checkbox" name="categorias[]" value="notificaciones" data-del="notificaciones">
+                        <span class="material-symbols-outlined cfg-del-ico">notifications</span>
+                        <span class="cfg-del-txt"><b>Notificaciones</b><span>Los avisos del panel y los de tu personal.</span></span>
+                        <span class="cfg-del-count"><?= (int) ($cd['notificaciones'] ?? 0) ?></span>
+                    </label>
+                    <p class="cfg-del-note" id="del-note" hidden>Al borrar el personal también se borran sus asistencias e incidencias.</p>
+                    <div class="cfg-field">
+                        <label for="del_password">Tu contraseña</label>
+                        <input type="password" id="del_password" name="password" autocomplete="current-password" required>
+                    </div>
+                    <div class="cfg-field">
+                        <label for="del_confirm">Escribe <b>ELIMINAR</b> para confirmar</label>
+                        <input type="text" id="del_confirm" name="confirmacion" autocomplete="off" placeholder="ELIMINAR" required>
+                    </div>
+                </div>
+                <div class="dev-modal-footer">
+                    <button type="button" class="dev-btn dev-btn-text" data-mc>Cancelar</button>
+                    <button type="submit" class="dev-btn cfg-danger-btn" id="del-submit" disabled>
+                        <span class="material-symbols-outlined">delete_forever</span> Borrar definitivamente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .cfg-danger { border: 1px solid color-mix(in oklab, #c62828 35%, transparent) !important; }
+        .cfg-danger .tk-card-head h3 { color: #c62828; }
+        .cfg-danger-chip { background: color-mix(in oklab, #c62828 12%, transparent) !important; color: #c62828 !important; }
+        .cfg-danger-body { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 20px 20px; }
+        .cfg-danger-body p { margin: 0; flex: 1 1 320px; font-size: 13px; color: var(--dev-text-secondary, #5f635d); }
+        .cfg-danger-btn { background: #c62828 !important; color: #fff !important; border: 0 !important; border-radius: 9999px !important; display: inline-flex; align-items: center; gap: 6px; padding: 0 16px !important; height: 38px; font-weight: 600; }
+        .cfg-danger-btn:hover { background: #a91f1f !important; }
+        .cfg-danger-btn:disabled { opacity: .45; cursor: not-allowed; }
+        .cfg-danger-btn .material-symbols-outlined { font-size: 18px; }
+        .cfg-del-warn { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: color-mix(in oklab, #c62828 10%, transparent); color: #a91f1f; font-size: 13px; font-weight: 600; margin-bottom: 14px; }
+        .cfg-del-label { margin: 0 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
+        .cfg-del-opt { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--dev-border, #e4e4e7); margin-bottom: 8px; cursor: pointer; }
+        .cfg-del-opt:has(input:checked) { border-color: #c62828; background: color-mix(in oklab, #c62828 6%, transparent); }
+        .cfg-del-opt input { width: 18px; height: 18px; accent-color: #c62828; flex: 0 0 auto; }
+        .cfg-del-ico { font-size: 20px; opacity: .7; }
+        .cfg-del-txt { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+        .cfg-del-txt b { font-size: 14px; }
+        .cfg-del-txt span { font-size: 12px; opacity: .75; }
+        .cfg-del-count { min-width: 32px; height: 24px; padding: 0 8px; border-radius: 9999px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--dev-surface-variant, #f1f3f4); }
+        .cfg-del-note { margin: 4px 0 12px; font-size: 12px; font-weight: 600; color: #a91f1f; }
+        html.dark .cfg-danger .tk-card-head h3, html.dark .cfg-danger-chip, html.dark .cfg-del-note { color: #ff8f8f !important; }
+        html.dark .cfg-del-warn { color: #ffb3b3; background: color-mix(in oklab, #ff8f8f 14%, transparent); }
+        html.dark .cfg-del-opt { border-color: #2a2a2a; }
+        html.dark .cfg-del-count { background: #222; color: #e8eaed; }
+    </style>
+
+    <script>
+    (function () {
+        var btn = document.getElementById('btn-borrar-datos');
+        var ov = document.getElementById('modal-borrar');
+        if (!btn || !ov) return;
+        var form = document.getElementById('form-borrar');
+        var submit = document.getElementById('del-submit');
+        var pass = document.getElementById('del_password');
+        var conf = document.getElementById('del_confirm');
+        var note = document.getElementById('del-note');
+        var cb = function (k) { return form.querySelector('[data-del="' + k + '"]'); };
+        function refresh() {
+            var personal = cb('personal').checked;
+            ['asistencias', 'incidencias'].forEach(function (k) {
+                var el = cb(k);
+                if (personal) { el.checked = true; el.disabled = true; } else { el.disabled = false; }
+            });
+            note.hidden = !personal;
+            var alguno = form.querySelectorAll('input[name="categorias[]"]:checked').length > 0;
+            submit.disabled = !(alguno && pass.value.length > 0 && conf.value.trim().toUpperCase() === 'ELIMINAR');
+        }
+        form.addEventListener('input', refresh);
+        form.addEventListener('change', refresh);
+        // las casillas deshabilitadas no se envían: se reactivan justo antes de enviar
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('input[name="categorias[]"]').forEach(function (el) { el.disabled = false; });
+            submit.disabled = true;
+            submit.innerHTML = '<span class="material-symbols-outlined">hourglass_top</span> Borrando…';
+        });
+        function cerrar() { ov.classList.remove('is-open'); form.reset(); refresh(); }
+        btn.addEventListener('click', function () { ov.classList.add('is-open'); setTimeout(function () { cb('personal').focus(); }, 50); });
+        ov.addEventListener('mousedown', function (e) { if (e.target === ov) cerrar(); });
+        ov.querySelectorAll('[data-mc]').forEach(function (b) { b.addEventListener('click', cerrar); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ov.classList.contains('is-open')) cerrar(); });
+    })();
+    </script>
     <script>window.__sseDisponible = <?= json_encode(PHP_SAPI !== 'cli-server') ?>;</script>
     <script src="<?= base_url('js/realtime.js') ?>"></script>
     <script>

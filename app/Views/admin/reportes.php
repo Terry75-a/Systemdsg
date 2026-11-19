@@ -170,6 +170,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'reportes']) ?>
@@ -341,8 +343,12 @@
                             <tr>
                                 <th>Empleado</th>
                                 <th>Fecha</th>
-                                <th>Entrada</th>
-                                <th>Salida</th>
+                                <?php $hayDoble = (bool) array_filter(array_column($attendance, 'doble')); ?>
+                                <?php if ($hayDoble): ?>
+                                    <th>1ª entrada</th><th>1ª salida</th><th>2ª entrada</th><th>2ª salida</th>
+                                <?php else: ?>
+                                    <th>Entrada</th><th>Salida</th>
+                                <?php endif; ?>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -364,8 +370,20 @@
                                     </div>
                                 </td>
                                 <td class="tk-cell-mono"><?= !empty($r['date']) ? esc(date('d/m/Y', strtotime($r['date']))) : '—' ?></td>
-                                <td class="tk-cell-mono"><?= !empty($r['time_in']) ? esc(substr($r['time_in'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
-                                <td class="tk-cell-mono"><?= !empty($r['time_out']) ? esc(substr($r['time_out'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                <?php $hc = static fn ($v) => !empty($v) ? esc(substr((string) $v, 0, 5)) : '<span class="tk-cell-muted">—</span>'; ?>
+                                <?php if ($hayDoble && !empty($r['doble'])): ?>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_in'] ?? '') ?></td>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_out1'] ?? '') ?></td>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_in2'] ?? '') ?></td>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_out'] ?? '') ?></td>
+                                <?php elseif ($hayDoble): ?>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_in'] ?? '') ?></td>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_out'] ?? '') ?></td>
+                                    <td class="tk-cell-muted" colspan="2">Un solo turno</td>
+                                <?php else: ?>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_in'] ?? '') ?></td>
+                                    <td class="tk-cell-mono"><?= $hc($r['time_out'] ?? '') ?></td>
+                                <?php endif; ?>
                                 <td><span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span></td>
                             </tr>
                         <?php endforeach; ?>

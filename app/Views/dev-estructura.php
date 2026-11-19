@@ -125,7 +125,29 @@
         .perm-no { color: var(--g-error); opacity: 0.5; }
         .perm-partial { color: #e37400; }
 
+        .alert { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; font-size: 14px; margin-bottom: 16px; }
+        .alert-success { background: var(--g-success-light); color: var(--g-success); }
+        .alert-danger, .alert-error, .alert-warning { background: var(--g-error-light); color: var(--g-error); }
+        .alert .material-symbols-outlined { font-size: 20px; }
         .perm-mobile { display: none; }
+        .perm-table-wrap { overflow-x: auto; }
+        .perm-table { min-width: 560px; }
+        .perm-nota { font-size: 11px; font-weight: 400; color: var(--g-text-secondary); margin-top: 2px; }
+        .perm-na { font-size: 11px; color: var(--g-text-secondary); opacity: .7; }
+        .perm-switch { position: relative; display: inline-block; width: 38px; height: 22px; cursor: pointer; vertical-align: middle; }
+        .perm-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+        .perm-slider { position: absolute; inset: 0; border-radius: 22px; background: var(--g-outline, #c4c7c5); transition: background .2s; }
+        .perm-slider::before { content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+        .perm-switch input:checked + .perm-slider { background: var(--g-success, #1e8e3e); }
+        .perm-switch input:checked + .perm-slider::before { transform: translateX(16px); }
+        .perm-switch input:focus-visible + .perm-slider { outline: 2px solid var(--g-primary, #1a73e8); outline-offset: 2px; }
+        .perm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .perm-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-top: 1px solid var(--g-outline-variant, #e3e3e3); flex-wrap: wrap; }
+        .perm-hint { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--g-text-secondary); flex: 1 1 280px; }
+        .perm-hint .material-symbols-outlined { font-size: 16px; }
+        .perm-save { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 20px; padding: 9px 18px; font: inherit; font-weight: 500; background: var(--g-primary, #1a73e8); color: #fff; cursor: pointer; }
+        .perm-save:disabled { opacity: .45; cursor: default; }
+        .perm-save .material-symbols-outlined { font-size: 18px; }
         .perm-card {
             background: var(--g-surface);
             border: 1px solid var(--g-border);
@@ -154,13 +176,14 @@
             .hierarchy { align-items: stretch; }
             .flow-step { gap: 10px; }
             .flow-num { width: 36px; height: 36px; font-size: 14px; }
-            .perm-table-wrap { display: none; }
-            .perm-mobile { display: flex !important; flex-direction: column; gap: 12px; padding: 16px; }
+            .perm-table th, .perm-table td { padding: 10px 8px; }
         }
     </style>
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
 <div class="dev-layout">
@@ -178,6 +201,13 @@
         </header>
 
         <div class="dev-content">
+            <?php $flashMsg = session()->getFlashdata('msg'); $flashTipo = session()->getFlashdata('tipo') ?? 'success'; ?>
+            <?php if (!empty($flashMsg)): ?>
+                <div class="alert alert-<?= esc($flashTipo) ?>">
+                    <span class="material-symbols-outlined filled"><?= $flashTipo === 'success' ? 'check_circle' : 'warning' ?></span>
+                    <span><?= esc($flashMsg) ?></span>
+                </div>
+            <?php endif; ?>
             <div class="grid-2">
 
                 <div class="card">
@@ -303,93 +333,66 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card grid-full" id="permisos">
                     <div class="card-head">
                         <h2><span class="material-symbols-outlined">lock</span> Permisos por rol</h2>
                     </div>
 
-                    <div class="perm-table-wrap">
-                        <table class="perm-table">
-                            <thead>
-                                <tr>
-                                    <th>Accion</th>
-                                    <th>Dev</th>
-                                    <th>Admin</th>
-                                    <th>Empleado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Crear Admin</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Crear Empleado</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Generar codigo</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Ver asistencia</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-partial">remove</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Marcar asistencia</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Eliminar usuarios</td>
-                                    <td><span class="material-symbols-outlined perm-check perm-yes">check_circle</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                    <td><span class="material-symbols-outlined perm-check perm-no">cancel</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="perm-mobile">
-                        <?php
-                        $perms = [
-                            ['action' => 'Crear Admin',       'dev' => true,  'admin' => false, 'emp' => false],
-                            ['action' => 'Crear Empleado',    'dev' => true,  'admin' => true,  'emp' => false],
-                            ['action' => 'Generar codigo',    'dev' => true,  'admin' => true,  'emp' => false],
-                            ['action' => 'Ver asistencia',    'dev' => true,  'admin' => true,  'emp' => 'partial'],
-                            ['action' => 'Marcar asistencia', 'dev' => false, 'admin' => false, 'emp' => true],
-                            ['action' => 'Eliminar usuarios', 'dev' => true,  'admin' => false, 'emp' => false],
-                        ];
-                        foreach ($perms as $p):
-                        ?>
-                        <div class="perm-card">
-                            <div class="perm-card-title"><?= $p['action'] ?></div>
-                            <div class="perm-card-roles">
-                                <div class="perm-role">
-                                    <span class="perm-role-name">Dev</span>
-                                    <span class="perm-role-icon"><?= $p['dev'] ? '✅' : '❌' ?></span>
-                                </div>
-                                <div class="perm-role">
-                                    <span class="perm-role-name">Admin</span>
-                                    <span class="perm-role-icon"><?= $p['admin'] ? '✅' : '❌' ?></span>
-                                </div>
-                                <div class="perm-role">
-                                    <span class="perm-role-name">Empleado</span>
-                                    <span class="perm-role-icon"><?= $p['emp'] === true ? '✅' : ($p['emp'] === 'partial' ? '⚠️' : '❌') ?></span>
-                                </div>
-                            </div>
+                    <form method="post" action="<?= site_url('dios/permisos') ?>" id="perm-form">
+                        <?= csrf_field() ?>
+                        <div class="perm-table-wrap">
+                            <table class="perm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Acción</th>
+                                        <?php foreach (\App\Libraries\Asistencia\PermisosRol::ROLES as $rol): ?>
+                                            <th><?= esc($rol) ?></th>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach (\App\Libraries\Asistencia\PermisosRol::ACCIONES as $accion => $def): ?>
+                                    <tr>
+                                        <td>
+                                            <?= esc($def['label']) ?>
+                                            <?php if (! empty($def['nota'])): ?><div class="perm-nota"><?= esc($def['nota']) ?></div><?php endif; ?>
+                                        </td>
+                                        <?php foreach (\App\Libraries\Asistencia\PermisosRol::ROLES as $rol): ?>
+                                            <?php $v = $permisos[$accion][$rol] ?? null; ?>
+                                            <td>
+                                                <?php if ($v === null): ?>
+                                                    <span class="perm-na" title="Este rol no tiene una pantalla para esta acción">No aplica</span>
+                                                <?php else: ?>
+                                                    <label class="perm-switch" title="<?= esc($rol . ': ' . $def['label']) ?>">
+                                                        <input type="checkbox" name="perm[<?= esc($accion) ?>][<?= esc($rol) ?>]" value="1" <?= $v ? 'checked' : '' ?>>
+                                                        <span class="perm-slider"></span>
+                                                        <span class="perm-sr"><?= esc($rol . ' · ' . $def['label']) ?></span>
+                                                    </label>
+                                                <?php endif; ?>
+                                            </td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
+                        <div class="perm-foot">
+                            <span class="perm-hint">
+                                <span class="material-symbols-outlined">info</span>
+                                Los roles salen de la tabla <code>roles</code>. Al desactivar un permiso, el sistema bloquea esa acción aunque el usuario tenga el botón a la vista.
+                            </span>
+                            <button type="submit" class="perm-save" id="perm-save" disabled>
+                                <span class="material-symbols-outlined">save</span> Guardar permisos
+                            </button>
+                        </div>
+                    </form>
+                    <script>
+                    (function () {
+                        var f = document.getElementById('perm-form'), b = document.getElementById('perm-save');
+                        if (!f || !b) return;
+                        f.addEventListener('change', function () { b.disabled = false; });
+                    })();
+                    </script>
                 </div>
 
             </div>

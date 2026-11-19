@@ -76,7 +76,7 @@ class EmployeeController extends BaseController
 
         // Horario del propio admin del practicante (o asignado directamente)
         $schedules  = $this->scheduleModel->getActive($adminId > 0 ? $adminId : null);
-        $miHorario  = $this->pickSchedule($schedules, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+        $miHorario  = \App\Libraries\Asistencia\Jornada::delDia($schedules, $user, $hoy);
 
         $hoyRegistro = $this->attendanceModel->findByUserAndDate($userId, $hoy) ?: null;
 
@@ -136,15 +136,22 @@ class EmployeeController extends BaseController
 
         // Días reales del horario (misma lectura que /admin/horas y el cron de faltas):
         // "Mar - Sáb" → mar..sáb, "Lun, Mié, Vie" → esos tres. Sin horario → 0 días.
-        $diasSet         = $miHorario ? \App\Libraries\Asistencia\HorasQuery::diasSemana((string) ($miHorario['dias'] ?? '')) : [];
-        $diasSemana      = count($diasSet);
-        $horasDia        = $this->horasDiarias($miHorario);
+        // Puede tener varios horarios (L-V + sábado): cada día usa el suyo.
+        $semanaHorarios  = [];
+        for ($i = 0; $i < 7; $i++) {
+            $d = date('Y-m-d', strtotime($weekStart . " +{$i} day"));
+            $h = \App\Libraries\Asistencia\Jornada::delDia($schedules, $user, $d);
+            if ($h && \App\Libraries\Asistencia\Jornada::esDiaLaborable($h, $d)) {
+                $semanaHorarios[$i + 1] = $h;
+            }
+        }
+        $diasSemana      = count($semanaHorarios);
         $horasSemana     = $this->horasDe($registrosSemana);
         $horasMes        = $this->horasDe($misRegistros);
         $festivosSemana  = $this->festivoModel->fechasEnRango($weekStart, $weekEnd, $adminId > 0 ? $adminId : null);
         $festivosMesHoy  = $this->festivoModel->fechasEnRango(date('Y-m-01'), $hoy, $adminId > 0 ? $adminId : null);
-        $horasSemanaEsp  = round($horasDia * $this->diasProgramadosEn($weekStart, $weekEnd, $diasSet, $festivosSemana), 1);
-        $horasMesEsp     = round($horasDia * $this->diasProgramadosEn(date('Y-m-01'), $hoy, $diasSet, $festivosMesHoy), 1);
+        $horasSemanaEsp  = $this->horasProgramadasEn($schedules, $user, $weekStart, $weekEnd, $festivosSemana);
+        $horasMesEsp     = $this->horasProgramadasEn($schedules, $user, date('Y-m-01'), $hoy, $festivosMesHoy);
 
         // ── Saldo del mes con la misma librería que /admin/horas:
         //    horas reales vs las programadas en el horario ──
@@ -154,7 +161,7 @@ class EmployeeController extends BaseController
             $resumen = (new \App\Libraries\Asistencia\HorasQuery())->porEmpleado(
                 $misRegistros,
                 [$user],
-                $miHorario ? [(int) $miHorario['id'] => $miHorario] : [],
+                array_column($schedules, null, 'id'),
                 $this->festivoModel->fechasEnRango($mesIni, $hoy, $adminId > 0 ? $adminId : null),
                 $mesIni,
                 $hoy
@@ -204,6 +211,8 @@ class EmployeeController extends BaseController
             'pctPractica'     => $pctPractica,
             'miInfo'          => $user,
             'miHorario'       => $miHorario,
+            'misHorarios'     => \App\Libraries\Asistencia\Jornada::horariosDe($schedules, $user) ?: ($miHorario ? [$miHorario] : []),
+            'semanaHorarios'  => $semanaHorarios,
             'hoyRegistro'     => $hoyRegistro,
             'salidaPendiente' => $salidaPendiente,
             'salidasPendientes' => $salidasPendientes,
@@ -237,35 +246,29 @@ class EmployeeController extends BaseController
     {
         $h = 0.0;
         foreach ($registros as $r) {
-            if (empty($r['date']) || empty($r['time_in']) || empty($r['time_out'])) continue;
-            $s = (strtotime($r['date'] . ' ' . $r['time_out']) - strtotime($r['date'] . ' ' . $r['time_in'])) / 3600;
-            if ($s > 0 && $s <= 24) $h += $s;
+            if (empty($r['date']) || empty($r['time_in'])) continue;
+            // Con doble turno se descuenta el descanso real (salida→regreso)
+            $min = \App\Libraries\Asistencia\Jornada::minutosRegistro($r, null);
+            if ($min > 0 && $min <= 24 * 60) $h += $min / 60;
         }
         return round($h, 1);
     }
 
-    /** Horas que dura la jornada diaria del horario (0 si no hay horario) */
-    private function horasDiarias(?array $horario): float
+    /** Horas programadas en un rango, usando en cada día el horario que le toca. */
+    private function horasProgramadasEn(array $schedules, array $user, string $desde, string $hasta, array $festivos = []): float
     {
-        if (empty($horario['hora_entrada']) || empty($horario['hora_salida'])) return 0.0;
-        $s = (strtotime($horario['hora_salida']) - strtotime($horario['hora_entrada'])) / 3600;
-        return $s > 0 ? round($s, 1) : 0.0;
+        $feriados = array_flip(array_map('strval', $festivos));
+        $min = 0;
+        for ($d = $desde, $i = 0; $d <= $hasta && $i < 400; $d = date('Y-m-d', strtotime($d . ' +1 day')), $i++) {
+            if (isset($feriados[$d])) continue;
+            $h = \App\Libraries\Asistencia\Jornada::delDia($schedules, $user, $d);
+            if ($h && \App\Libraries\Asistencia\Jornada::esDiaLaborable($h, $d)) {
+                $min += \App\Libraries\Asistencia\Jornada::minutosJornada($h);
+            }
+        }
+        return round($min / 60, 1);
     }
 
-    /**
-     * Días programados entre dos fechas: sólo los días de la semana del horario
-     * ($diasSet usa date('w'): 0=dom..6=sáb) y que no sean feriado.
-     */
-    private function diasProgramadosEn(string $desde, string $hasta, array $diasSet, array $festivos = []): int
-    {
-        if ($diasSet === []) return 0;
-        $feriados = array_flip(array_map('strval', $festivos));
-        $n = 0;
-        for ($d = $desde, $i = 0; $d <= $hasta && $i < 400; $d = date('Y-m-d', strtotime($d . ' +1 day')), $i++) {
-            if (isset($diasSet[(int) date('w', strtotime($d))]) && ! isset($feriados[$d])) $n++;
-        }
-        return $n;
-    }
 
     /**
      * ¿Hoy toca trabajar según el horario? Devuelve el motivo si NO toca
@@ -425,7 +428,7 @@ class EmployeeController extends BaseController
                 return redirect()->to(base_url('mi-panel'));
             }
 
-            $scPend      = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+            $scPend      = $this->scheduleScore($adminId, $user, (string) ($pendiente['date'] ?? date('Y-m-d')));
             $horaProg    = substr((string) ($scPend['hora_salida'] ?? ''), 0, 5);
             $horaPost    = trim((string) $this->request->getPost('hora_salida_pendiente'));
 
@@ -545,7 +548,7 @@ class EmployeeController extends BaseController
         // Horario del colaborador (una sola consulta) y si hoy le toca trabajar.
         // En feriado o día de descanso se registra la marca, pero sin tardanza
         // ni salida anticipada: no hay hora de entrada/salida que cumplir.
-        $sc         = $this->scheduleScore($adminId, (int) ($user['schedule_id'] ?? 0), $user['role'] ?? '');
+        $sc         = $this->scheduleScore($adminId, $user, $hoy);
         $diaLibre   = $this->motivoDiaNoLaborable($sc, $adminId, $hoy);
 
         // Falta automática generada por el cron (sin entrada): si el colaborador
@@ -635,14 +638,64 @@ class EmployeeController extends BaseController
             $svc->marcacionRegistrada($attId, $adminId);
             $svc->asistenciaMarcada($attId, $adminId);
 
-            $s->setFlashdata('msg', "Entrada registrada a las {$entrada}" . ($diaLibre !== null
+            $s->setFlashdata('msg', (\App\Libraries\Asistencia\Jornada::esDobleTurno($sc) ? '1ª entrada' : 'Entrada') . " registrada a las {$entrada}" . ($diaLibre !== null
                 ? ' · ' . $diaLibre
                 : ($status === 'late' ? ' · Tardanza' : ' · Puntual')));
             $s->setFlashdata('tipo', $status === 'late' ? 'warning' : 'success');
 
+        } elseif (($marca = \App\Libraries\Asistencia\Jornada::siguienteMarca($att, $sc, $ahora)) === 'salida_descanso') {
+            // DOBLE TURNO · SALIDA AL DESCANSO (13:00): el día sigue abierto
+            $hora = date('H:i');
+            $this->attendanceModel->update((int) $att['id'], [
+                'time_out1' => $ahora,
+                'lat'       => $geo['lat'],
+                'lng'       => $geo['lng'],
+                'ip'        => $geo['ip'],
+                'geo_ok'    => $geo['geo_ok'] ?? null,
+            ]);
+            $vuelta = substr((string) (\App\Libraries\Asistencia\Jornada::bloques($sc)[1][0] ?? ''), 0, 5);
+            $svc = new \App\Services\NotificationService();
+            $svc->marcacionRegistrada((int) $att['id'], $adminId);
+            $svc->asistenciaMarcada((int) $att['id'], $adminId);
+            $s->setFlashdata('msg', "1ª salida registrada a las {$hora}" . ($vuelta !== '' ? " · marca tu 2ª entrada a las {$vuelta}" : ''));
+            $s->setFlashdata('tipo', 'success');
+
+        } elseif ($marca === 'regreso') {
+            // DOBLE TURNO · REGRESO DEL DESCANSO (14:00)
+            $hora    = date('H:i');
+            $entra2  = (string) (\App\Libraries\Asistencia\Jornada::bloques($sc)[1][0] ?? '');
+            $tol     = (int) ($sc['tolerancia'] ?? 10);
+            $tarde   = $diaLibre === null && $entra2 !== '' && strtotime($ahora) > strtotime($entra2) + $tol * 60;
+            $this->attendanceModel->update((int) $att['id'], [
+                'time_in2' => $ahora,
+                'lat'      => $geo['lat'],
+                'lng'      => $geo['lng'],
+                'ip'       => $geo['ip'],
+                'geo_ok'   => $geo['geo_ok'] ?? null,
+            ]);
+            if ($tarde) {
+                $this->incidentModel->insert([
+                    'admin_id'      => $adminId ?: null,
+                    'att_id'        => (int) $att['id'],
+                    'user_id'       => $userId,
+                    'name'          => $user['name'] ?? '',
+                    'tipo'          => 'Tardanza',
+                    'fecha'         => date('Y-m-d H:i:s'),
+                    'detalle'       => "2ª entrada a las {$hora} · prevista " . substr($entra2, 0, 5),
+                    'estado'        => 'Pendiente',
+                    'justificacion' => '',
+                ]);
+            }
+            $svc = new \App\Services\NotificationService();
+            $svc->marcacionRegistrada((int) $att['id'], $adminId);
+            $svc->asistenciaMarcada((int) $att['id'], $adminId);
+            $s->setFlashdata('msg', "2ª entrada registrada a las {$hora}" . ($tarde ? ' · Tardanza' : ' · Puntual'));
+            $s->setFlashdata('tipo', $tarde ? 'warning' : 'success');
+
         } elseif (empty($att['time_out'])) {
-            // SALIDA
+            // SALIDA (final del día)
             $salida = date('H:i');
+            $nomSalida = ! empty($att['time_in2']) ? '2ª salida' : 'Salida';
             $this->attendanceModel->update($att['id'], [
                 'time_out'  => $ahora,
                 'evidencia' => $evidencia ?: ($att['evidencia'] ?? ''),
@@ -654,7 +707,7 @@ class EmployeeController extends BaseController
 
             // Salida anticipada: si se retira antes de su hora de salida prevista
             // (en feriado o día de descanso no hay hora de salida que cumplir)
-            $horaSalidaPrevista = $sc['hora_salida'] ?? '';
+            $horaSalidaPrevista = $sc ? \App\Libraries\Asistencia\Jornada::salidaFinal($sc) : '';
             $salidaAnticipada = ($diaLibre === null && $horaSalidaPrevista !== '' && strtotime($ahora) < strtotime($horaSalidaPrevista));
             $conMotivo = false;
             if ($salidaAnticipada) {
@@ -688,13 +741,13 @@ class EmployeeController extends BaseController
             $svc->asistenciaMarcada((int) $att['id'], $adminId);
 
             if (! $salidaAnticipada) {
-                $s->setFlashdata('msg', "Salida registrada a las {$salida}");
+                $s->setFlashdata('msg', $nomSalida . " registrada a las {$salida}");
                 $s->setFlashdata('tipo', 'success');
             } elseif ($conMotivo) {
-                $s->setFlashdata('msg', "Salida registrada a las {$salida} · salida anticipada con motivo, en revisión");
+                $s->setFlashdata('msg', $nomSalida . " registrada a las {$salida} · salida anticipada con motivo, en revisión");
                 $s->setFlashdata('tipo', 'success');
             } else {
-                $s->setFlashdata('msg', "Salida registrada a las {$salida} · salida anticipada sin motivo: justifícala en Mis Incidencias");
+                $s->setFlashdata('msg', $nomSalida . " registrada a las {$salida} · salida anticipada sin motivo: justifícala en Mis Incidencias");
                 $s->setFlashdata('tipo', 'warning');
             }
 
@@ -1016,35 +1069,11 @@ class EmployeeController extends BaseController
             ->setJSON(['ok' => false, 'msj' => 'Solo tu administrador puede registrar tu biometria.']);
     }
 
-    /**
-     * Elige el horario de una persona: NUNCA mezcla tipos.
-     * Un Empleado jamás ve un horario Practicante ni viceversa.
-     */
-    private function pickSchedule(array $schedules, int $scheduleId, string $role): array
-    {
-        $tipoRole = $role === 'Practicante' ? 'Practicante' : 'Empleado';
-
-        // Solo horarios cuyo tipo coincide con el rol (getActive ordena id DESC)
-        $delTipo = array_values(array_filter(
-            $schedules,
-            fn($s) => ($s['tipo'] ?? 'Empleado') === $tipoRole
-        ));
-
-        // 1. El asignado, solo si es del tipo correcto
-        if ($scheduleId > 0) {
-            foreach ($delTipo as $sch) {
-                if ((int) ($sch['id'] ?? 0) === $scheduleId) return $sch;
-            }
-        }
-
-        // 2. El más reciente del tipo correcto; si no hay, [] (sin horario)
-        return $delTipo[0] ?? [];
-    }
-
-    private function scheduleScore(int $adminId, int $scheduleId = 0, string $role = ''): array
+    /** Horario que le toca a la persona en esa fecha (puede tener varios: L-V, sábado…). */
+    private function scheduleScore(int $adminId, array $user, string $fecha): array
     {
         $schedules = $this->scheduleModel->getActive($adminId > 0 ? $adminId : null);
-        return $this->pickSchedule($schedules, $scheduleId, $role);
+        return \App\Libraries\Asistencia\Jornada::delDia($schedules, $user, $fecha);
     }
 
     // ════════════════════════════════════════

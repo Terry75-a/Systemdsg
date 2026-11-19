@@ -48,6 +48,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/educonecta.css?v=' . filemtime(FCPATH . 'css/index/components/educonecta.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
 <div class="dev-layout">
@@ -58,7 +60,7 @@
             <div class="dev-topbar-row">
                 <div>
                     <h1><strong>Auditoría</strong> de asistencia</h1>
-                    <p>Todas las ediciones manuales sobre marcas, con autor, motivo y valores.</p>
+                    <p>Todas las ediciones manuales sobre marcas, con autor, motivo y valores. <span class="aud-live" id="aud-live" title="Se actualiza sola cada 10 segundos"><i></i> En vivo</span></p>
                 </div>
             </div>
         </header>
@@ -69,19 +71,19 @@
                     <div class="stat-icon" style="background:var(--g-primary-light);color:var(--g-primary);">
                         <span class="material-symbols-outlined">history</span>
                     </div>
-                    <div><b><?= (int) $total ?></b><span>cambios registrados</span></div>
+                    <div><b id="aud-total"><?= (int) $total ?></b><span>cambios registrados</span></div>
                 </div>
                 <div class="aud-stat">
                     <div class="stat-icon" style="background:var(--g-warning-light);color:#e37400;">
                         <span class="material-symbols-outlined">edit_document</span>
                     </div>
-                    <div><b><?= count(array_filter($filas, static fn ($f) => $f['accion'] === 'editar')) ?></b><span>ediciones</span></div>
+                    <div><b id="aud-ediciones"><?= count(array_filter($filas, static fn ($f) => $f['accion'] === 'editar')) ?></b><span>ediciones</span></div>
                 </div>
                 <div class="aud-stat">
                     <div class="stat-icon" style="background:var(--g-success-light);color:var(--g-success);">
                         <span class="material-symbols-outlined">event_available</span>
                     </div>
-                    <div><b><?= count(array_unique(array_filter(array_column($filas, 'empleado')))) ?></b><span>personas afectadas</span></div>
+                    <div><b id="aud-personas"><?= count(array_unique(array_filter(array_column($filas, 'empleado')))) ?></b><span>personas afectadas</span></div>
                 </div>
             </div>
 
@@ -102,7 +104,7 @@
 <script>
 var auditoriaData = <?= json_encode($filas, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;
 
-new DevTable({
+var auditoriaTabla = new DevTable({
     containerId: 'auditoriaTable',
     data: auditoriaData,
     rowsPerPage: 8,
@@ -139,6 +141,47 @@ new DevTable({
         }}
     ]
 });
+
+// En vivo: cada 10 s pregunta si hay cambios nuevos y redibuja la tabla
+(function () {
+    var ultimoId = <?= (int) ($ultimoId ?? 0) ?>;
+    var live = document.getElementById('aud-live');
+    function contar(filas) {
+        var ed = 0, per = {};
+        filas.forEach(function (f) { if (f.accion === 'editar') ed++; if (f.empleado) per[f.empleado] = 1; });
+        document.getElementById('aud-total').textContent = filas.length;
+        document.getElementById('aud-ediciones').textContent = ed;
+        document.getElementById('aud-personas').textContent = Object.keys(per).length;
+    }
+    function revisar() {
+        if (document.hidden) return;
+        fetch('<?= site_url('dios/auditoria/datos') ?>?desde=' + ultimoId, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(function (r) { if (!r.ok) throw r; return r.json(); })
+            .then(function (d) {
+                live.classList.remove('off');
+                if (!d.cambios) return;
+                ultimoId = d.ultimoId;
+                auditoriaTabla.data = d.filas;
+                auditoriaTabla.totalPages = Math.ceil(d.filas.length / auditoriaTabla.rowsPerPage);
+                auditoriaTabla.currentPage = 1;
+                auditoriaTabla.render();
+                contar(d.filas);
+                live.classList.add('flash');
+                setTimeout(function () { live.classList.remove('flash'); }, 1500);
+            })
+            .catch(function () { live.classList.add('off'); });
+    }
+    setInterval(revisar, 10000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) revisar(); });
+})();
 </script>
+<style>
+.aud-live { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: var(--g-success-light); color: var(--g-success); vertical-align: middle; transition: box-shadow .3s; }
+.aud-live i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: audPulso 1.6s ease-in-out infinite; }
+.aud-live.off { background: var(--g-error-light); color: var(--g-error); }
+.aud-live.flash { box-shadow: 0 0 0 4px var(--g-success-light); }
+@keyframes audPulso { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .aud-live i { animation: none; } }
+</style>
 </body>
 </html>

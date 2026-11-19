@@ -47,16 +47,30 @@ class HorasQuery
 
         $salida = [];
         foreach ($personal as $p) {
-            $uid     = (int) ($p['id'] ?? 0);
-            $horario = $horarios[(int) ($p['schedule_id'] ?? 0)] ?? null;
-            $salida[] = $this->resumirPersona(
-                $p,
-                $porUsuario[$uid] ?? [],
-                $horario,
-                $festivoSet,
-                $fi,
-                $ff
-            );
+            $uid = (int) ($p['id'] ?? 0);
+            // Puede tener varios horarios (L-V + sábado): cada marcación y cada
+            // día programado se cuentan con el horario que cubre esa fecha.
+            $suyos = [];
+            foreach (\App\Libraries\Asistencia\HorariosPersona::ids($p) as $sid) {
+                if (isset($horarios[$sid])) $suyos[] = $horarios[$sid];
+            }
+            if (count($suyos) <= 1) {
+                $salida[] = $this->resumirPersona($p, $porUsuario[$uid] ?? [], $suyos[0] ?? null, $festivoSet, $fi, $ff);
+                continue;
+            }
+            $partes = array_fill(0, count($suyos), []);
+            foreach ($porUsuario[$uid] ?? [] as $m) {
+                $k = 0;
+                foreach ($suyos as $i => $h) {
+                    if (\App\Libraries\Asistencia\Jornada::esDiaLaborable($h, (string) ($m['date'] ?? ''))) { $k = $i; break; }
+                }
+                $partes[$k][] = $m;
+            }
+            $res = [];
+            foreach ($suyos as $i => $h) {
+                $res[] = $this->resumirPersona($p, $partes[$i], $h, $festivoSet, $fi, $ff);
+            }
+            $salida[] = $this->unirResumenes($res);
         }
 
         // Ordena: mayor saldo primero (las horas extra arriba)
@@ -104,8 +118,14 @@ class HorasQuery
             }
 
             if ($tout !== '') {
-                // Doble turno: se descuenta el descanso entre bloques
-                $horasTrab += \App\Libraries\Asistencia\Jornada::minutosTrabajados($tin, $tout, $horario);
+                // Doble turno: descanso real si lo marcó; si no, el programado
+                $horasTrab += \App\Libraries\Asistencia\Jornada::minutosRegistro($m, $horario);
+                continue;
+            }
+            if (trim((string) ($m['time_out1'] ?? '')) !== '') {
+                // Salió a descanso y no cerró el día: cuenta sólo el primer tramo
+                $sinSalida++;
+                $horasTrab += \App\Libraries\Asistencia\Jornada::minutosRegistro($m, $horario);
                 continue;
             }
 
@@ -157,6 +177,20 @@ class HorasQuery
             'faltas'          => $faltas,
             'sin_salida'      => $sinSalida,
         ];
+    }
+
+    /** Une los resúmenes de una persona con varios horarios en uno solo. */
+    private function unirResumenes(array $res): array
+    {
+        $out = $res[0];
+        $out['horario']     = implode(' + ', array_filter(array_column($res, 'horario')));
+        $out['horario_txt'] = implode(' | ', array_column($res, 'horario_txt'));
+        foreach (array_slice($res, 1) as $r) {
+            foreach (['dias_laborables', 'dias_trabajados', 'horas_reales', 'horas_programadas', 'saldo_min', 'estimadas', 'tardanzas', 'faltas', 'sin_salida'] as $k) {
+                $out[$k] += (int) $r[$k];
+            }
+        }
+        return $out;
     }
 
     /** Agrega el equipo entero. */

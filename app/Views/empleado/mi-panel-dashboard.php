@@ -73,7 +73,7 @@
             <div class="tk-kv-row"><span>DNI</span><span class="tk-mono"><?= esc($u['dni'] ?? '—') ?></span></div>
             <div class="tk-kv-row"><span>Código</span><span><span class="tk-code"><?= esc($u['personal_code'] ?? '—') ?></span></span></div>
             <div class="tk-kv-row"><span>Correo</span><span><?= esc($u['email'] ?? '') ?></span></div>
-            <div class="tk-kv-row"><span>Horario</span><span class="tk-mono"><?= $sinHorario ? 'Sin horario asignado' : esc(substr((string) $horaEntrada, 0, 5) . ' - ' . substr((string) $horaSalida, 0, 5)) ?></span></div>
+            <div class="tk-kv-row"><span>Horario</span><span class="tk-mono" style="text-align:right;"><?php if ($sinHorario): ?>Sin horario asignado<?php else: foreach (\App\Libraries\Asistencia\Jornada::textoHorarios($misHorarios ?? [$miHorario]) as $i => $lin): ?><?= $i ? '<br>' : '' ?><?= esc($lin) ?><?php endforeach; endif; ?></span></div>
         </div>
     </section>
 

@@ -87,11 +87,7 @@ class AsistenciaCierre extends BaseCommand
             }
 
             $schedules = $scheduleModel->getActive($userAd);
-            $schedule  = Jornada::elegir(
-                $schedules,
-                (int) ($user['schedule_id'] ?? 0),
-                (string) ($user['role'] ?? 'Empleado')
-            );
+            $schedule  = Jornada::delDia($schedules, $user, $fecha);
 
             if (! Jornada::esDiaLaborable($schedule, $fecha)) {
                 continue;

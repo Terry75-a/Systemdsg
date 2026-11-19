@@ -62,7 +62,7 @@
             <div class="tk-kv-row"><span>DNI</span><span class="tk-mono"><?= esc($u['dni'] ?? '—') ?></span></div>
             <div class="tk-kv-row"><span>Correo</span><span><?= esc($u['email'] ?? '—') ?></span></div>
             <div class="tk-kv-row"><span>Cargo</span><span><?= esc(($u['cargo'] ?? '') ?: ($esPrac ? 'Practicante' : 'Colaborador')) ?></span></div>
-            <div class="tk-kv-row"><span>Horario</span><span class="tk-mono"><?= $sinHorario ? 'Sin horario asignado' : esc(($horaEntrada ? substr($horaEntrada, 0, 5) : '?') . ' - ' . ($horaSalida ? substr($horaSalida, 0, 5) : '?') . ($diasHorario ? ' · ' . $diasHorario : '')) ?></span></div>
+            <div class="tk-kv-row"><span>Horario</span><span class="tk-mono" style="text-align:right;"><?php if ($sinHorario): ?>Sin horario asignado<?php else: foreach (\App\Libraries\Asistencia\Jornada::textoHorarios($misHorarios ?? [$miHorario]) as $i => $lin): ?><?= $i ? '<br>' : '' ?><?= esc($lin) ?><?php endforeach; endif; ?></span></div>
             <div class="tk-kv-row"><span>Biometría</span><span>
                 <span class="tk-st <?= !empty($u['huella_registrada']) ? 'tk-st-present' : 'tk-st-justified' ?>">Huella <?= !empty($u['huella_registrada']) ? 'sí' : 'no' ?></span>
                 <span class="tk-st <?= !empty($u['rostro_registrado']) ? 'tk-st-present' : 'tk-st-justified' ?>">Rostro <?= !empty($u['rostro_registrado']) ? 'sí' : 'no' ?></span>

@@ -1,3 +1,21 @@
+<?php
+/**
+ * Chips compactos de biometría: [📷 Foto ✓] [🖐 Huella !]
+ * El color y el ícono final dicen el estado; el texto completo va en title.
+ * La misma estructura la arma bioPersonRefreshFila() en JS.
+ */
+$bioChips = static function (int $r, int $h): string {
+    $chip = static function (string $ico, string $lbl, string $st, string $title): string {
+        $stIco = ['ok' => 'check_circle', 'warn' => 'error', 'bad' => 'cancel'][$st];
+        return '<span class="bio-chip is-' . $st . '" title="' . esc($title) . '" aria-label="' . esc($title) . '">'
+            . '<span class="material-symbols-outlined">' . $ico . '</span>' . $lbl
+            . '<span class="material-symbols-outlined bio-st">' . $stIco . '</span></span>';
+    };
+    return $chip('photo_camera', 'Foto', $r ? 'ok' : 'bad', $r ? 'Foto completa' : 'Foto pendiente')
+        . $chip('fingerprint', 'Huella', $h === 1 ? 'ok' : ($h === 2 ? 'warn' : 'bad'),
+            $h === 1 ? 'Huella completa' : ($h === 2 ? 'Huella incompleta (modo sin lector)' : 'Huella pendiente'));
+};
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -435,6 +453,11 @@
             body:has(.dev-main) .pf-select-wrap { flex: 1 1 auto; }
             body:has(.dev-main) .pf-select { width: 100%; }
         }
+        /* Estado de foto y huella en la lista */
+        .bio-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
+        .bio-chips .tk-chip-soft { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+        .bio-chips .material-symbols-outlined { font-size: 14px; }
+
         /* ── Biometría del personal (la registra el admin) ── */
         .bio-person-block {
             border: 1px solid var(--g-border, #26323f); border-radius: 16px;
@@ -526,6 +549,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
 
@@ -713,12 +738,25 @@
                                             <div class="personal-user">
                                                 <div class="personal-avatar <?= $avatarClass ?>"><?= $initial ?></div>
                                                 <div class="personal-user-txt">
-                                                    <div class="personal-user-name"><?= esc($name) ?></div>
-                                                    <div class="personal-user-sub">DNI <?= esc($emp['dni'] ?? '—') ?><?= !empty($emp['email']) ? ' · ' . esc($emp['email']) : '' ?></div>
-                                                    <div class="personal-user-sub pc-only">
-                                                        <code class="dev-code"><?= esc($emp['personal_code'] ?? '—') ?></code>
+                                                    <div class="pu-top">
+                                                        <span class="personal-user-name"><?= esc($name) ?></span>
                                                         <?php if (!in_array($role, ['Empleado', 'Practicante'], true)): ?><span class="personal-role <?= $roleClass ?>"><?= esc($role) ?></span><?php endif; ?>
-                                                        <span class="pc-area"><?= esc(($emp['area'] ?? '') ?: '—') ?> · <?= esc(($emp['cargo'] ?? '') ?: '—') ?></span>
+                                                    </div>
+                                                    <div class="pu-line pc-only"><?= esc(($emp['area'] ?? '') ?: '—') ?> · <?= esc(($emp['cargo'] ?? '') ?: '—') ?></div>
+                                                    <div class="pu-meta">
+                                                        <code class="dev-code pc-only"><?= esc($emp['personal_code'] ?? '—') ?></code>
+                                                        <span class="pu-dni">DNI <?= esc($emp['dni'] ?? '—') ?></span>
+                                                        <?php if (!empty($emp['email'])): ?><span class="pu-mail" title="<?= esc($emp['email']) ?>"><?= esc($emp['email']) ?></span><?php endif; ?>
+                                                    </div>
+                                                    <?php
+                                                        $bH = (int) ($emp['huella_registrada'] ?? 0);
+                                                        $bR = (int) ($emp['rostro_registrado'] ?? 0);
+                                                        $ctc = $emp['contract_type'] ?? 'Indefinido'; $cdc = (int) ($emp['contract_duration'] ?? 0);
+                                                    ?>
+                                                    <!-- Pantallas grandes (2 columnas): biometría y contrato bajo el nombre -->
+                                                    <div class="pu-bio pc-only">
+                                                        <span class="bio-chips" data-bio-chips="<?= (int) $emp['id'] ?>"><?= $bioChips($bR, $bH) ?></span>
+                                                        <span class="pu-contract"><span class="material-symbols-outlined">description</span><?= $ctc === 'Indefinido' ? 'Indefinido' : ($ctc === 'Meses' ? $cdc . ' mes(es)' : $cdc . ' año(s)') ?></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -734,9 +772,7 @@
                                                 $bH = (int) ($emp['huella_registrada'] ?? 0);
                                                 $bR = (int) ($emp['rostro_registrado'] ?? 0);
                                             ?>
-                                            <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : ($bH || $bR ? 'tk-chip-warn' : 'tk-chip-bad') ?>">
-                                                <?= $bH && $bR ? 'Completa' : ($bH || $bR ? 'Incompleta' : 'Pendiente') ?>
-                                            </span>
+                                            <span class="bio-chips" data-bio-chips="<?= (int) $emp['id'] ?>"><?= $bioChips($bR, $bH) ?></span>
                                             <?php $ctc = $emp['contract_type'] ?? 'Indefinido'; $cdc = (int) ($emp['contract_duration'] ?? 0); ?>
                                             <span class="tk-chip-soft pc-only <?= $ctc === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
                                                 <?= $ctc === 'Indefinido' ? 'Indefinido' : ($ctc === 'Meses' ? $cdc . ' mes(es)' : $cdc . ' año(s)') ?>
@@ -750,29 +786,38 @@
                                         </td>
                                         <td class="personal-dim"><?= esc($emp['created'] ?? 'N/A') ?></td>
                                         <td onclick="event.stopPropagation()">
-                                            <div class="personal-actions">
-                                                <?php if (($emp['role'] ?? '') === 'Empleado' && ($emp['estado'] ?? 'Activo') !== 'Despedido'): ?>
-                                                <button type="button" class="dev-btn-icon" title="Despedir empleado" style="color:#e37400;" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'fire')">
-                                                    <span class="material-symbols-outlined">person_remove</span>
-                                                </button>
-                                                <?php endif; ?>
-                                                <?php if (($emp['role'] ?? '') === 'Practicante' && ($emp['estado'] ?? 'Activo') !== 'Retirado'): ?>
-                                                <button type="button" class="dev-btn-icon" title="Terminar" style="color:#b45309;" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'end')">
-                                                    <span class="material-symbols-outlined">school</span>
-                                                </button>
-                                                <?php endif; ?>
-                                                <button type="button" class="dev-btn-icon" title="Generar nueva contrasena" style="color:#7c4dff;" onclick="openResetPwd(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>')">
-                                                    <span class="material-symbols-outlined">password</span>
-                                                </button>
-                                                <button type="button" class="dev-btn-icon" title="Editar" onclick='openEditModal(<?= json_encode($emp) ?>)'>
-                                                    <span class="material-symbols-outlined">edit</span>
-                                                </button>
-                                                <button type="button" class="dev-btn-icon" title="Biometria (foto y huella)" style="color:var(--g-primary);" onclick='openBioPerson(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)'>
+                                            <div class="personal-actions hu-actions">
+                                                <button type="button" class="dev-btn-icon hu-act" title="Biometría (foto y huella)" aria-label="Biometría" onclick='openBioPerson(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)'>
                                                     <span class="material-symbols-outlined">fingerprint</span>
                                                 </button>
-                                                <button type="button" class="dev-btn-icon" title="Eliminar (definitivo)" style="color:var(--g-error);" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'user')">
-                                                    <span class="material-symbols-outlined">delete</span>
+                                                <button type="button" class="dev-btn-icon hu-act" title="Editar" aria-label="Editar" onclick='openEditModal(<?= json_encode($emp) ?>)'>
+                                                    <span class="material-symbols-outlined">edit</span>
                                                 </button>
+                                                <!-- Menú ⋮ con el resto de acciones (estilo Dropdown de HeroUI) -->
+                                                <div class="hu-menu">
+                                                    <button type="button" class="dev-btn-icon hu-act hu-menu-btn" title="Más acciones" aria-label="Más acciones" aria-haspopup="menu" aria-expanded="false">
+                                                        <span class="material-symbols-outlined">more_vert</span>
+                                                    </button>
+                                                    <div class="hu-menu-list" role="menu" hidden>
+                                                        <button type="button" role="menuitem" class="hu-menu-item" onclick="openResetPwd(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>')">
+                                                            <span class="material-symbols-outlined">password</span><span>Nueva contraseña</span>
+                                                        </button>
+                                                        <?php if (($emp['role'] ?? '') === 'Empleado' && ($emp['estado'] ?? 'Activo') !== 'Despedido'): ?>
+                                                        <button type="button" role="menuitem" class="hu-menu-item is-warn" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'fire')">
+                                                            <span class="material-symbols-outlined">person_remove</span><span>Despedir</span>
+                                                        </button>
+                                                        <?php endif; ?>
+                                                        <?php if (($emp['role'] ?? '') === 'Practicante' && ($emp['estado'] ?? 'Activo') !== 'Retirado'): ?>
+                                                        <button type="button" role="menuitem" class="hu-menu-item is-warn" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'end')">
+                                                            <span class="material-symbols-outlined">school</span><span>Terminar prácticas</span>
+                                                        </button>
+                                                        <?php endif; ?>
+                                                        <div class="hu-menu-sep"></div>
+                                                        <button type="button" role="menuitem" class="hu-menu-item is-danger" onclick="openConfirmDelete(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>', 'user')">
+                                                            <span class="material-symbols-outlined">delete</span><span>Eliminar definitivo</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -830,9 +875,7 @@
                                     $_cd = (int) ($emp['contract_duration'] ?? 0);
                                 ?>
                                 <div class="m-card-chips">
-                                    <span class="tk-chip-soft <?= $bH && $bR ? 'tk-chip-ok' : 'tk-chip-bad' ?>" data-bio-user-m="<?= (int) $emp['id'] ?>">
-                                        <span class="material-symbols-outlined">fingerprint</span> <?= $bH && $bR ? 'Biometría ✓' : 'Biometría pendiente' ?>
-                                    </span>
+                                    <span class="bio-chips" data-bio-chips-m="<?= (int) $emp['id'] ?>"><?= $bioChips($bR, $bH) ?></span>
                                     <span class="tk-chip-soft <?= $_ct === 'Indefinido' ? 'tk-chip-neutral' : 'tk-chip-blue' ?>">
                                         <span class="material-symbols-outlined">description</span> <?= $_ct === 'Indefinido' ? 'Contrato indefinido' : 'Contrato ' . $_cd . ($_ct === 'Meses' ? ' mes(es)' : ' año(s)') ?>
                                     </span>
@@ -946,8 +989,17 @@
                             <span class="tk-code-pill"><?= esc($adminCode ?? 'ADMIN-???') ?></span>
                         </div>
                     </div>
-                    <div class="dev-field"><label>Nombre completo</label><input type="text" id="create_emp_name" name="emp_name" placeholder="Ej. Juan Perez" required></div>
-                    <div class="dev-field"><label>DNI</label><input type="text" name="emp_dni" placeholder="8 digitos (ej. 71234567)" pattern="\d{8}" minlength="8" maxlength="8" inputmode="numeric" title="El DNI peruano tiene 8 digitos" required></div>
+                    <!-- DNI primero: al completar 8 dígitos se buscan los nombres (API DSG) -->
+                    <div class="dev-field dni-field" style="grid-column:1/-1;">
+                        <label for="create_emp_dni">DNI</label>
+                        <div class="dni-search">
+                            <span class="material-symbols-outlined dni-ico">badge</span>
+                            <input type="text" id="create_emp_dni" name="emp_dni" placeholder="8 dígitos, ej. 71234567" pattern="\d{8}" minlength="8" maxlength="8" inputmode="numeric" autocomplete="off" title="El DNI peruano tiene 8 dígitos" required>
+                            <button type="button" class="dni-btn" id="dniBuscarBtn"><span class="material-symbols-outlined">search</span><span class="dni-btn-txt">Buscar</span></button>
+                        </div>
+                        <div class="dni-status" id="dniStatus" aria-live="polite">Escribe el DNI y los nombres se completan solos.</div>
+                    </div>
+                    <div class="dev-field" style="grid-column:1/-1;"><label for="create_emp_name">Nombre completo</label><input type="text" id="create_emp_name" name="emp_name" placeholder="Se completa con el DNI (puedes editarlo)" required></div>
                     <div class="dev-field" style="grid-column:1/-1;"><label>Rol</label><select name="emp_role" required id="create_emp_role" onchange="toggleCreatePracticante(this.value); autofillCargo()"><option value="Empleado">Empleado</option><option value="Practicante">Practicante</option></select></div>
                     <div id="create_practica_fields" style="display:none;grid-column:1/-1;background:var(--g-surface-variant);border:1px solid var(--g-border);border-radius:12px;padding:14px;margin-top:-4px;">
                         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
@@ -1302,7 +1354,7 @@
         </div>
         <div class="dev-modal-footer">
             <button type="button" class="dev-btn" onclick="closeBioPerson()">Cerrar</button>
-            <button type="button" class="dev-btn dev-btn-primary" id="bioPersonSaveBtn" disabled onclick="bioPersonSave()">
+            <button type="button" class="dev-btn dev-btn-primary" id="bioPersonSaveBtn" disabled onclick="bioPersonBtnClick()">
                 <span class="material-symbols-outlined">save</span> Guardar foto
             </button>
         </div>
@@ -1425,78 +1477,68 @@
 </div>
 
 <div class="dev-modal-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetailModal()">
-    <div class="dev-modal" style="max-width:500px;">
-        <div class="dev-modal-head">
-            <h3><span class="material-symbols-outlined">badge</span> <span id="detailName">-</span></h3>
-            <button type="button" class="dev-btn-icon" onclick="closeDetailModal()"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="dev-modal-body">
-            <div class="detail-who" id="detailCover">
-                <div class="detail-avatar" id="detailAvatar"></div>
-                <div class="detail-sub" id="detailRole">-</div>
-            </div>
-            <div class="detail-grid">
-                <div class="detail-field">
-                    <div class="detail-label">DNI</div>
-                    <div class="detail-value"><code id="detailDni">-</code></div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Codigo</div>
-                    <div class="detail-value"><code id="detailCode">-</code></div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Rol</div>
-                    <div class="detail-value" id="detailRolBadge">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Area</div>
-                    <div class="detail-value" id="detailArea">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Cargo</div>
-                    <div class="detail-value" id="detailCargo">-</div>
-                </div>
-                <div class="detail-field" id="detailPracticaBlock" style="display:none;">
-                    <div class="detail-label">Semestre</div>
-                    <div class="detail-value" id="detailSemestre">-</div>
-                </div>
-                <div class="detail-field" id="detailInstBlock" style="display:none;">
-                    <div class="detail-label">Institucion</div>
-                    <div class="detail-value" id="detailInstitucion">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Estado</div>
-                    <div class="detail-value" id="detailEstado">-</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Creado</div>
-                    <div class="detail-value" id="detailCreated">-</div>
-                </div>
-                <div class="detail-field" style="grid-column:span 2;">
-                    <div class="detail-label">Contrato</div>
-                    <div class="detail-value" id="detailContract">Indefinido</div>
-                </div>
-                <div class="detail-field" style="grid-column:span 2;">
-                    <div class="detail-label">Firma</div>
-                    <div class="detail-value" id="detailFirma">Sin firma</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Email</div>
-                    <div class="detail-value" id="detailEmail" style="grid-column:span 2;">-</div>
+    <div class="dev-modal pd-modal" role="dialog" aria-labelledby="detailName">
+        <!-- Cabecera: persona -->
+        <div class="pd-hero">
+            <button type="button" class="pd-close" onclick="closeDetailModal()" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button>
+            <div class="pd-avatar" id="detailAvatar"></div>
+            <div class="pd-hero-txt">
+                <h3 id="detailName">-</h3>
+                <div class="pd-sub" id="detailRole">-</div>
+                <div class="pd-tags">
+                    <span class="pd-tag" id="detailRolBadge">-</span>
+                    <code class="pd-tag pd-code" id="detailCode">-</code>
+                    <span class="pd-tag pd-estado" id="detailEstado">-</span>
                 </div>
             </div>
         </div>
-        <div class="dev-modal-footer">
-            <button type="button" class="dev-btn" onclick="closeDetailModal()">
-                <span class="material-symbols-outlined">close</span> Cerrar
-            </button>
-            <button type="button" class="dev-btn dev-btn-danger" id="detailFireBtn">
+
+        <div class="dev-modal-body pd-body">
+            <!-- Resumen rápido -->
+            <div class="pd-quick">
+                <div class="pd-q">
+                    <span class="pd-q-k"><span class="material-symbols-outlined">badge</span>DNI</span>
+                    <span class="pd-q-v pd-mono" id="detailDni">-</span>
+                </div>
+                <div class="pd-q">
+                    <span class="pd-q-k"><span class="material-symbols-outlined">description</span>Contrato</span>
+                    <span class="pd-q-v" id="detailContract">Indefinido</span>
+                </div>
+                <div class="pd-q pd-q-wide">
+                    <span class="pd-q-k"><span class="material-symbols-outlined">fingerprint</span>Biometría</span>
+                    <span class="pd-q-v"><span class="bio-chips" id="detailBio"></span></span>
+                </div>
+            </div>
+
+            <section class="pd-sec">
+                <h4>Trabajo</h4>
+                <div class="pd-row"><span>Área</span><b id="detailArea">-</b></div>
+                <div class="pd-row"><span>Cargo</span><b id="detailCargo">-</b></div>
+                <div class="pd-row" id="detailInstBlock" style="display:none;"><span>Institución</span><b id="detailInstitucion">-</b></div>
+                <div class="pd-row" id="detailPracticaBlock" style="display:none;"><span>Semestre</span><b id="detailSemestre">-</b></div>
+                <div class="pd-row"><span>Registrado</span><b id="detailCreated">-</b></div>
+            </section>
+
+            <section class="pd-sec">
+                <h4>Contacto</h4>
+                <div class="pd-row"><span>Correo</span><b id="detailEmail">-</b></div>
+            </section>
+
+            <section class="pd-sec">
+                <h4>Firma</h4>
+                <div class="pd-firma" id="detailFirma">Sin firma</div>
+            </section>
+        </div>
+
+        <div class="dev-modal-footer pd-foot">
+            <button type="button" class="pd-btn pd-btn-danger" id="detailFireBtn">
                 <span class="material-symbols-outlined">person_remove</span> Despedir
             </button>
-            <button type="button" class="dev-btn dev-btn-primary" id="detailBioBtn">
-                <span class="material-symbols-outlined">fingerprint</span> Biometria
+            <span class="pd-foot-sp"></span>
+            <button type="button" class="pd-btn" id="detailBioBtn">
+                <span class="material-symbols-outlined">fingerprint</span> Biometría
             </button>
-            <button type="button" class="dev-btn dev-btn-primary" id="detailEditBtn">
+            <button type="button" class="pd-btn pd-btn-primary" id="detailEditBtn">
                 <span class="material-symbols-outlined">edit</span> Editar
             </button>
         </div>
@@ -1658,6 +1700,91 @@ function toggleCreatePracticante(role) {
     if (box) box.style.display = role === 'Practicante' ? 'block' : 'none';
 }
 
+// ── Menú ⋮ de acciones por fila (Dropdown estilo HeroUI) ──
+(function () {
+    var abierto = null;
+    function cerrar() {
+        if (!abierto) return;
+        abierto.list.hidden = true;
+        abierto.btn.setAttribute('aria-expanded', 'false');
+        abierto = null;
+    }
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.hu-menu-btn');
+        if (btn) {
+            e.stopPropagation();
+            var list = btn.parentElement.querySelector('.hu-menu-list');
+            var mismo = abierto && abierto.btn === btn;
+            cerrar();
+            if (mismo) return;
+            // Posición fija para que la tabla con scroll no lo recorte
+            list.hidden = false;
+            var r = btn.getBoundingClientRect();
+            var w = list.offsetWidth, h = list.offsetHeight;
+            var top = r.bottom + 6;
+            if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+            list.style.top = top + 'px';
+            list.style.left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)) + 'px';
+            btn.setAttribute('aria-expanded', 'true');
+            abierto = { btn: btn, list: list };
+            var first = list.querySelector('.hu-menu-item');
+            if (first) first.focus({ preventScroll: true });
+            return;
+        }
+        if (e.target.closest('.hu-menu-item')) { cerrar(); return; }
+        if (!e.target.closest('.hu-menu-list')) cerrar();
+    }, true);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+    window.addEventListener('scroll', cerrar, true);
+    window.addEventListener('resize', cerrar);
+})();
+
+// ── Crear empleado: autocompletar nombres por DNI (API DSG vía /admin/dni) ──
+(function () {
+    var input = document.getElementById('create_emp_dni');
+    var btn   = document.getElementById('dniBuscarBtn');
+    var st    = document.getElementById('dniStatus');
+    var name  = document.getElementById('create_emp_name');
+    if (!input || !btn || !st || !name) return;
+    var ultimo = '';
+    function estado(tipo, ico, txt) {
+        st.className = 'dni-status is-' + tipo;
+        st.innerHTML = (ico ? '<span class="material-symbols-outlined">' + ico + '</span>' : '') + '<span></span>';
+        st.lastChild.textContent = txt;
+    }
+    function buscar(forzar) {
+        var dni = (input.value || '').replace(/\D/g, '').slice(0, 8);
+        input.value = dni;
+        if (dni.length !== 8) { estado('info', '', 'El DNI debe tener 8 dígitos.'); return; }
+        if (dni === ultimo && !forzar) return;
+        ultimo = dni;
+        btn.disabled = true; btn.classList.add('is-loading');
+        estado('loading', 'progress_activity', 'Buscando DNI…');
+        fetch('<?= site_url('admin/dni') ?>/' + dni, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (input.value !== dni) return; // cambió mientras buscaba
+                if (d.ok) {
+                    name.value = d.completo;
+                    name.dispatchEvent(new Event('input', { bubbles: true }));
+                    estado('ok', 'verified', d.completo);
+                } else {
+                    estado(d.existe ? 'bad' : 'warn', d.existe ? 'block' : 'info', d.msg || 'No se encontró el DNI.');
+                    if (!d.existe) name.focus();
+                }
+            })
+            .catch(function () { estado('warn', 'wifi_off', 'No se pudo consultar ahora. Escribe el nombre a mano.'); ultimo = ''; })
+            .finally(function () { btn.disabled = false; btn.classList.remove('is-loading'); });
+    }
+    input.addEventListener('input', function () {
+        input.value = input.value.replace(/\D/g, '').slice(0, 8);
+        if (input.value.length === 8) buscar(false);
+        else if (st.className.indexOf('is-info') === -1) estado('info', '', 'Escribe el DNI y los nombres se completan solos.');
+    });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); buscar(true); } });
+    btn.addEventListener('click', function () { buscar(true); });
+})();
+
 function openResetPwd(userId, name) {
     document.getElementById('resetPwdUserId').value = userId;
     document.querySelector('#resetPwdModal .reset-pwd-name').textContent = name;
@@ -1690,7 +1817,7 @@ function bioPersonSetPreview(url) {
     img.src = url;
     img.style.display = 'block';
     document.getElementById('bioPersonCamWrap').style.display = 'none';
-    document.getElementById('bioPersonSaveBtn').disabled = true;
+    bioPersonBtn();
     document.getElementById('bioPersonClearBtn').style.display = '';
 }
 
@@ -1698,8 +1825,26 @@ function bioPersonHidePreview() {
     var img = document.getElementById('bioPersonPrev');
     img.style.display = 'none';
     img.removeAttribute('src');
-    document.getElementById('bioPersonSaveBtn').disabled = true;
+    bioPersonBtn();
     document.getElementById('bioPersonClearBtn').style.display = 'none';
+}
+
+/**
+ * Botón verde del pie:
+ *  · foto nueva sin guardar → «Guardar foto»
+ *  · foto ya guardada       → «Listo» (cierra la ventana)
+ *  · sin foto               → «Guardar foto» desactivado
+ */
+function bioPersonBtn() {
+    var btn = document.getElementById('bioPersonSaveBtn');
+    var guardada = !!(BIO_P.emp && Number(BIO_P.emp.rostro_registrado) && BIO_P.emp.rostro_path);
+    var listo = !BIO_P.photo && guardada;
+    btn.disabled = !BIO_P.photo && !guardada;
+    btn.innerHTML = '<span class="material-symbols-outlined">' + (listo ? 'check_circle' : 'save') + '</span> ' + (listo ? 'Listo' : 'Guardar foto');
+}
+function bioPersonBtnClick() {
+    if (BIO_P.photo) bioPersonSave();
+    else closeBioPerson();
 }
 
 function bioPersonStopCam() {
@@ -1753,6 +1898,7 @@ function bioPersonShot() {
     BIO_P.photo = c.toDataURL('image/jpeg', 0.85);
     bioPersonSetPreview(BIO_P.photo);
     bioPersonStopCam();
+    bioPersonSave(); // se guarda al tomarla; no depende de la huella
 }
 
 document.getElementById('bioPersonFile').addEventListener('change', function () {
@@ -1762,6 +1908,7 @@ document.getElementById('bioPersonFile').addEventListener('change', function () 
     rd.onload = function () {
         BIO_P.photo = rd.result;
         bioPersonSetPreview(rd.result);
+        bioPersonSave(); // se guarda al subirla; no depende de la huella
     };
     rd.readAsDataURL(f);
     this.value = '';
@@ -1807,6 +1954,7 @@ function bioPersonSave() {
 
     var btn = document.getElementById('bioPersonSaveBtn');
     btn.disabled = true;
+    bioPersonMsg('bioPersonRostroMsg', 'Guardando foto…', true);
 
     var body = new FormData();
     body.set('csrf_test_name', '<?= csrf_hash() ?>');
@@ -1817,7 +1965,7 @@ function bioPersonSave() {
         .then(function (r) { return r.json(); })
         .then(function (d) {
             bioPersonMsg('bioPersonRostroMsg', d.msj || (d.ok ? 'Foto guardada' : 'No se pudo guardar la foto'), !!d.ok);
-            if (!d.ok) { btn.disabled = false; return; }
+            if (!d.ok) { bioPersonBtn(); return; }
 
             BIO_P.photo = null;
             BIO_P.emp.rostro_registrado = 1;
@@ -1830,7 +1978,7 @@ function bioPersonSave() {
             bioPersonRefreshFila();
         })
         .catch(function () {
-            btn.disabled = false;
+            bioPersonBtn();
             bioPersonMsg('bioPersonRostroMsg', 'Error de red. Intentalo de nuevo.', false);
         });
 }
@@ -1886,22 +2034,19 @@ function bioPersonRefreshFila() {
     if (!e) return;
     var h = Number(e.huella_registrada) || 0;
     var r = Number(e.rostro_registrado) || 0;
-    var completo = h > 0 && r > 0;
-
-    var td = document.querySelector('[data-bio-user="' + e.id + '"]');
-    if (td) {
-        var chip = td.querySelector('.tk-chip-soft');
-        if (chip) {
-            chip.className = 'tk-chip-soft ' + (completo ? 'tk-chip-ok' : (h || r ? 'tk-chip-warn' : 'tk-chip-bad'));
-            chip.textContent = completo ? 'Completa' : (h || r ? 'Incompleta' : 'Pendiente');
-        }
+    // Chips compactos (igual que $bioChips en PHP): [📷 Foto ✓] [🖐 Huella !]
+    function chip(ico, lbl, st, title) {
+        var stIco = { ok: 'check_circle', warn: 'error', bad: 'cancel' }[st];
+        return '<span class="bio-chip is-' + st + '" title="' + title + '" aria-label="' + title + '">'
+             + '<span class="material-symbols-outlined">' + ico + '</span>' + lbl
+             + '<span class="material-symbols-outlined bio-st">' + stIco + '</span></span>';
     }
-
-    var mc = document.querySelector('[data-bio-user-m="' + e.id + '"]');
-    if (mc) {
-        mc.className = 'tk-chip-soft ' + (completo ? 'tk-chip-ok' : 'tk-chip-bad');
-        mc.innerHTML = '<span class="material-symbols-outlined">fingerprint</span> ' + (completo ? 'Biometría ✓' : 'Biometría pendiente');
-    }
+    var html = chip('photo_camera', 'Foto', r ? 'ok' : 'bad', r ? 'Foto completa' : 'Foto pendiente')
+             + chip('fingerprint', 'Huella', h === 1 ? 'ok' : (h === 2 ? 'warn' : 'bad'),
+                    h === 1 ? 'Huella completa' : (h === 2 ? 'Huella incompleta (modo sin lector)' : 'Huella pendiente'));
+    document.querySelectorAll('[data-bio-chips="' + e.id + '"], [data-bio-chips-m="' + e.id + '"]').forEach(function (el) {
+        el.innerHTML = html;
+    });
 }
 
 function openBioPerson(emp) {
@@ -2235,18 +2380,28 @@ function openDetailModal(emp) {
     var coverColor = roleColor[role] || roleColor.default;
     var avatarBg = {Dev:'#9334e6',Admin:'var(--g-primary)',Practicante:'#b45309',default:'#1a73e8'};
 
-    document.getElementById('detailAvatar').style.background = avatarBg[role] || avatarBg.default;
-    document.getElementById('detailAvatar').style.color = '#fff';
     document.getElementById('detailAvatar').textContent = initial;
     document.getElementById('detailName').textContent = name;
     document.getElementById('detailRole').textContent = role + (emp.area ? ' - ' + emp.area : '');
     document.getElementById('detailDni').textContent = emp.dni || '---';
     document.getElementById('detailCode').textContent = emp.personal_code || '—';
     document.getElementById('detailRolBadge').textContent = role;
-    document.getElementById('detailRolBadge').style.color = coverColor;
     document.getElementById('detailArea').textContent = emp.area || '-';
     document.getElementById('detailCargo').textContent = emp.cargo || '-';
-    document.getElementById('detailEstado').textContent = emp.estado || 'Activo';
+    var estado = emp.estado || 'Activo';
+    var estEl = document.getElementById('detailEstado');
+    estEl.textContent = estado;
+    estEl.className = 'pd-tag pd-estado ' + (estado === 'Activo' ? 'is-ok' : 'is-off');
+    // Biometría: mismos chips que la tabla
+    var bh = Number(emp.huella_registrada) || 0, br = Number(emp.rostro_registrado) || 0;
+    function chipB(ico, lbl, st, title) {
+        var stIco = { ok: 'check_circle', warn: 'error', bad: 'cancel' }[st];
+        return '<span class="bio-chip is-' + st + '" title="' + title + '"><span class="material-symbols-outlined">' + ico + '</span>' + lbl
+             + '<span class="material-symbols-outlined bio-st">' + stIco + '</span></span>';
+    }
+    document.getElementById('detailBio').innerHTML =
+        chipB('photo_camera', 'Foto', br ? 'ok' : 'bad', br ? 'Foto completa' : 'Foto pendiente')
+      + chipB('fingerprint', 'Huella', bh === 1 ? 'ok' : (bh === 2 ? 'warn' : 'bad'), bh === 1 ? 'Huella completa' : (bh === 2 ? 'Huella incompleta' : 'Huella pendiente'));
     document.getElementById('detailCreated').textContent = emp.created || 'N/A';
     document.getElementById('detailEmail').textContent = emp.email || '-';
     var isPract = emp.role === 'Practicante';
@@ -2263,9 +2418,9 @@ function openDetailModal(emp) {
     if (ct === 'Indefinido') {
         contractTxt = 'Indefinido';
     } else {
-        var per = ct === 'Meses' ? (dur === 1 ? 'mes' : 'meses') : (dur === 1 ? 'ano' : 'anos');
-        contractTxt = 'Por ' + dur + ' ' + per;
-        if (cs) contractTxt += ' - ' + cs + (ce ? ' a ' + ce : '');
+        var per = ct === 'Meses' ? (dur == 1 ? 'mes' : 'meses') : (dur == 1 ? 'año' : 'años');
+        contractTxt = dur + ' ' + per;
+        if (cs) contractTxt += ' · ' + cs + (ce ? ' → ' + ce : '');
     }
     document.getElementById('detailContract').textContent = contractTxt;
 
@@ -2299,7 +2454,7 @@ function openDetailModal(emp) {
     } else if ((emp.role === 'Practicante' && emp.estado !== 'Retirado')) {
         fireAction = 'end';
         fireBtn.style.display = '';
-        fireBtn.innerHTML = '<span class="material-symbols-outlined">school</span> Terminar';
+        fireBtn.innerHTML = '<span class="material-symbols-outlined">school</span> Terminar prácticas';
     } else {
         fireBtn.style.display = 'none';
     }

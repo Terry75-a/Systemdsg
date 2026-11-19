@@ -17,6 +17,48 @@ $cfg = array_merge([
     'onboarding' => true,
 ], $tkCfg ?? []);
 $tk     = $tk ?? [];
+?>
+<style>
+    /* ── Versión celular del dashboard: tarjetas en vez de tablas anchas ── */
+    .tk-dash .tkm-only, .tk-dash .tkm-only-inline { display: none; }
+    @media (max-width: 767.98px) {
+        .tk-dash .tkm-hide { display: none !important; }
+        .tk-dash .tkm-only { display: block; }
+        .tk-dash .tkm-only-inline { display: inline; }
+        .tk-dash .tkm-list { display: flex; flex-direction: column; gap: 10px; padding: 4px 16px 16px; }
+        .tk-dash .tkm-card {
+            border: 1px solid var(--tk-line, rgba(0,0,0,.08)); border-radius: 14px; padding: 12px 14px;
+            background: var(--sb-surface, #fff); display: flex; flex-direction: column; gap: 8px;
+        }
+        .tk-dash .tkm-card.tkm-total { background: var(--sb-surface-container, rgba(0,0,0,.03)); }
+        .tk-dash .tkm-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .tk-dash .tkm-head b { font-size: 14px; font-weight: 700; }
+        .tk-dash .tkm-tot { font-size: 12.5px; font-weight: 600; color: var(--sb-on-surface-variant, #555); text-decoration: none; }
+        .tk-dash .tkm-eq { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 50px;
+            background: var(--sb-surface-container-high, rgba(0,0,0,.06)); white-space: nowrap; }
+        .tk-dash .tkm-eq.is-ok { background: color-mix(in oklab, var(--tk-ontime) 16%, transparent); color: var(--tk-ontime); }
+        .tk-dash .tkm-legend { display: flex; gap: 14px; font-size: 11px; color: var(--sb-on-surface-variant, #666); }
+        .tk-dash .tkm-legend span, .tk-dash .tkm-pair a { display: inline-flex; align-items: center; gap: 5px; }
+        .tk-dash .tkm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px;
+            padding-top: 8px; border-top: 1px solid var(--tk-line, rgba(0,0,0,.06)); }
+        .tk-dash .tkm-row > span:first-child { font-weight: 600; }
+        .tk-dash .tkm-pair { display: inline-flex; gap: 14px; }
+        .tk-dash .tkm-pair a { text-decoration: none; color: inherit; font-weight: 600; }
+        .tk-dash .tkm-meta { font-size: 12px; color: var(--sb-on-surface-variant, #666); }
+        .tk-dash .tkm-states { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+        .tk-dash .tkm-st { display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            padding: 8px 10px; border-radius: 10px; text-decoration: none; color: inherit; font-size: 12.5px; }
+        .tk-dash .tkm-st b { font-size: 15px; }
+        .tk-dash .tkm-st-on { background: color-mix(in oklab, var(--tk-ontime) 14%, transparent); }
+        .tk-dash .tkm-st-late { background: color-mix(in oklab, var(--tk-late) 14%, transparent); }
+        .tk-dash .tkm-st-on b { color: var(--tk-ontime); }
+        .tk-dash .tkm-st-late b { color: var(--tk-late); }
+        .tk-dash .tk-chips { flex-wrap: wrap; row-gap: 8px; }
+        .tk-dash .tk-card-head { flex-wrap: wrap; row-gap: 8px; }
+        .tk-dash .tk-pivot-legend { flex-wrap: wrap; }
+    }
+</style>
+<?php
 $MESES  = \App\Libraries\Asistencia\DashboardStats::MESES;
 $ESTADOS = \App\Libraries\Asistencia\DashboardStats::ESTADOS;
 $year   = (int) ($tk['year'] ?? date('Y'));
@@ -313,7 +355,43 @@ $eqOk = ($tk['eqPct'] ?? null) !== null && $tk['eqPct'] >= $target;
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="tk-scroll">
+                <!-- Celular: una tarjeta por mes -->
+                <div class="tkm-only tkm-list">
+                    <?php if (empty($tk['monthStats'])): ?>
+                        <p class="tk-empty">Sin marcaciones en <?= $year ?> para estos filtros.</p>
+                    <?php endif; ?>
+                    <?php
+                        $tkmFila = function (string $nombre, array $d, int $m) use ($drill, $fmtPct) {
+                            if (!$d['n']) return '<div class="tkm-row"><span>' . $nombre . '</span><span class="tk-muted">Sin marcas</span></div>';
+                            return '<div class="tkm-row"><span>' . $nombre . '</span><span class="tkm-pair">'
+                                . '<a href="' . $drill($m, 'present') . '"><i class="tk-dot tk-dot-on"></i>' . $fmtPct($d['p']) . '</a>'
+                                . '<a href="' . $drill($m, 'late') . '" class="tk-muted"><i class="tk-dot tk-dot-late"></i>' . $fmtPct(100 - ($d['p'] ?? 0)) . '</a>'
+                                . '</span></div>';
+                        };
+                    ?>
+                    <?php foreach ($tk['monthStats'] ?? [] as $row): $ok = $row['eq'] !== null && $row['eq'] >= $target; ?>
+                        <div class="tkm-card">
+                            <div class="tkm-head">
+                                <b><?= $MESES[$row['m'] - 1] ?></b>
+                                <span class="tkm-eq <?= $ok ? 'is-ok' : '' ?>">Equipo <?= $fmtPct($row['eq']) ?><?= $ok ? ' ✓' : '' ?></span>
+                            </div>
+                            <?php if ($row['eq'] !== null): ?><?= $splitBar($row['eq'], 100 - $row['eq'], false, 'tk-w-full') ?><?php endif; ?>
+                            <div class="tkm-legend"><span><i class="tk-dot tk-dot-on"></i>a tiempo</span><span><i class="tk-dot tk-dot-late"></i>fuera</span></div>
+                            <?= $tkmFila('Empleados', $row['emp'], (int) $row['m']) ?>
+                            <?= $tkmFila('Practicantes', $row['prac'], (int) $row['m']) ?>
+                            <div class="tkm-row tkm-meta"><span>Meta</span><span><?= $target ?>%</span></div>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if (!empty($tk['monthStats'])): ?>
+                        <div class="tkm-card tkm-total">
+                            <div class="tkm-head"><b>Total general</b><span class="tkm-eq">Equipo <?= $fmtPct($tk['eqPct'] ?? null) ?></span></div>
+                            <div class="tkm-row"><span>Empleados</span><span><?= $fmtPct($tk['empPct'] ?? null) ?> a tiempo</span></div>
+                            <div class="tkm-row"><span>Practicantes</span><span><?= $fmtPct($tk['pracPct'] ?? null) ?> a tiempo</span></div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="tk-scroll tkm-hide">
                     <table class="tk-table tk-table-hover tk-minw">
                         <thead>
                             <tr>
@@ -362,7 +440,7 @@ $eqOk = ($tk['eqPct'] ?? null) !== null && $tk['eqPct'] >= $target;
                         </tbody>
                     </table>
                 </div>
-                <p class="tk-card-foot">Equipo = promedio de Empleados y Practicantes. Azul con ✓ = cumple la meta. Haz clic en un % para ver esas marcaciones.</p>
+                <p class="tk-card-foot">Equipo = promedio de Empleados y Practicantes. Azul con ✓ = cumple la meta. <span class="tkm-hide">Haz clic</span><span class="tkm-only-inline">Toca</span> un % para ver esas marcaciones.</p>
             </section>
 
             <!-- Meses en las tablas de estado -->
@@ -389,9 +467,38 @@ $eqOk = ($tk['eqPct'] ?? null) !== null && $tk['eqPct'] >= $target;
                         </div>
                         <div class="tk-pivot-legend">
                             <?= $badge('on') ?><?= $badge('late') ?>
-                            <span>Color más intenso = más marcaciones. Pasa el mouse por una celda para ver el detalle; haz clic para ver las marcaciones.</span>
+                            <span class="tkm-hide">Color más intenso = más marcaciones. Pasa el mouse por una celda para ver el detalle; haz clic para ver las marcaciones.</span>
+                            <span class="tkm-only-inline">Toca un número para ver esas marcaciones.</span>
                         </div>
-                        <div class="tk-scroll">
+
+                        <!-- Celular: una tarjeta por mes con sus estados -->
+                        <div class="tkm-only tkm-list">
+                            <?php if (!$pv['rows']): ?><p class="tk-empty">Sin marcaciones para estos filtros.</p><?php endif; ?>
+                            <?php foreach ($pv['rows'] as $f): ?>
+                                <div class="tkm-card">
+                                    <div class="tkm-head">
+                                        <b><?= $MESES[$f['m'] - 1] ?></b>
+                                        <a href="<?= $drill($f['m']) ?>" class="tkm-tot"><?= $num($f['total']) ?> <?= $f['total'] === 1 ? 'marca' : 'marcas' ?></a>
+                                    </div>
+                                    <?= $splitBar($f['on'], $f['late'], true, 'tk-w-full') ?>
+                                    <div class="tkm-states">
+                                        <?php foreach ($f['st'] as $st => $v): if (!$v) continue;
+                                            $sv = \App\Libraries\Asistencia\DashboardStats::servicio($st) ?? 'on'; ?>
+                                            <a href="<?= $drill($f['m'], $st) ?>" class="tkm-st tkm-st-<?= $sv ?>">
+                                                <span><?= $ESTADOS[$st] ?></span><b><?= $num($v) ?></b>
+                                            </a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php if (count($pv['rows']) > 1): ?>
+                                <div class="tkm-card tkm-total">
+                                    <div class="tkm-head"><b>Total</b><span class="tkm-tot"><?= $num(array_sum(array_column($pv['rows'], 'total'))) ?> marcas</span></div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="tk-scroll tkm-hide">
                             <table class="tk-pivot tk-minw">
                                 <thead>
                                     <tr>

@@ -96,5 +96,7 @@ class Security extends BaseConfig
      *
      * @see https://codeigniter4.github.io/userguide/libraries/security.html#redirection-on-failure
      */
-    public bool $redirect = (ENVIRONMENT === 'production');
+    // Si el token caducó (página abierta mucho rato), se vuelve a la página
+    // anterior con un aviso en vez de mostrar la pantalla de error 403.
+    public bool $redirect = true;
 }

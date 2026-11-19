@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers\Admin;
 
+use App\Libraries\Asistencia\BorradoDatos;
+
 /**
  * Configuración del admin: datos de empresa, notificaciones y festivos.
  */
@@ -13,7 +15,64 @@ class ConfigAdminController extends AdminBaseController
             'activePage' => 'configuracion',
             'config'     => $this->configModel->getConfig($this->adminId()),
             'festivos'   => $this->festivoModel->getAll($this->adminId()),
+            'conteoDatos' => (new BorradoDatos(db_connect(), $this->adminId()))->contar(),
         ]));
+    }
+
+    // ════════════════════════════════════════
+    // ZONA DE PELIGRO: borrar datos de la empresa
+    // ════════════════════════════════════════
+    /**
+     * Borra las categorías marcadas (personal, asistencias, incidencias,
+     * horarios, notificaciones) de ESTA empresa. Pide escribir ELIMINAR y
+     * la contraseña del admin. No se puede deshacer.
+     */
+    public function borrarDatos()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $s       = session();
+        $volver  = redirect()->to(base_url('admin/configuracion'));
+        $error   = function (string $msg) use ($s, $volver) {
+            $s->setFlashdata('msg', $msg);
+            $s->setFlashdata('tipo', 'danger');
+            return $volver;
+        };
+
+        $cats = array_values(array_intersect(BorradoDatos::CATEGORIAS, (array) $this->request->getPost('categorias')));
+        if (! $cats) {
+            return $error('Marca al menos un tipo de dato para borrar.');
+        }
+        if (mb_strtoupper(trim((string) $this->request->getPost('confirmacion'))) !== 'ELIMINAR') {
+            return $error('Para confirmar, escribe ELIMINAR.');
+        }
+
+        $admin = $this->userModel->find($this->adminId());
+        $pass  = (string) $this->request->getPost('password');
+        $hash  = (string) ($admin['password'] ?? '');
+        $ok    = $hash !== '' && (password_verify($pass, $hash)
+            || (! str_starts_with($hash, '$2') && hash_equals($hash, $pass)));
+        if (! $ok) {
+            return $error('La contraseña no es correcta. No se borró nada.');
+        }
+
+        try {
+            $hecho = (new BorradoDatos(db_connect(), $this->adminId()))->borrar($cats);
+        } catch (\Throwable $e) {
+            log_message('error', 'Borrado de datos (admin ' . $this->adminId() . '): ' . $e->getMessage());
+            return $error('No se pudo completar el borrado. No se borró nada.');
+        }
+
+        $nombres = [
+            'personal' => 'personas', 'asistencias' => 'asistencias', 'incidencias' => 'incidencias',
+            'horarios' => 'horarios', 'notificaciones' => 'notificaciones',
+        ];
+        $partes = [];
+        foreach ($hecho as $k => $n) $partes[] = $n . ' ' . $nombres[$k];
+        log_message('notice', 'Borrado de datos (admin ' . $this->adminId() . '): ' . implode(', ', $partes));
+
+        $s->setFlashdata('msg', 'Datos borrados: ' . implode(', ', $partes) . '.');
+        $s->setFlashdata('tipo', 'success');
+        return $volver;
     }
 
     // ════════════════════════════════════════

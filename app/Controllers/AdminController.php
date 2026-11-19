@@ -41,10 +41,10 @@ class AdminController extends AdminBaseController
         if ($redirect = $this->guard()) return $redirect;
 
         $personal = $this->getPersonal();
+        // Una persona puede estar en varios horarios (L-V + sábado)
         $scheduleUsers = [];
         foreach ($personal as $u) {
-            $sid = (int) ($u['schedule_id'] ?? 0);
-            if ($sid > 0) {
+            foreach (\App\Libraries\Asistencia\HorariosPersona::ids($u) as $sid) {
                 $scheduleUsers[$sid][] = $u;
             }
         }
@@ -65,6 +65,30 @@ class AdminController extends AdminBaseController
     // ════════════════════════════════════════
     // PERSONAL — crear (código EMPL-XXX / PRCT-XXX por admin)
     // ════════════════════════════════════════
+    /**
+     * GET /admin/dni/{dni} — datos del DNI para autocompletar «Crear empleado».
+     * Avisa si el DNI ya está registrado en Asisten.
+     */
+    public function consultarDni($dni = '')
+    {
+        if ($redirect = $this->guard()) return $redirect;
+        $dni = (string) $dni;
+        if (! preg_match('/^\d{8}$/', $dni)) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'El DNI debe tener 8 dígitos.']);
+        }
+        if ($existe = $this->userModel->findByDni($dni)) {
+            return $this->response->setJSON([
+                'ok' => false, 'existe' => true,
+                'msg' => 'Este DNI ya está registrado en Asisten (' . ($existe['name'] ?? '') . ').',
+            ]);
+        }
+        $datos = \App\Libraries\DniApi::consultar($dni);
+        if (! $datos) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'No se encontró el DNI en el servicio. Escribe el nombre a mano.']);
+        }
+        return $this->response->setJSON(['ok' => true] + $datos);
+    }
+
     public function createEmployee()
     {
         if ($redirect = $this->guard()) return $redirect;
@@ -400,6 +424,7 @@ class AdminController extends AdminBaseController
         if ($redirect = $this->validar([
             'sch_nombre'        => 'required|trim|min_length[3]|max_length[100]',
             'sch_tipo'          => 'permit_empty|in_list[Empleado,Practicante]',
+            'sch_jornada'       => 'permit_empty|in_list[full,part]',
             'sch_dias'          => 'permit_empty|max_length[100]',
             'sch_hora_entrada'  => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
             'sch_hora_salida'   => 'permit_empty|regex_match[/^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/]',
@@ -430,6 +455,7 @@ class AdminController extends AdminBaseController
             'admin_id'      => $adminId,
             'nombre'        => $nombre,
             'tipo'          => $tipo,
+            'jornada'       => $this->jornadaPost($entrada, $salida, $segundo),
             'dias'          => $dias,
             'hora_entrada'  => $entrada,
             'hora_salida'   => $salida,
@@ -483,6 +509,7 @@ class AdminController extends AdminBaseController
         $this->scheduleModel->update($schId, [
             'nombre'        => $nombre,
             'tipo'          => $tipo,
+            'jornada'       => $this->jornadaPost($entrada, $salida, $segundo),
             'dias'          => $dias,
             'hora_entrada'  => $entrada,
             'hora_salida'   => $salida,
@@ -494,6 +521,22 @@ class AdminController extends AdminBaseController
         $s->setFlashdata('msg', 'Horario actualizado');
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('admin/horarios'));
+    }
+
+    /**
+     * Jornada elegida en el formulario (full / part). Si no llega, se
+     * detecta por las horas del día.
+     */
+    private function jornadaPost(string $entrada, string $salida, array $segundo): string
+    {
+        $j = (string) $this->request->getPost('sch_jornada');
+        if (isset(\App\Libraries\Asistencia\Jornada::JORNADAS[$j])) {
+            return $j;
+        }
+        return \App\Libraries\Asistencia\Jornada::detectar([
+            'hora_entrada' => $entrada, 'hora_salida' => $salida,
+            'hora_entrada2' => $segundo[0], 'hora_salida2' => $segundo[1],
+        ]);
     }
 
     /**
@@ -546,9 +589,14 @@ class AdminController extends AdminBaseController
             $s->setFlashdata('tipo', 'danger');
             return redirect()->to(base_url('admin/horarios'));
         }
+        // Quitar el horario a quienes lo tenían (se conservan sus otros horarios)
+        foreach ($this->userModel->where('admin_id', $adminId)->findAll() as $u) {
+            $ids = \App\Libraries\Asistencia\HorariosPersona::ids($u);
+            if (in_array($schId, $ids, true)) {
+                \App\Libraries\Asistencia\HorariosPersona::guardar((int) $u['id'], array_diff($ids, [$schId]));
+            }
+        }
         $this->scheduleModel->delete($schId);
-        // Liberar a quienes tenian este horario asignado
-        $this->userModel->where('schedule_id', $schId)->set('schedule_id', null)->update();
         $s->setFlashdata('msg', 'Horario eliminado');
         $s->setFlashdata('tipo', 'success');
         return redirect()->to(base_url('admin/horarios'));
@@ -579,28 +627,47 @@ class AdminController extends AdminBaseController
         $tipo   = $sch['tipo'] ?? 'Empleado';
         $roles  = $tipo === 'Practicante' ? ['Practicante'] : ['Empleado'];
 
-        // Quitar el horario a quienes ya no estan en la lista
-        if (empty($sel)) {
-            $this->userModel
-                ->where('admin_id', $adminId)
-                ->where('schedule_id', $schId)
-                ->set('schedule_id', null)
-                ->update();
-        } else {
-            $this->userModel
-                ->where('admin_id', $adminId)
-                ->where('schedule_id', $schId)
-                ->whereNotIn('id', $sel)
-                ->set('schedule_id', null)
-                ->update();
+        // Una persona puede tener varios horarios, pero no dos que caigan el
+        // mismo día (no se sabría cuál usar). Se agrega/quita SOLO este horario.
+        $diasEste = \App\Libraries\Asistencia\Jornada::diasDeSemana($sch);
+        $todos    = [];
+        foreach ($this->scheduleModel->getAll($adminId) as $x) $todos[(int) $x['id']] = $x;
+        $nombresDia = [1 => 'lunes', 2 => 'martes', 3 => 'miércoles', 4 => 'jueves', 5 => 'viernes', 6 => 'sábado', 7 => 'domingo'];
+        $choques = [];
+
+        $personas = $this->userModel->where('admin_id', $adminId)->whereIn('role', $roles)->findAll();
+        foreach ($personas as $u) {
+            $uid   = (int) $u['id'];
+            $ids   = \App\Libraries\Asistencia\HorariosPersona::ids($u);
+            $tiene = in_array($schId, $ids, true);
+            $quiere = in_array($uid, $sel, true);
+            if ($tiene === $quiere) continue;
+
+            if (! $quiere) {
+                \App\Libraries\Asistencia\HorariosPersona::guardar($uid, array_diff($ids, [$schId]));
+                continue;
+            }
+            // ¿Choca con otro horario suyo el mismo día?
+            $choque = null;
+            foreach ($ids as $otro) {
+                if (! isset($todos[$otro])) continue;
+                $comunes = array_intersect($diasEste, \App\Libraries\Asistencia\Jornada::diasDeSemana($todos[$otro]));
+                if ($comunes) {
+                    $choque = ($u['name'] ?? 'Alguien') . ' ya tiene «' . ($todos[$otro]['nombre'] ?? '') . '» el ' . $nombresDia[reset($comunes)];
+                    break;
+                }
+            }
+            if ($choque !== null) {
+                $choques[] = $choque;
+                continue;
+            }
+            \App\Libraries\Asistencia\HorariosPersona::guardar($uid, array_merge($ids, [$schId]));
         }
 
-        // Asignar el horario a los seleccionados (validando rol y admin)
-        foreach ($sel as $uid) {
-            $u = $this->userModel->find($uid);
-            if (!$u || (int) ($u['admin_id'] ?? -1) !== $adminId) continue;
-            if (!in_array($u['role'] ?? '', $roles, true)) continue;
-            $this->userModel->update($uid, ['schedule_id' => $schId]);
+        if ($choques) {
+            $s->setFlashdata('msg', 'Integrantes actualizados, pero no se pudo asignar a todos: ' . implode('; ', $choques) . '. Quítale primero ese horario o ajusta los días.');
+            $s->setFlashdata('tipo', 'warning');
+            return redirect()->to(base_url('admin/horarios'));
         }
 
         $s->setFlashdata('msg', 'Integrantes actualizados para «' . ($sch['nombre'] ?? '') . '»');

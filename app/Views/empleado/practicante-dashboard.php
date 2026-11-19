@@ -89,7 +89,7 @@
                 <span><?= !empty($finPracticaEstimado) ? 'Fin estimado' : 'Fin' ?> <strong><?= esc($fmt($finP)) ?></strong></span>
             </div>
             <div class="tk-prog-meta">
-                <span>Jornada <strong><?= esc($diasHorario ?: '—') ?><?= $horaEntrada ? ' · ' . esc(substr($horaEntrada, 0, 5)) . ' - ' . esc(substr((string) $horaSalida, 0, 5)) : '' ?></strong></span>
+                <span>Jornada <strong><?= empty($miHorario) ? '—' : esc(implode(' | ', \App\Libraries\Asistencia\Jornada::textoHorarios($misHorarios ?? [$miHorario]))) ?></strong></span>
                 <span><?= ($diasHorarioSem ?? 0) > 0 ? (int) $diasHorarioSem . ' días/semana' : 'Sin horario' ?></span>
             </div>
             <div class="tk-minis">

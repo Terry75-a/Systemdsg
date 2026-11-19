@@ -129,6 +129,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>/* Menú del celular más rápido (abre/cierra ~2.5x) */ if (window.gsap) gsap.globalTimeline.timeScale(2.5);</script>
 <script>
 (function() {
     var modal = document.getElementById('mobileModal');

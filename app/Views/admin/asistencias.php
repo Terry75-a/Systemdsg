@@ -485,6 +485,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tk-dashboard.css?v=' . filemtime(FCPATH . 'css/index/components/tk-dashboard.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => 'asistencias']) ?>
@@ -652,7 +654,7 @@
                                     </td>
                                     <td class="tk-cell-mono"><?= esc($fechaTxt) ?></td>
                                     <td class="tk-cell-mono"><?= !empty($r['time_in']) ? esc(substr($r['time_in'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
-                                    <td class="tk-cell-mono"><?= !empty($r['time_out']) ? esc(substr($r['time_out'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?></td>
+                                    <td class="tk-cell-mono"><?= !empty($r['time_out']) ? esc(substr($r['time_out'], 0, 5)) : '<span class="tk-cell-muted">—</span>' ?><?php if (!empty($r['time_out1'])): ?><br><span class="tk-cell-sub" title="Doble turno: 1ª salida → 2ª entrada">1ª salida <?= esc(substr($r['time_out1'], 0, 5)) ?> · 2ª entrada <?= !empty($r['time_in2']) ? esc(substr($r['time_in2'], 0, 5)) : '…' ?></span><?php endif; ?></td>
                                     <td><span class="att-estado <?= $estado ?>"><i></i><?= $label ?></span></td>
                                     <td class="tk-r" onclick="event.stopPropagation()">
                                         <span class="tk-actions">
@@ -817,6 +819,7 @@
             $attRowsMap[(int) $r['id']] = [
                 'id' => (int) $r['id'], 'name' => $r['name'] ?? 'Empleado', 'dni' => $r['dni'] ?? '',
                 'date' => $r['date'] ?? '', 'time_in' => $r['time_in'] ?? '', 'time_out' => $r['time_out'] ?? '',
+                'time_out1' => $r['time_out1'] ?? '', 'time_in2' => $r['time_in2'] ?? '',
                 'status' => $r['status'] ?? '', 'observacion' => $r['observacion'] ?? '',
                 'lat' => $r['lat'] ?? null, 'lng' => $r['lng'] ?? null,
             ];
@@ -840,7 +843,8 @@
         document.getElementById('attDetailDni').textContent = 'DNI ' + (r.dni || '---');
         document.getElementById('attDetailDate').textContent = r.date || '-';
         document.getElementById('attDetailTimeIn').textContent = r.time_in || '-';
-        document.getElementById('attDetailTimeOut').textContent = r.time_out || '-';
+        document.getElementById('attDetailTimeOut').textContent = (r.time_out || '-')
+            + (r.time_out1 ? '  (descanso ' + r.time_out1.substr(0, 5) + ' → ' + (r.time_in2 ? r.time_in2.substr(0, 5) : '…') + ')' : '');
         var st = document.getElementById('attDetailStatus');
         st.textContent = m.label;
         st.style.color = m.color;
@@ -991,7 +995,8 @@
                 '<span><span class="tk-cell-main">' + attEsc(nombre) + '</span><br><span class="tk-cell-sub tk-cell-mono">DNI ' + attEsc(datos.dni || '—') + '</span></span></div></td>' +
             '<td class="tk-cell-mono">' + attFecha(datos.date) + '</td>' +
             '<td class="tk-cell-mono">' + attHora(datos.time_in) + '</td>' +
-            '<td class="tk-cell-mono">' + attHora(datos.time_out) + '</td>' +
+            '<td class="tk-cell-mono">' + attHora(datos.time_out) +
+                (datos.time_out1 ? '<br><span class="tk-cell-sub">1ª salida ' + attHora(datos.time_out1) + ' · 2ª entrada ' + (datos.time_in2 ? attHora(datos.time_in2) : '…') + '</span>' : '') + '</td>' +
             '<td><span class="att-estado ' + attEsc(st) + '"><i></i>' + attEsc(label) + '</span></td>' +
             '<td class="tk-r" onclick="event.stopPropagation()"><span class="tk-actions">' +
                 '<a class="dev-btn-icon" href="' + window.location.origin + '/admin/auditoria/' + parseInt(datos.id, 10) + '" title="Auditoría"><span class="material-symbols-outlined">manage_search</span></a>' +

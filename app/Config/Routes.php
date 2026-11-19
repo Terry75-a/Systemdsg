@@ -62,6 +62,8 @@ $routes->group('dios', ['filter' => 'dev'], static function ($routes) {
     $routes->get('empleados', 'DevController::empleados');
     $routes->get('estructura', 'DevController::estructura');
     $routes->get('auditoria', 'DevController::auditoria');
+    $routes->get('auditoria/datos', 'DevController::auditoriaDatos');
+    $routes->post('permisos', 'DevController::guardarPermisos');
     $routes->get('sesiones', 'DevController::sesiones');
     $routes->get('datos', 'DevController::datos');
     $routes->get('datos/tabla', 'DevController::datosTabla');
@@ -113,6 +115,7 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('save-config', 'Admin\ConfigAdminController::saveConfig');
     $routes->post('festivos/guardar', 'Admin\ConfigAdminController::saveFestivo');
     $routes->post('festivos/eliminar', 'Admin\ConfigAdminController::deleteFestivo');
+    $routes->post('borrar-datos', 'Admin\ConfigAdminController::borrarDatos');
     $routes->get('festivos/eliminar/(:num)', 'Admin\ConfigAdminController::deleteFestivo/$1');
     $routes->get('notificaciones/poll', 'Admin\ConfigAdminController::pollNotificaciones');
     $routes->get('notificaciones', 'Admin\ConfigAdminController::listarNotificaciones');
@@ -120,6 +123,7 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->get('notificaciones/badge', 'Admin\ConfigAdminController::badgeNotificaciones');
 
     // Admin CRUD
+    $routes->get('dni/(:segment)', 'AdminController::consultarDni/$1'); // autocompletar al crear personal
     $routes->post('create-employee', 'AdminController::createEmployee');
     $routes->post('update-employee', 'AdminController::updateEmployee');
     $routes->post('reset-password', 'AdminController::resetPassword');

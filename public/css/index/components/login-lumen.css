@@ -1,0 +1,153 @@
+/* ══════════════════════════════════════════════════════════════
+   LUMEN · login de Asisten DSG
+   Misma piel que el panel (lumen.css): lienzo gris, tarjetas muy
+   redondeadas, lila + verde lima + negro. Se carga después de
+   login-asisten.css y sólo cambia la apariencia.
+   ══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Paleta de siempre: verde DSG */
+  --l-bg: #e7ebe4;
+  --l-surface: #ffffff;
+  --l-border: #e4e4e7;
+  --l-text: #161618;
+  --l-muted: #52525b;
+  --l-faint: #a1a1aa;
+  --l-accent: #1b7a42;
+  --l-deep: #15633a;
+  --l-ink: #161618;
+  --l-soft: #e6f4ea;
+  --l-glow: rgba(27, 122, 66, .18);
+  --l-font: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --lm-lilac: #bfe3cc;       /* panel destacado: verde DSG claro */
+  --lm-lilac-soft: #e6f4ea;
+  --lm-lime: #dcebfb;        /* azul a tiempo suave */
+  --lm-lime-strong: #9fd8b2;
+}
+
+body { background: var(--l-bg) !important; font-family: var(--l-font) !important; }
+body :is(input, button) { font-family: var(--l-font) !important; }
+
+/* La página como dos tarjetas sobre el lienzo */
+.login-page { gap: 12px; padding: 12px; min-height: 100vh; background: var(--l-bg) !important; }
+.login-left {
+  background: var(--l-surface) !important; border-radius: 28px; box-shadow: 0 1px 2px rgba(20,19,24,.04);
+}
+.login-left::before, .login-left::after { display: none !important; }
+.login-brand-mark {
+  background: var(--l-accent) !important;
+  border-radius: 12px !important;
+}
+.login-brand-text { font-weight: 800 !important; letter-spacing: -.02em; }
+.login-brand-text small { color: var(--l-accent) !important; }
+.login-eyebrow { background: var(--lm-lilac-soft) !important; color: var(--l-accent) !important; border: 0 !important; border-radius: 999px !important; }
+.login-title { font-weight: 800 !important; letter-spacing: -.035em !important; }
+.serif-accent {
+  font-family: var(--l-font) !important; font-style: normal !important; font-weight: 800 !important;
+  color: var(--l-ink) !important; background: var(--lm-lilac); padding: 0 12px; border-radius: 999px;
+}
+.login-sub { font-weight: 500 !important; }
+
+/* Pestañas Correo / DNI / Código: cápsula con la activa negra */
+.login-tabs { background: #f3f3f5 !important; border: 0 !important; border-radius: 999px !important; padding: 4px !important; }
+.login-tab { border-radius: 999px !important; font-weight: 600 !important; color: var(--l-muted) !important; }
+.login-tab.is-active { background: var(--l-accent) !important; color: #fff !important; box-shadow: none !important; }
+
+.field-wrap { border-radius: 16px !important; background: #f3f3f5 !important; border: 1px solid transparent !important; }
+.field-wrap:focus-within { background: #fff !important; border-color: var(--l-accent) !important; box-shadow: 0 0 0 4px var(--l-glow) !important; }
+.form-field label { font-weight: 700 !important; color: var(--l-text) !important; }
+
+.btn-login {
+  background: var(--l-accent) !important; color: #fff !important; border-radius: 999px !important;
+  box-shadow: none !important; font-weight: 700 !important;
+}
+.btn-login:hover { background: var(--l-deep) !important; }
+.login-foot-link { color: var(--l-muted) !important; font-weight: 600 !important; }
+
+/* Panel derecho: tarjeta lila con una mini vista del sistema */
+.login-right {
+  background: var(--lm-lilac) !important; border-radius: 28px; align-items: center !important;
+}
+.login-right::before, .login-right::after, .login-watermark { display: none !important; }
+.login-right-tag { color: #141318 !important; border-color: rgba(20,19,24,.2) !important; background: rgba(255,255,255,.5); }
+.login-right-title { color: #141318 !important; font-weight: 800 !important; letter-spacing: -.035em !important; }
+.serif-accent-white {
+  font-family: var(--l-font) !important; font-style: normal !important; color: #141318 !important;
+  background: #fff; padding: 0 12px; border-radius: 999px; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.login-right-desc { color: rgba(20,19,24,.72) !important; font-weight: 500; }
+.login-right-list li { color: #141318 !important; font-weight: 600; }
+.login-right-list i {
+  color: #141318 !important; background: var(--lm-lime-strong); width: 20px; height: 20px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 10px !important;
+}
+
+.lg-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 22px 0 22px; }
+.lg-card { border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.lg-card-white { background: #fff; grid-column: 1 / -1; }
+.lg-card-lime { background: var(--lm-lime); }
+.lg-card-ink { background: #161618; color: #fff; }
+.lg-k { font-size: 11.5px; font-weight: 600; opacity: .65; }
+.lg-v { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.lg-s { font-size: 11.5px; font-weight: 500; opacity: .7; }
+.lg-steps {
+  grid-column: 1 / -1; display: flex; align-items: center; background: #fff; border-radius: 20px; padding: 14px 18px;
+}
+.lg-step {
+  width: 30px; height: 30px; border-radius: 50%; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  background: #f3f3f5; color: #a3a2ad; font-size: 12px;
+}
+.lg-step.is-done { background: var(--lm-lime-strong); color: #141318; }
+.lg-step.is-now { background: var(--l-accent); color: #fff; box-shadow: 0 0 0 4px var(--lm-lilac-soft); }
+.lg-line { flex: 1; height: 2px; background: #ececf1; margin: 0 6px; }
+.lg-line.is-done { background: var(--lm-lime-strong); }
+
+@media (max-width: 900px) {
+  .login-page { padding: 0; gap: 0; }
+  .login-left { border-radius: 0; }
+}
+
+/* Animaciones ágiles en el login: la entrada se ve, pero corta */
+.reveal, .login-page *, .login-page *::before, .login-page *::after {
+  animation-duration: .26s !important; transition-duration: .22s !important;
+}
+.reveal[data-delay] { transition-delay: 0s !important; }
+
+/* ── Avisos del login: tarjeta con ícono en círculo, título y mensaje ── */
+.lg-alert {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 18px; padding: 12px 12px 12px 12px;
+  border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px var(--lg-a-line), 0 8px 24px -14px var(--lg-a-shadow);
+  --lg-a-c: #e34948; --lg-a-soft: #fdecec; --lg-a-line: #f6caca; --lg-a-shadow: rgba(227, 73, 72, .45);
+}
+.lg-alert.is-warning { --lg-a-c: #b7791f; --lg-a-soft: #fef5e1; --lg-a-line: #f5dfae; --lg-a-shadow: rgba(183, 121, 31, .4); }
+.lg-alert.is-success { --lg-a-c: #1b7a42; --lg-a-soft: #e6f4ea; --lg-a-line: #bfe3cc; --lg-a-shadow: rgba(27, 122, 66, .4); }
+.lg-alert-ico {
+  flex: none; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--lg-a-soft); color: var(--lg-a-c); font-size: 15px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--lg-a-soft) 55%, transparent);
+}
+.lg-alert-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; line-height: 1.35; }
+.lg-alert-txt strong { font-size: 13.5px; font-weight: 800; color: var(--l-text); letter-spacing: -.01em; }
+.lg-alert-txt span { font-size: 13px; font-weight: 500; color: var(--l-muted); }
+.lg-alert-x {
+  flex: none; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; cursor: pointer;
+  color: var(--l-faint); display: inline-flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.lg-alert-x:hover { background: #f3f3f5; color: var(--l-text); }
+
+/* Avisos como notificación lateral (arriba a la derecha) */
+.lg-toasts {
+  position: fixed; top: 24px; right: 24px; z-index: 5000; width: min(380px, calc(100vw - 32px));
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+}
+.lg-toasts .lg-alert {
+  pointer-events: auto; margin: 0;
+  box-shadow: inset 0 0 0 1px var(--lg-a-line), 0 18px 40px -12px rgba(0,0,0,.28);
+  opacity: 0; transform: translateX(24px); transition: opacity .12s ease, transform .12s ease !important;
+}
+.lg-toasts .lg-alert.is-in { opacity: 1; transform: none; }
+@media (max-width: 900px) {
+  .lg-toasts { top: 12px; left: 12px; right: 12px; width: auto; }
+  .lg-toasts .lg-alert { transform: translateY(-16px); }
+}

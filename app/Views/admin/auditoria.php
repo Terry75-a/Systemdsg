@@ -102,6 +102,8 @@
     <link rel="stylesheet" href="<?= base_url('css/index/components/next-panel.css?v=' . filemtime(FCPATH . 'css/index/components/next-panel.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/tablas-botones.css?v=' . filemtime(FCPATH . 'css/index/components/tablas-botones.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/trackin.css?v=' . filemtime(FCPATH . 'css/index/components/trackin.css')) ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
+    <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
 </head>
 <body>
     <?= view('partials/admin-sidebar', ['activePage' => $activePage ?? 'asistencias']) ?>
@@ -133,8 +135,16 @@
                     <div class="ad-grid">
                         <div class="ad-kv"><div class="k">Fecha</div><div class="v"><?= esc($att['date'] ?? '') ?></div></div>
                         <div class="ad-kv"><div class="k">DNI</div><div class="v"><?= esc($att['dni'] ?? '—') ?></div></div>
-                        <div class="ad-kv"><div class="k">Entrada</div><div class="v"><?= esc(substr((string) ($att['time_in'] ?? ''), 0, 5)) ?: '—' ?></div></div>
-                        <div class="ad-kv"><div class="k">Salida</div><div class="v"><?= esc(substr((string) ($att['time_out'] ?? ''), 0, 5)) ?: '—' ?></div></div>
+                        <?php $hhmm = static fn ($v) => esc(substr((string) ($v ?? ''), 0, 5)) ?: '—'; ?>
+                        <?php if (! empty($doble)): ?>
+                            <div class="ad-kv ad-marca" style="order:-1;"><div class="k">1ª entrada</div><div class="v"><?= $hhmm($att['time_in'] ?? '') ?></div></div>
+                            <div class="ad-kv ad-marca" style="order:-1;"><div class="k">1ª salida</div><div class="v"><?= $hhmm($att['time_out1'] ?? '') ?></div></div>
+                            <div class="ad-kv ad-marca" style="order:-1;"><div class="k">2ª entrada</div><div class="v"><?= $hhmm($att['time_in2'] ?? '') ?></div></div>
+                            <div class="ad-kv ad-marca" style="order:-1;"><div class="k">2ª salida</div><div class="v"><?= $hhmm($att['time_out'] ?? '') ?></div></div>
+                        <?php else: ?>
+                            <div class="ad-kv"><div class="k">Entrada</div><div class="v"><?= $hhmm($att['time_in'] ?? '') ?></div></div>
+                            <div class="ad-kv"><div class="k">Salida</div><div class="v"><?= $hhmm($att['time_out'] ?? '') ?></div></div>
+                        <?php endif; ?>
                         <div class="ad-kv"><div class="k">Observación</div><div class="v <?= empty($att['observacion']) ? 'muted' : '' ?>"><?= esc($att['observacion'] ?? '—') ?></div></div>
                         <div class="ad-kv"><div class="k">Geolocalización</div><div class="v <?= empty($att['lat']) ? 'muted' : '' ?>"><?= ! empty($att['lat']) ? esc($att['lat'] . ', ' . $att['lng']) : '—' ?></div></div>
                         <div class="ad-kv"><div class="k">IP de origen</div><div class="v <?= empty($att['ip']) ? 'muted' : '' ?>"><?= esc($att['ip'] ?? '—') ?></div></div>

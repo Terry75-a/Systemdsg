@@ -126,7 +126,22 @@ class DevController extends BaseController
     public function estructura()
     {
         if ($redir = $this->guardDev()) return $redir;
-        return view('dev-estructura', ['modalData' => $this->getModalData()]);
+        return view('dev-estructura', [
+            'modalData' => $this->getModalData(),
+            'permisos'  => \App\Libraries\Asistencia\PermisosRol::matriz(),
+        ]);
+    }
+
+    // POST /dios/permisos — guarda la tabla «Permisos por rol»
+    public function guardarPermisos()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+        $marcados = (array) $this->request->getPost('perm');
+        $n = \App\Libraries\Asistencia\PermisosRol::guardar($marcados, (int) session()->get('user_id'));
+        log_message('notice', 'Permisos por rol actualizados por el Dev ' . session()->get('user_id') . " ({$n} valores)");
+        session()->setFlashdata('msg', 'Permisos guardados. Se aplican desde la próxima acción de cada usuario.');
+        session()->setFlashdata('tipo', 'success');
+        return redirect()->to(base_url('dios/estructura') . '#permisos');
     }
 
     // ════════════════════════════════════════
@@ -135,7 +150,30 @@ class DevController extends BaseController
     public function auditoria()
     {
         if ($redir = $this->guardDev()) return $redir;
+        $filas = $this->filasAuditoria();
+        return view('dev-auditoria', [
+            'filas'     => $filas,
+            'total'     => count($filas),
+            'ultimoId'  => $filas[0]['id'] ?? 0,
+            'modalData' => $this->getModalData(),
+        ]);
+    }
 
+    // GET /dios/auditoria/datos?desde=<id> — para refrescar la tabla en vivo
+    public function auditoriaDatos()
+    {
+        if ($redir = $this->guardDev()) return $redir;
+        $desde  = (int) $this->request->getGet('desde');
+        $ultimo = (int) ($this->attendanceLogModel->selectMax('id')->first()['id'] ?? 0);
+        if ($ultimo <= $desde) {
+            return $this->response->setJSON(['ok' => true, 'cambios' => false, 'ultimoId' => $ultimo]);
+        }
+        $filas = $this->filasAuditoria();
+        return $this->response->setJSON(['ok' => true, 'cambios' => true, 'ultimoId' => $ultimo, 'filas' => $filas]);
+    }
+
+    private function filasAuditoria(): array
+    {
         $logs = $this->attendanceLogModel->orderBy('id', 'DESC')->limit(200)->findAll();
 
         $attIds  = [];
@@ -181,14 +219,10 @@ class DevController extends BaseController
                 'cuando'   => (string) ($log['created_at'] ?? ''),
                 'attId'    => (int) ($log['attendance_id'] ?? 0),
                 'adminId'  => (int) ($log['admin_id'] ?? 0),
+                'id'       => (int) ($log['id'] ?? 0),
             ];
         }
-
-        return view('dev-auditoria', [
-            'filas'     => $filas,
-            'total'     => count($filas),
-            'modalData' => $this->getModalData(),
-        ]);
+        return $filas;
     }
 
     // ════════════════════════════════════════

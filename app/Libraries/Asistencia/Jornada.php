@@ -8,6 +8,27 @@ namespace App\Libraries\Asistencia;
  */
 class Jornada
 {
+    /** Tipo de jornada de un horario (columna schedules.jornada). */
+    public const FULL = 'full';
+    public const PART = 'part';
+    public const JORNADAS = [self::FULL => 'Full time', self::PART => 'Part time'];
+
+    /** Desde cuántas horas al día un horario se considera full time. */
+    public const HORAS_FULL = 8;
+
+    /** Full o part time según las horas del día (suma de los dos bloques). */
+    public static function detectar(?array $schedule): string
+    {
+        return self::minutosJornada($schedule) >= self::HORAS_FULL * 60 ? self::FULL : self::PART;
+    }
+
+    /** Jornada guardada del horario; si no tiene, la detecta por sus horas. */
+    public static function jornada(?array $schedule): string
+    {
+        $j = (string) ($schedule['jornada'] ?? '');
+        return isset(self::JORNADAS[$j]) ? $j : self::detectar($schedule);
+    }
+
     public const DIAS = [
         1 => 'lun', 2 => 'mar', 3 => 'mie', 4 => 'jue', 5 => 'vie', 6 => 'sab', 7 => 'dom',
     ];
@@ -31,6 +52,151 @@ class Jornada
         }
 
         return $delTipo[0] ?? [];
+    }
+
+    /**
+     * Qué marca le toca ahora a la persona:
+     *   entrada · salida_descanso · regreso · salida · completo
+     *
+     * En doble turno la segunda marca es la salida al descanso si llega antes
+     * de la mitad del segundo bloque; si llega después (no marcó el descanso)
+     * se toma como la salida final del día.
+     */
+    public static function siguienteMarca(?array $att, ?array $schedule, string $ahora): string
+    {
+        $tin = trim((string) ($att['time_in'] ?? ''));
+        if (! $att || $tin === '') {
+            return 'entrada';
+        }
+        if (trim((string) ($att['time_out'] ?? '')) !== '') {
+            return 'completo';
+        }
+        if (trim((string) ($att['time_in2'] ?? '')) !== '') {
+            return 'salida';
+        }
+        if (trim((string) ($att['time_out1'] ?? '')) !== '') {
+            return 'regreso';
+        }
+        if (! self::esDobleTurno($schedule)) {
+            return 'salida';
+        }
+        [$e2, $s2] = self::bloques($schedule)[1];
+        $ini = strtotime('2000-01-01 ' . $e2);
+        $fin = strtotime('2000-01-01 ' . $s2);
+        $now = strtotime('2000-01-01 ' . $ahora);
+        if ($ini === false || $fin === false || $now === false || $fin <= $ini) {
+            return 'salida';
+        }
+        return $now < (int) (($ini + $fin) / 2) ? 'salida_descanso' : 'salida';
+    }
+
+    /**
+     * Minutos trabajados de un registro. Si marcó el descanso se usan sus
+     * marcas reales (entrada→salida descanso + regreso→salida); si no, se
+     * descuenta el descanso programado del horario.
+     */
+    public static function minutosRegistro(array $att, ?array $schedule): int
+    {
+        $tin  = trim((string) ($att['time_in'] ?? ''));
+        $out1 = trim((string) ($att['time_out1'] ?? ''));
+        $in2  = trim((string) ($att['time_in2'] ?? ''));
+        $tout = trim((string) ($att['time_out'] ?? ''));
+        if ($tin === '') {
+            return 0;
+        }
+        if ($out1 !== '') {
+            $min = self::minutosEntre($tin, $out1);
+            if ($in2 !== '' && $tout !== '') {
+                $min += self::minutosEntre($in2, $tout);
+            }
+            return max(0, $min);
+        }
+        return $tout === '' ? 0 : self::minutosTrabajados($tin, $tout, $schedule);
+    }
+
+    /** Bloques en texto: '09:00 – 13:00 · 14:00 – 19:00'. */
+    public static function textoBloques(?array $schedule): string
+    {
+        $out = [];
+        foreach (self::bloques($schedule) as [$e, $s]) {
+            $out[] = substr($e, 0, 5) . ' – ' . substr($s, 0, 5);
+        }
+        return implode(' · ', $out);
+    }
+
+    /**
+     * Horarios de una persona en texto, uno por línea:
+     *   ['Lun - Vie · 09:00 – 13:00 · 14:00 – 19:00', 'Sabado · 09:00 – 13:00']
+     */
+    public static function textoHorarios(array $schedules): array
+    {
+        $out = [];
+        foreach ($schedules as $sch) {
+            $dias  = trim((string) ($sch['dias'] ?? ''));
+            $out[] = ($dias !== '' ? $dias . ' · ' : '') . self::textoBloques($sch);
+        }
+        return $out;
+    }
+
+    /** Horarios asignados a la persona (del tipo de su rol), de una lista ya cargada. */
+    public static function horariosDe(array $schedules, array $user): array
+    {
+        $tipoRole = ((string) ($user['role'] ?? '')) === 'Practicante' ? 'Practicante' : 'Empleado';
+        $porId = [];
+        foreach ($schedules as $sch) $porId[(int) ($sch['id'] ?? 0)] = $sch;
+        $out = [];
+        foreach (HorariosPersona::ids($user) as $id) {
+            if (isset($porId[$id]) && ($porId[$id]['tipo'] ?? 'Empleado') === $tipoRole) {
+                $out[] = $porId[$id];
+            }
+        }
+        return $out;
+    }
+
+    /** Días de la semana (1 = lunes … 7 = domingo) que cubre un horario. */
+    public static function diasDeSemana(?array $schedule): array
+    {
+        $out = [];
+        $lunes = strtotime('monday this week');
+        for ($i = 0; $i < 7; $i++) {
+            if (self::esDiaLaborable($schedule, date('Y-m-d', strtotime("+{$i} day", $lunes)))) {
+                $out[] = $i + 1;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Horario que le toca a una persona en una fecha.
+     *
+     * De sus horarios asignados (y del tipo de su rol) se usa el que incluye
+     * ese día de la semana. Si ninguno lo incluye, se devuelve el primero
+     * asignado: con él esDiaLaborable() dirá que ese día descansa.
+     * Sin horarios asignados se cae a elegir() (comportamiento anterior).
+     */
+    public static function delDia(array $schedules, array $user, string $fecha): array
+    {
+        $role     = (string) ($user['role'] ?? 'Empleado');
+        $tipoRole = $role === 'Practicante' ? 'Practicante' : 'Empleado';
+        $ids      = HorariosPersona::ids($user);
+
+        $suyos = [];
+        foreach ($ids as $id) {
+            foreach ($schedules as $sch) {
+                if ((int) ($sch['id'] ?? 0) === $id && ($sch['tipo'] ?? 'Empleado') === $tipoRole) {
+                    $suyos[] = $sch;
+                }
+            }
+        }
+        if ($suyos === []) {
+            return self::elegir($schedules, (int) ($user['schedule_id'] ?? 0), $role);
+        }
+        foreach ($suyos as $sch) {
+            if (self::esDiaLaborable($sch, $fecha)) {
+                return $sch;
+            }
+        }
+        return $suyos[0];
     }
 
     /**

@@ -1,6 +1,7 @@
 /* Dashboard admin (réplica de System-Trackin): números que suben,
    barras que se llenan y pestañas del recorrido. */
 (function () {
+  // Números que suben, pero rápido (0,45 s). Respeta "reducir movimiento".
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Barras: se llenan un instante después de pintar
@@ -16,14 +17,16 @@
     if (reduce || !fin) { el.textContent = fmt(fin); return; }
     var t0 = performance.now();
     var paso = function (t) {
-      var p = Math.min(1, (t - t0) / 900);
+      var p = Math.min(1, (t - t0) / 450);
       el.textContent = fmt(fin * ease(p));
       if (p < 1) requestAnimationFrame(paso);
     };
     requestAnimationFrame(paso);
   };
   var nums = document.querySelectorAll('.tk-dash [data-count]');
-  if ('IntersectionObserver' in window) {
+  if (reduce) {
+    nums.forEach(animar); // valor final directo, sin contar desde 0
+  } else if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) { io.unobserve(e.target); animar(e.target); }

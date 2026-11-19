@@ -53,7 +53,7 @@ class AsistenciaAdminController extends AdminBaseController
         $attendance = $resultado['filas'];
 
         $paginacion = $this->paginar($attendance, (int) ($this->request->getGet('page') ?? 1), $this->request->getGet());
-        $attendance = $paginacion['filas'];
+        $attendance = $this->marcarDobleTurno($paginacion['filas']);
         unset($paginacion['filas']);
 
         return view('admin/reportes', array_merge($this->viewData([
@@ -84,10 +84,20 @@ class AsistenciaAdminController extends AdminBaseController
             return redirect()->to(base_url('admin/asistencias'));
         }
 
+        // ¿Ese día le tocaba doble turno? (o ya marcó 1ª salida / 2ª entrada)
+        $doble = ! empty($att['time_out1']) || ! empty($att['time_in2']);
+        if (! $doble && ($persona = $this->userModel->find((int) ($att['user_id'] ?? 0)))) {
+            $h = \App\Libraries\Asistencia\Jornada::delDia(
+                $this->scheduleModel->getActive($adminId), $persona, (string) ($att['date'] ?? date('Y-m-d'))
+            );
+            $doble = \App\Libraries\Asistencia\Jornada::esDobleTurno($h);
+        }
+
         return view('admin/auditoria', $this->viewData([
             'activePage' => 'asistencias',
             'pageTitle'  => 'Auditoría de asistencia · DSG',
             'att'        => $att,
+            'doble'      => $doble,
             'logs'       => $this->logModel->deAsistencia($attId, 100),
         ]));
     }
@@ -114,7 +124,33 @@ class AsistenciaAdminController extends AdminBaseController
         return $this->response
             ->setHeader('Content-Type', 'text/csv; charset=UTF-8')
             ->setHeader('Content-Disposition', 'attachment; filename="' . ExportCsv::nombreArchivo($fi, $ff) . '"')
-            ->setBody(ExportCsv::asistencias($filas, $fi, $ff));
+            ->setBody(ExportCsv::asistencias($this->marcarDobleTurno($filas), $fi, $ff));
+    }
+
+    /**
+     * Marca cada fila con 'doble' = 1 si ese día la persona tenía doble turno
+     * (por su horario de esa fecha) o si ya marcó 1ª salida / 2ª entrada.
+     */
+    private function marcarDobleTurno(array $filas): array
+    {
+        if ($filas === []) return $filas;
+        $schedules = $this->scheduleModel->getActive($this->adminId());
+        $personas  = [];
+        foreach ($this->userModel->where('admin_id', $this->adminId())->findAll() as $u) {
+            $personas[(int) $u['id']] = $u;
+        }
+        foreach ($filas as &$f) {
+            $doble = ! empty($f['time_out1']) || ! empty($f['time_in2']);
+            $u = $personas[(int) ($f['user_id'] ?? 0)] ?? null;
+            if (! $doble && $u) {
+                $doble = \App\Libraries\Asistencia\Jornada::esDobleTurno(
+                    \App\Libraries\Asistencia\Jornada::delDia($schedules, $u, (string) ($f['date'] ?? ''))
+                );
+            }
+            $f['doble'] = $doble ? 1 : 0;
+        }
+        unset($f);
+        return $filas;
     }
 
     // ════════════════════════════════════════

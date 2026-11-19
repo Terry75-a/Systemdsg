@@ -98,6 +98,7 @@
             border-radius: 13px; padding: 12px 14px;
         }
         .dm-cell span { font-size: 11px; color: var(--g-text-secondary); display: block; }
+        .dm-times.dm-times-4 { display: grid; grid-template-columns: 1fr 1fr; }
         .dm-cell b { display: block; font-family: 'SF Mono', Consolas, monospace; font-size: 21px; font-weight: 700; margin-top: 2px; letter-spacing: 0.01em; }
         .dm-cell.off { opacity: 0.75; }
         .dm-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
@@ -187,12 +188,23 @@
     $mesesEs = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     $mesShort = ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
+    // ¿Ese día le tocaba doble turno? (1ª entrada · 1ª salida · 2ª entrada · 2ª salida)
+    $misHs   = $misHorarios ?? (!empty($miHorario) ? [$miHorario] : []);
+    $miInfo  = $miInfo ?? [];
+    $esDoble = static function (string $fecha, array $r = []) use ($misHs, $miInfo): bool {
+        if (!empty($r['time_out1']) || !empty($r['time_in2'])) return true;
+        $h = $misHs ? \App\Libraries\Asistencia\Jornada::delDia($misHs, $miInfo, $fecha) : [];
+        return \App\Libraries\Asistencia\Jornada::esDobleTurno($h);
+    };
     $dayInfo = [];
     foreach ($misRegistros ?? [] as $r) {
         $d = $r['date'] ?? '';
         $dayInfo[$d] = [
             'st'  => $r['status'] ?? 'absent',
             'in'  => substr($r['time_in'] ?? '', 0, 5),
+            'out1'=> substr($r['time_out1'] ?? '', 0, 5),
+            'in2' => substr($r['time_in2'] ?? '', 0, 5),
+            'doble' => $esDoble($d, $r) ? 1 : 0,
             'out' => substr($r['time_out'] ?? '', 0, 5),
             'bio' => !empty($r['evidencia']) ? 1 : 0,
             'obs' => trim((string) str_replace(["\r", "\n"], ' ', $r['observacion'] ?? '')),
@@ -263,6 +275,9 @@
                 data-st="<?= $st ? esc($rec['st']) : '' ?>"
                 data-in="<?= $rec ? esc($rec['in']) : '' ?>"
                 data-out="<?= $rec ? esc($rec['out']) : '' ?>"
+                data-out1="<?= $rec ? esc($rec['out1']) : '' ?>"
+                data-in2="<?= $rec ? esc($rec['in2']) : '' ?>"
+                data-doble="<?= $rec ? $rec['doble'] : 0 ?>"
                 data-bio="<?= $rec ? $rec['bio'] : 0 ?>"
                 data-obs="<?= $rec ? esc($rec['obs']) : '' ?>"
                 data-inc="<?= isset($dayInc[$date]) ? 1 : 0 ?>"
@@ -301,8 +316,17 @@
         </div>
     <?php else: ?>
         <div class="tk-scroll">
-            <table class="tk-table tk-table-hover" style="min-width:560px;">
-                <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Verificación</th><th>Observación</th><th class="tk-r">Estado</th></tr></thead>
+            <?php
+                // Si tiene doble turno, el historial muestra las 4 marcas en columnas
+                $hayDoble = false;
+                foreach ($misRegistros as $rr) { if (!empty($dayInfo[$rr['date'] ?? '']['doble'])) { $hayDoble = true; break; } }
+                if (!$hayDoble) { foreach ($misHs as $hh) { if (\App\Libraries\Asistencia\Jornada::esDobleTurno($hh)) { $hayDoble = true; break; } } }
+                $hm = static fn ($v) => !empty($v) ? substr((string) $v, 0, 5) : '';
+            ?>
+            <table class="tk-table tk-table-hover" style="min-width:<?= $hayDoble ? 760 : 560 ?>px;">
+                <thead><tr><th>Fecha</th>
+                    <?php if ($hayDoble): ?><th>1ª entrada</th><th>1ª salida</th><th>2ª entrada</th><th>2ª salida</th><?php else: ?><th>Entrada</th><th>Salida</th><?php endif; ?>
+                    <th>Verificación</th><th>Observación</th><th class="tk-r">Estado</th></tr></thead>
                 <tbody>
                 <?php foreach ($misRegistros as $i => $r):
                     $st    = $r['status'] ?? 'absent';
@@ -316,8 +340,20 @@
                             <?= date('d', $ts) ?> <?= esc($mesShort[(int) date('n', $ts)]) ?>
                             <span class="tk-sub2"><?= esc(ucfirst($dowLargo[(int) date('N', $ts)])) ?><?= $isToday ? ' · hoy' : '' ?></span>
                         </td>
-                        <td class="tk-mono"><?= esc(!empty($r['time_in']) ? substr($r['time_in'], 0, 5) : '—') ?></td>
-                        <td class="tk-mono"><?= esc(!empty($r['time_out']) ? substr($r['time_out'], 0, 5) : '—') ?></td>
+                        <?php if ($hayDoble && !empty($dayInfo[$r['date'] ?? '']['doble'])): ?>
+                            <td class="tk-mono"><?= esc($hm($r['time_in'] ?? '') ?: '—') ?></td>
+                            <td class="tk-mono"><?= esc($hm($r['time_out1'] ?? '') ?: '—') ?></td>
+                            <td class="tk-mono"><?= esc($hm($r['time_in2'] ?? '') ?: '—') ?></td>
+                            <td class="tk-mono"><?= esc($hm($r['time_out'] ?? '') ?: '—') ?></td>
+                        <?php elseif ($hayDoble): ?>
+                            <!-- Día de un solo turno (p. ej. sábado) dentro de un mes con doble turno -->
+                            <td class="tk-mono"><?= esc($hm($r['time_in'] ?? '') ?: '—') ?></td>
+                            <td class="tk-mono"><?= esc($hm($r['time_out'] ?? '') ?: '—') ?></td>
+                            <td class="tk-muted" colspan="2">Un solo turno</td>
+                        <?php else: ?>
+                            <td class="tk-mono"><?= esc($hm($r['time_in'] ?? '') ?: '—') ?></td>
+                            <td class="tk-mono"><?= esc($hm($r['time_out'] ?? '') ?: '—') ?></td>
+                        <?php endif; ?>
                         <td class="tk-muted"><?php if (!empty($r['evidencia'])): ?><span class="tk-bio"><span class="material-symbols-outlined">fingerprint</span>Biometría</span><?php else: ?>—<?php endif; ?></td>
                         <td class="tk-muted" style="white-space:normal;max-width:260px;"><?= esc(($r['observacion'] ?? '') ?: '—') ?></td>
                         <td class="tk-r"><span class="tk-st <?= $cls ?>"><?= $label ?></span></td>
@@ -382,6 +418,9 @@
         return dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()] + ' de ' + d.getFullYear();
     }
 
+    function dmCelda(nombre, hora) {
+        return '<div class="dm-cell' + (hora ? '' : ' off') + '"><span>' + nombre + '</span><b>' + esc(hora || '--:--') + '</b></div>';
+    }
     function abrir(cell) {
         var st  = cell.dataset.st || '';
         var date = cell.dataset.date;
@@ -415,10 +454,18 @@
                  + '<span class="dev-badge ' + c.badge + '">' + c.label + '</span>'
                  + '<span class="dm-txt">' + c.txt + '</span>'
                  + '</div>'
-                 + '<div class="dm-times">'
-                 + '<div class="dm-cell' + (cell.dataset.in ? '' : ' off') + '"><span>Entrada</span><b>' + esc(cell.dataset.in || '--:--') + '</b></div>'
-                 + '<div class="dm-cell' + (cell.dataset.out ? '' : ' off') + '"><span>Salida</span><b>' + esc(cell.dataset.out || '--:--') + '</b></div>'
-                 + '</div>'
+                 + (cell.dataset.doble === '1'
+                    // Doble turno: las 4 marcas del día
+                    ? '<div class="dm-times dm-times-4">'
+                      + dmCelda('1ª entrada', cell.dataset.in)
+                      + dmCelda('1ª salida', cell.dataset.out1)
+                      + dmCelda('2ª entrada', cell.dataset.in2)
+                      + dmCelda('2ª salida', cell.dataset.out)
+                      + '</div>'
+                    : '<div class="dm-times">'
+                      + dmCelda('Entrada', cell.dataset.in)
+                      + dmCelda('Salida', cell.dataset.out)
+                      + '</div>')
                  + '<div class="dm-tags">'
                  + festTag
                  + (cell.dataset.bio === '1' ? '<span class="dm-tag"><span class="material-symbols-outlined">fingerprint</span> Verificada con biometría</span>' : '')

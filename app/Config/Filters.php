@@ -53,6 +53,7 @@ class Filters extends BaseFilters
         'auth'    => \App\Filters\Auth::class, // <-- este
         'asistencia' => \App\Filters\Asistencia::class, // módulo de asistencia (admin / mi-panel)
         'dev'     => \App\Filters\DevGuard::class, // panel Dev: rol Dev + rate limit
+        'permiso' => \App\Filters\PermisoRol::class, // permisos por rol (asisten_permisos)
     ];
 
     /**
@@ -123,5 +124,8 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        // Acciones que se pueden activar/desactivar por rol desde /dios/estructura
+        'permiso' => ['before' => ['dios/*', 'admin/*', 'mi-panel/*', 'registro-empleado']],
+    ];
 }

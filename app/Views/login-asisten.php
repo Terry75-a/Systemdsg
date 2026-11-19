@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/index/components/login-asisten.css?v=20261112') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/index/components/login-lumen.css?v=' . filemtime(FCPATH . 'css/index/components/login-lumen.css')) ?>">
     <link rel="icon" type="image/svg+xml" href="<?= base_url('images/asisten/favicon.svg') ?>">
     <link rel="alternate icon" href="<?= base_url('images/asisten/favicon.ico') ?>">
     <?= view('partials/pwa-head') ?>
@@ -36,13 +37,29 @@
                 <?php
                 $flashMsg = session()->getFlashdata('msg') ?? session()->getFlashdata('error');
                 $flashTipo = session()->getFlashdata('tipo') ?? 'danger';
-                $flashClass = ($flashTipo === 'warning') ? 'alerta-warning' : 'alerta-error';
-                $flashIcon = ($flashTipo === 'warning') ? 'fa-triangle-exclamation' : 'fa-circle-exclamation';
+                // Token de seguridad caducado (página abierta mucho tiempo): mensaje claro
+                if ($flashMsg === lang('Security.disallowedAction')) {
+                    $flashMsg  = 'La página estuvo abierta mucho tiempo y su seguridad caducó. Ya la recargamos: vuelve a iniciar sesión.';
+                    $flashTipo = 'warning';
+                }
+                // Aviso con título + mensaje: error (rojo), advertencia (ámbar) o éxito (verde)
+                $flashTipo = in_array($flashTipo, ['success', 'warning'], true) ? $flashTipo : 'error';
+                $flashCfg = [
+                    'error'   => ['fa-xmark',                'No pudimos continuar'],
+                    'warning' => ['fa-exclamation',          'Atención'],
+                    'success' => ['fa-check',                'Listo'],
+                ][$flashTipo];
                 ?>
                 <?php if (!empty($flashMsg)): ?>
-                    <div class="<?= esc($flashClass) ?>" role="alert">
-                        <i class="fa-solid <?= esc($flashIcon) ?>" aria-hidden="true"></i>
-                        <span><?= esc($flashMsg) ?></span>
+                    <div class="lg-alert is-<?= $flashTipo ?>" role="<?= $flashTipo === 'success' ? 'status' : 'alert' ?>">
+                        <span class="lg-alert-ico"><i class="fa-solid <?= $flashCfg[0] ?>" aria-hidden="true"></i></span>
+                        <div class="lg-alert-txt">
+                            <strong><?= $flashCfg[1] ?></strong>
+                            <span><?= esc($flashMsg) ?></span>
+                        </div>
+                        <button type="button" class="lg-alert-x" aria-label="Cerrar aviso" onclick="this.parentElement.remove()">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
                     </div>
                 <?php endif; ?>
 
@@ -162,20 +179,40 @@
     <!-- ═══════════ LADO DERECHO: PANEL DE MARCA ═══════════ -->
     <div class="login-right">
         <div class="login-right-inner reveal">
-            <span class="login-right-tag">DSG Perú Technology</span>
-            <h2 class="login-right-title">Todo tu negocio, <span class="serif-accent-white">bajo control.</span></h2>
-            <p class="login-right-desc">Ventas, inventario y reportes en un solo panel. Diseñado para restaurantes, boticas y minimarkets del Perú.</p>
+            <span class="login-right-tag">Asisten DSG · Control de asistencia</span>
+            <h2 class="login-right-title">La asistencia de tu equipo, <span class="serif-accent-white">en tiempo real.</span></h2>
+            <p class="login-right-desc">Marcas con huella o rostro, horarios de doble turno, incidencias y horas por persona en un solo panel.</p>
+
+            <!-- Mini vista del panel (estilo de tarjetas del sistema) -->
+            <div class="lg-preview" aria-hidden="true">
+                <div class="lg-card lg-card-white">
+                    <span class="lg-k">Hoy</span>
+                    <b class="lg-v">1ª entrada 08:52</b>
+                    <span class="lg-s">Puntual · verificado con rostro</span>
+                </div>
+                <div class="lg-card lg-card-lime">
+                    <span class="lg-k">Puntualidad</span>
+                    <b class="lg-v">92%</b>
+                    <span class="lg-s">Meta del equipo 90%</span>
+                </div>
+                <div class="lg-card lg-card-ink">
+                    <span class="lg-k">Siguiente marca</span>
+                    <b class="lg-v">2ª entrada</b>
+                    <span class="lg-s">14:00 · doble turno</span>
+                </div>
+                <div class="lg-steps">
+                    <span class="lg-step is-done"><i class="fa-solid fa-check"></i></span><i class="lg-line is-done"></i>
+                    <span class="lg-step is-done"><i class="fa-solid fa-check"></i></span><i class="lg-line"></i>
+                    <span class="lg-step is-now"><i class="fa-solid fa-fingerprint"></i></span><i class="lg-line"></i>
+                    <span class="lg-step"><i class="fa-solid fa-right-from-bracket"></i></span>
+                </div>
+            </div>
 
             <ul class="login-right-list">
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Punto de venta rápido y facturación electrónica</li>
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Inventario en tiempo real con alertas de stock</li>
-                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reportes claros para decidir mejor</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Marca con huella, rostro o código</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> 1ª y 2ª entrada en horarios de doble turno</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reportes, horas e incidencias por persona</li>
             </ul>
-
-            <div class="login-right-quote">
-                <blockquote>"Nos da control total del negocio y ahora tengo más tiempo para lo importante."</blockquote>
-                <footer><strong>Juan Alberto</strong> · Vifarma, Perú</footer>
-            </div>
         </div>
 
         <p class="login-watermark" aria-hidden="true">DSG</p>
@@ -243,5 +280,31 @@
 <footer style="text-align:center;padding:18px 16px 26px;font-size:12.5px;font-weight:700;color:#6F6F6F;">&copy; <?= date('Y') ?> DSG Peru Technology · <a href="<?= base_url('asisten-dsg') ?>" style="color:inherit;">Asistencia del personal</a></footer>
 <?= view('partials/pwa-js') ?>
 
+<script>
+/* Avisos del login como notificaciones laterales: arriba a la derecha,
+   se cierran solos (éxito 4,5 s · error/aviso 8 s, pausa con el mouse). */
+(function () {
+    var a = document.querySelector('.lg-alert');
+    if (!a) return;
+    var pila = document.createElement('div');
+    pila.className = 'lg-toasts';
+    document.body.appendChild(pila);
+    pila.appendChild(a);
+    requestAnimationFrame(function () { a.classList.add('is-in'); });
+    var ms = a.classList.contains('is-success') ? 4500 : 8000, t;
+    function cerrar() { a.classList.remove('is-in'); setTimeout(function () { a.remove(); }, 160); }
+    function programar() { t = setTimeout(cerrar, ms); }
+    a.addEventListener('mouseenter', function () { clearTimeout(t); });
+    a.addEventListener('mouseleave', programar);
+    var x = a.querySelector('.lg-alert-x');
+    if (x) x.onclick = cerrar;
+    programar();
+})();
+</script>
+<script>
+/* Si el navegador muestra el login desde su caché (botón atrás), se recarga
+   para traer un token de seguridad nuevo y evitar el error 403. */
+window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
+</script>
 </body>
 </html>

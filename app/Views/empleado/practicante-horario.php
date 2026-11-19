@@ -2,7 +2,9 @@
     $miHorario   = $miHorario ?? [];
     $sinHorario  = empty($miHorario);
     $horaEntrada = $miHorario['hora_entrada'] ?? '08:00';
-    $horaSalida  = $miHorario['hora_salida']  ?? '17:00';
+    $horaSalida  = $miHorario ? \App\Libraries\Asistencia\Jornada::salidaFinal($miHorario) : '17:00';
+    $bloquesHoy  = \App\Libraries\Asistencia\Jornada::bloques($miHorario);
+    $misHorarios = $misHorarios ?? ($miHorario ? [$miHorario] : []);
     $diasHorario = (string) ($miHorario['dias'] ?? '');
     $tolerancia  = (int) ($miHorario['tolerancia'] ?? 10);
     $esPrac      = (session()->get('user_role') ?? '') === 'Practicante';
@@ -38,7 +40,23 @@
     $limite  = date('H:i', strtotime(substr($horaEntrada, 0, 5)) + $tolerancia * 60);
     $hEntTs  = strtotime(substr($horaEntrada, 0, 5));
     $hSalTs  = strtotime(substr($horaSalida, 0, 5));
-    $horasDia = $hSalTs > $hEntTs ? round(($hSalTs - $hEntTs) / 3600, 1) : 0;
+    // Suma de bloques (en doble turno no cuenta el descanso)
+    $horasDia = round(\App\Libraries\Asistencia\Jornada::minutosJornada($miHorario) / 60, 1);
+    // Con varios horarios (L-V + sábado) cada día muestra el suyo
+    $porDia = [];
+    if (! empty($semanaHorarios)) {
+        $activos = [];
+        foreach ($semanaHorarios as $n => $h) {
+            $l = $orden[$n - 1];
+            $activos[$l] = true;
+            // Cada bloque del día: ['09:00 – 13:00', '14:00 – 19:00']
+            $porDia[$l] = array_map(static fn ($b) => substr($b[0], 0, 5) . ' – ' . substr($b[1], 0, 5), \App\Libraries\Asistencia\Jornada::bloques($h));
+        }
+        $nombresH = array_values(array_unique(array_map(static fn ($h) => (string) ($h['nombre'] ?? ''), $semanaHorarios)));
+        if (count($nombresH) > 1) {
+            $diasHorario = implode(' + ', array_map(static fn ($h) => (string) ($h['dias'] ?? ''), array_values(array_unique($semanaHorarios, SORT_REGULAR))));
+        }
+    }
     $diasLista = array_values(array_filter($orden, static fn ($l) => isset($activos[$l])));
 ?>
 
@@ -59,6 +77,28 @@
         <div class="tk-stat"><span class="material-symbols-outlined tk-stat-ico">timer</span><div><p class="tk-stat-lbl">Tolerancia</p><p class="tk-stat-val"><?= $tolerancia ?> min</p></div></div>
     </section>
 
+    <?php if (count($misHorarios) > 1 || count($bloquesHoy) > 1): ?>
+    <!-- Horarios asignados (doble turno y/o varios horarios) -->
+    <section class="tk-card tk-ovh tk-anim-item">
+        <div class="tk-card-head">
+            <div><h3>Mis horarios</h3><p>Los horarios que te asignó tu administrador. Cada día se usa el que le corresponde.</p></div>
+        </div>
+        <div class="tk-kv">
+            <?php foreach ($misHorarios as $h): $bl = \App\Libraries\Asistencia\Jornada::bloques($h); ?>
+                <div class="tk-kv-row">
+                    <span><?= esc((string) ($h['nombre'] ?? 'Horario')) ?><br><small style="color:var(--g-text-secondary);"><?= esc((string) ($h['dias'] ?? '')) ?></small></span>
+                    <span class="tk-mono" style="text-align:right;">
+                        <?php foreach ($bl as $i => $b): ?>
+                            <?= $i ? '<br>' : '' ?><?= count($bl) > 1 ? ($i + 1) . 'º turno · ' : '' ?><?= esc(substr($b[0], 0, 5) . ' – ' . substr($b[1], 0, 5)) ?>
+                        <?php endforeach; ?>
+                        <?php if (count($bl) > 1): ?><br><small style="color:var(--g-text-secondary);">Descanso <?= esc(substr($bl[0][1], 0, 5) . ' – ' . substr($bl[1][0], 0, 5)) ?></small><?php endif; ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+    <?php endif; ?>
+
     <!-- Semana -->
     <section class="tk-card tk-ovh tk-anim-item">
         <div class="tk-card-head">
@@ -70,8 +110,12 @@
                 <div class="tk-wday <?= $on ? 'on' : '' ?> <?= $i === $hoyIdx ? 'today' : '' ?>">
                     <span class="tk-wday-n"><?= esc(mb_substr($nombres[$l], 0, 3)) ?></span>
                     <?php if ($on): ?>
-                        <span class="tk-wday-h"><?= esc(substr($horaEntrada, 0, 5)) ?></span>
-                        <span class="tk-wday-h"><?= esc(substr($horaSalida, 0, 5)) ?></span>
+                        <?php if (isset($porDia[$l])): foreach ($porDia[$l] as $tramo): ?>
+                            <span class="tk-wday-h"><?= esc($tramo) ?></span>
+                        <?php endforeach; else: ?>
+                            <span class="tk-wday-h"><?= esc(substr($horaEntrada, 0, 5)) ?></span>
+                            <span class="tk-wday-h"><?= esc(substr($horaSalida, 0, 5)) ?></span>
+                        <?php endif; ?>
                     <?php else: ?>
                         <span class="tk-wday-off">Libre</span>
                     <?php endif; ?>

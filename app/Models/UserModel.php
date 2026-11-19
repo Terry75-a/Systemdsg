@@ -11,7 +11,7 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
 
     protected $allowedFields = [
-        'name', 'email', 'dni', 'password', 'role',
+        'name', 'email', 'dni', 'password', 'role', 'id_rol',
         'area', 'cargo', 'admin_id', 'created_by',
         'estado', 'last_login',
         'admin_code', 'personal_code', 'empresa',
@@ -22,8 +22,20 @@ class UserModel extends Model
         'firma_tipo', 'firma_datos', 'schedule_id',
     ];
 
-    protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
+    protected $beforeInsert = ['hashPassword', 'sincronizarRol'];
+    protected $beforeUpdate = ['hashPassword', 'sincronizarRol'];
+
+    /**
+     * Cada vez que se guarda `role`, se llena también `id_rol` con el
+     * registro de la tabla `roles` que le corresponde.
+     */
+    protected function sincronizarRol(array $data): array
+    {
+        if (isset($data['data']['role']) && ! array_key_exists('id_rol', $data['data'])) {
+            $data['data']['id_rol'] = \App\Libraries\Asistencia\Roles::idDe((string) $data['data']['role']);
+        }
+        return $data;
+    }
 
     protected function hashPassword(array $data): array
     {
