@@ -881,8 +881,8 @@ $bioChips = static function (int $r, int $h): string {
                                     </span>
                                 </div>
                                 <div class="m-card-actions" onclick="event.stopPropagation()">
-                                    <button type="button" class="m-card-btn" title="Nueva contrasena" onclick="openResetPwd(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>')">
-                                        <span class="material-symbols-outlined">password</span> Contrasena
+                                    <button type="button" class="m-card-btn" title="Nueva contraseña" onclick="openResetPwd(<?= $emp['id'] ?>, '<?= addslashes(esc($name)) ?>')">
+                                        <span class="material-symbols-outlined">password</span> Contraseña
                                     </button>
                                     <button type="button" class="m-card-btn" title="Biometria (foto y huella)" onclick='openBioPerson(<?= htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8') ?>)'>
                                         <span class="material-symbols-outlined">fingerprint</span> Biometria
@@ -1027,17 +1027,17 @@ $bioChips = static function (int $r, int $h): string {
                         <small style="color:var(--g-text-secondary);font-size:11px;display:block;margin-top:8px;">Campo exclusivo de practicantes: indica en que semestre esta.</small>
                     </div>
                     <div class="dev-field" style="grid-column:1/-1;">
-                        <label>Area especializada</label>
+                        <label>Área especializada</label>
                         <div style="position:relative;">
                             <input type="text" id="create_emp_area" name="emp_area" placeholder="Toca para elegir area" readonly onclick="openAreaModal()" style="cursor:pointer;padding-right:36px;">
                             <span class="material-symbols-outlined" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--g-text-secondary);pointer-events:none;">expand_more</span>
                         </div>
-                        <small style="color:var(--g-text-secondary);font-size:11px;">Se abre una busqueda de areas especializadas.</small>
+                        <small style="color:var(--g-text-secondary);font-size:11px;">Se abre una búsqueda de áreas especializadas.</small>
                     </div>
                     <div class="dev-field" style="grid-column:1/-1;">
                         <label>Cargo</label>
                         <input type="text" id="create_emp_cargo" name="emp_cargo" list="cargoOptions" placeholder="Elige o escribe, ej. Asistente de Sistemas">
-                        <small style="color:var(--g-text-secondary);font-size:11px;">Sugerencias al hacer clic, tambien puedes escribir libre.</small>
+                        <small style="color:var(--g-text-secondary);font-size:11px;">Sugerencias al hacer clic; también puedes escribir libre.</small>
                     </div>
                     <div style="grid-column:1/-1;border-top:1px dashed var(--g-border);margin-top:4px;padding-top:14px;">
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
@@ -1209,63 +1209,63 @@ $bioChips = static function (int $r, int $h): string {
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Codigo</span><div style="font-family:monospace;font-weight:600;"><?= esc($creds['personal_code'] ?? '') ?></div></div>
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Correo</span><div style="font-family:monospace;font-weight:500;"><?= esc($creds['email']) ?></div></div>
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">DNI</span><div style="font-family:monospace;font-weight:500;"><?= esc($creds['dni']) ?></div></div>
-                <div><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Contrasena</span><div style="font-family:monospace;font-weight:500;background:var(--g-surface);padding:6px 10px;border-radius:8px;border:1px solid var(--g-border);"><?= esc($creds['password']) ?></div></div>
+                <div><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Contraseña</span><div style="font-family:monospace;font-weight:500;background:var(--g-surface);padding:6px 10px;border-radius:8px;border:1px solid var(--g-border);"><?= esc($creds['password']) ?></div></div>
             </div>
             <div style="font-size:11.5px;color:var(--g-text-secondary);display:flex;gap:6px;align-items:center;"><span class="material-symbols-outlined" style="font-size:16px;">fingerprint</span> Al ingresar por primera vez debera registrar su <strong>huella</strong> y <strong>rostro</strong> para poder marcar asistencia.</div>
         </div>
         <div class="dev-modal-footer">
-            <button type="button" class="dev-btn dev-btn-primary" onclick="navigator.clipboard.writeText('Codigo: <?= esc($creds['personal_code'] ?? '') ?>\nCorreo: <?= esc($creds['email']) ?>\nDNI: <?= esc($creds['dni']) ?>\nContrasena: <?= esc($creds['password']) ?>'); this.innerHTML='<span class=\'material-symbols-outlined\'>check</span> Copiado';"><span class="material-symbols-outlined">content_copy</span> Copiar credenciales</button>
+            <button type="button" class="dev-btn dev-btn-primary" onclick="navigator.clipboard.writeText('Código: <?= esc($creds['personal_code'] ?? '') ?>\nCorreo: <?= esc($creds['email']) ?>\nDNI: <?= esc($creds['dni']) ?>\nContraseña: <?= esc($creds['password']) ?>'); this.innerHTML='<span class=\'material-symbols-outlined\'>check</span> Copiado';"><span class="material-symbols-outlined">content_copy</span> Copiar credenciales</button>
             <button type="button" class="dev-btn" onclick="closeModal('credsModal')">Cerrar</button>
         </div>
     </div>
 </div>
 <?php endif; ?>
 
-<!-- Modal: Contrasena regenerada -->
+<!-- Modal: Contraseña regenerada -->
 <?php $reset = session()->getFlashdata('emp_reset'); ?>
 <?php if ($reset): ?>
 <div class="dev-modal-overlay active one-shot" id="credsModal">
     <div class="dev-modal">
         <div class="dev-modal-head">
-            <h3><span class="material-symbols-outlined" style="color:var(--g-success);">password</span> Contrasena regenerada</h3>
+            <h3><span class="material-symbols-outlined" style="color:var(--g-success);">password</span> Contraseña regenerada</h3>
             <button type="button" class="dev-btn-icon" onclick="closeModal('credsModal')"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="dev-modal-body" style="text-align:center;">
             <span class="material-symbols-outlined" style="font-size:48px;color:var(--g-success);">manage_accounts</span>
             <h3 style="margin:8px 0;font-family:var(--g-font-display);"><?= esc($reset['name']) ?></h3>
-            <p style="color:var(--g-text-secondary);font-size:13px;margin:0 0 8px;">Nueva contrasena generada. Copiala y entregasela.</p>
+            <p style="color:var(--g-text-secondary);font-size:13px;margin:0 0 8px;">Nueva contraseña generada. Cópiala y entrégasela.</p>
             <div style="background:var(--g-surface-variant);border-radius:12px;padding:16px;margin:16px 0;text-align:left;">
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Codigo</span><div style="font-family:monospace;font-weight:600;"><?= esc($reset['personal_code'] ?? '') ?></div></div>
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Correo</span><div style="font-family:monospace;font-weight:500;"><?= esc($reset['email']) ?></div></div>
                 <div style="margin-bottom:10px;"><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">DNI</span><div style="font-family:monospace;font-weight:500;"><?= esc($reset['dni']) ?></div></div>
-                <div><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Contrasena</span><div style="font-family:monospace;font-weight:600;background:var(--g-surface);padding:6px 10px;border-radius:8px;border:1px solid var(--g-border);"><?= esc($reset['password']) ?></div></div>
+                <div><span style="font-size:11px;color:var(--g-text-secondary);text-transform:uppercase;">Contraseña</span><div style="font-family:monospace;font-weight:600;background:var(--g-surface);padding:6px 10px;border-radius:8px;border:1px solid var(--g-border);"><?= esc($reset['password']) ?></div></div>
             </div>
         </div>
         <div class="dev-modal-footer">
-            <button type="button" class="dev-btn dev-btn-primary" onclick="navigator.clipboard.writeText('Codigo: <?= esc($reset['personal_code'] ?? '') ?>\nCorreo: <?= esc($reset['email']) ?>\nDNI: <?= esc($reset['dni']) ?>\nContrasena: <?= esc($reset['password']) ?>'); this.innerHTML='<span class=\'material-symbols-outlined\'>check</span> Copiado';"><span class="material-symbols-outlined">content_copy</span> Copiar credenciales</button>
+            <button type="button" class="dev-btn dev-btn-primary" onclick="navigator.clipboard.writeText('Código: <?= esc($reset['personal_code'] ?? '') ?>\nCorreo: <?= esc($reset['email']) ?>\nDNI: <?= esc($reset['dni']) ?>\nContraseña: <?= esc($reset['password']) ?>'); this.innerHTML='<span class=\'material-symbols-outlined\'>check</span> Copiado';"><span class="material-symbols-outlined">content_copy</span> Copiar credenciales</button>
             <button type="button" class="dev-btn" onclick="closeModal('credsModal')">Cerrar</button>
         </div>
     </div>
 </div>
 <?php endif; ?>
 
-<!-- Modal: Confirmar regenerar contrasena -->
+<!-- Modal: Confirmar regenerar contraseña -->
 <div class="dev-modal-overlay" id="resetPwdModal">
     <div class="dev-modal" style="max-width:420px;">
         <div class="dev-modal-head">
-            <h3><span class="material-symbols-outlined">manage_accounts</span> Regenerar contrasena</h3>
+            <h3><span class="material-symbols-outlined">manage_accounts</span> Regenerar contraseña</h3>
             <button type="button" class="dev-btn-icon" onclick="closeModal('resetPwdModal')"><span class="material-symbols-outlined">close</span></button>
         </div>
         <form action="<?= site_url('admin/reset-password') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="dev-modal-body">
-                <p style="color:var(--g-text-secondary);margin:0 0 10px;">Se generara una <strong>nueva contrasena segura</strong> para <strong class="reset-pwd-name"></strong>.</p>
-                <p style="color:var(--g-text-secondary);margin:0;">Se mostrara una <strong style="color:var(--g-warning);">sola vez</strong> en pantalla: copiala y entregasela.</p>
+                <p style="color:var(--g-text-secondary);margin:0 0 10px;">Se generará una <strong>nueva contraseña segura</strong> para <strong class="reset-pwd-name"></strong>.</p>
+                <p style="color:var(--g-text-secondary);margin:0;">Se mostrará una <strong style="color:var(--g-warning);">sola vez</strong> en pantalla: cópiala y entrégasela.</p>
                 <input type="hidden" name="user_id" id="resetPwdUserId">
             </div>
             <div class="dev-modal-footer">
                 <button type="button" class="dev-btn" onclick="closeModal('resetPwdModal')">Cancelar</button>
-                <button type="submit" class="dev-btn dev-btn-primary"><span class="material-symbols-outlined">password</span> Generar nueva contrasena</button>
+                <button type="submit" class="dev-btn dev-btn-primary"><span class="material-symbols-outlined">password</span> Generar nueva contraseña</button>
             </div>
         </form>
     </div>
@@ -1447,7 +1447,7 @@ $bioChips = static function (int $r, int $h): string {
                         </div>
                     </div>
                     <div class="dev-field"><label>Estado</label><select id="edit_estado" name="emp_estado"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
-                    <div class="dev-field"><label>Nueva contrasena (opcional)</label><input type="password" id="edit_password" name="emp_password" placeholder="Dejar vacio para mantener actual"></div>
+                    <div class="dev-field"><label>Nueva contraseña (opcional)</label><input type="password" id="edit_password" name="emp_password" placeholder="Dejar vacio para mantener actual"></div>
                 </div>
             </div>
             <div class="dev-modal-footer">
@@ -1498,7 +1498,7 @@ $bioChips = static function (int $r, int $h): string {
             <div class="pd-quick">
                 <div class="pd-q">
                     <span class="pd-q-k"><span class="material-symbols-outlined">badge</span>DNI</span>
-                    <span class="pd-q-v pd-mono" id="detailDni">-</span>
+                    <span class="pd-q-v pd-copyable"><span class="pd-mono" id="detailDni">-</span><button type="button" class="pd-copy" data-copy="detailDni" aria-label="Copiar DNI"><span class="material-symbols-outlined">content_copy</span></button></span>
                 </div>
                 <div class="pd-q">
                     <span class="pd-q-k"><span class="material-symbols-outlined">description</span>Contrato</span>
@@ -1521,7 +1521,7 @@ $bioChips = static function (int $r, int $h): string {
 
             <section class="pd-sec">
                 <h4>Contacto</h4>
-                <div class="pd-row"><span>Correo</span><b id="detailEmail">-</b></div>
+                <div class="pd-row"><span>Correo</span><b class="pd-copyable"><span id="detailEmail">-</span><button type="button" class="pd-copy" data-copy="detailEmail" aria-label="Copiar correo"><span class="material-symbols-outlined">content_copy</span></button></b></div>
             </section>
 
             <section class="pd-sec">
@@ -2461,6 +2461,23 @@ function openDetailModal(emp) {
     fireBtn.onclick = function() { closeDetailModal(); openConfirmDelete(emp.id, name, fireAction); };
     openModal('detailOverlay');
 }
+
+// Copiar DNI / correo: el ícono pasa a ✓ 1,5 s y vuelve (sin aviso extra)
+document.addEventListener('click', function (e) {
+    var b = e.target.closest('.pd-copy');
+    if (!b) return;
+    var txt = (document.getElementById(b.dataset.copy) || {}).textContent || '';
+    if (!txt || txt === '-' || txt === '---') return;
+    var ok = function () {
+        var ic = b.querySelector('.material-symbols-outlined');
+        b.classList.add('is-done'); ic.textContent = 'check';
+        b.setAttribute('aria-label', 'Copiado');
+        clearTimeout(b._t);
+        b._t = setTimeout(function () { b.classList.remove('is-done'); ic.textContent = 'content_copy'; b.setAttribute('aria-label', b.dataset.copy === 'detailDni' ? 'Copiar DNI' : 'Copiar correo'); }, 1500);
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(ok, ok);
+    else { var t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) {} t.remove(); ok(); }
+});
 
 function closeDetailModal() {
     closeModal('detailOverlay');

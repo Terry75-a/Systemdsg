@@ -175,6 +175,11 @@ $eqOk = ($tk['eqPct'] ?? null) !== null && $tk['eqPct'] >= $target;
                 </section>
             <?php endif; ?>
 
+            <?php if (($cfg['base'] ?? '') === 'admin'): ?>
+                <!-- Resumen de hoy (alertas, personal de hoy, avance del día) -->
+                <?= view('partials/tk-hoy', get_defined_vars()) ?>
+                <div class="hy-block-head hy-sep"><h2>Análisis del año</h2></div>
+            <?php else: ?>
             <!-- KPIs · celdas unidas por líneas de 1px -->
             <?php
             $kpis = [
@@ -203,6 +208,8 @@ $eqOk = ($tk['eqPct'] ?? null) !== null && $tk['eqPct'] >= $target;
                     <span><b><?= $num($hoyFaltas ?? 0) ?></b> sin marcar hoy · <b><?= $num($hoyTardanzas ?? 0) ?></b> tardanzas hoy · <b><?= $num($incPendientes ?? 0) ?></b> incidencias por resolver</span>
                     <span class="tk-banner-link"><?= esc($cfg['bannerLbl']) ?></span>
                 </a>
+            <?php endif; ?>
+
             <?php endif; ?>
 
             <!-- Cierre de mes -->

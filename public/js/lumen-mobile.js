@@ -195,3 +195,122 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();
+
+/* ══════════════════════════════════════════════════════════════
+   LUMEN · nombres para botones de solo ícono
+   Un botón que sólo muestra un ícono (cerrar, editar, eliminar…) no
+   tiene texto para el lector de pantalla. Se le pone aria-label según
+   su ícono, sin tocar los que ya tienen aria-label o title.
+   ══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var NOMBRES = {
+    close: 'Cerrar', edit: 'Editar', delete: 'Eliminar', delete_outline: 'Eliminar',
+    visibility: 'Ver detalle', more_vert: 'Más opciones', more_horiz: 'Más opciones',
+    content_copy: 'Copiar', download: 'Descargar', refresh: 'Actualizar', search: 'Buscar',
+    group: 'Integrantes', person_add: 'Agregar persona', fingerprint: 'Biometría',
+    key: 'Nueva contraseña', lock_reset: 'Nueva contraseña', check: 'Aprobar', block: 'Rechazar',
+    menu: 'Abrir menú', arrow_back: 'Volver', chevron_left: 'Anterior', chevron_right: 'Siguiente',
+    notifications: 'Notificaciones', logout: 'Cerrar sesión', dark_mode: 'Modo oscuro', light_mode: 'Modo claro'
+  };
+  function nombrar(root) {
+    (root || document).querySelectorAll('button, a.dev-btn-icon, [role="button"]').forEach(function (b) {
+      if (b.hasAttribute('aria-label') || b.hasAttribute('title')) return;
+      var ico = b.querySelector('.material-symbols-outlined, .material-icons, .material-symbols-rounded');
+      if (!ico) return;
+      var texto = (b.textContent || '').replace(ico.textContent || '', '').replace(/\s+/g, '');
+      if (texto.length) return; // ya tiene texto visible
+      var n = NOMBRES[(ico.textContent || '').trim()];
+      if (n) { b.setAttribute('aria-label', n); ico.setAttribute('aria-hidden', 'true'); }
+    });
+  }
+  function iniciar() {
+    nombrar();
+    var main = document.querySelector('.dev-main') || document.body;
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) for (var j = 0; j < muts[i].addedNodes.length; j++) if (muts[i].addedNodes[j].nodeType === 1) { nombrar(main); return; }
+    }).observe(main, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+})();
+
+/* Escape cierra la ventana abierta en cualquier pantalla (si la vista no lo hace ya) */
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || e.defaultPrevented) return;
+  var abiertas = Array.prototype.filter.call(document.querySelectorAll('.dev-modal-overlay'), function (o) {
+    if (/(^|\s)(active|show|open|is-open)(\s|$)/.test(o.className)) return true;
+    var c = getComputedStyle(o);
+    return c.display !== 'none' && c.visibility !== 'hidden' && c.opacity !== '0';
+  });
+  var top = abiertas[abiertas.length - 1];
+  if (!top) return;
+  var x = top.querySelector('.dev-modal-close, .pd-close, [aria-label="Cerrar"], [data-mc], [data-mcnotif]');
+  if (x) x.click();
+});
+
+/* Al abrir una ventana el foco entra en ella; al cerrarla vuelve al botón
+   que la abrió (teclado y lector de pantalla no se quedan detrás). */
+(function () {
+  'use strict';
+  var origen = new WeakMap();
+  function abierta(o) { return /(^|\s)(active|show|open|is-open)(\s|$)/.test(o.className); }
+  function vigilar(o) {
+    if (o.dataset.lmFoco) return;
+    o.dataset.lmFoco = '1';
+    if (!o.hasAttribute('role')) { var m = o.querySelector('.dev-modal') || o; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); }
+    var antes = abierta(o);
+    new MutationObserver(function () {
+      var ahora = abierta(o);
+      if (ahora === antes) return;
+      antes = ahora;
+      if (ahora) {
+        origen.set(o, document.activeElement);
+        // Se reintenta mientras la ventana termina de hacerse visible (transición)
+        var n = 0;
+        (function intentar() {
+          if (!abierta(o) || o.contains(document.activeElement)) return;
+          var f = o.querySelector('input:not([type=hidden]):not([disabled]), select, textarea, button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])');
+          if (f) f.focus({ preventScroll: true });
+          if (!o.contains(document.activeElement) && ++n < 10) setTimeout(intentar, 60);
+        })();
+      } else {
+        var v = origen.get(o);
+        if (v && v.focus && document.contains(v)) v.focus({ preventScroll: true });
+      }
+    }).observe(o, { attributes: true, attributeFilter: ['class'] });
+  }
+  function iniciar() {
+    document.querySelectorAll('.dev-modal-overlay').forEach(vigilar);
+    new MutationObserver(function () { document.querySelectorAll('.dev-modal-overlay:not([data-lm-foco])').forEach(vigilar); })
+      .observe(document.body, { childList: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+})();
+
+/* Entradas en limpio: las animaciones de entrada (tarjetas, filas, menú) terminan en
+   filter: blur(0) / translateY(0) y, al quedar fijas (fill-mode both), convierten a la
+   tarjeta en el marco de lo que tenga position: fixed adentro (el menú ⋮ de Personal
+   salía desplazado o recortado). Al terminar se suelta la animación: el elemento ya
+   está en su estado final, así que no cambia nada a la vista. */
+(function () {
+  'use strict';
+  var ENTRADAS = /^(tk-item-in|np-fade-up|np-fade-down|np-nav-in|np-row-in|np-alert-in|edu-fade-up)$/;
+  document.addEventListener('animationend', function (e) {
+    if (e.target === e.currentTarget || !ENTRADAS.test(e.animationName)) return;
+    e.target.style.animation = 'none';
+  }, true);
+  // Respaldo (pestañas en segundo plano no siempre emiten animationend):
+  // al cargar y antes de cada toque se sueltan las entradas ya terminadas.
+  function soltar() {
+    if (!document.getAnimations) return;
+    document.getAnimations().forEach(function (a) {
+      var t = a.effect && a.effect.target;
+      if (t && t.style && a.playState === 'finished' && ENTRADAS.test(a.animationName || '')) t.style.animation = 'none';
+    });
+  }
+  window.addEventListener('load', function () { setTimeout(soltar, 1500); });
+  document.addEventListener('pointerdown', soltar, true);
+  document.addEventListener('keydown', soltar, true);
+})();
