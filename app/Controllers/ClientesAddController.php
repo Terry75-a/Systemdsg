@@ -12,18 +12,18 @@ use App\Support\ClientesCatalog;
 class ClientesAddController extends BaseController
 {
     protected $db;
-    protected DocumentoLookupService $documentoLookupService;
-    protected ClienteFormService $clienteFormService;
-    protected ClienteValidationService $clienteValidationService;
+    // NOTA: los servicios de Clientes fueron removidos de Config\Services
+    // (módulo deshabilitado en rutas). Si se reactiva el módulo, hay que
+    // reimplementarlos. Ver docs/estructura-sistema.md §4.6.
+    protected ?DocumentoLookupService $documentoLookupService = null;
+    protected ?ClienteFormService $clienteFormService = null;
+    protected ?ClienteValidationService $clienteValidationService = null;
     protected ClientesaddModel $personaModel;
     protected ClientesModel $clienteModel;
 
     public function __construct()
     {
         $this->db = \Config\Database::connect();
-        $this->documentoLookupService = service('documentoLookup');
-        $this->clienteFormService = service('clienteForm');
-        $this->clienteValidationService = service('clienteValidation');
         $this->personaModel = new ClientesaddModel();
         $this->clienteModel = new ClientesModel();
     }

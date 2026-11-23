@@ -111,6 +111,10 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     $routes->post('create-incident', 'Admin\IncidenciaAdminController::createIncident');
     $routes->post('update-incident', 'Admin\IncidenciaAdminController::updateIncident');
 
+    // Herramientas de mantenimiento (cierre/saneo de asistencia)
+    $routes->post('herramientas/cierre', 'AdminController::ejecutarCierre');
+    $routes->post('herramientas/saneo', 'AdminController::ejecutarSaneo');
+
     // Configuración y festivos
     $routes->get('configuracion', 'Admin\ConfigAdminController::configuracion');
     $routes->post('save-config', 'Admin\ConfigAdminController::saveConfig');
@@ -166,6 +170,7 @@ $routes->group('mi-panel', ['filter' => 'asistencia'], static function ($routes)
     $routes->post('justificar-incidencia', 'EmployeeController::justificarIncidencia');
     $routes->post('crear-incidencia', 'EmployeeController::crearIncidencia');
     $routes->get('perfil', 'EmployeeController::perfil');
+    $routes->post('cambiar-password', 'EmployeeController::cambiarPassword');
     $routes->get('bio-session', 'EmployeeController::bioSession');
     $routes->post('guardar-huella', 'EmployeeController::guardarHuella');
     $routes->post('verify-huella', 'EmployeeController::verifyHuella');

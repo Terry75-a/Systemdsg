@@ -801,4 +801,33 @@ class AdminController extends AdminBaseController
         ]);
     }
 
+    /**
+     * Ejecuta el cierre de jornada para el equipo del admin logueado.
+     * Llama al comando CLI `asistencia:cierre` y devuelve su salida.
+     */
+    public function ejecutarCierre()
+    {
+        // En sesión de asistencia el user_id del admin logueado es su propio id.
+        $adminId = (int) (session()->get('user_id') ?? 0);
+        $fecha   = (string) ($this->request->getPost('fecha') ?: date('Y-m-d'));
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Fecha inválida (YYYY-MM-DD).']);
+        }
+
+        $cmd = 'asistencia:cierre --fecha=' . $fecha . ' --admin=' . $adminId;
+        $out = command($cmd);
+        return $this->response->setJSON(['ok' => true, 'msj' => 'Cierre ejecutado.', 'salida' => (string) $out]);
+    }
+
+    /**
+     * Ejecuta el saneo (por defecto dry-run; --apply si se solicita).
+     */
+    public function ejecutarSaneo()
+    {
+        $apply = (bool) $this->request->getPost('apply');
+        $cmd   = 'asistencia:saneo' . ($apply ? ' --apply' : '');
+        $out   = command($cmd);
+        return $this->response->setJSON(['ok' => true, 'msj' => 'Saneo ejecutado.', 'salida' => (string) $out]);
+    }
+
 }

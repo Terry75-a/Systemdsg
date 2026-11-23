@@ -2,14 +2,7 @@
 
 namespace Config;
 
-use App\Services\External\Http\CurlDocumentoLookupHttpClient;
-use App\Services\External\Http\DocumentoLookupHttpClientInterface;
-use App\Services\External\DocumentoLookupService;
-use App\Services\Clientes\ClienteFormService;
-use App\Services\Clientes\ClienteValidationService;
 use App\Services\Permisos\PermisoWriterService;
-use App\Services\Personas\PersonaFormService;
-use App\Services\Personas\PersonaValidationService;
 use App\Services\Usuarios\UsuarioWriterService;
 use CodeIgniter\Config\BaseService;
 
@@ -28,27 +21,6 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    public static function documentoLookup(bool $getShared = true): DocumentoLookupService
-    {
-        if ($getShared) {
-            return static::getSharedInstance('documentoLookup');
-        }
-
-        return new DocumentoLookupService(
-            config('ExternalServices'),
-            static::documentoLookupHttpClient(false)
-        );
-    }
-
-    public static function documentoLookupHttpClient(bool $getShared = true): DocumentoLookupHttpClientInterface
-    {
-        if ($getShared) {
-            return static::getSharedInstance('documentoLookupHttpClient');
-        }
-
-        return new CurlDocumentoLookupHttpClient();
-    }
-
     public static function permisoWriter(bool $getShared = true): PermisoWriterService
     {
         if ($getShared) {
@@ -65,42 +37,6 @@ class Services extends BaseService
         }
 
         return new UsuarioWriterService();
-    }
-
-    public static function personaForm(bool $getShared = true): PersonaFormService
-    {
-        if ($getShared) {
-            return static::getSharedInstance('personaForm');
-        }
-
-        return new PersonaFormService();
-    }
-
-    public static function personaValidation(bool $getShared = true): PersonaValidationService
-    {
-        if ($getShared) {
-            return static::getSharedInstance('personaValidation');
-        }
-
-        return new PersonaValidationService();
-    }
-
-    public static function clienteForm(bool $getShared = true): ClienteFormService
-    {
-        if ($getShared) {
-            return static::getSharedInstance('clienteForm');
-        }
-
-        return new ClienteFormService();
-    }
-
-    public static function clienteValidation(bool $getShared = true): ClienteValidationService
-    {
-        if ($getShared) {
-            return static::getSharedInstance('clienteValidation');
-        }
-
-        return new ClienteValidationService();
     }
 
     public static function webpush(bool $getShared = true): \App\Services\WebPushService

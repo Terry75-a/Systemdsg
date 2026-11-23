@@ -48,7 +48,7 @@ final class AsistenciaLibrariesTest extends CIUnitTestCase
 
         $this->assertSame("\xEF\xBB\xBF", substr($csv, 0, 3));
         $this->assertStringContainsString(
-            'Fecha;Nombre;DNI;Entrada;Salida;Estado;Observacion;Lat;Lng;IP',
+            'Fecha;Nombre;DNI;1a entrada;1a salida;2a entrada;2a salida;Turnos;Estado;Observacion;Lat;Lng;IP',
             $csv
         );
     }
@@ -74,11 +74,12 @@ final class AsistenciaLibrariesTest extends CIUnitTestCase
         $this->assertCount(2, $lineas, 'Encabezado + 1 fila, sin filas rotas');
 
         $celdas = explode(';', $lineas[1]);
-        $this->assertCount(10, $celdas);
+        $this->assertCount(13, $celdas);
         $this->assertSame('2026-09-30', $celdas[0]);
         $this->assertSame('Ana Pérez', $celdas[1]);
-        $this->assertStringNotContainsString(';', $celdas[6]);
-        $this->assertStringNotContainsString("\n", $celdas[6]);
+        // observacion queda en la columna 9 (0-based) tras los turnos
+        $this->assertStringNotContainsString(';', $celdas[9]);
+        $this->assertStringNotContainsString("\n", $celdas[9]);
     }
 
     public function testCsvTruncaHorasAAHoraMinuto(): void

@@ -1275,6 +1275,36 @@ class EmployeeController extends BaseController
         return view('layouts/practicante-panel', $data);
     }
 
+    /**
+     * Cambio de contraseña por el propio empleado/practicante.
+     * POST /mi-panel/cambiar-password
+     */
+    public function cambiarPassword()
+    {
+        if ($redirect = $this->checkEmployee()) return $redirect;
+
+        $userId   = (int) session()->get('user_id');
+        $actual   = (string) $this->request->getPost('password_actual');
+        $nueva    = (string) $this->request->getPost('password_nueva');
+        $confirm  = (string) $this->request->getPost('password_confirm');
+
+        if (strlen($nueva) < 8) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'La nueva contraseña debe tener al menos 8 caracteres.']);
+        }
+        if ($nueva !== $confirm) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'La confirmación no coincide.']);
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $user      = $userModel->find($userId);
+        if (! $user || ! password_verify($actual, (string) ($user['password'] ?? ''))) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'La contraseña actual es incorrecta.']);
+        }
+
+        $userModel->update($userId, ['password' => password_hash($nueva, PASSWORD_DEFAULT)]);
+        return $this->response->setJSON(['ok' => true, 'msj' => 'Contraseña actualizada correctamente.']);
+    }
+
     // ══════════════════════════════════════════════════════
     // NOTIFICACIONES DEL EMPLEADO (campana del panel)
     // ══════════════════════════════════════════════════════
