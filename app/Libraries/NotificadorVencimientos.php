@@ -143,13 +143,7 @@ class NotificadorVencimientos
                                                             <p style='color: #718096; font-size: 12px; text-transform: uppercase; margin: 0 0 5px 0; font-weight: bold;'>Monto a pagar:</p>
                                                             <p style='color: #1a202c; font-size: 24px; font-weight: bold; margin: 0 0 15px 0;'>S/ {$montoFormateado}</p>
                                                             <p style='color: #718096; font-size: 12px; margin: 0 0 15px 0;'>Concepto: {$nombreServicio}</p>
-                                                            <table border='0' cellpadding='0' cellspacing='0' width='100%'>
-                                                                <tr>
-                                                                    <td align='center' style='background-color: #007bff; border-radius: 6px;'>
-                                                                        <a href='#' target='_blank' style='color: #ffffff; padding: 10px 15px; display: block; font-size: 14px; font-weight: bold; text-decoration: none;'>Renovar ahora</a>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
+                                                            
                                                         </td>
                                                         <td width='4%'></td>
                                                         <td width='48%' style='border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; vertical-align: top; background-color: #ffffff;'>

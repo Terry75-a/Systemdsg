@@ -381,7 +381,8 @@ $routes->get('buscar', 'PersonasController::buscar', ['filter' => 'auth']);
 $routes->post('personas/guardar-todo', 'PersonasAddController::guardar_todo', ['filter' => 'auth']);
 $routes->post('personas/guardarPlan' , 'PersonasAddController::guardarPlan', ['filter' => 'auth']);
 $routes->get('personasadd/(:num)?', 'PersonasAddController::index/$1', ['filter' => 'auth']);
-$routes->post('personas/guardarOtrosPagos', 'PersonasAddController::guardarOtrosPagos');
+$routes->post('personas/guardarOtrosPagos', 'PersonasAddController::guardarOtrosPagos', ['filter' => 'auth']);
+$routes->post('personas/eliminarPago', 'PersonasAddController::eliminarPago', ['filter' => 'auth']);
 $routes->post('personas/borrar/(:num)', 'PersonasAddController::borrar/$1', ['filter' => 'auth']);
 
 $routes->get('notificaciones', 'NotificacionesController::index', ['filter' => 'auth']);

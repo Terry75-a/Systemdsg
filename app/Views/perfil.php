@@ -3,25 +3,29 @@
 <?php
 $p = is_array($perfil) ? (object) $perfil : $perfil;
 $inis = strtoupper(substr(trim((string) ($p->nombre ?? 'U')), 0, 1) . substr(trim((string) ($p->apellido_paterno ?? '')), 0, 1));
-if ($inis === '' || $inis === 'U') { $inis = strtoupper(substr(trim((string) (session()->get('username') ?? 'US')), 0, 2)); }
+if ($inis === '' || $inis === 'U') {
+    $inis = strtoupper(substr(trim((string) (session()->get('username') ?? 'US')), 0, 2));
+}
 $rol  = $p->rol_nombre ?? session()->get('rol_nombre') ?? '—';
 $tel  = trim((string) ($p->telefono ?? '')) !== '' ? $p->telefono : 'No registrado';
 $mail = trim((string) ($p->correo ?? '')) !== '' ? $p->correo : 'No registrado';
 $miembro = !empty($p->created_at) ? date('d/m/Y', strtotime($p->created_at)) : '—';
 $nombre = trim(($p->nombre ?? '') . ' ' . ($p->apellido_paterno ?? '')) ?: (session()->get('username') ?? 'Usuario');
 $activo = ((int) ($p->estado ?? 1)) === 1;
+
+$imgRel = ltrim(trim((string) ($p->imagen ?? '')), '/');
+$fotoUrl = ($imgRel !== '' && is_file(FCPATH . $imgRel))
+    ? base_url($imgRel) . '?v=' . filemtime(FCPATH . $imgRel)
+    : '';
 ?>
 
 <main class="pf-page">
     <div class="pdsg-page-head">
         <div>
             <h1 class="pdsg-page-title">Mi Perfil</h1>
-            <p class="pdsg-page-sub">Revisa tus datos personales y actualiza tu nombre o contraseña.</p>
+            <p class="pdsg-page-sub">Revisa tus datos personales y actualiza tu foto, nombre o contraseña.</p>
         </div>
-        <button type="button" class="btn pdsg-add-btn" onclick="document.getElementById('Byimagen').click()">
-            <i class="fa-solid fa-camera" aria-hidden="true"></i> Cambiar foto
-        </button>
-        <input type="file" id="Byimagen" accept="image/*" hidden onchange="Most(event);mostrarFotoPerfil()">
+        
     </div>
 
     <?php $flashMsg = session()->getFlashdata('msg'); ?>
@@ -49,9 +53,13 @@ $activo = ((int) ($p->estado ?? 1)) === 1;
 
             <div class="pf-id">
                 <div class="pf-avatar-wrap">
-                    <img id="fotoPerfil" class="pf-avatar" src="<?= base_url('images/avatar-placeholder.svg') ?>" alt="Foto de perfil"
+                    <img id="fotoPerfil"
+                         class="pf-avatar"
+                         src="<?= $fotoUrl !== '' ? esc($fotoUrl) : '' ?>"
+                         alt="Foto de perfil"
+                         style="display:<?= $fotoUrl !== '' ? 'block' : 'none' ?>;object-fit:cover;"
                          onerror="this.style.display='none';document.getElementById('pfInitials').style.display='flex';">
-                    <div class="pf-avatar-initials" id="pfInitials" style="display:none;"><?= esc($inis) ?></div>
+                    <div class="pf-avatar-initials" id="pfInitials" style="display:<?= $fotoUrl !== '' ? 'none' : 'flex' ?>;"><?= esc($inis) ?></div>
                     <button type="button" class="pf-avatar-btn" title="Cambiar foto" onclick="document.getElementById('Byimagen').click()">
                         <i class="fa-solid fa-camera" aria-hidden="true"></i>
                     </button>
@@ -99,8 +107,14 @@ $activo = ((int) ($p->estado ?? 1)) === 1;
                 <h2><span class="material-symbols-outlined">edit_square</span> Editar perfil</h2>
             </div>
 
-            <form class="pf-form" action="<?= base_url('perfil/actualizar') ?>" method="post" autocomplete="off">
+            <form class="pf-form" action="<?= base_url('perfil/actualizar') ?>" method="post" enctype="multipart/form-data" autocomplete="off">
                 <?= csrf_field() ?>
+                <input type="file" id="Byimagen" name="imagen" accept="image/png,image/jpeg,image/webp" hidden onchange="previewFotoPerfil(event)">
+
+                <p class="pf-hint" id="pfPhotoHint" hidden style="color:var(--bs-success,#16a34a);font-weight:500;">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span id="pfPhotoName">Foto seleccionada.</span> Pulsa <strong>Guardar cambios</strong> para aplicarla.
+                </p>
 
                 <div class="dev-field">
                     <label for="pfNombre">Nombre <span class="pf-req">*</span></label>
@@ -138,7 +152,6 @@ $activo = ((int) ($p->estado ?? 1)) === 1;
     </div>
 </main>
 
-<script src="<?= base_url('js/subirimage.js') ?>"></script>
 <script>
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('password');
@@ -152,24 +165,38 @@ $activo = ((int) ($p->estado ?? 1)) === 1;
         }
     }
 
+    function previewFotoPerfil(event) {
+        const file = event.target && event.target.files ? event.target.files[0] : null;
+        if (!file) return;
+
+        const img = document.getElementById('fotoPerfil');
+        const ini = document.getElementById('pfInitials');
+        const hint = document.getElementById('pfPhotoHint');
+        const nameEl = document.getElementById('pfPhotoName');
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            if (img) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+            }
+            if (ini) {
+                ini.style.display = 'none';
+            }
+            if (nameEl) {
+                nameEl.textContent = 'Foto lista (' + file.name + ').';
+            }
+            if (hint) {
+                hint.hidden = false;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
     document.querySelector('.pf-form')?.addEventListener('submit', function (e) {
         const btn = document.getElementById('pfSubmit');
         if (btn.disabled) { e.preventDefault(); return; }
         btn.disabled = true;
         btn.innerHTML = '<span class="material-symbols-outlined">progress_activity</span> Guardando…';
     });
-
-    function mostrarFotoPerfil() {
-        const img = document.getElementById('fotoPerfil');
-        const ini = document.getElementById('pfInitials');
-        if (!img || !ini) return;
-        if (localStorage.getItem('fotoUsuario')) {
-            img.style.display = 'block';
-            ini.style.display = 'none';
-        } else {
-            img.style.display = 'none';
-            ini.style.display = 'flex';
-        }
-    }
-    window.addEventListener('DOMContentLoaded', mostrarFotoPerfil);
 </script>

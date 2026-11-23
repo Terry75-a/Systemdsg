@@ -16,7 +16,7 @@ $menusPayload = array_map(static fn($menu) => [
         </button>
     </div>
 
-    <div id="usNotice" class="alert alert-success" role="status" hidden></div>
+    <div id="usNotice" role="status" hidden></div>
 
     <section class="pdsg-card pdsg-table-card" aria-label="Listado de usuarios">
         <div class="tk2-toolbar us-toolbar">
@@ -58,7 +58,7 @@ $menusPayload = array_map(static fn($menu) => [
                     <button type="button" class="tp-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="tp-modal-body">
-                    <div id="usFormError" class="alert alert-danger" role="alert" hidden></div>
+                    <div id="usFormError" hidden></div>
 
                     <div class="row g-3">
                         <div class="col-md-4">
@@ -99,7 +99,7 @@ $menusPayload = array_map(static fn($menu) => [
                             <select name="id_rol" id="usRol" class="form-control" required>
                                 <option value="">-- Seleccionar rol --</option>
                                 <?php foreach ($roles as $rol): ?>
-                                    <option value="<?= $rol->id_rol ?>"><?= esc($rol->nombre) ?></option>
+                                    <option value="<?= (int) $rol->id_rol ?>"><?= esc($rol->nombre) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -127,7 +127,7 @@ $menusPayload = array_map(static fn($menu) => [
                     <button type="button" class="tp-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="tp-modal-body">
-                    <div id="usEditError" class="alert alert-danger" role="alert" hidden></div>
+                    <div id="usEditError" hidden></div>
 
                     <div class="row g-3">
                         <div class="col-md-4">
@@ -161,14 +161,14 @@ $menusPayload = array_map(static fn($menu) => [
                         <div class="col-md-4">
                             <label for="usEditPassword">Nueva contraseña</label>
                             <input type="password" id="usEditPassword" name="password" class="form-control" autocomplete="new-password">
-                            <small class="form-text text-muted">Dejalo vacío si no querés cambiarla.</small>
+                            <small class="form-text text-muted">Déjalo vacío si no quieres cambiarla.</small>
                         </div>
                         <div class="col-md-4">
                             <label for="usEditRol">Rol <span class="text-danger">*</span></label>
                             <select name="id_rol" id="usEditRol" class="form-control" required>
                                 <option value="">-- Seleccionar rol --</option>
                                 <?php foreach ($roles as $rol): ?>
-                                    <option value="<?= $rol->id_rol ?>"><?= esc($rol->nombre) ?></option>
+                                    <option value="<?= (int) $rol->id_rol ?>"><?= esc($rol->nombre) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -197,7 +197,7 @@ $menusPayload = array_map(static fn($menu) => [
                     <button type="button" class="tp-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="tp-modal-body">
-                    <div id="usPermError" class="alert alert-danger" role="alert" hidden></div>
+                    <div id="usPermError" hidden></div>
                     <div class="alert alert-warning small" role="status">
                         <strong>Ojo:</strong> los permisos se guardan por <strong>rol</strong>, no por usuario individual. Cualquier cambio impacta a todos los usuarios que compartan ese rol.
                     </div>
@@ -225,21 +225,190 @@ $menusPayload = array_map(static fn($menu) => [
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <script>
 const BASE_URL = '<?= base_url() ?>';
 const CSRF_TOKEN = '<?= csrf_token() ?>';
-const CSRF_HASH = '<?= csrf_hash() ?>';
+const CSRF_HEADER = '<?= csrf_header() ?>';
+let CSRF_HASH = '<?= csrf_hash() ?>';
 const MENUS = <?= json_encode($menusPayload, JSON_UNESCAPED_UNICODE) ?>;
 
 let tablaUsuarios;
 
-$(document).ready(function () {
-    tablaUsuarios = $('#tablaUsuarios').DataTable({
+window.escapeHtml = function (value) {
+    const map = {
+        '&': '&' + 'amp;',
+        '<': '&' + 'lt;',
+        '>': '&' + 'gt;',
+        '"': '&' + 'quot;',
+        "'": '&' + '#039;'
+    };
+    return String(value ?? '').replace(/[&<>"']/g, function (c) {
+        return map[c];
+    });
+};
+
+window.buildAlert = function (type, content) {
+    return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">'
+        + content
+        + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>'
+        + '</div>';
+};
+
+window.renderErrors = function (errors, fallbackMessage) {
+    const items = Object.values(errors || {}).filter(Boolean);
+    if (!items.length) {
+        return escapeHtml(fallbackMessage || 'Ocurrió un error inesperado.');
+    }
+    return '<ul class="mb-0 ps-3">' + items.map(function (item) {
+        return '<li>' + escapeHtml(item) + '</li>';
+    }).join('') + '</ul>';
+};
+
+window.setAlert = function (containerId, type, html) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (html) {
+        container.innerHTML = buildAlert(type, html);
+        container.hidden = false;
+        container.style.display = '';
+        const modalBody = container.closest('.tp-modal-body');
+        if (modalBody) {
+            modalBody.scrollTop = 0;
+        }
+    } else {
+        container.innerHTML = '';
+        container.hidden = true;
+    }
+};
+
+window.clearAlert = function (containerId) {
+    setAlert(containerId, '', '');
+};
+
+window.cleanupBackdrops = function () {
+    if (!document.querySelector('.modal.show')) {
+        document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
+            backdrop.remove();
+        });
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    }
+};
+
+window.openModal = function (modalId) {
+    const el = document.getElementById(modalId);
+    if (!el || !window.bootstrap || !bootstrap.Modal) return;
+    bootstrap.Modal.getOrCreateInstance(el).show();
+};
+
+window.closeModal = function (modalId) {
+    const el = document.getElementById(modalId);
+    if (!el) {
+        cleanupBackdrops();
+        return;
+    }
+
+    const instance = (window.bootstrap && bootstrap.Modal)
+        ? bootstrap.Modal.getInstance(el)
+        : null;
+
+    if (instance) {
+        instance.hide();
+    } else {
+        const closeBtn = el.querySelector('[data-bs-dismiss="modal"]');
+        if (closeBtn) {
+            closeBtn.click();
+        }
+    }
+
+    setTimeout(function () {
+        if (el.classList.contains('show')) {
+            const stuck = (window.bootstrap && bootstrap.Modal)
+                ? bootstrap.Modal.getInstance(el)
+                : null;
+            if (stuck) {
+                stuck.dispose();
+            }
+            el.classList.remove('show');
+            el.setAttribute('aria-hidden', 'true');
+            el.removeAttribute('aria-modal');
+            el.style.display = 'none';
+        }
+        cleanupBackdrops();
+    }, 350);
+};
+
+window.syncCsrfToken = function (res, data) {
+    const nextHash = (data && (data.csrfHash || data.csrf_hash))
+        || (res && res.headers && res.headers.get(CSRF_HEADER));
+    if (!nextHash) return;
+    CSRF_HASH = nextHash;
+    document.querySelectorAll('input[name="' + CSRF_TOKEN + '"]').forEach(function (input) {
+        input.value = nextHash;
+    });
+};
+
+window.parseJsonResponse = async function (res) {
+    const text = await res.text();
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        return { success: false, message: 'Respuesta inválida del servidor (HTTP ' + res.status + ').' };
+    }
+};
+
+window.fullName = function (u) {
+    return [u.nombre, u.apellido_paterno, u.apellido_materno].filter(Boolean).join(' ').trim();
+};
+
+window.fillUserForm = function (prefix, usuario) {
+    document.getElementById(prefix + 'Nombre').value = usuario.nombre ?? '';
+    document.getElementById(prefix + 'ApellidoPaterno').value = usuario.apellido_paterno ?? '';
+    document.getElementById(prefix + 'ApellidoMaterno').value = usuario.apellido_materno ?? '';
+    document.getElementById(prefix + 'Dni').value = usuario.dni ?? '';
+    document.getElementById(prefix + 'Correo').value = usuario.correo ?? '';
+    document.getElementById(prefix + 'Telefono').value = usuario.telefono ?? '';
+    document.getElementById(prefix + 'Username').value = usuario.username ?? '';
+    document.getElementById(prefix + 'Rol').value = usuario.id_rol ?? '';
+};
+
+window.renderPermsBody = function (permisos) {
+    const tbody = document.getElementById('usPermBody');
+    const permMap = new Map((permisos || []).map(function (p) {
+        return [Number(p.menu_id), p];
+    }));
+    if (!MENUS.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No hay menús configurados.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = MENUS.map(function (menu) {
+        const p = permMap.get(Number(menu.id)) || {};
+        return '<tr data-menu-id="' + Number(menu.id) + '">'
+            + '<td>' + escapeHtml(menu.nombre) + '</td>'
+            + '<td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="read" ' + (Number(p.read) === 1 ? 'checked' : '') + '></td>'
+            + '<td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="insert" ' + (Number(p.insert) === 1 ? 'checked' : '') + '></td>'
+            + '<td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="update" ' + (Number(p.update) === 1 ? 'checked' : '') + '></td>'
+            + '<td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="delete" ' + (Number(p.delete) === 1 ? 'checked' : '') + '></td>'
+            + '</tr>';
+    }).join('');
+};
+
+jQuery(document).ready(function () {
+    // Mover modales al body evita conflictos de z-index y backdrop bloqueado
+    ['usModal', 'usEditModal', 'usPermModal'].forEach(function (modalId) {
+        const el = document.getElementById(modalId);
+        if (el) {
+            document.body.appendChild(el);
+            el.addEventListener('hidden.bs.modal', cleanupBackdrops);
+        }
+    });
+
+    tablaUsuarios = jQuery('#tablaUsuarios').DataTable({
         autoWidth: false,
         lengthChange: false,
         dom: 'rt<"us-table-footer"ip>',
@@ -247,7 +416,7 @@ $(document).ready(function () {
         order: [[0, 'desc']],
         drawCallback: function () {
             const api = this.api();
-            $('#usCount').text(api.page.info().recordsTotal);
+            jQuery('#usCount').text(api.page.info().recordsTotal);
         },
         ajax: {
             url: BASE_URL + 'usuarios/listar',
@@ -260,37 +429,33 @@ $(document).ready(function () {
                 data: null,
                 className: 'us-user-cell',
                 render: function (data, type, row) {
-                    if (type !== 'display') return row.username;
+                    if (type !== 'display') return row.username || '';
                     const ini = (row.username || '?').trim().substring(0, 2).toUpperCase();
-                    return `
-                        <div class="us-user-wrap">
-                            <span class="pdsg-avatar">${ini}</span>
-                            <div>
-                                <div class="us-user-name">${escapeHtml(row.username)}</div>
-                                <div class="us-user-id">ID #${row.id_usuario}</div>
-                            </div>
-                        </div>
-                    `;
+                    return '<div class="us-user-wrap">'
+                        + '<span class="pdsg-avatar">' + escapeHtml(ini) + '</span>'
+                        + '<div>'
+                        + '<div class="us-user-name">' + escapeHtml(row.username) + '</div>'
+                        + '<div class="us-user-id">ID #' + Number(row.id_usuario) + '</div>'
+                        + '</div>'
+                        + '</div>';
                 }
             },
             {
                 data: null,
                 className: 'us-person-cell',
                 render: function (data, type, row) {
-                    if (type !== 'display') return '';
                     const full = [row.nombre, row.apellido_paterno, row.apellido_materno].filter(Boolean).join(' ');
+                    if (type !== 'display') return full + ' ' + (row.dni || '');
                     const dni = row.dni ? 'DNI: ' + row.dni : '—';
-                    return `
-                        <div class="us-person-name">${escapeHtml(full || 'Sin nombre registrado')}</div>
-                        <div class="us-person-dni">${escapeHtml(dni)}</div>
-                    `;
+                    return '<div class="us-person-name">' + escapeHtml(full || 'Sin nombre registrado') + '</div>'
+                        + '<div class="us-person-dni">' + escapeHtml(dni) + '</div>';
                 }
             },
             {
                 data: null,
                 className: 'us-contact-cell',
                 render: function (data, type, row) {
-                    if (type !== 'display') return '';
+                    if (type !== 'display') return row.correo || '';
                     return '<div class="us-contact-email">' + escapeHtml(row.correo ?? '—') + '</div>';
                 }
             },
@@ -317,108 +482,63 @@ $(document).ready(function () {
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
-                    return `
-                        <span class="pdsg-actions">
-                            <button type="button" class="pdsg-action pdsg-action-edit" onclick="openEditUsuario(${row.id_usuario})" title="Editar usuario" aria-label="Editar usuario">
-                                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" class="pdsg-action pdsg-action-info" onclick="openPermisosUsuario(${row.id_usuario})" title="Permisos del rol" aria-label="Permisos del rol">
-                                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" class="pdsg-action ${Number(row.estado) === 1 ? 'pdsg-action-warning' : 'pdsg-action-success'}" onclick="toggleEstadoUsuario(${row.id_usuario}, ${row.estado})" title="${Number(row.estado) === 1 ? 'Desactivar' : 'Activar'} usuario" aria-label="${Number(row.estado) === 1 ? 'Desactivar' : 'Activar'} usuario">
-                                <i class="fa-solid ${Number(row.estado) === 1 ? 'fa-user-slash' : 'fa-user-check'}" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    `;
+                    const id = Number(row.id_usuario);
+                    const est = Number(row.estado);
+                    const isActive = est === 1;
+                    const toggleClass = isActive ? 'pdsg-action-warning' : 'pdsg-action-success';
+                    const toggleTitle = isActive ? 'Desactivar usuario' : 'Activar usuario';
+                    const toggleIcon = isActive ? 'fa-user-slash' : 'fa-user-check';
+
+                    return '<span class="pdsg-actions">'
+                        + '<button type="button" class="pdsg-action pdsg-action-edit" onclick="openEditUsuario(' + id + ')" title="Editar usuario" aria-label="Editar usuario">'
+                        + '<i class="fa-solid fa-pen" aria-hidden="true"></i>'
+                        + '</button>'
+                        + '<button type="button" class="pdsg-action pdsg-action-info" onclick="openPermisosUsuario(' + id + ')" title="Permisos del rol" aria-label="Permisos del rol">'
+                        + '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i>'
+                        + '</button>'
+                        + '<button type="button" class="pdsg-action ' + toggleClass + '" onclick="toggleEstadoUsuario(' + id + ', ' + est + ')" title="' + toggleTitle + '" aria-label="' + toggleTitle + '">'
+                        + '<i class="fa-solid ' + toggleIcon + '" aria-hidden="true"></i>'
+                        + '</button>'
+                        + '</span>';
                 }
             }
         ],
         language: {
-            processing: "Procesando...",
+            processing: 'Procesando...',
             zeroRecords: '<div class="tp-empty"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><strong>Sin coincidencias</strong><span>Prueba con otro término.</span></div>',
             emptyTable: '<div class="tp-empty"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><strong>No hay usuarios registrados</strong><span>Usa “Nuevo Usuario” para crear el primero.</span></div>',
-            info: "_START_–_END_ de _TOTAL_ usuarios",
-            infoEmpty: "0 usuarios",
-            infoFiltered: "(de _MAX_ en total)",
+            info: '_START_–_END_ de _TOTAL_ usuarios',
+            infoEmpty: '0 usuarios',
+            infoFiltered: '(de _MAX_ en total)',
             paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
+                first: 'Primero',
+                last: 'Último',
+                next: 'Siguiente',
+                previous: 'Anterior'
             }
         }
     });
 
-    // --- Helpers (global scope para onclick inline) ---
-    window.escapeHtml = function (value) {
-        return String(value ?? '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    };
-    window.buildAlert = function (type, content) {
-        return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' + content + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
-    };
-    window.renderErrors = function (errors = {}) {
-        const items = Object.values(errors).filter(Boolean);
-        if (!items.length) return 'Ocurrió un error inesperado.';
-        return '<ul class="mb-0 ps-3">' + items.map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>';
-    };
-    window.setAlert = function (containerId, type, html) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.innerHTML = html ? buildAlert(type, html) : '';
-    };
-    window.clearAlert = function (containerId) { setAlert(containerId, '', ''); };
-    window.fullName = function (u) {
-        return [u.nombre, u.apellido_paterno, u.apellido_materno].filter(Boolean).join(' ').trim();
-    };
-    window.fillUserForm = function (prefix, usuario) {
-        document.getElementById(prefix + 'Nombre').value = usuario.nombre ?? '';
-        document.getElementById(prefix + 'ApellidoPaterno').value = usuario.apellido_paterno ?? '';
-        document.getElementById(prefix + 'ApellidoMaterno').value = usuario.apellido_materno ?? '';
-        document.getElementById(prefix + 'Dni').value = usuario.dni ?? '';
-        document.getElementById(prefix + 'Correo').value = usuario.correo ?? '';
-        document.getElementById(prefix + 'Telefono').value = usuario.telefono ?? '';
-        document.getElementById(prefix + 'Username').value = usuario.username ?? '';
-        document.getElementById(prefix + 'Rol').value = usuario.id_rol ?? '';
-    };
-    window.renderPermsBody = function (permisos = []) {
-        const tbody = document.getElementById('usPermBody');
-        const permMap = new Map((permisos || []).map(p => [Number(p.menu_id), p]));
-        if (!MENUS.length) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No hay menús configurados.</td></tr>';
-            return;
-        }
-        tbody.innerHTML = MENUS.map(menu => {
-            const p = permMap.get(Number(menu.id)) ?? {};
-            return `
-                <tr data-menu-id="${menu.id}">
-                    <td>${escapeHtml(menu.nombre)}</td>
-                    <td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="read" ${Number(p.read) === 1 ? 'checked' : ''}></td>
-                    <td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="insert" ${Number(p.insert) === 1 ? 'checked' : ''}></td>
-                    <td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="update" ${Number(p.update) === 1 ? 'checked' : ''}></td>
-                    <td class="text-center"><input class="form-check-input perm-check" type="checkbox" data-action="delete" ${Number(p.delete) === 1 ? 'checked' : ''}></td>
-                </tr>
-            `;
-        }).join('');
-    }
+    // --- Buscador de la tabla ---
+    jQuery('#usSearch').on('input', function () {
+        tablaUsuarios.search(this.value).draw();
+    });
 
     // --- Nuevo usuario modal ---
-    $('#usModal').on('show.bs.modal', function () {
-        $('#usForm')[0].reset();
-        $('#usId').val('');
-        $('#usFormError').hide();
-        $('#usPassHelp').text('Mínimo 6 caracteres.').removeClass('text-danger');
-        $('#usPassword').prop('required', true);
+    jQuery('#usModal').on('show.bs.modal', function () {
+        jQuery('#usForm')[0].reset();
+        jQuery('#usId').val('');
+        clearAlert('usFormError');
+        jQuery('#usPassHelp').text('Mínimo 6 caracteres.').removeClass('text-danger');
+        jQuery('#usPassword').prop('required', true);
     });
 
     // --- Guardar nuevo ---
-    $('#usForm').on('submit', async function (e) {
+    jQuery('#usForm').on('submit', async function (e) {
         e.preventDefault();
         clearAlert('usFormError');
+        const btn = document.getElementById('usSave');
+        btn.disabled = true;
         const formData = new FormData(this);
         try {
             const res = await fetch(BASE_URL + 'usuarios/registrar', {
@@ -426,20 +546,30 @@ $(document).ready(function () {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 body: formData
             });
-            const data = await res.json();
-            if (!data.success) { setAlert('usFormError', 'danger', renderErrors(data.errors ?? { general: data.message })); return; }
-            bootstrap.Modal.getInstance(document.getElementById('usModal')).hide();
-            tablaUsuarios.ajax.reload();
-        } catch (err) { setAlert('usFormError', 'danger', 'Error de conexión.'); }
+            const data = await parseJsonResponse(res);
+            syncCsrfToken(res, data);
+            if (!res.ok || !data.success) {
+                console.warn('Error usuarios/registrar:', res.status, data);
+                setAlert('usFormError', 'danger', renderErrors(data.errors, data.message));
+                return;
+            }
+            closeModal('usModal');
+            setAlert('usNotice', 'success', escapeHtml(data.message || 'Usuario registrado correctamente.'));
+            tablaUsuarios.ajax.reload(null, false);
+        } catch (err) {
+            setAlert('usFormError', 'danger', 'Error de conexión.');
+        } finally {
+            btn.disabled = false;
+        }
     });
 
     // --- Editar usuario ---
-    // (Ahora se bindea en bindActionButtons / draw.dt)
-
-    $('#usEditForm').on('submit', async function (e) {
+    jQuery('#usEditForm').on('submit', async function (e) {
         e.preventDefault();
         clearAlert('usEditError');
-        const id = $('#usEditId').val();
+        const btn = document.getElementById('usEditSave');
+        btn.disabled = true;
+        const id = jQuery('#usEditId').val();
         const formData = new FormData(this);
         try {
             const res = await fetch(BASE_URL + 'usuarios/actualizar/' + id, {
@@ -447,110 +577,154 @@ $(document).ready(function () {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 body: formData
             });
-            const data = await res.json();
-            if (!data.success) { setAlert('usEditError', 'danger', renderErrors(data.errors ?? { general: data.message })); return; }
-            bootstrap.Modal.getInstance(document.getElementById('usEditModal')).hide();
-            tablaUsuarios.ajax.reload();
-        } catch (err) { setAlert('usEditError', 'danger', 'Error de conexión.'); }
+            const data = await parseJsonResponse(res);
+            syncCsrfToken(res, data);
+            if (!res.ok || !data.success) {
+                console.warn('Error usuarios/actualizar:', res.status, data);
+                setAlert('usEditError', 'danger', renderErrors(data.errors, data.message));
+                return;
+            }
+            closeModal('usEditModal');
+            setAlert('usNotice', 'success', escapeHtml(data.message || 'Usuario actualizado correctamente.'));
+            tablaUsuarios.ajax.reload(null, false);
+        } catch (err) {
+            setAlert('usEditError', 'danger', 'Error de conexión.');
+        } finally {
+            btn.disabled = false;
+        }
     });
 
     // --- Permisos del rol ---
-    // (Ahora se bindea en bindActionButtons / draw.dt)
-
-    $('#usPermForm').on('submit', async function (e) {
+    jQuery('#usPermForm').on('submit', async function (e) {
         e.preventDefault();
         clearAlert('usPermError');
-        const id = $('#usPermIdUsuario').val();
-        const payload = Array.from(document.querySelectorAll('#usPermBody tr[data-menu-id]')).map(row => ({
-            menu_id: Number(row.dataset.menuId),
-            read: row.querySelector('[data-action="read"]').checked ? 1 : 0,
-            insert: row.querySelector('[data-action="insert"]').checked ? 1 : 0,
-            update: row.querySelector('[data-action="update"]').checked ? 1 : 0,
-            delete: row.querySelector('[data-action="delete"]').checked ? 1 : 0,
-        }));
+        const btn = document.getElementById('usPermSave');
+        btn.disabled = true;
+        const id = jQuery('#usPermIdUsuario').val();
+        const payload = Array.from(document.querySelectorAll('#usPermBody tr[data-menu-id]')).map(function (row) {
+            return {
+                menu_id: Number(row.dataset.menuId),
+                read: row.querySelector('[data-action="read"]').checked ? 1 : 0,
+                insert: row.querySelector('[data-action="insert"]').checked ? 1 : 0,
+                update: row.querySelector('[data-action="update"]').checked ? 1 : 0,
+                delete: row.querySelector('[data-action="delete"]').checked ? 1 : 0
+            };
+        });
         try {
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            headers[CSRF_HEADER] = CSRF_HASH;
+            headers[CSRF_TOKEN] = CSRF_HASH;
+
             const res = await fetch(BASE_URL + 'usuarios/permisos/' + id, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    [CSRF_TOKEN]: CSRF_HASH
-                },
+                headers: headers,
                 body: JSON.stringify({ permisos: payload })
             });
-            const data = await res.json();
-            if (!data.success) { setAlert('usPermError', 'danger', escapeHtml(data.message ?? 'No se pudieron guardar.')); return; }
-            bootstrap.Modal.getInstance(document.getElementById('usPermModal')).hide();
-        } catch (err) { setAlert('usPermError', 'danger', 'Error de conexión.'); }
+            const data = await parseJsonResponse(res);
+            syncCsrfToken(res, data);
+            if (!res.ok || !data.success) {
+                console.warn('Error usuarios/permisos:', res.status, data);
+                setAlert('usPermError', 'danger', escapeHtml(data.message || 'No se pudieron guardar.'));
+                return;
+            }
+            closeModal('usPermModal');
+            setAlert('usNotice', 'success', escapeHtml(data.message || 'Permisos actualizados correctamente.'));
+        } catch (err) {
+            setAlert('usPermError', 'danger', 'Error de conexión.');
+        } finally {
+            btn.disabled = false;
+        }
     });
 
-    // --- Toggle estado ---
-    // (Ahora se bindea via onclick inline)
-
-    // Funciones globales para onclick inline (evitan problemas de delegación con DataTables)
+    // --- Acciones inline ---
     window.openEditUsuario = function (id) {
-        // Ensure create modal is closed
-        var createModalEl = document.getElementById('usModal');
-        if (createModalEl.classList.contains('show')) {
-            var inst = bootstrap.Modal.getInstance(createModalEl);
-            if (inst) inst.hide();
-        }
+        closeModal('usModal');
         clearAlert('usEditError');
         fetch(BASE_URL + 'usuarios/obtener/' + id, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) { setAlert('usEditError', 'danger', escapeHtml(data.message ?? 'No se pudo cargar.')); new bootstrap.Modal(document.getElementById('usEditModal')).show(); return; }
-                const u = data.data;
-                $('#usEditId').val(u.id_usuario);
-                $('#usEditPassword').val('');
-                fillUserForm('usEdit', u);
-                new bootstrap.Modal(document.getElementById('usEditModal')).show();
+            .then(async function (res) {
+                return { res: res, data: await parseJsonResponse(res) };
             })
-            .catch(() => setAlert('usEditError', 'danger', 'Error de conexión.'));
+            .then(function (result) {
+                if (!result.res.ok || !result.data.success) {
+                    setAlert('usEditError', 'danger', escapeHtml((result.data && result.data.message) || 'No se pudo cargar.'));
+                    openModal('usEditModal');
+                    return;
+                }
+                const u = result.data.data;
+                jQuery('#usEditId').val(u.id_usuario);
+                jQuery('#usEditPassword').val('');
+                fillUserForm('usEdit', u);
+                openModal('usEditModal');
+            })
+            .catch(function () {
+                setAlert('usEditError', 'danger', 'Error de conexión.');
+                openModal('usEditModal');
+            });
     };
 
     window.openPermisosUsuario = function (id) {
-        // Ensure other modals are closed
-        ['usModal', 'usEditModal'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el?.classList.contains('show')) {
-                var inst = bootstrap.Modal.getInstance(el);
-                if (inst) inst.hide();
-            }
-        });
+        closeModal('usModal');
+        closeModal('usEditModal');
         clearAlert('usPermError');
         fetch(BASE_URL + 'usuarios/obtener/' + id, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) { setAlert('usPermError', 'danger', escapeHtml(data.message ?? 'No se pudieron cargar.')); new bootstrap.Modal(document.getElementById('usPermModal')).show(); return; }
-                const u = data.data;
-                $('#usPermIdUsuario').val(u.id_usuario);
-                $('#usPermUserLabel').text(u.username + ' · ' + (fullName(u) || 'Sin nombre'));
-                $('#usPermRolLabel').text(u.rol_nombre ?? 'Sin rol');
-                renderPermsBody(u.permisos ?? []);
-                new bootstrap.Modal(document.getElementById('usPermModal')).show();
+            .then(async function (res) {
+                return { res: res, data: await parseJsonResponse(res) };
             })
-            .catch(() => setAlert('usPermError', 'danger', 'Error de conexión.'));
+            .then(function (result) {
+                if (!result.res.ok || !result.data.success) {
+                    setAlert('usPermError', 'danger', escapeHtml((result.data && result.data.message) || 'No se pudieron cargar.'));
+                    openModal('usPermModal');
+                    return;
+                }
+                const u = result.data.data;
+                jQuery('#usPermIdUsuario').val(u.id_usuario);
+                jQuery('#usPermUserLabel').text(u.username + ' · ' + (fullName(u) || 'Sin nombre'));
+                jQuery('#usPermRolLabel').text(u.rol_nombre || 'Sin rol');
+                renderPermsBody(u.permisos || []);
+                openModal('usPermModal');
+            })
+            .catch(function () {
+                setAlert('usPermError', 'danger', 'Error de conexión.');
+                openModal('usPermModal');
+            });
     };
 
     window.toggleEstadoUsuario = function (id, estado) {
-        const accion = estado === 1 ? 'desactivar' : 'activar';
-        if (!confirm('¿Querés ' + accion + ' este usuario?')) return;
+        const accion = Number(estado) === 1 ? 'desactivar' : 'activar';
+        if (!confirm('¿Quieres ' + accion + ' este usuario?')) return;
         const formData = new FormData();
         formData.append(CSRF_TOKEN, CSRF_HASH);
+        const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+        headers[CSRF_HEADER] = CSRF_HASH;
+
         fetch(BASE_URL + 'usuarios/estado/' + id, {
             method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            headers: headers,
             body: formData
-        }).then(r => r.json()).then(data => {
-            if (!data.success) alert(data.message ?? 'No se pudo actualizar.');
-            else tablaUsuarios.ajax.reload();
-        }).catch(() => alert('Error de conexión.'));
+        })
+            .then(async function (res) {
+                return { res: res, data: await parseJsonResponse(res) };
+            })
+            .then(function (result) {
+                syncCsrfToken(result.res, result.data);
+                if (!result.res.ok || !result.data.success) {
+                    setAlert('usNotice', 'danger', escapeHtml((result.data && result.data.message) || 'No se pudo actualizar.'));
+                } else {
+                    setAlert('usNotice', 'success', escapeHtml((result.data && result.data.message) || 'Estado actualizado correctamente.'));
+                    tablaUsuarios.ajax.reload(null, false);
+                }
+            })
+            .catch(function () {
+                setAlert('usNotice', 'danger', 'Error de conexión.');
+            });
     };
 
     // Animación de entrada
     if (typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        gsap.fromTo('.us-page > *', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .35, stagger: .06, ease: 'power2.out', clearProps: 'opacity,transform' });
+        gsap.fromTo('.us-page > *', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.06, ease: 'power2.out', clearProps: 'opacity,transform' });
     }
 });
 </script>

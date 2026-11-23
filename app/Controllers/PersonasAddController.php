@@ -457,11 +457,12 @@ if (strpos((string)$indice, 'existing_') === 0) {
             ]);
         }
 
+        $idPago     = $this->request->getPost('id_pago');
         $idSucursal = $this->request->getPost('id_sucursal');
         $idEmpresa  = $this->request->getPost('id_empresa');
 
         // Validar si la sucursal es temporal o no existe en BD
-        if (empty($idSucursal) || strpos($idSucursal, 'temp_') === 0) {
+        if (empty($idSucursal) || strpos((string)$idSucursal, 'temp_') === 0) {
             if (!empty($idEmpresa)) {
                 $sucursalModel = new \App\Models\empresaSucursalModel();
                 $sucursalPrincipal = $sucursalModel->where('id_empresa', $idEmpresa)
@@ -481,29 +482,25 @@ if (strpos((string)$indice, 'existing_') === 0) {
             }
         }
 
-        // Parámetros recibidos
-        $idPlan           = $this->request->getPost('id_plan');
-        $idTipoPlan       = $this->request->getPost('id_tipo_plan');
-        $id_tipo_pago     = $this->request->getPost('id_tipo_pago') ?: 1;
-        $concepto          = $this->request->getPost('concepto');
-        $fechaInicio      = $this->request->getPost('fecha_de_inicio');
-        $fechaVencimiento = $this->request->getPost('fecha_de_vencimiento');
-        $precio           = $this->request->getPost('precio');
-        $observaciones    = $this->request->getPost('observaciones');
+        $idPlan              = $this->request->getPost('id_plan');
+        $idTipoPlan          = $this->request->getPost('id_tipo_plan');
+        $id_tipo_pago        = $this->request->getPost('id_tipo_pago') ?: 1;
+        $concepto            = $this->request->getPost('concepto');
+        $fechaInicio         = $this->request->getPost('fecha_de_inicio') ?: $this->request->getPost('fecha_inicio');
+        $fechaVencimiento    = $this->request->getPost('fecha_de_vencimiento') ?: $this->request->getPost('fecha_vencimiento');
+        $precio              = $this->request->getPost('precio');
+        $observaciones       = $this->request->getPost('observaciones');
         $correo_notificacion = $this->request->getPost('correo_notificacion');
+        $estado              = $this->request->getPost('estado') ?? 1;
 
-
-        // Campos de finalización mensual
         $tipoFin         = $this->request->getPost('tipo_fin') ?: 'SIN_FIN';
         $numRepeticiones = $this->request->getPost('num_repeticiones');
         $fechaFin        = $this->request->getPost('fecha_fin');
 
-       // Si no viene fecha de vencimiento (ej. Plan Mensual), calculamos +1 mes desde fecha_de_inicio para poder avisar
         if (empty($fechaVencimiento) && !empty($fechaInicio)) {
             $fechaVencimiento = date('Y-m-d', strtotime($fechaInicio . ' +1 month'));
         }
 
-        // Guardamos la cantidad de días/repeticiones de aviso (por defecto 5 días antes)
         $repeticionesFinal = !empty($numRepeticiones) ? (int)$numRepeticiones : 5;
         $fechaFinFinal     = ($tipoFin === 'FECHA' && !empty($fechaFin)) ? $fechaFin : null;
 
@@ -513,21 +510,33 @@ if (strpos((string)$indice, 'existing_') === 0) {
             'id_tipo_plan'         => !empty($idTipoPlan) ? (int)$idTipoPlan : null,
             'id_tipo_pago'         => (int)$id_tipo_pago,
             'concepto'             => !empty($concepto) ? trim($concepto) : null,
-            'fecha_de_inicio'      => $fechaInicio,
-            'fecha_de_vencimiento' => $fechaVencimiento,
+            'fecha_de_inicio'      => !empty($fechaInicio) ? $fechaInicio : date('Y-m-d'),
+            'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => in_array($tipoFin, ['SIN_FIN', 'REPETICIONES', 'FECHA']) ? $tipoFin : 'SIN_FIN',
             'num_repeticiones'     => $repeticionesFinal,
             'fecha_fin'            => $fechaFinFinal,
             'precio'               => !empty($precio) ? (float)$precio : 0.00,
             'observaciones'        => !empty($observaciones) ? trim($observaciones) : null,
             'correo_notificacion'  => !empty($correo_notificacion) ? trim($correo_notificacion) : null,
-            'estado'               => 1,
-            'created_at'           => date('Y-m-d H:i:s'),
+            'estado'               => (int)$estado,
         ];
 
         try {
-            // Instanciar tu modelo
             $pagosModel = new \App\Models\PagosModel();
+
+            // MODO EDICIÓN: Si viene id_pago, actualizamos el registro existente
+            if (!empty($idPago) && is_numeric($idPago)) {
+                $dataPago['updated_at'] = date('Y-m-d H:i:s');
+                $actualizado = $pagosModel->update((int)$idPago, $dataPago);
+
+                return $this->response->setJSON([
+                    'status'  => $actualizado ? 'success' : 'error',
+                    'message' => $actualizado ? '¡Plan actualizado correctamente!' : 'No se pudo actualizar el plan.'
+                ]);
+            }
+
+            // MODO CREACIÓN: Si no viene id_pago, insertamos uno nuevo
+            $dataPago['created_at'] = date('Y-m-d H:i:s');
             $idInsertado = $pagosModel->insert($dataPago);
 
             if ($idInsertado) {
@@ -560,10 +569,10 @@ if (strpos((string)$indice, 'existing_') === 0) {
             ]);
         }
 
+        $idPago     = $this->request->getPost('id_pago');
         $idSucursal = $this->request->getPost('id_sucursal');
 
-        // Validar sucursal
-        if (empty($idSucursal) || strpos($idSucursal, 'temp_') === 0 || !is_numeric($idSucursal)) {
+        if (empty($idSucursal) || strpos((string)$idSucursal, 'temp_') === 0 || !is_numeric($idSucursal)) {
             return $this->response->setJSON([
                 'status'  => 'error',
                 'message' => 'Primero debe guardar los cambios de la sucursal antes de registrar pagos.'
@@ -578,19 +587,12 @@ if (strpos((string)$indice, 'existing_') === 0) {
         $correo           = $this->request->getPost('correo_notificacion');
         $estado           = $this->request->getPost('estado') ?? 1;
 
-        if (empty($concepto) || empty($monto)) {
+        if (empty($concepto) || $monto === null || $monto === '') {
             return $this->response->setJSON([
                 'status'  => 'error',
                 'message' => 'El concepto y el monto son obligatorios.'
             ]);
         }
-
-        // Armar el detalle para observaciones
-        $obs = trim($concepto);
-        if (!empty($correo)) {
-            $obs .= " | Correo de aviso: " . trim($correo);
-        }
-        
 
         $dataPago = [
             'id_sucursal'          => (int)$idSucursal,
@@ -598,33 +600,36 @@ if (strpos((string)$indice, 'existing_') === 0) {
             'id_tipo_plan'         => null,
             'id_tipo_pago'         => 2, // 2 = Otros Pagos
             'concepto'             => trim($concepto),
-            'fecha_de_inicio'      => date('Y-m-d'),
             'fecha_de_vencimiento' => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'tipo_fin'             => 'FECHA',
-            'num_repeticiones'     => !empty($diasAviso) ? (int)$diasAviso : null,
+            'num_repeticiones'     => ($diasAviso !== null && $diasAviso !== '') ? (int)$diasAviso : null,
             'fecha_fin'            => !empty($fechaVencimiento) ? $fechaVencimiento : null,
             'precio'               => (float)$monto,
-            'observaciones'        => $this->request->getPost('observaciones') ?: null, // Directo
-            'correo_notificacion'  => !empty($correo) ? trim($correo) : null,          // Columna propia
+            'observaciones'        => $this->request->getPost('observaciones') ? trim($this->request->getPost('observaciones')) : null,
+            'correo_notificacion'  => !empty($correo) ? trim($correo) : null,
             'ultimo_aviso'         => !empty($ultimoAviso) ? $ultimoAviso : null,
             'estado'               => (int)$estado,
-            'created_at'           => date('Y-m-d H:i:s'),
         ];
 
         try {
             $pagosModel = new \App\Models\PagosModel();
-            $idInsertado = $pagosModel->insert($dataPago);
 
-            if ($idInsertado) {
+            if (!empty($idPago) && is_numeric($idPago)) {
+                $dataPago['updated_at'] = date('Y-m-d H:i:s');
+                $actualizado = $pagosModel->update((int)$idPago, $dataPago);
+
                 return $this->response->setJSON([
-                    'status'  => 'success',
-                    'message' => '¡Pago registrado correctamente!'
+                    'status'  => $actualizado ? 'success' : 'error',
+                    'message' => $actualizado ? '¡Pago actualizado correctamente!' : 'No se pudo actualizar el pago.'
                 ]);
             } else {
+                $dataPago['fecha_de_inicio'] = date('Y-m-d');
+                $dataPago['created_at']      = date('Y-m-d H:i:s');
+                $idInsertado = $pagosModel->insert($dataPago);
+
                 return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => 'No se pudo registrar el pago.',
-                    'errors'  => $pagosModel->errors()
+                    'status'  => $idInsertado ? 'success' : 'error',
+                    'message' => $idInsertado ? '¡Pago registrado correctamente!' : 'No se pudo registrar el pago.'
                 ]);
             }
         } catch (\Throwable $e) {
@@ -636,48 +641,104 @@ if (strpos((string)$indice, 'existing_') === 0) {
         }
     }
 
+    public function eliminarPago()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON(['status' => 'error', 'message' => 'Petición no válida']);
+        }
+
+        $idPago = (int)$this->request->getPost('id_pago');
+        if ($idPago <= 0) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'ID de pago inválido.']);
+        }
+
+        $pagosModel = new \App\Models\PagosModel();
+        if ($pagosModel->delete($idPago)) {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Pago eliminado correctamente.']);
+        }
+
+        return $this->response->setJSON(['status' => 'error', 'message' => 'No se pudo eliminar el pago.']);
+    }
+
     public function buscarRepresentantes()
-{
-    $this->response->setHeader('Content-Type', 'application/json');
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
 
-    $q = trim((string) $this->request->getGet('q'));
+        // Soporta 'term' (estándar phpAutocomplete / jQuery UI) y 'q'
+        $q = trim((string) ($this->request->getGet('term') ?? $this->request->getGet('q') ?? ''));
 
-    if (mb_strlen($q) < 2) {
-        return $this->response->setJSON([]);
+        // 1. Buscar en tabla personas (clientes registrados)
+        $builderPersonas = $this->db->table('personas')
+            ->select("CONCAT_WS(' ', nombre, apellido_paterno, apellido_materno) AS nombre_completo, dni, telefono, correo", false);
+
+        if ($q !== '') {
+            $builderPersonas->groupStart()
+                ->like('nombre', $q)
+                ->orLike('apellido_paterno', $q)
+                ->orLike('apellido_materno', $q)
+                ->orLike('dni', $q)
+            ->groupEnd();
+        }
+
+        $personas = $builderPersonas
+            ->orderBy('nombre', 'ASC')
+            ->limit(8)
+            ->get()
+            ->getResultArray();
+
+        // 2. Buscar en representantes de sucursales ya registradas
+        $builderSuc = $this->db->table('empresa_sucursales')
+            ->select('representante, telefono, correo')
+            ->where('representante IS NOT NULL')
+            ->where('representante !=', '');
+
+        if ($q !== '') {
+            $builderSuc->like('representante', $q);
+        }
+
+        $sucursales = $builderSuc
+            ->groupBy('representante')
+            ->orderBy('representante', 'ASC')
+            ->limit(8)
+            ->get()
+            ->getResultArray();
+
+        // 3. Unificar resultados sin duplicados
+        $resultados = [];
+        $vistos = [];
+
+        foreach ($personas as $p) {
+            $nombre = trim((string) ($p['nombre_completo'] ?? ''));
+            $clave  = mb_strtolower($nombre);
+            if ($nombre !== '' && !isset($vistos[$clave])) {
+                $vistos[$clave] = true;
+                $resultados[] = [
+                    'label'    => $nombre . (!empty($p['dni']) ? ' · DNI ' . $p['dni'] : ''),
+                    'value'    => $nombre,
+                    'telefono' => $p['telefono'] ?? '',
+                    'correo'   => $p['correo'] ?? '',
+                    'origen'   => 'Cliente'
+                ];
+            }
+        }
+
+        foreach ($sucursales as $s) {
+            $nombre = trim((string) ($s['representante'] ?? ''));
+            $clave  = mb_strtolower($nombre);
+            if ($nombre !== '' && !isset($vistos[$clave])) {
+                $vistos[$clave] = true;
+                $resultados[] = [
+                    'label'    => $nombre,
+                    'value'    => $nombre,
+                    'telefono' => $s['telefono'] ?? '',
+                    'correo'   => $s['correo'] ?? '',
+                    'origen'   => 'Sucursal'
+                ];
+            }
+        }
+
+        return $this->response->setJSON(array_slice($resultados, 0, 10));
     }
-
-    // Representantes de sucursales ya registradas
-    $sucursales = $this->db->table('empresa_sucursales')
-        ->select('representante')
-        ->like('representante', $q)
-        ->where('representante !=', '')
-        ->groupBy('representante')
-        ->orderBy('representante', 'ASC')
-        ->limit(8)
-        ->get()->getResultArray();
-
-    $lista = array_column($sucursales, 'representante');
-
-    // También personas (nombre + apellidos)
-    $personas = $this->db->table('personas')
-        ->select("CONCAT_WS(' ', nombre, apellido_paterno, apellido_materno) AS nombre_completo", false)
-        ->groupStart()
-            ->like('nombre', $q)
-            ->orLike('apellido_paterno', $q)
-            ->orLike('apellido_materno', $q)
-        ->groupEnd()
-        ->limit(8)
-        ->get()->getResultArray();
-
-    foreach ($personas as $p) {
-        $lista[] = $p['nombre_completo'];
-    }
-
-    $lista = array_values(array_unique(array_filter($lista)));
-
-    return $this->response->setJSON(array_slice($lista, 0, 10));
-}
-
 public function pagosSucursal()
 {
     $idSucursal = $this->request->getGet('id_sucursal');

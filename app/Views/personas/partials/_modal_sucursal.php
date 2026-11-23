@@ -31,13 +31,19 @@
                                     <label for="codigo_cliente_sucursal">Código cliente <span class="mf-req">*</span></label>
                                     <input type="text" class="form-control" id="codigo_cliente_sucursal" name="codigo_cliente_sucursal" placeholder="Ej: 0000070" required>
                                 </div>
-                                <div class="mf-f">
-                                 <label for="representante_sucursal">Representante <span class="mf-req">*</span></label>
-                                     <input type="text" class="form-control" id="representante_sucursal"
-                                       name="representante_sucursal" placeholder="Ej: Juan Pérez"
-                                              list="listaRepresentantes" autocomplete="off" required>
-                                        <datalist id="listaRepresentantes"></datalist>
-                                      </div>
+                                <div class="mf-f pdsg-ac-wrap">
+                                    <label for="representante_sucursal">Representante <span class="mf-req">*</span></label>
+                                    <div class="position-relative">
+                                        <input type="text"
+                                               class="form-control"
+                                               id="representante_sucursal"
+                                               name="representante_sucursal"
+                                               placeholder="Escribe para buscar representante..."
+                                               autocomplete="off"
+                                               required>
+                                        <div id="listaRepresentantes" class="pdsg-ac-menu d-none" role="listbox"></div>
+                                    </div>
+                                </div>
                                 <div class="mf-f">
                                     <label for="estado_label">Estado</label>
                                     <select class="form-select" id="estado_label" name="estado_label">
@@ -114,3 +120,60 @@
         </div>
     </div>
 </div>
+<style>
+.pdsg-ac-wrap {
+    position: relative;
+}
+.pdsg-ac-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 1065;
+    max-height: 210px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+    padding: 4px;
+}
+.pdsg-ac-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 0.83rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.pdsg-ac-item:hover,
+.pdsg-ac-item.is-active {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+.pdsg-ac-item mark {
+    background: rgba(16, 185, 129, 0.2);
+    color: #065f46;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+.pdsg-ac-badge {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #475569;
+    white-space: nowrap;
+}
+.pdsg-ac-empty {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: center;
+}
+</style>

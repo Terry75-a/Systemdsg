@@ -27,20 +27,20 @@ class PersonaModel extends Model
         'id_tipo_documento',
         'id_distrito',
         'imagen',
-        'created_at'
+        'created_at',
     ];
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';
-    protected $updatedField  = ''; // CI4 espera string; false crea una key numérica y rompe inserts/updates
+    protected $updatedField  = '';
 
     // Verifica si el DNI ya existe (excluyendo opcionalmente un id)
-    public function dniExiste(string $dni, int $excluirId = null): bool
+    public function dniExiste(string $dni, ?int $excluirId = null): bool
     {
         $builder = $this->where('dni', $dni);
-        if ($excluirId) {
+        if ($excluirId !== null) {
             $builder->where('id_persona !=', $excluirId);
         }
-        return $this->countAllResults() > 0;
+        return $builder->countAllResults() > 0;
     }
 }

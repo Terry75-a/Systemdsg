@@ -713,20 +713,100 @@ async function cargarPlanesYTipos() {
 }
 
 // ════════════════════════════════════════════════════
-// ENVÍO DE FORMULARIOS Y NOTIFICACIONES TOAST
+// ASIGNAR PLAN DESDE SUCURSALES (MODAL PLAN + GRILLA CRUD)
 // ════════════════════════════════════════════════════
+let cachePlanesPagos = [];
+
+function resetModoEdicionPlan() {
+    const formPl = document.getElementById('formAsignarPlan');
+    const idSucActual = document.getElementById('idSucursalModal')?.value || '';
+    const nombreSucActual = document.getElementById('modalClienteNombre')?.textContent || '';
+
+    if (formPl) formPl.reset();
+
+    if (document.getElementById('idSucursalModal')) {
+        document.getElementById('idSucursalModal').value = idSucActual;
+    }
+    if (document.getElementById('modalClienteNombre')) {
+        document.getElementById('modalClienteNombre').textContent = nombreSucActual;
+    }
+    const inputIdPago = document.getElementById('planIdPago');
+    if (inputIdPago) inputIdPago.value = '';
+
+    const inputInicio = document.getElementById('fechaInicio');
+    if (inputInicio && !inputInicio.value) {
+        const hoy = new Date();
+        inputInicio.value = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    }
+
+    document.getElementById('planBannerEdicion')?.classList.add('d-none');
+    document.getElementById('planDetalleCard')?.classList.add('d-none');
+
+    const txtBtn = document.getElementById('txtBtnGuardarPlan');
+    if (txtBtn) txtBtn.textContent = 'Asignar Plan';
+
+    document.querySelectorAll('#tbodyPlanesPagos tr').forEach(tr => tr.classList.remove('is-editing'));
+    actualizarBloqueMensual();
+}
+
+if (tablaSuc) {
+    tablaSuc.addEventListener('click', async function (e) {
+        const btnAsignar = e.target.closest('.btn-asignar-plan');
+        if (!btnAsignar) return;
+
+        const fila = btnAsignar.closest('tr');
+        const indice = fila.getAttribute('data-indice') || btnAsignar.getAttribute('data-id-persona') || '';
+        const idSucursal = indice.replace('existing_', '');
+
+        if (!idSucursal || indice.startsWith('temp_')) {
+            alert('Primero debe guardar los cambios de la persona/sucursal antes de asignar planes.');
+            return;
+        }
+
+        const nombreSucursal = fila.querySelector('.txt-nombre')?.textContent.trim() || '';
+
+        const inputSucursal = document.getElementById('idSucursalModal');
+        if (inputSucursal) inputSucursal.value = idSucursal;
+
+        const lblCliente = document.getElementById('modalClienteNombre');
+        if (lblCliente) lblCliente.textContent = nombreSucursal;
+
+        await cargarPlanesYTipos();
+        resetModoEdicionPlan();
+        cargarPagosSucursal(idSucursal, 1, 'modalPlan');
+
+        const modalPlan = obtenerModalPlan();
+        if (modalPlan) modalPlan.show();
+    });
+}
+
+const btnCancelarEdicionPlan = document.getElementById('btnCancelarEdicionPlan');
+if (btnCancelarEdicionPlan) {
+    btnCancelarEdicionPlan.addEventListener('click', resetModoEdicionPlan);
+}
+
+const btnCerrarDetallePlan = document.getElementById('btnCerrarDetallePlan');
+if (btnCerrarDetallePlan) {
+    btnCerrarDetallePlan.addEventListener('click', function () {
+        document.getElementById('planDetalleCard')?.classList.add('d-none');
+    });
+}
+
+// Envío del formulario de Planes (Crear y Actualizar)
 const formPlan = document.getElementById('formAsignarPlan');
 if (formPlan) {
     formPlan.addEventListener('submit', async function (e) {
         e.preventDefault();
         const btnSubmit = document.getElementById('btnGuardarPlan');
         const textoOriginal = btnSubmit.innerHTML;
+        const idSucursal = document.getElementById('idSucursalModal')?.value || '';
 
         if (esPlanMensual()) {
-            const tipoFin = document.querySelector('[name="tipo_fin"]:checked').value;
+            const radioFin = document.querySelector('[name="tipo_fin"]:checked');
+            const tipoFin = radioFin ? radioFin.value : 'SIN_FIN';
             if (tipoFin === 'FECHA') {
                 const ini = document.getElementById('fechaInicio').value;
-                const fin = document.getElementById('fechaFinMensual').value;
+                const fin = document.getElementById('fechaFinMensual')?.value;
                 if (!fin || fin <= ini) {
                     alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
                     return;
@@ -752,10 +832,10 @@ if (formPlan) {
             const data = await res.json();
 
             if (data.status === 'success' || data.success) {
-                const modalEl = document.getElementById('modalPlan');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-                pdsgToastPlan('success', 'Plan asignado', data.message || '¡Plan y pago registrados correctamente!');
+                const esEdicion = !!document.getElementById('planIdPago')?.value;
+                pdsgToastPlan('success', esEdicion ? 'Plan actualizado' : 'Plan asignado', data.message || '¡Plan registrado correctamente!');
+                resetModoEdicionPlan();
+                cargarPagosSucursal(idSucursal, 1, 'modalPlan');
             } else {
                 pdsgToastPlan('error', 'No se pudo guardar', data.message || 'Error al guardar el plan');
             }
@@ -765,13 +845,147 @@ if (formPlan) {
         } finally {
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = textoOriginal;
+            const txtBtn = document.getElementById('txtBtnGuardarPlan');
+            if (txtBtn && !document.getElementById('planIdPago')?.value) {
+                txtBtn.textContent = 'Asignar Plan';
+            }
         }
     });
 }
 
+// Eventos de la Grilla de Planes: Ver, Editar y Eliminar
+const tbodyPlanesPagos = document.getElementById('tbodyPlanesPagos');
+if (tbodyPlanesPagos) {
+    tbodyPlanesPagos.addEventListener('click', async function (e) {
+        const btn = e.target.closest('button[data-accion]');
+        if (!btn) return;
+
+        const idPago = btn.getAttribute('data-id');
+        const accion = btn.getAttribute('data-accion');
+        const pago = cachePlanesPagos.find(p => String(p.id_pago) === String(idPago));
+        if (!pago) return;
+
+        // 1. VER DETALLE DEL PLAN
+        if (accion === 'ver') {
+            const card = document.getElementById('planDetalleCard');
+            const cont = document.getElementById('planDetalleContenido');
+            if (!card || !cont) return;
+
+            cont.innerHTML = `
+                <div><small>Plan</small><strong>${escH(pago.nombre_plan || '—')}</strong></div>
+                <div><small>Tipo / Periodo</small><strong>${escH(pago.nombre_tipo || '—')}</strong></div>
+                <div><small>Monto</small><strong>S/ ${Number(pago.precio || 0).toFixed(2)}</strong></div>
+                <div><small>Estado</small><span>${String(pago.estado) === '1' ? 'Activo' : 'Inactivo'}</span></div>
+                <div><small>Fecha de Inicio</small><span>${escH((pago.fecha_de_inicio || '—').slice(0, 10))}</span></div>
+                <div><small>Fecha de Vencimiento</small><span>${escH(pago.fecha_de_vencimiento ? pago.fecha_de_vencimiento.slice(0, 10) : 'Sin vencimiento')}</span></div>
+                <div class="full"><small>Observaciones</small><span>${escH(pago.observaciones || 'Sin observaciones')}</span></div>
+            `;
+            card.classList.remove('d-none');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 2. CARGAR EN FORMULARIO PARA EDITAR PLAN
+        if (accion === 'editar') {
+            if (document.getElementById('planIdPago')) {
+                document.getElementById('planIdPago').value = pago.id_pago;
+            }
+            if (document.getElementById('selectPlan')) {
+                document.getElementById('selectPlan').value = pago.id_plan || '';
+            }
+            if (document.getElementById('selectTipoPlan')) {
+                document.getElementById('selectTipoPlan').value = pago.id_tipo_plan || '';
+            }
+            if (document.getElementById('fechaInicio')) {
+                document.getElementById('fechaInicio').value = (pago.fecha_de_inicio || '').slice(0, 10);
+            }
+
+            actualizarBloqueMensual();
+
+            if (document.getElementById('fechaVencimiento')) {
+                document.getElementById('fechaVencimiento').value = (pago.fecha_de_vencimiento || '').slice(0, 10);
+            }
+            if (document.getElementById('inputPrecio')) {
+                document.getElementById('inputPrecio').value = Number(pago.precio || 0).toFixed(2);
+            }
+            if (document.getElementById('selectEstadoPago')) {
+                document.getElementById('selectEstadoPago').value = String(pago.estado ?? '1');
+            }
+            if (document.getElementById('txtObservaciones')) {
+                document.getElementById('txtObservaciones').value = pago.observaciones || '';
+            }
+
+            const nombreEtiqueta = `${pago.nombre_plan || 'Plan'} (${pago.nombre_tipo || ''})`.trim();
+            if (document.getElementById('planEditandoNombre')) {
+                document.getElementById('planEditandoNombre').textContent = nombreEtiqueta;
+            }
+            document.getElementById('planBannerEdicion')?.classList.remove('d-none');
+
+            const txtBtn = document.getElementById('txtBtnGuardarPlan');
+            if (txtBtn) txtBtn.textContent = 'Actualizar Plan';
+
+            document.querySelectorAll('#tbodyPlanesPagos tr').forEach(tr => tr.classList.remove('is-editing'));
+            btn.closest('tr')?.classList.add('is-editing');
+            document.getElementById('selectPlan')?.focus();
+        }
+
+        // 3. ELIMINAR PLAN
+        if (accion === 'eliminar') {
+            const nombrePlan = pago.nombre_plan || 'este plan';
+            if (!confirm(`¿Seguro que deseas eliminar el plan "${nombrePlan}"?`)) return;
+
+            try {
+                const fd = new FormData();
+                fd.append('id_pago', pago.id_pago);
+                fd.append(csrfName, csrfHash);
+
+                const res = await fetch(`${BASE_URL}personas/eliminarPago`, {
+                    method: 'POST',
+                    body: fd,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfHash
+                    }
+                });
+                const data = await res.json();
+                if (data.status === 'success' || data.success) {
+                    pdsgToastPlan('success', 'Plan eliminado', data.message || 'El plan fue eliminado.');
+                    resetModoEdicionPlan();
+                    const idSuc = document.getElementById('idSucursalModal')?.value || pago.id_sucursal;
+                    cargarPagosSucursal(idSuc, 1, 'modalPlan');
+                } else {
+                    pdsgToastPlan('error', 'Error', data.message || 'No se pudo eliminar el plan.');
+                }
+            } catch (err) {
+                console.error(err);
+                pdsgToastPlan('error', 'Error', 'Error de conexión al eliminar.');
+            }
+        }
+    });
+}
 // ════════════════════════════════════════════════════
-// GESTIÓN DE OTROS PAGOS (MODAL PAGO)
+// GESTIÓN DE OTROS PAGOS (MODAL PAGO + GRILLA CRUD)
 // ════════════════════════════════════════════════════
+let cacheOtrosPagos = [];
+
+function resetModoEdicionPago() {
+    const formP = document.getElementById('formPago');
+    const idSucActual = document.getElementById('pagoIdSucursal')?.value || '';
+    if (formP) formP.reset();
+    if (document.getElementById('pagoIdSucursal')) {
+        document.getElementById('pagoIdSucursal').value = idSucActual;
+    }
+    const inputIdPago = document.getElementById('pagoIdPago');
+    if (inputIdPago) inputIdPago.value = '';
+
+    document.getElementById('pagoBannerEdicion')?.classList.add('d-none');
+    document.getElementById('pagoDetalleCard')?.classList.add('d-none');
+
+    const txtBtn = document.getElementById('txtBtnGuardarPago');
+    if (txtBtn) txtBtn.textContent = 'Guardar Pago';
+
+    document.querySelectorAll('#tbodyOtrosPagos tr').forEach(tr => tr.classList.remove('is-editing'));
+}
+
 if (tablaSuc) {
     tablaSuc.addEventListener('click', function (e) {
         const btnPago = e.target.closest('.btn-asignar-tipo-pagos');
@@ -786,19 +1000,28 @@ if (tablaSuc) {
             return;
         }
 
-        // Limpiar formulario y pasar la sucursal
-        const formP = document.getElementById('formPago');
-        if (formP) formP.reset();
-
         document.getElementById('pagoIdSucursal').value = idSucursal;
-         cargarPagosSucursal(idSucursal, 2, 'modalPago');
+        resetModoEdicionPago();
+        cargarPagosSucursal(idSucursal, 2, 'modalPago');
 
         const modalPago = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPago'));
         modalPago.show();
     });
 }
 
-// Envío del formulario de Otros Pagos
+const btnCancelarEdicionPago = document.getElementById('btnCancelarEdicionPago');
+if (btnCancelarEdicionPago) {
+    btnCancelarEdicionPago.addEventListener('click', resetModoEdicionPago);
+}
+
+const btnCerrarDetallePago = document.getElementById('btnCerrarDetallePago');
+if (btnCerrarDetallePago) {
+    btnCerrarDetallePago.addEventListener('click', function () {
+        document.getElementById('pagoDetalleCard')?.classList.add('d-none');
+    });
+}
+
+// Envío del formulario de Otros Pagos (Crear y Actualizar)
 const formPago = document.getElementById('formPago');
 if (formPago) {
     formPago.addEventListener('submit', async function (e) {
@@ -809,6 +1032,7 @@ if (formPago) {
 
         const concepto = document.getElementById('pagoConcepto').value.trim();
         const monto = document.getElementById('pagoMonto').value.trim();
+        const idSucursal = document.getElementById('pagoIdSucursal').value;
 
         if (!concepto || !monto) {
             alert('Por favor complete el concepto y el monto.');
@@ -833,11 +1057,10 @@ if (formPago) {
             const data = await res.json();
 
             if (data.status === 'success' || data.success) {
-                const modalEl = document.getElementById('modalPago');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-                pdsgToastPlan('success', 'Pago registrado', data.message || 'Pago registrado exitosamente.');
-                formPago.reset();
+                const esEdicion = !!document.getElementById('pagoIdPago')?.value;
+                pdsgToastPlan('success', esEdicion ? 'Pago actualizado' : 'Pago registrado', data.message);
+                resetModoEdicionPago();
+                cargarPagosSucursal(idSucursal, 2, 'modalPago');
             } else {
                 pdsgToastPlan('error', 'Error al guardar', data.message || 'No se pudo guardar el pago.');
             }
@@ -847,6 +1070,96 @@ if (formPago) {
         } finally {
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = textoOriginal;
+            const txtBtn = document.getElementById('txtBtnGuardarPago');
+            if (txtBtn && !document.getElementById('pagoIdPago')?.value) {
+                txtBtn.textContent = 'Guardar Pago';
+            }
+        }
+    });
+}
+
+// Eventos de la Grilla: Ver, Editar y Eliminar
+const tbodyOtrosPagos = document.getElementById('tbodyOtrosPagos');
+if (tbodyOtrosPagos) {
+    tbodyOtrosPagos.addEventListener('click', async function (e) {
+        const btn = e.target.closest('button[data-accion]');
+        if (!btn) return;
+
+        const idPago = btn.getAttribute('data-id');
+        const accion = btn.getAttribute('data-accion');
+        const pago = cacheOtrosPagos.find(p => String(p.id_pago) === String(idPago));
+        if (!pago) return;
+
+        // 1. VER DETALLE
+        if (accion === 'ver') {
+            const card = document.getElementById('pagoDetalleCard');
+            const cont = document.getElementById('pagoDetalleContenido');
+            if (!card || !cont) return;
+
+            cont.innerHTML = `
+                <div><small>Concepto</small><strong>${escH(pago.concepto || '—')}</strong></div>
+                <div><small>Monto</small><strong>S/ ${Number(pago.precio || 0).toFixed(2)}</strong></div>
+                <div><small>Fecha de Inicio</small><span>${escH(pago.fecha_de_inicio || '—')}</span></div>
+                <div><small>Fecha de Vencimiento</small><span>${escH(pago.fecha_de_vencimiento || 'Sin vencimiento')}</span></div>
+                <div><small>Días de Aviso</small><span>${pago.num_repeticiones ? pago.num_repeticiones + ' días antes' : '—'}</span></div>
+                <div><small>Correo Notificación</small><span>${escH(pago.correo_notificacion || '—')}</span></div>
+                <div class="full"><small>Observaciones</small><span>${escH(pago.observaciones || 'Sin observaciones')}</span></div>
+            `;
+            card.classList.remove('d-none');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 2. CARGAR EN FORMULARIO PARA EDITAR
+        if (accion === 'editar') {
+            document.getElementById('pagoIdPago').value        = pago.id_pago;
+            document.getElementById('pagoConcepto').value      = pago.concepto || '';
+            document.getElementById('pagoMonto').value         = Number(pago.precio || 0).toFixed(2);
+            document.getElementById('pagoEstado').value        = String(pago.estado ?? '1');
+            document.getElementById('pagoFechaVenc').value     = (pago.fecha_de_vencimiento || '').slice(0, 10);
+            document.getElementById('pagoDiasAviso').value     = pago.num_repeticiones ?? '';
+            document.getElementById('pagoCorreo').value        = pago.correo_notificacion || '';
+            document.getElementById('pagoObservaciones').value = pago.observaciones || '';
+
+            document.getElementById('pagoEditandoNombre').textContent = pago.concepto || ('#' + pago.id_pago);
+            document.getElementById('pagoBannerEdicion')?.classList.remove('d-none');
+
+            const txtBtn = document.getElementById('txtBtnGuardarPago');
+            if (txtBtn) txtBtn.textContent = 'Actualizar Pago';
+
+            document.querySelectorAll('#tbodyOtrosPagos tr').forEach(tr => tr.classList.remove('is-editing'));
+            btn.closest('tr')?.classList.add('is-editing');
+            document.getElementById('pagoConcepto').focus();
+        }
+
+        // 3. ELIMINAR PAGO
+        if (accion === 'eliminar') {
+            if (!confirm(`¿Seguro que deseas eliminar el pago "${pago.concepto}"?`)) return;
+
+            try {
+                const fd = new FormData();
+                fd.append('id_pago', pago.id_pago);
+                fd.append(csrfName, csrfHash);
+
+                const res = await fetch(`${BASE_URL}personas/eliminarPago`, {
+                    method: 'POST',
+                    body: fd,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfHash
+                    }
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    pdsgToastPlan('success', 'Eliminado', data.message);
+                    resetModoEdicionPago();
+                    cargarPagosSucursal(pago.id_sucursal, 2, 'modalPago');
+                } else {
+                    pdsgToastPlan('error', 'Error', data.message || 'No se pudo eliminar.');
+                }
+            } catch (err) {
+                console.error(err);
+                pdsgToastPlan('error', 'Error', 'Error de conexión al eliminar.');
+            }
         }
     });
 }
@@ -960,49 +1273,159 @@ function pdsgToastPlan(tipo, titulo, mensaje) {
 // ════════════════════════════════════════════════════
 // AUTOCOMPLETAR REPRESENTANTE
 // ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
+// AUTOCOMPLETAR REPRESENTANTE (PHP AUTOCOMPLETE)
+// ════════════════════════════════════════════════════
 (function () {
     const input = document.getElementById('representante_sucursal');
-    const datalist = document.getElementById('listaRepresentantes');
-    if (!input || !datalist) return;
+    const menu  = document.getElementById('listaRepresentantes');
+    if (!input || !menu) return;
 
     let timer = null;
     let controller = null;
+    let itemsActuales = [];
+    let indiceActivo = -1;
+
+    function resaltarCoincidencia(texto, busqueda) {
+        const seguro = escH(texto);
+        if (!busqueda) return seguro;
+        const regex = new RegExp(`(${busqueda.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return seguro.replace(regex, '<mark>$1</mark>');
+    }
+
+    function cerrarMenu() {
+        menu.classList.add('d-none');
+        menu.innerHTML = '';
+        itemsActuales = [];
+        indiceActivo = -1;
+    }
+
+    function seleccionarItem(item) {
+        if (!item) return;
+        input.value = item.value || '';
+
+        // Si el teléfono o correo de la sucursal están vacíos, los autocompleta
+        const inputTel = document.getElementById('telefono_sucursal');
+        const inputCor = document.getElementById('correo_sucursal');
+        if (inputTel && !inputTel.value.trim() && item.telefono) {
+            inputTel.value = item.telefono;
+        }
+        if (inputCor && !inputCor.value.trim() && item.correo) {
+            inputCor.value = item.correo;
+        }
+
+        cerrarMenu();
+    }
+
+    function pintarMenu(lista, q) {
+        itemsActuales = Array.isArray(lista) ? lista : [];
+        indiceActivo = -1;
+
+        if (!itemsActuales.length) {
+            menu.innerHTML = '<div class="pdsg-ac-empty">Sin coincidencias registradas</div>';
+            menu.classList.remove('d-none');
+            return;
+        }
+
+        menu.innerHTML = itemsActuales.map((item, idx) => {
+            const obj = typeof item === 'string'
+                ? { label: item, value: item, origen: '' }
+                : item;
+            itemsActuales[idx] = obj;
+
+            return `
+                <div class="pdsg-ac-item" role="option" data-idx="${idx}">
+                    <span>${resaltarCoincidencia(obj.label || obj.value, q)}</span>
+                    ${obj.origen ? `<span class="pdsg-ac-badge">${escH(obj.origen)}</span>` : ''}
+                </div>
+            `;
+        }).join('');
+
+        menu.classList.remove('d-none');
+    }
+
+    async function consultarPhpAutocomplete(q) {
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        try {
+            const res = await fetch(
+                `${BASE_URL}personas/buscarRepresentantes?term=${encodeURIComponent(q)}`,
+                {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                }
+            );
+            const data = await res.json();
+            pintarMenu(data, q);
+        } catch (e) {
+            if (e.name !== 'AbortError') console.error('Error en PHP Autocomplete:', e);
+        }
+    }
 
     input.addEventListener('input', function () {
         const q = this.value.trim();
         clearTimeout(timer);
 
-        if (q.length < 2) {
-            datalist.innerHTML = '';
+        if (q.length < 1) {
+            cerrarMenu();
             return;
         }
 
-        // Debounce: espera 250 ms después de dejar de escribir
-        timer = setTimeout(async () => {
-            if (controller) controller.abort();
-            controller = new AbortController();
-
-            try {
-                const res = await fetch(
-                    `${BASE_URL}personas/buscarRepresentantes?q=${encodeURIComponent(q)}`,
-                    {
-                        signal: controller.signal,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    }
-                );
-                const nombres = await res.json();
-
-                datalist.innerHTML = '';
-                nombres.forEach(nombre => {
-                    const opt = document.createElement('option');
-                    opt.value = nombre;
-                    datalist.appendChild(opt);
-                });
-            } catch (e) {
-                if (e.name !== 'AbortError') console.error('Error autocompletar:', e);
-            }
-        }, 250);
+        timer = setTimeout(() => consultarPhpAutocomplete(q), 220);
     });
+
+    // Mostrar sugerencias iniciales al hacer foco si ya escribió o quiere elegir
+    input.addEventListener('focus', function () {
+        const q = this.value.trim();
+        if (q.length >= 1) {
+            consultarPhpAutocomplete(q);
+        }
+    });
+
+    // Navegación con teclado (Flechas arriba/abajo, Enter, Escape)
+    input.addEventListener('keydown', function (e) {
+        if (menu.classList.contains('d-none') || !itemsActuales.length) return;
+
+        const nodos = menu.querySelectorAll('.pdsg-ac-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            indiceActivo = (indiceActivo + 1) % nodos.length;
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            indiceActivo = (indiceActivo - 1 + nodos.length) % nodos.length;
+        } else if (e.key === 'Enter' && indiceActivo >= 0) {
+            e.preventDefault();
+            seleccionarItem(itemsActuales[indiceActivo]);
+            return;
+        } else if (e.key === 'Escape') {
+            cerrarMenu();
+            return;
+        } else {
+            return;
+        }
+
+        nodos.forEach((n, i) => n.classList.toggle('is-active', i === indiceActivo));
+        nodos[indiceActivo]?.scrollIntoView({ block: 'nearest' });
+    });
+
+    // Selección con clic
+    menu.addEventListener('mousedown', function (e) {
+        const itemEl = e.target.closest('.pdsg-ac-item');
+        if (!itemEl) return;
+        e.preventDefault();
+        const idx = parseInt(itemEl.getAttribute('data-idx'), 10);
+        seleccionarItem(itemsActuales[idx]);
+    });
+
+    // Cerrar al hacer clic fuera o al cerrar el modal
+    document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !menu.contains(e.target)) {
+            cerrarMenu();
+        }
+    });
+
+    document.getElementById('modalSucursal')?.addEventListener('hidden.bs.modal', cerrarMenu);
 })();
 // ════════════════════════════════════════════════════
 // LISTA DE PAGOS YA REGISTRADOS (Plan = tipo 1, Otros pagos = tipo 2)
@@ -1025,66 +1448,79 @@ function obtenerContenedorPagos(modalId) {
 }
 
 async function cargarPagosSucursal(idSucursal, tipoPago, modalId) {
-    const cont = obtenerContenedorPagos(modalId);
-    if (!cont) return;
+    const esPlan = (tipoPago === 1);
+    const tbody = document.getElementById(esPlan ? 'tbodyPlanesPagos' : 'tbodyOtrosPagos');
+    const badge = document.getElementById(esPlan ? 'contadorPlanes' : 'contadorOtrosPagos');
 
-    if (!idSucursal || !/^\d+$/.test(String(idSucursal))) {
-        cont.innerHTML = '';
-        return;
-    }
+    if (!tbody) return;
 
-    cont.innerHTML = '<div class="text-muted small py-2">Cargando registros…</div>';
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3 small">Cargando registros…</td></tr>';
 
     try {
         const res = await fetch(
             `${BASE_URL}personas/pagosSucursal?id_sucursal=${idSucursal}&tipo=${tipoPago}`,
             { headers: { 'X-Requested-With': 'XMLHttpRequest' } }
         );
-        if (!res.ok) throw new Error('HTTP ' + res.status);
         const pagos = await res.json();
+        const lista = Array.isArray(pagos) ? pagos : [];
 
-        const titulo = tipoPago === 1 ? 'Planes asignados' : 'Pagos registrados';
+        if (esPlan) {
+            cachePlanesPagos = lista;
+        } else {
+            cacheOtrosPagos = lista;
+        }
 
-        if (!Array.isArray(pagos) || !pagos.length) {
-            cont.innerHTML = `
-                <h3 class="mf-sec-title"><span class="material-symbols-outlined">history</span> ${titulo}</h3>
-                <div class="text-muted small py-2">Aún no hay registros para esta sucursal.</div>`;
+        if (badge) badge.textContent = lista.length;
+
+        if (!lista.length) {
+            const msgVacio = esPlan
+                ? 'No hay planes registrados para esta sucursal.'
+                : 'No hay otros pagos registrados para esta sucursal.';
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3 small">${msgVacio}</td></tr>`;
             return;
         }
 
-        const filas = pagos.map(p => {
-            const nombre = tipoPago === 1
-                ? `${escH(p.nombre_plan || '—')} · ${escH(p.nombre_tipo || '')}`
-                : escH(p.concepto || '—');
+        tbody.innerHTML = lista.map(p => {
             const activo = String(p.estado) === '1';
-            return `
-                <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
-                    <div>
-                        <div class="fw-semibold">${nombre}</div>
-                        <div class="text-muted small">
-                            Vence: ${escH(p.fecha_de_vencimiento || '—')}
-                            ${p.correo_notificacion ? ' · ' + escH(p.correo_notificacion) : ''}
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <div class="fw-semibold">S/ ${Number(p.precio || 0).toFixed(2)}</div>
-                        <span class="pdsg-chip ${activo ? 'pdsg-chip-on' : 'pdsg-chip-off'}">${activo ? 'Activo' : 'Inactivo'}</span>
-                    </div>
-                </div>`;
-        }).join('');
+            const venc = p.fecha_de_vencimiento ? escH(p.fecha_de_vencimiento.slice(0, 10)) : 'Sin fin';
 
-        cont.innerHTML = `
-            <h3 class="mf-sec-title">
-                <span class="material-symbols-outlined">history</span> ${titulo}
-                <span class="pdsg-chip pdsg-chip-on ms-2">${pagos.length}</span>
-            </h3>
-            <div style="max-height:180px;overflow:auto">${filas}</div>`;
+            const colPrincipal = esPlan
+                ? `<div class="fw-semibold pdsg-cell-truncate" title="${escH(p.nombre_plan || '—')}">${escH(p.nombre_plan || '—')}</div>
+                   <div class="text-muted pdsg-cell-truncate" style="font-size:0.74rem;">${escH(p.nombre_tipo || '')}</div>`
+                : `<div class="fw-semibold pdsg-cell-truncate" title="${escH(p.concepto || '—')}">${escH(p.concepto || '—')}</div>
+                   ${p.correo_notificacion ? `<div class="text-muted pdsg-cell-truncate" style="font-size:0.74rem;">${escH(p.correo_notificacion)}</div>` : ''}`;
+
+            return `
+                <tr data-id-pago="${p.id_pago}">
+                    <td>${colPrincipal}</td>
+                    <td class="fw-semibold">S/ ${Number(p.precio || 0).toFixed(2)}</td>
+                    <td>${venc}</td>
+                    <td class="text-center">
+                        <span class="pdsg-chip ${activo ? 'pdsg-chip-on' : 'pdsg-chip-off'}">
+                            ${activo ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="pdsg-pago-actions">
+                            <button type="button" class="pdsg-pago-btn pdsg-pago-btn--view" data-accion="ver" data-id="${p.id_pago}" title="Ver detalle">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button type="button" class="pdsg-pago-btn pdsg-pago-btn--edit" data-accion="editar" data-id="${p.id_pago}" title="Editar">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" class="pdsg-pago-btn pdsg-pago-btn--del" data-accion="eliminar" data-id="${p.id_pago}" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     } catch (e) {
-        console.error('Error cargando pagos:', e);
-        cont.innerHTML = '<div class="text-danger small py-2">No se pudo cargar el historial.</div>';
+        console.error('Error cargando grilla de pagos/planes:', e);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3 small">No se pudo cargar la lista de registros.</td></tr>';
     }
 }
-
 // ════════════════════════════════════════════════════
 // INICIALIZACIÓN GLOBAL
 // ════════════════════════════════════════════════════

@@ -7,6 +7,7 @@ use App\Models\UsuarioModel;
 use App\Models\PermisosModel;
 use App\Services\Shared\BusinessException;
 use App\Services\Shared\ServiceResult;
+use Config\Database;
 
 class UsuarioWriterService
 {
@@ -17,11 +18,10 @@ class UsuarioWriterService
     public function __construct()
     {
         $this->personaModel = new PersonaModel();
-        $this->usuarioModel = new UsuarioModel();
-        $this->permisosModel = new PermisosModel();
+        $this->usuarioModel = new UsuarioModel();$this->permisosModel = new PermisosModel();
     }
 
-    public function registrarUsuario(array $personaData, array $usuarioData): ServiceResult
+    public function registrarUsuario(array $personaData, array$usuarioData): ServiceResult
     {
         $dni = trim($personaData['dni'] ?? '');
         if ($dni !== '' && $this->personaModel->dniExiste($dni)) {
@@ -29,87 +29,122 @@ class UsuarioWriterService
         }
 
         $username = trim($usuarioData['username'] ?? '');
-        if ($username !== '' && $this->usuarioModel->where('username', $username)->first()) {
+        if ($username !== '' && $this->usuarioModel->where('username',$username)->first()) {
             throw new BusinessException('El nombre de usuario ya existe.', 422);
         }
 
-        $personaId = $this->personaModel->insert($personaData, false);
-        if (!$personaId) {
-            throw new BusinessException('No se pudo crear la persona.', 500);
-        }
+        $db = Database::connect();$db->transBegin();
 
-        $usuarioData['id_persona'] = $personaId;
-        $usuarioId = $this->usuarioModel->insert($usuarioData, false);
-        if (!$usuarioId) {
-            $this->personaModel->delete($personaId);
-            throw new BusinessException('No se pudo crear el usuario.', 500);
-        }
+        try {
+            $personaId = $this->personaModel->insert($personaData, true);
+            if (!is_numeric($personaId) || (int) $personaId <= 0) {$db->transRollback();
+                throw new BusinessException('No se pudo crear la persona.', 500);
+            }
 
-        return new ServiceResult(true, 'Usuario registrado correctamente.', 201, [
-            'id_usuario' => $usuarioId,
-            'id_persona' => $personaId,
-        ]);
+            $personaId = (int)$personaId;
+            $usuarioData['id_persona'] =$personaId;
+            $usuarioData['estado'] =$usuarioData['estado'] ?? 1;
+
+            $usuarioId = $this->usuarioModel->insert($usuarioData, true);
+            if (!is_numeric($usuarioId) || (int) $usuarioId <= 0) {$db->transRollback();
+                throw new BusinessException('No se pudo crear el usuario.', 500);
+            }
+
+            if ($db->transStatus() === false) {$db->transRollback();
+                throw new BusinessException('No se pudo completar el registro del usuario.', 500);
+            }
+
+            $db->transCommit();
+
+            return new ServiceResult(true, 'Usuario registrado correctamente.', 201, [
+                'id_usuario' => (int) $usuarioId,
+                'id_persona' => $personaId,
+            ]);
+        } catch (BusinessException $e) {
+            if ($db->transStatus() !== false) {$db->transRollback();
+            }
+            throw $e;
+        } catch (\Throwable $e) {$db->transRollback();
+            throw $e;
+        }
     }
 
-    public function actualizarUsuario(int $usuarioId, array $personaData, array $usuarioData): ServiceResult
+    public function actualizarUsuario(int $usuarioId, array $personaData, array$usuarioData): ServiceResult
     {
         $usuario = $this->usuarioModel->find($usuarioId);
         if (!$usuario) {
             throw new BusinessException('Usuario no encontrado.', 404);
         }
 
-        $idPersona = (int) $usuario->id_persona;
+        $idPersona = (int)$usuario->id_persona;
 
         $dni = trim($personaData['dni'] ?? '');
-        if ($dni !== '' && $this->personaModel->dniExiste($dni, $idPersona)) {
+        if ($dni !== '' &&$this->personaModel->dniExiste($dni,$idPersona)) {
             throw new BusinessException('El DNI ya está registrado por otra persona.', 422);
         }
 
         $username = trim($usuarioData['username'] ?? '');
-        if ($username !== '' && $this->usuarioModel
+        if ($username !== '' &&$this->usuarioModel
             ->where('username', $username)
             ->where('id_usuario !=', $usuarioId)
             ->first()) {
             throw new BusinessException('El nombre de usuario ya existe.', 422);
         }
 
-        $okPersona = $this->personaModel->update($idPersona, $personaData);
+        $db = Database::connect();$db->transBegin();
 
-        $usuarioUpdate = [];
-        if (isset($usuarioData['username'])) $usuarioUpdate['username'] = $usuarioData['username'];
-        if (isset($usuarioData['password']) && $usuarioData['password'] !== '') $usuarioUpdate['password'] = $usuarioData['password'];
-        if (isset($usuarioData['id_rol'])) $usuarioUpdate['id_rol'] = (int) $usuarioData['id_rol'];
-        $okUsuario = $usuarioUpdate ? $this->usuarioModel->update($usuarioId, $usuarioUpdate) : true;
+        try {
+            $okPersona =$this->personaModel->update($idPersona,$personaData);
 
-        if (!$okPersona || !$okUsuario) {
-            throw new BusinessException('No se pudo actualizar el usuario.', 500);
+            $usuarioUpdate = [];
+            if (isset($usuarioData['username'])) {
+                $usuarioUpdate['username'] =$usuarioData['username'];
+            }
+            if (isset($usuarioData['password']) &&$usuarioData['password'] !== '') {
+                $usuarioUpdate['password'] =$usuarioData['password'];
+            }
+            if (isset($usuarioData['id_rol'])) {
+                $usuarioUpdate['id_rol'] = (int)$usuarioData['id_rol'];
+            }
+
+            $okUsuario = $usuarioUpdate ? $this->usuarioModel->update($usuarioId,$usuarioUpdate) : true;
+
+            if (!$okPersona || !$okUsuario || $db->transStatus() === false) {
+    $db->transRollback();
+    throw new BusinessException('No se pudo actualizar el usuario.', 500);
+}
+
+            $db->transCommit();
+
+            return new ServiceResult(true, 'Usuario actualizado correctamente.', 200);
+        } catch (BusinessException $e) {$db->transRollback();
+            throw $e;
+        } catch (\Throwable $e) {$db->transRollback();
+            throw $e;
         }
-
-        return new ServiceResult(true, 'Usuario actualizado correctamente.', 200);
     }
 
-    public function actualizarPermisosPorUsuario(int $usuarioId, array $permisos): ServiceResult
+    public function actualizarPermisosPorUsuario(int $usuarioId, array$permisos): ServiceResult
     {
         $usuario = $this->usuarioModel->find($usuarioId);
         if (!$usuario) {
             throw new BusinessException('Usuario no encontrado.', 404);
         }
 
-        $idPersona = (int) $usuario->id_persona;
-        $idRol = (int) $usuario->id_rol;
+        $idRol = (int)$usuario->id_rol;
 
-        foreach ($permisos as $permiso) {
+        foreach ($permisos as$permiso) {
             $menuId = (int) ($permiso['menu_id'] ?? 0);
-            if ($menuId <= 0) continue;
+            if ($menuId <= 0) {
+                continue;
+            }
 
             $flags = [
-                'read'   => !empty($permiso['read']) ? 1 : 0,
-                'insert' => !empty($permiso['insert']) ? 1 : 0,
-                'update' => !empty($permiso['update']) ? 1 : 0,
-                'delete' => !empty($permiso['delete']) ? 1 : 0,
+                'read'   => !empty($permiso['read']) ? 1 : 0, 'insert' => !empty($permiso['insert']) ? 1 : 0,
+                'update' => !empty($permiso['update']) ? 1 : 0, 'delete' => !empty($permiso['delete']) ? 1 : 0,
             ];
 
-            $this->permisosModel->guardarPorRolYMenu($idRol, $menuId, $flags);
+            $this->permisosModel->guardarPorRolYMenu($idRol, $menuId,$flags);
         }
 
         return new ServiceResult(true, 'Permisos actualizados correctamente.', 200);
@@ -122,8 +157,8 @@ class UsuarioWriterService
             throw new BusinessException('Usuario no encontrado.', 404);
         }
 
-        $nuevoEstado = (int) $usuario->estado === 1 ? 0 : 1;
-        $ok = $this->usuarioModel->actualizarEstadoPorId($usuarioId, $nuevoEstado);
+        $nuevoEstado = (int)$usuario->estado === 1 ? 0 : 1;
+        $ok =$this->usuarioModel->actualizarEstadoPorId($usuarioId,$nuevoEstado);
 
         if (!$ok) {
             throw new BusinessException('No se pudo cambiar el estado.', 500);
