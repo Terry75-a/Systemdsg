@@ -1,4 +1,4 @@
-# Subir Asisten DSG + Panel de clientes a cPanel
+# Subir el proyecto DSG (Asisten + Panel de clientes) a cPanel
 
 Este zip trae los dos sistemas (Asisten y el panel de clientes). No trae
 `.env`, logs, sesiones ni datos: eso vive en el servidor.
@@ -14,13 +14,13 @@ Este zip trae los dos sistemas (Asisten y el panel de clientes). No trae
    crea la base y un usuario, y dale **todos los privilegios** sobre la base.
    Luego en *phpMyAdmin* → la base → **Importar** → `produccion_base.sql`
    (lo genera Stev aparte; trae las tablas de los dos sistemas y los datos).
-4. **Archivos** · *Administrador de archivos* → sube `asisten-cpanel.zip`
+4. **Archivos** · *Administrador de archivos* → sube `proyectodsg.zip`
    a tu carpeta de inicio `/home/USUARIO/` (**fuera de `public_html`**) y
-   extráelo: queda `/home/USUARIO/asisten/`.
+   extráelo: queda `/home/USUARIO/proyectodsg/`.
 5. **Dominio** · cPanel → *Dominios* → edita el dominio o subdominio →
-   **Raíz del documento** = `asisten/public`.
+   **Raíz del documento** = `proyectodsg/public`.
    - Si el hosting no deja cambiarla: extrae el zip dentro de `public_html`,
-     mueve el contenido de `asisten/` a `public_html/` y renombra
+     mueve el contenido de `proyectodsg/` a `public_html/` y renombra
      `htaccess-raiz` a `.htaccess`. Ese archivo manda todo a `public/` y
      protege `app/`, `writable/`, `vendor/` y `.env`.
 6. **.env** · renombra `env.ejemplo` a `.env` (junto a `spark`) y llénalo:
@@ -35,7 +35,7 @@ Este zip trae los dos sistemas (Asisten y el panel de clientes). No trae
    debe registrar su huella otra vez desde el panel en el dominio nuevo.
 10. Abre el dominio. Las tablas nuevas de Asisten se crean solas.
     Si la base vino vacía, crea la cuenta Dev desde *Terminal* de cPanel:
-    `cd ~/asisten && php spark asisten:crear-dev`
+    `cd ~/proyectodsg && php spark asisten:crear-dev`
 
 ## Tareas automáticas (cPanel → Cron Jobs)
 
@@ -45,8 +45,8 @@ o `/opt/cpanel/ea-php82/root/usr/bin/php`). La hora del cron es la del
 
 | Qué | Cuándo (hora de Lima) | Comando |
 |---|---|---|
-| Cierre del día de asistencia (faltas y salidas sin marcar) | 23:55 todos los días | `cd /home/USUARIO/asisten && /usr/local/bin/php spark asistencia:cierre >> writable/logs/cron.log 2>&1` |
-| Avisos de vencimiento del panel (correo/WhatsApp) | 08:00 todos los días | `cd /home/USUARIO/asisten && /usr/local/bin/php spark vencimientos:enviar >> writable/logs/cron.log 2>&1` |
+| Cierre del día de asistencia (faltas y salidas sin marcar) | 23:55 todos los días | `cd /home/USUARIO/proyectodsg && /usr/local/bin/php spark asistencia:cierre >> writable/logs/cron.log 2>&1` |
+| Avisos de vencimiento del panel (correo/WhatsApp) | 08:00 todos los días | `cd /home/USUARIO/proyectodsg && /usr/local/bin/php spark vencimientos:enviar >> writable/logs/cron.log 2>&1` |
 
 ## Actualizar después (cuando haya cambios)
 

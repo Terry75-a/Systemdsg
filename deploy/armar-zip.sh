@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────
-# Arma el zip para subir a cPanel (Asisten + Panel de clientes).
+# Arma el zip para subir a cPanel (proyecto DSG: Asisten + Panel de clientes).
 #
-#   bash deploy/armar-zip.sh                 → ../asisten-cpanel.zip
+#   bash deploy/armar-zip.sh                 → ../proyectodsg.zip
 #   bash deploy/armar-zip.sh --con-uploads   → incluye fotos de rostro y evidencias
 #                                              (solo para la PRIMERA subida)
 #
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
-SALIDA="${SALIDA:-$(dirname "$RAIZ")/asisten-cpanel.zip}"
+SALIDA="${SALIDA:-$(dirname "$RAIZ")/proyectodsg.zip}"
 PHP="${PHP:-$(command -v php || echo /opt/lampp/bin/php)}"
 COMPOSER="${COMPOSER:-$(command -v composer)}"
 CON_UPLOADS=0
@@ -23,7 +23,7 @@ if [[ "${1:-}" == "--con-uploads" ]]; then CON_UPLOADS=1; fi
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-DEST="$TMP/asisten"
+DEST="$TMP/proyectodsg"
 mkdir -p "$DEST"
 
 echo "→ Copiando archivos…"
@@ -33,6 +33,7 @@ rsync -a \
   --exclude='writable/logs/*' --exclude='writable/debugbar/*' --exclude='writable/session/*' \
   --exclude='writable/cache/*' --exclude='writable/sync/*' --exclude='writable/tmp/*' --exclude='writable/uploads/*' \
   --exclude='.svn' --exclude='.git' --exclude='.env*' --exclude='.DS_Store' \
+  --exclude='writable/*.json' --exclude='writable/*.sql' \
   --include='app/***' --include='public/***' --include='vendor/***' --include='writable/***' \
   --include='spark' --include='composer.json' --include='composer.lock' --include='preload.php' \
   --exclude='*' "$RAIZ/" "$DEST/"
@@ -78,6 +79,6 @@ echo "→ Quitando dependencias de desarrollo…"
 
 echo "→ Comprimiendo…"
 rm -f "$SALIDA"
-( cd "$TMP" && zip -qr -9 "$SALIDA" asisten )
+( cd "$TMP" && zip -qr -9 "$SALIDA" proyectodsg )
 
 echo "✔ Listo: $SALIDA ($(du -h "$SALIDA" | cut -f1))"

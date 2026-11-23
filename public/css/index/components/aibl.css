@@ -336,3 +336,36 @@ body:has(.login-page) :is(.login-btn, button[type="submit"]) { background: #1414
 body:has(.login-page) :is(.login-btn, button[type="submit"]):hover { background: #2e2e2e !important; }
 body:has(.login-page) :is(.login-btn, button[type="submit"]) :is(i, .material-symbols-outlined) { color: #9fd8b2 !important; }
 body:has(.login-page) .login-right { background: #f3f4f6 !important; border-radius: 30px !important; }
+
+/* ── 7 · Celular: botones de arriba (campana + modo oscuro) ──────
+   Antes los dos iban fijos en la misma esquina y el de modo oscuro
+   quedaba escondido debajo de la campana. Ahora van uno al lado del
+   otro, mismo tamaño y misma altura; el título deja espacio para
+   ambos y las acciones del encabezado van en una sola fila. */
+@media (max-width: 768px) {
+  html body:has(.dev-main) .admin-notif-bell {
+    top: 16px !important; right: 16px !important; width: 44px !important; height: 44px !important;
+    border-radius: 50% !important; border: 1px solid var(--lm-line-2) !important;
+    background: var(--lm-card) !important; color: var(--lm-ink) !important;
+    box-shadow: 0 6px 18px -10px rgba(0, 0, 0, .35) !important;
+  }
+  html body:has(.dev-main) .dev-mobile-dark-btn { top: 16px !important; width: 44px !important; height: 44px !important; }
+  /* Con campana: el modo oscuro va a su izquierda (16 + 44 + 8) */
+  html body:has(.dev-main):has(.admin-notif-bell) .dev-mobile-dark-btn { right: 68px !important; }
+  /* La línea «Asisten DSG» ocupa la franja de los botones (44 px de alto);
+     el título va debajo con todo el ancho, sin partirse de más. */
+  html body:has(.dev-main) :is(.dev-topbar-row, .dev-topbar > .tk-title, .tk-mp > .tk-title) { padding-right: 0 !important; }
+  html body:has(.dev-main) :is(.dev-topbar, .tk-mp > .tk-title) h1 { padding-right: 0 !important; }
+  html body:has(.dev-main) .dev-topbar { padding-top: 16px !important; }
+  html body:has(.dev-main) .tk-mp > .tk-title { margin-top: 0 !important; padding-top: 8px !important; }
+  html body:has(.dev-main) :is(.dev-topbar, .tk-mp > .tk-title) h1::before {
+    display: flex !important; align-items: center; min-height: 44px; margin: 0 0 6px !important; padding-right: 60px;
+  }
+  html body:has(.dev-main):has(.admin-notif-bell) :is(.dev-topbar, .tk-mp > .tk-title) h1::before { padding-right: 116px; }
+  /* Acciones del encabezado (reporte, año, filtros) en una fila que se ajusta */
+  html body:has(.dev-main) :is(.tk-title-actions, .dev-topbar-actions) {
+    display: flex !important; flex-wrap: wrap; align-items: center; gap: 8px !important;
+  }
+  html body:has(.dev-main) :is(.tk-title-actions, .dev-topbar-actions) > * { margin: 0 !important; }
+  html.dark body:has(.dev-main) .admin-notif-bell { background: #1c1c20 !important; border-color: #2f2f36 !important; color: #ededed !important; }
+}
