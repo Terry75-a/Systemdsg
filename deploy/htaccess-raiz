@@ -1,0 +1,14 @@
+# ──────────────────────────────────────────────────────────────
+# Solo si el hosting NO deja apuntar el dominio a la carpeta public.
+# Se copia como  .htaccess  en la carpeta del sistema (junto a spark).
+# Manda todo a public/ y así app/, writable/, vendor/ y .env nunca
+# se pueden abrir desde el navegador.
+# ──────────────────────────────────────────────────────────────
+Options -Indexes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

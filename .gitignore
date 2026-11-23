@@ -142,3 +142,6 @@ _modules/*
 
 /results/
 /phpunit*.xml
+
+# Copias de datos de Asisten (datos personales: no se suben)
+writable/sync/*
