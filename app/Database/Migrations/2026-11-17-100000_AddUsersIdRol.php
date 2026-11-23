@@ -25,6 +25,20 @@ class AddUsersIdRol extends Migration
 
     public function up(): void
     {
+        // `roles` es del panel de clientes. En una base sin el panel se crea con
+        // su misma estructura, para que Asisten funcione solo.
+        if (! $this->db->tableExists('roles')) {
+            $this->db->query("CREATE TABLE `roles` (
+                `id_rol` int(11) NOT NULL AUTO_INCREMENT,
+                `nombre` varchar(50) NOT NULL,
+                `descripcion` varchar(255) DEFAULT NULL,
+                `created_at` datetime DEFAULT current_timestamp(),
+                `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                PRIMARY KEY (`id_rol`),
+                UNIQUE KEY `uq_nombre_rol` (`nombre`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+        }
+
         $ahora = date('Y-m-d H:i:s');
         foreach (self::ROLES as $nombre => $desc) {
             $existe = $this->db->table('roles')->where('nombre', $nombre)->countAllResults();

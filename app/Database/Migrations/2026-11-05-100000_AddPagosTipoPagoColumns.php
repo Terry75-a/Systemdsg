@@ -24,6 +24,11 @@ class AddPagosTipoPagoColumns extends Migration
 
     public function up(): void
     {
+        // `pagos` es del panel de clientes: si esta base no lo tiene, no hay nada que ampliar
+        if (! $this->db->tableExists('pagos')) {
+            return;
+        }
+
         $columnas = [
             'id_tipo_pago' => [
                 'type'       => 'TINYINT',

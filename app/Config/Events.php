@@ -36,6 +36,9 @@ Events::on('pre_system', static function (): void {
         ob_start(static fn ($buffer) => $buffer);
     }
 
+    // Tablas y columnas nuevas de Asisten: se crean solas tras un `git pull`
+    \App\Libraries\Asistencia\AutoMigracion::ejecutar();
+
     /*
      * --------------------------------------------------------------------
      * Debug Toolbar Listeners.
