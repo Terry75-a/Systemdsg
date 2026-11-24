@@ -141,6 +141,8 @@ $routes->group('admin', ['filter' => 'asistencia'], static function ($routes) {
     // Biometría del personal: la registra el admin (el colaborador ya no)
     $routes->post('biometria/rostro', 'AdminController::biometriaRostro');
     $routes->post('biometria/huella', 'AdminController::biometriaHuella');
+    $routes->post('biometria/huella-reto', 'AdminController::biometriaHuellaReto');
+    $routes->post('biometria/huella-registrar', 'AdminController::biometriaHuellaRegistrar');
 
     // Admin Horarios
     $routes->post('create-schedule', 'AdminController::createSchedule');

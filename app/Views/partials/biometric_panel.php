@@ -1,5 +1,6 @@
 <?php
-    $bHuella = (int) ($bioHuella ?? 0);
+    // 1 = huella real (WebAuthn). El antiguo 2 («sin lector») ya no vale.
+    $bHuella = (int) ($bioHuella ?? 0) === 1 ? 1 : 0;
     $bRostro = (int) ($bioRostro ?? 0);
     $bRostroPath = (string) ($bioRostroPath ?? '');
     $bCredId = (string) ($bioHuellaCredId ?? '');
@@ -272,7 +273,7 @@
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
         if (!tH && !tR) {
-            alert('Aún no tienes biometría registrada. Contacta a tu administrador para que la registre antes de marcar asistencia.');
+            alert('Aún no tienes biometría registrada. Pide a tu administrador que registre tu huella o tu rostro.');
             return;
         }
         B.humino_huellaOk = false;
@@ -314,7 +315,7 @@
         var tH = <?= $bHuella ?> > 0;
         var tR = <?= $bRostro ?> > 0;
         if (!tH && !tR) {
-            alert('Aún no tienes biometría registrada. Contacta a tu administrador para que la registre antes de marcar asistencia.');
+            alert('Aún no tienes biometría registrada. Pide a tu administrador que registre tu huella o tu rostro.');
             return;
         }
         // Horario asignado al usuario
@@ -456,18 +457,10 @@
         $('bioCheckHuellaBtn').disabled = true;
         var credId = '<?= esc($bCredId) ?>';
         if (!window.PublicKeyCredential || credId === '' || credId.indexOf('sim-') === 0) {
-            // Sin lector real: el servidor aprueba (y emite el token) si hay
-            // biometría registrada. Ya no basta con un flag en el HTML.
-            var fdSim = new FormData();
-            fdSim.set('metodo', 'sim');
-            fetchPost('<?= site_url('mi-panel/aprobar-bio') ?>', fdSim).then(function (res) {
-                if (res.ok) return bioHuellaDone(res.bio_token || '');
-                $('bioCheckHuellaBtn').disabled = false;
-                msg('bioCheckMsg', res.msj || 'No se pudo verificar. Intenta con el rostro.', false);
-            }).catch(function () {
-                $('bioCheckHuellaBtn').disabled = false;
-                msg('bioCheckMsg', 'No se pudo verificar. Intenta con el rostro.', false);
-            });
+            // Sin huella real en este equipo: no hay atajo, se usa el rostro.
+            $('bioCheckHuellaBtn').disabled = false;
+            msg('bioCheckMsg', 'Tu huella está registrada en otro equipo o este no tiene lector. Verifica con tu rostro.', false);
+            if (<?= $bRostro ?> > 0) showMethod('facial');
             return;
         }
         fetch('<?= site_url('mi-panel/bio-session') ?>?fresh=1', { credentials: 'same-origin' })

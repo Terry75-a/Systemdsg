@@ -47,3 +47,31 @@ Options -Indexes
 # Disable server signature start
 ServerSignature Off
 # Disable server signature end
+
+# ──────────────────────────────────────────────────────────────
+# Velocidad: el navegador guarda los archivos estáticos y no los
+# vuelve a descargar en cada página (las páginas PHP no se guardan).
+#  · Con ?v=… (cambia al actualizar el archivo): 1 año.
+#  · CSS/JS sin versión: 1 hora, para que una actualización llegue pronto.
+#  · Imágenes, fuentes y videos: 30 días.
+# ──────────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|mjs)$">
+        Header set Cache-Control "public, max-age=3600"
+    </FilesMatch>
+    <FilesMatch "\.(png|jpe?g|gif|webp|avif|svg|ico|woff2?|ttf|otf|mp4|webm|json|bin|weights)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+    <If "%{QUERY_STRING} =~ /(^|&)v=/">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+    # El service worker y el manifiesto siempre frescos
+    <FilesMatch "^(sw\.js|manifest\.json|manifest\.webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
+# Compresión (si el servidor no la tiene ya activada)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript text/javascript application/json image/svg+xml
+</IfModule>

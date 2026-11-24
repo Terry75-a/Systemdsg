@@ -88,6 +88,9 @@ class AsistenciaCierre extends BaseCommand
 
             $schedules = $scheduleModel->getActive($userAd);
             $schedule  = Jornada::delDia($schedules, $user, $fecha);
+            if ($schedule === []) {
+                continue; // sin horario asignado: no se le pone falta
+            }
 
             if (! Jornada::esDiaLaborable($schedule, $fecha)) {
                 continue;

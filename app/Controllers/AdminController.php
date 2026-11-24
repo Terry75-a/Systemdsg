@@ -766,8 +766,8 @@ class AdminController extends AdminBaseController
     }
 
     /**
-     * Huella: WebAuthn sólo se inscribe desde el dispositivo de la persona,
-     * así que el admin sólo activa o apaga el modo «sin lector».
+     * Huella: la registra el admin (biometriaHuellaRegistrar). Aquí sólo se
+     * REINICIA (borra) para volver a registrarla. Ya no hay modo «sin lector».
      */
     public function biometriaHuella()
     {
@@ -778,27 +778,105 @@ class AdminController extends AdminBaseController
             return $this->response->setStatusCode(403)
                 ->setJSON(['ok' => false, 'msj' => 'Esta persona no pertenece a tu equipo']);
         }
+        if ((string) $this->request->getPost('estado') !== 'off') {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Usa «Registrar huella en este equipo».']);
+        }
 
         $id     = (int) $member['id'];
         $nombre = (string) ($member['name'] ?? '');
-        $activa = (string) $this->request->getPost('estado') === 'on';
 
-        // Al apagar se borran también las credenciales WebAuthn que
-        // hubiera, para que no quede una huella «fantasma» usable.
+        // Se borran también las credenciales WebAuthn: no queda una huella «fantasma».
         (new \App\Models\WebAuthnCredentialModel())->clearUser($id);
-
         $this->userModel->update($id, [
-            'huella_registrada' => $activa ? 2 : 0,   // 2 = sin lector, 1 = real
-            'huella_fecha'      => $activa ? date('Y-m-d H:i:s') : null,
-            'huella_cred_id'    => $activa ? 'sim-' . bin2hex(random_bytes(6)) : null,
+            'huella_registrada' => 0,
+            'huella_fecha'      => null,
+            'huella_cred_id'    => null,
         ]);
 
         return $this->response->setJSON([
             'ok'  => true,
-            'msj' => $activa
-                ? "Huella habilitada en modo sin lector para {$nombre}"
-                : "Huella desactivada para {$nombre}",
+            'msj' => "Huella reiniciada para {$nombre}.",
         ]);
+    }
+
+    /**
+     * Huella REAL (WebAuthn) registrada por el admin para una persona de su
+     * equipo, en el equipo donde está el admin. La huella queda guardada en
+     * ESE equipo: la persona marca con huella allí; en otro equipo, con rostro.
+     *
+     * Paso 1: reto de un solo uso atado a esa persona.
+     */
+    public function biometriaHuellaReto()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+
+        $member = $this->personaBio((int) $this->request->getPost('user_id'));
+        if ($member === null) {
+            return $this->response->setStatusCode(403)
+                ->setJSON(['ok' => false, 'msj' => 'Esta persona no pertenece a tu equipo']);
+        }
+
+        $wa = new \App\Libraries\WebAuthnService();
+        $challenge = \App\Libraries\WebAuthnService::b64e(random_bytes(32));
+        session()->set(['wa_adm_challenge' => $challenge, 'wa_adm_uid' => (int) $member['id'], 'wa_adm_ts' => time()]);
+
+        return $this->response->setJSON([
+            'ok'         => true,
+            'csrfHash'   => csrf_hash(),
+            'challenge'  => $challenge,
+            'rpId'       => $wa->host(),
+            'userHandle' => $wa->userHandleB64((int) $member['id']),
+            'userName'   => (string) ($member['name'] ?? ''),
+            'userEmail'  => (string) ($member['email'] ?? ''),
+        ]);
+    }
+
+    /** Paso 2: valida la huella leída y la guarda para esa persona. */
+    public function biometriaHuellaRegistrar()
+    {
+        if ($redirect = $this->guard()) return $redirect;
+
+        $member = $this->personaBio((int) $this->request->getPost('user_id'));
+        if ($member === null) {
+            return $this->response->setStatusCode(403)
+                ->setJSON(['ok' => false, 'msj' => 'Esta persona no pertenece a tu equipo']);
+        }
+        $id = (int) $member['id'];
+
+        $challenge = (string) session()->get('wa_adm_challenge');
+        $uid       = (int) session()->get('wa_adm_uid');
+        $ts        = (int) session()->get('wa_adm_ts');
+        session()->remove(['wa_adm_challenge', 'wa_adm_uid', 'wa_adm_ts']);
+        if ($challenge === '' || $uid !== $id || (time() - $ts) > 300) {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'El registro expiró. Vuelve a intentarlo.']);
+        }
+
+        $wa    = new \App\Libraries\WebAuthnService();
+        $creds = new \App\Models\WebAuthnCredentialModel();
+        try {
+            $options = $wa->creationOptions($challenge, $id, (string) ($member['name'] ?? ''), (string) ($member['email'] ?? ''));
+            $record  = $wa->verifyAttestation($challenge, $options, $this->request->getPost());
+            $row     = $wa->toRow($record, $id);
+
+            $otro = $creds->findByCredentialId($row['credential_id']);
+            if ($otro !== null && (int) $otro['user_id'] !== $id) {
+                return $this->response->setJSON(['ok' => false, 'msj' => 'Esa huella ya está registrada para otra persona.']);
+            }
+
+            $creds->clearUser($id);
+            $creds->insert($row);
+            $this->userModel->update($id, [
+                'huella_registrada' => 1,
+                'huella_fecha'      => date('Y-m-d H:i:s'),
+                'huella_cred_id'    => $row['credential_id'],
+            ]);
+
+            return $this->response->setJSON(['ok' => true, 'msj' => 'Huella registrada para ' . ($member['name'] ?? 'la persona') . '.']);
+        } catch (\Throwable $e) {
+            log_message('error', 'WebAuthn (registro admin) fallido: ' . $e->getMessage());
+
+            return $this->response->setJSON(['ok' => false, 'msj' => 'No se pudo validar la huella. Inténtalo de nuevo.']);
+        }
     }
 
     /**

@@ -172,7 +172,7 @@ class Jornada
      * De sus horarios asignados (y del tipo de su rol) se usa el que incluye
      * ese día de la semana. Si ninguno lo incluye, se devuelve el primero
      * asignado: con él esDiaLaborable() dirá que ese día descansa.
-     * Sin horarios asignados se cae a elegir() (comportamiento anterior).
+     * Sin horarios asignados devuelve [] (no se le pone el de otra persona).
      */
     public static function delDia(array $schedules, array $user, string $fecha): array
     {
@@ -189,7 +189,8 @@ class Jornada
             }
         }
         if ($suyos === []) {
-            return self::elegir($schedules, (int) ($user['schedule_id'] ?? 0), $role);
+            // Sin horario asignado no se inventa uno: la persona no tiene horario.
+            return [];
         }
         foreach ($suyos as $sch) {
             if (self::esDiaLaborable($sch, $fecha)) {

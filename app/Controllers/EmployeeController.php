@@ -374,8 +374,8 @@ class EmployeeController extends BaseController
         }
 
         // Biometria obligatoria: huella o rostro. Al marcar se pide uno de los dos.
-        if (!(int) ($user['huella_registrada'] ?? 0) && !(int) ($user['rostro_registrado'] ?? 0)) {
-            $s->setFlashdata('msg', 'Tu administrador aún no registra tu biometría. Contacta a tu administrador para que la registre antes de marcar asistencia.');
+        if ((int) ($user['huella_registrada'] ?? 0) !== 1 && !(int) ($user['rostro_registrado'] ?? 0)) {
+            $s->setFlashdata('msg', 'Tu administrador aún no registra tu huella ni tu rostro. Pídeselo antes de marcar asistencia.');
             $s->setFlashdata('tipo', 'warning');
             return redirect()->to(base_url('mi-panel'));
         }
@@ -954,8 +954,8 @@ class EmployeeController extends BaseController
     }
 
     /**
-     * La biometria la registra el administrador desde Personal: el
-     * colaborador ya no puede cargar su propia huella.
+     * La huella la registra el administrador desde Personal: el colaborador
+     * no puede cargar su propia huella.
      */
     public function guardarHuella()
     {
@@ -963,7 +963,7 @@ class EmployeeController extends BaseController
 
         return $this->response
             ->setStatusCode(403)
-            ->setJSON(['ok' => false, 'msj' => 'Solo tu administrador puede registrar tu biometria.']);
+            ->setJSON(['ok' => false, 'msj' => 'Solo tu administrador puede registrar tu huella.']);
     }
 
     /** Comprueba en el servidor la firma de la assertion (huella real). */
@@ -1006,8 +1006,8 @@ class EmployeeController extends BaseController
     }
 
     /**
-     * Aprobación de la marcación por rostro (o por "sim-" cuando no hay
-     * lector real). El servidor compara la selfie con la foto de referencia
+     * Aprobación de la marcación por rostro (la huella va por verifyHuella).
+     * El servidor compara la selfie con la foto de referencia
      * guardada y, si coincide, emite el token de marcación.
      *
      * El cotejo facial fino lo hace el cliente con face-api.js; aquí se
@@ -1025,8 +1025,9 @@ class EmployeeController extends BaseController
         }
 
         $metodo = trim((string) $this->request->getPost('metodo'));
-        if (! in_array($metodo, ['facial', 'sim'], true)) {
-            return $this->response->setJSON(['ok' => false, 'msj' => 'Metodo de verificacion invalido.']);
+        // Sólo rostro: la huella se verifica con su firma real en verifyHuella().
+        if ($metodo !== 'facial') {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Verifica con tu huella registrada o con tu rostro.']);
         }
 
         $user = $this->userModel->find($userId);
@@ -1034,20 +1035,12 @@ class EmployeeController extends BaseController
             return $this->response->setJSON(['ok' => false, 'msj' => 'Sesion invalida.']);
         }
 
-        if ($metodo === 'facial') {
-            if (! (int) ($user['rostro_registrado'] ?? 0) || trim((string) ($user['rostro_path'] ?? '')) === '') {
-                return $this->response->setJSON(['ok' => false, 'msj' => 'No tienes un rostro registrado.']);
-            }
-            $selfie = trim((string) $this->request->getPost('selfie'));
-            if ($selfie === '') {
-                return $this->response->setJSON(['ok' => false, 'msj' => 'Toma la foto para verificar tu rostro.']);
-            }
-        } else {
-            // Modo sin lector: exige la huella/rostro registrados igual que
-            // el resto del flujo (la vista sólo ofrece "sim" si hay credencial).
-            if (! (int) ($user['huella_registrada'] ?? 0) && ! (int) ($user['rostro_registrado'] ?? 0)) {
-                return $this->response->setJSON(['ok' => false, 'msj' => 'Registra tu huella o tu rostro antes de marcar.']);
-            }
+        if (! (int) ($user['rostro_registrado'] ?? 0) || trim((string) ($user['rostro_path'] ?? '')) === '') {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'No tienes un rostro registrado.']);
+        }
+        $selfie = trim((string) $this->request->getPost('selfie'));
+        if ($selfie === '') {
+            return $this->response->setJSON(['ok' => false, 'msj' => 'Toma la foto para verificar tu rostro.']);
         }
 
         return $this->response->setJSON(array_merge(

@@ -5,6 +5,8 @@
     $horaSalida  = $miHorario['hora_salida']  ?? null;
     $diasHorario = $miHorario['dias'] ?? null;
     $esPrac = (session()->get('user_role') ?? '') === 'Practicante';
+    // 1 = huella real (WebAuthn) registrada desde el dispositivo de la persona
+    $huellaReal = (int) ($u['huella_registrada'] ?? 0) === 1;
 ?>
 <style>
     .pf-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -64,7 +66,7 @@
             <div class="tk-kv-row"><span>Cargo</span><span><?= esc(($u['cargo'] ?? '') ?: ($esPrac ? 'Practicante' : 'Colaborador')) ?></span></div>
             <div class="tk-kv-row"><span>Horario</span><span class="tk-mono" style="text-align:right;"><?php if ($sinHorario): ?>Sin horario asignado<?php else: foreach (\App\Libraries\Asistencia\Jornada::textoHorarios($misHorarios ?? [$miHorario]) as $i => $lin): ?><?= $i ? '<br>' : '' ?><?= esc($lin) ?><?php endforeach; endif; ?></span></div>
             <div class="tk-kv-row"><span>Biometría</span><span>
-                <span class="tk-st <?= !empty($u['huella_registrada']) ? 'tk-st-present' : 'tk-st-justified' ?>">Huella <?= !empty($u['huella_registrada']) ? 'sí' : 'no' ?></span>
+                <span class="tk-st <?= $huellaReal ? 'tk-st-present' : 'tk-st-justified' ?>">Huella <?= $huellaReal ? 'sí' : 'no' ?></span>
                 <span class="tk-st <?= !empty($u['rostro_registrado']) ? 'tk-st-present' : 'tk-st-justified' ?>">Rostro <?= !empty($u['rostro_registrado']) ? 'sí' : 'no' ?></span>
             </span></div>
         </div>
@@ -89,6 +91,15 @@
                 </div>
                 <span class="tk-set-state" id="pfNotifState">—</span>
                 <button type="button" class="pf-toggle" id="pfNotifToggle" aria-label="Notificaciones"></button>
+            </div>
+            <div class="tk-set">
+                <div class="tk-set-info">
+                    <strong>Mi huella</strong>
+                    <span><?= $huellaReal
+                        ? 'Registrada por tu administrador. Marca con huella en el equipo donde la registró.'
+                        : 'Pídele a tu administrador que la registre. Mientras tanto, marca con tu rostro.' ?></span>
+                </div>
+                <span class="tk-set-state" style="<?= $huellaReal ? 'color:var(--g-success,#16a34a);' : '' ?>"><?= $huellaReal ? 'Registrada' : 'Pendiente' ?></span>
             </div>
             <div class="tk-set">
                 <div class="tk-set-info">

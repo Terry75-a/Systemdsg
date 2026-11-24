@@ -13,7 +13,7 @@ $bioChips = static function (int $r, int $h): string {
     };
     return $chip('photo_camera', 'Foto', $r ? 'ok' : 'bad', $r ? 'Foto completa' : 'Foto pendiente')
         . $chip('fingerprint', 'Huella', $h === 1 ? 'ok' : ($h === 2 ? 'warn' : 'bad'),
-            $h === 1 ? 'Huella completa' : ($h === 2 ? 'Huella incompleta (modo sin lector)' : 'Huella pendiente'));
+            $h === 1 ? 'Huella completa' : ($h === 2 ? 'Huella sin lector (antiguo): reiniciar' : 'Huella pendiente'));
 };
 ?>
 <!DOCTYPE html>
@@ -552,6 +552,27 @@ $bioChips = static function (int $r, int $h): string {
     <link rel="stylesheet" href="<?= base_url('css/index/components/lumen.css?v=' . filemtime(FCPATH . 'css/index/components/lumen.css')) ?>">
     <link rel="stylesheet" href="<?= base_url('css/index/components/aibl.css?v=' . filemtime(FCPATH . 'css/index/components/aibl.css')) ?>">
     <script src="<?= base_url('js/lumen-mobile.js?v=' . filemtime(FCPATH . 'js/lumen-mobile.js')) ?>" defer></script>
+    <script src="<?= base_url('js/instituciones-pe.js?v=' . filemtime(FCPATH . 'js/instituciones-pe.js')) ?>" defer></script>
+    <style>
+        /* Buscador de universidades e institutos */
+        .inst-lista { position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:60; display:none; max-height:288px; overflow-y:auto;
+            background:var(--lm-card, #fff); border:1px solid var(--lm-line-2, #e4e4e7); border-radius:14px; padding:6px;
+            box-shadow:0 18px 40px -18px rgba(0,0,0,.35); }
+        .inst-lista.is-open { display:block; }
+        .inst-op { display:flex; flex-direction:column; align-items:flex-start; gap:2px; width:100%; text-align:left; background:none; border:0;
+            border-radius:10px; padding:9px 11px; cursor:pointer; color:var(--lm-ink, #18181b); font:inherit; }
+        .inst-op:hover, .inst-op.is-act { background:var(--lm-soft, rgba(22,101,52,.08)); }
+        .inst-n { font-size:13.5px; font-weight:500; line-height:1.3; }
+        .inst-m { font-size:11.5px; color:var(--lm-faint, #71717a); }
+        .inst-vacio { padding:10px 11px; font-size:12px; color:var(--lm-faint, #71717a); }
+        .inst-tipo { display:inline-flex; gap:4px; margin-top:12px; padding:3px; border-radius:999px; background:var(--lm-card, #fff); border:1px solid var(--lm-line-2, #e4e4e7); }
+        .inst-tipo button { border:0; background:none; border-radius:999px; padding:6px 14px; min-height:32px; font:inherit; font-size:12.5px; cursor:pointer; color:var(--lm-faint, #71717a); }
+        .inst-tipo button.is-on { background:#166534; color:#fff; font-weight:600; }
+        .inst-tipo button:focus-visible { outline:2px solid #166534; outline-offset:2px; }
+        html.dark .inst-lista, html.dark .inst-tipo { background:#1c1c20; border-color:#2f2f36; }
+        html.dark .inst-op { color:#ededed; }
+        html.dark .inst-op:hover, html.dark .inst-op.is-act { background:rgba(255,255,255,.07); }
+    </style>
 </head>
 <body>
 
@@ -1002,30 +1023,19 @@ $bioChips = static function (int $r, int $h): string {
                     </div>
                     <div class="dev-field" style="grid-column:1/-1;"><label for="create_emp_name">Nombre completo</label><input type="text" id="create_emp_name" name="emp_name" placeholder="Se completa con el DNI (puedes editarlo)" required></div>
                     <div class="dev-field" style="grid-column:1/-1;"><label>Rol</label><select name="emp_role" required id="create_emp_role" onchange="toggleCreatePracticante(this.value); autofillCargo()"><option value="Empleado">Empleado</option><option value="Practicante">Practicante</option></select></div>
-                    <div id="create_practica_fields" style="display:none;grid-column:1/-1;background:var(--g-surface-variant);border:1px solid var(--g-border);border-radius:12px;padding:14px;margin-top:-4px;">
+                    <div id="create_practica_fields" data-inst style="display:none;grid-column:1/-1;background:var(--g-surface-variant);border:1px solid var(--g-border);border-radius:12px;padding:14px;margin-top:-4px;">
                         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
                             <div class="dev-field" style="flex:1;min-width:200px;margin:0;">
-                                <label><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">school</span> Institucion educativa (opcional)</label>
-                                <input type="text" name="emp_institucion" placeholder="Ej. SENATI, UNI, TECSUP...">
+                                <label for="create_emp_institucion"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">school</span> Universidad o instituto</label>
+                                <div><input type="text" id="create_emp_institucion" name="emp_institucion" data-inst-input placeholder="Busca: San Marcos, UTP, SENATI…"></div>
                             </div>
                             <div class="dev-field" style="min-width:160px;margin:0;">
-                                <label><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">grade</span> Semestre / Ciclo *</label>
-                                <select name="emp_semestre" id="create_emp_semestre">
-                                    <option value="">Elegir...</option>
-                                    <option value="Ciclo I">Ciclo I</option>
-                                    <option value="Ciclo II">Ciclo II</option>
-                                    <option value="Ciclo III">Ciclo III</option>
-                                    <option value="Ciclo IV">Ciclo IV</option>
-                                    <option value="Ciclo V">Ciclo V</option>
-                                    <option value="Ciclo VI">Ciclo VI</option>
-                                    <option value="Ciclo VII">Ciclo VII</option>
-                                    <option value="Ciclo VIII">Ciclo VIII</option>
-                                    <option value="Ciclo IX">Ciclo IX</option>
-                                    <option value="Ciclo X">Ciclo X</option>
-                                </select>
+                                <label for="create_emp_semestre"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">grade</span> Ciclo / Semestre *</label>
+                                <select name="emp_semestre" id="create_emp_semestre" data-inst-semestre></select>
                             </div>
                         </div>
-                        <small style="color:var(--g-text-secondary);font-size:11px;display:block;margin-top:8px;">Campo exclusivo de practicantes: indica en que semestre esta.</small>
+                        <div class="inst-tipo" data-inst-tipo role="group" aria-label="Tipo de institución"><button type="button" data-t="U" aria-pressed="false">Universidad</button><button type="button" data-t="I" aria-pressed="false">Instituto</button></div>
+                        <small style="color:var(--g-text-secondary);font-size:11px;display:block;margin-top:8px;">Universidad: ciclos I a XIV. Instituto: semestres I a VI. Si no está en la lista, escríbela y elige el tipo.</small>
                     </div>
                     <div class="dev-field" style="grid-column:1/-1;">
                         <label>Área especializada</label>
@@ -1329,7 +1339,7 @@ $bioChips = static function (int $r, int $h): string {
                     <span class="material-symbols-outlined">fingerprint</span>
                     <div>
                         <strong>Huella</strong>
-                        <small>La huella real sólo se inscribe desde el dispositivo de la persona (WebAuthn). Aquí sólo se activa o apaga el modo sin lector.</small>
+                        <small>Regístrala aquí con la persona presente: pondrá su dedo en el lector de ESTE equipo. Podrá marcar con huella en este mismo equipo; en otro, con su rostro.</small>
                     </div>
                     <span class="tk-chip-soft tk-chip-bad" id="bioHuellaChip">Pendiente</span>
                 </div>
@@ -1337,11 +1347,11 @@ $bioChips = static function (int $r, int $h): string {
                 <div style="font-size:11.5px;color:var(--g-text-secondary,#a9b6c8);margin-top:10px;" id="bioHuellaHint">Aún no se ha habilitado.</div>
 
                 <div class="bio-person-actions">
-                    <button type="button" class="dev-btn dev-btn-sm" id="bioHuellaOnBtn" onclick="bioPersonHuella('on')">
-                        <span class="material-symbols-outlined">fingerprint</span> Activar sin lector
+                    <button type="button" class="dev-btn dev-btn-sm" id="bioHuellaRegBtn" onclick="bioPersonHuellaRegistrar()">
+                        <span class="material-symbols-outlined">fingerprint</span> Registrar huella en este equipo
                     </button>
                     <button type="button" class="dev-btn dev-btn-outline dev-btn-sm" id="bioHuellaOffBtn" style="display:none;" onclick="bioPersonHuella('off')">
-                        <span class="material-symbols-outlined">block</span> Desactivar
+                        <span class="material-symbols-outlined">delete</span> Borrar huella
                     </button>
                 </div>
 
@@ -1442,9 +1452,12 @@ $bioChips = static function (int $r, int $h): string {
                         </div>
                     </div>
                     <div class="dev-field" style="grid-column:1/-1;display:none;" id="edit_practica_fields">
-                        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:var(--g-surface-variant);border:1px solid var(--g-border);border-radius:12px;padding:14px;">
-                            <div class="dev-field" style="flex:1;min-width:200px;margin:0;"><label>Institucion educativa</label><input type="text" id="edit_institucion" name="emp_institucion"></div>
-                            <div class="dev-field" style="min-width:160px;margin:0;"><label>Semestre / Ciclo</label><select id="edit_semestre" name="emp_semestre"><option value="">Elegir...</option><option value="Ciclo I">Ciclo I</option><option value="Ciclo II">Ciclo II</option><option value="Ciclo III">Ciclo III</option><option value="Ciclo IV">Ciclo IV</option><option value="Ciclo V">Ciclo V</option><option value="Ciclo VI">Ciclo VI</option><option value="Ciclo VII">Ciclo VII</option><option value="Ciclo VIII">Ciclo VIII</option><option value="Ciclo IX">Ciclo IX</option><option value="Ciclo X">Ciclo X</option></select></div>
+                        <div data-inst style="background:var(--g-surface-variant);border:1px solid var(--g-border);border-radius:12px;padding:14px;">
+                            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                                <div class="dev-field" style="flex:1;min-width:200px;margin:0;"><label for="edit_institucion">Universidad o instituto</label><div><input type="text" id="edit_institucion" name="emp_institucion" data-inst-input placeholder="Busca: San Marcos, UTP, SENATI…"></div></div>
+                                <div class="dev-field" style="min-width:160px;margin:0;"><label for="edit_semestre">Ciclo / Semestre</label><select id="edit_semestre" name="emp_semestre" data-inst-semestre></select></div>
+                            </div>
+                            <div class="inst-tipo" data-inst-tipo role="group" aria-label="Tipo de institución"><button type="button" data-t="U" aria-pressed="false">Universidad</button><button type="button" data-t="I" aria-pressed="false">Instituto</button></div>
                         </div>
                     </div>
                     <div class="dev-field"><label>Estado</label><select id="edit_estado" name="emp_estado"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
@@ -1988,22 +2001,89 @@ function bioPersonRenderHuella() {
     var h = Number((BIO_P.emp && BIO_P.emp.huella_registrada) || 0);
     var chip = document.getElementById('bioHuellaChip');
     chip.className = 'tk-chip-soft ' + (h === 1 ? 'tk-chip-ok' : (h === 2 ? 'tk-chip-warn' : 'tk-chip-bad'));
-    chip.textContent = h === 1 ? 'Real (WebAuthn)' : (h === 2 ? 'Sin lector' : 'Pendiente');
+    chip.textContent = h === 1 ? 'Registrada' : (h === 2 ? 'Sin lector (antiguo)' : 'Pendiente');
 
     document.getElementById('bioHuellaHint').textContent = h === 1
-        ? 'Inscrita por la persona desde su propio dispositivo.'
-        : (h === 2 ? 'Habilitada en modo sin lector: no valida huella real.' : 'Aún no se ha habilitado.');
+        ? 'Huella real registrada. Para cambiarla (otro equipo u otro dedo), vuelve a registrarla.'
+        : (h === 2 ? 'Modo sin lector antiguo, ya no sirve para marcar. Registra su huella real.'
+                   : 'Aún no tiene huella. Con la persona presente, pulsa «Registrar huella en este equipo».');
 
-    document.getElementById('bioHuellaOnBtn').style.display = h ? 'none' : '';
+    var reg = document.getElementById('bioHuellaRegBtn');
+    reg.innerHTML = '<span class="material-symbols-outlined">fingerprint</span> ' + (h === 1 ? 'Volver a registrar' : 'Registrar huella en este equipo');
+    reg.className = 'dev-btn dev-btn-sm' + (h === 1 ? ' dev-btn-outline' : '');
     document.getElementById('bioHuellaOffBtn').style.display = h ? '' : 'none';
+}
+
+/** El admin registra la huella real (WebAuthn) de la persona en este equipo. */
+function bioPersonHuellaRegistrar() {
+    if (!BIO_P.emp) return;
+    var btn = document.getElementById('bioHuellaRegBtn');
+    function fail(m) { btn.disabled = false; bioPersonMsg('bioPersonHuellaMsg', m, false); }
+    function b64ToU8(s) {
+        s = String(s).replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        var bin = atob(s), out = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+        return out;
+    }
+    function u8ToB64(buf) {
+        var u8 = new Uint8Array(buf), bin = '';
+        for (var i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+        return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    if (!window.isSecureContext || !window.PublicKeyCredential) {
+        return fail('Este navegador no permite registrar huellas. Usa Chrome, Edge o Safari actualizados, con https.');
+    }
+    btn.disabled = true;
+    bioPersonMsg('bioPersonHuellaMsg', 'Preparando el lector…', true);
+    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (ok) {
+        if (!ok) return fail('Este equipo no tiene lector de huella ni Face ID. Hazlo desde un equipo con lector.');
+        var fd = new FormData();
+        fd.set('csrf_test_name', '<?= csrf_hash() ?>');
+        fd.set('user_id', BIO_P.emp.id);
+        return fetch('<?= site_url('admin/biometria/huella-reto') ?>', { method: 'POST', body: fd, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (!d.ok) return fail(d.msj || 'No se pudo iniciar el registro.');
+                bioPersonMsg('bioPersonHuellaMsg', 'Que ' + (BIO_P.emp.name || 'la persona') + ' ponga su dedo en el lector.', true);
+                return navigator.credentials.create({
+                    publicKey: {
+                        challenge: b64ToU8(d.challenge),
+                        rp: { id: d.rpId, name: 'DSG Peru' },
+                        user: { id: b64ToU8(d.userHandle), name: d.userEmail || d.userName, displayName: d.userName },
+                        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+                        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required' },
+                        timeout: 60000
+                    }
+                }).then(function (cred) {
+                    var resp = cred.response, body = new FormData();
+                    body.set('csrf_test_name', d.csrfHash || '<?= csrf_hash() ?>');
+                    body.set('user_id', BIO_P.emp.id);
+                    body.set('credential_id', u8ToB64(cred.rawId));
+                    body.set('type', cred.type || 'public-key');
+                    body.set('clientDataJSON', u8ToB64(resp.clientDataJSON));
+                    body.set('attestationObject', u8ToB64(resp.attestationObject));
+                    body.set('transports', JSON.stringify(typeof resp.getTransports === 'function' ? resp.getTransports() : []));
+                    return fetch('<?= site_url('admin/biometria/huella-registrar') ?>', { method: 'POST', body: body, credentials: 'same-origin' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (res) {
+                            if (!res.ok) return fail(res.msj || 'No se pudo registrar la huella.');
+                            btn.disabled = false;
+                            bioPersonMsg('bioPersonHuellaMsg', res.msj || 'Huella registrada.', true);
+                            BIO_P.emp.huella_registrada = 1;
+                            bioPersonRenderHuella();
+                            bioPersonRefreshFila();
+                        });
+                }, function () { fail('Se canceló o no se pudo leer la huella. Inténtalo de nuevo.'); });
+            });
+    }).catch(function () { fail('Error de red. Inténtalo de nuevo.'); });
 }
 
 function bioPersonHuella(estado) {
     if (!BIO_P.emp) return;
 
-    var onBtn = document.getElementById('bioHuellaOnBtn');
+    if (!confirm('¿Borrar la huella de ' + (BIO_P.emp.name || 'esta persona') + '? Podrás registrarla de nuevo aquí.')) return;
     var offBtn = document.getElementById('bioHuellaOffBtn');
-    onBtn.disabled = true;
     offBtn.disabled = true;
 
     var body = new FormData();
@@ -2014,18 +2094,16 @@ function bioPersonHuella(estado) {
     fetch('<?= site_url('admin/biometria/huella') ?>', { method: 'POST', body: body, credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
-            onBtn.disabled = false;
             offBtn.disabled = false;
             bioPersonMsg('bioPersonHuellaMsg', d.msj || (d.ok ? 'Listo' : 'No se pudo actualizar'), !!d.ok);
             if (!d.ok) return;
-            BIO_P.emp.huella_registrada = estado === 'on' ? 2 : 0;
+            BIO_P.emp.huella_registrada = 0;
             bioPersonRenderHuella();
             bioPersonRefreshFila();
         })
         .catch(function () {
-            onBtn.disabled = false;
             offBtn.disabled = false;
-            bioPersonMsg('bioPersonHuellaMsg', 'Error de red. Intentalo de nuevo.', false);
+            bioPersonMsg('bioPersonHuellaMsg', 'Error de red. Inténtalo de nuevo.', false);
         });
 }
 
@@ -2044,7 +2122,7 @@ function bioPersonRefreshFila() {
     }
     var html = chip('photo_camera', 'Foto', r ? 'ok' : 'bad', r ? 'Foto completa' : 'Foto pendiente')
              + chip('fingerprint', 'Huella', h === 1 ? 'ok' : (h === 2 ? 'warn' : 'bad'),
-                    h === 1 ? 'Huella completa' : (h === 2 ? 'Huella incompleta (modo sin lector)' : 'Huella pendiente'));
+                    h === 1 ? 'Huella completa' : (h === 2 ? 'Huella sin lector (antiguo): reiniciar' : 'Huella pendiente'));
     document.querySelectorAll('[data-bio-chips="' + e.id + '"], [data-bio-chips-m="' + e.id + '"]').forEach(function (el) {
         el.innerHTML = html;
     });
@@ -2527,8 +2605,9 @@ function openEditModal(emp) {
     document.getElementById('edit_password').value = '';
     var isPract = emp.role === 'Practicante';
     document.getElementById('edit_practica_fields').style.display = isPract ? '' : 'none';
-    document.getElementById('edit_institucion').value = emp.institucion || '';
-    document.getElementById('edit_semestre').value = emp.semestre || '';
+    var instEd = window.dsgInstituciones && window.dsgInstituciones.montar(document.getElementById('edit_institucion').closest('[data-inst]'));
+    if (instEd) instEd.set(emp.institucion || '', emp.semestre || '');
+    else { document.getElementById('edit_institucion').value = emp.institucion || ''; document.getElementById('edit_semestre').value = emp.semestre || ''; }
 
     document.getElementById('edit_contract_type').value = emp.contract_type || 'Indefinido';
     document.getElementById('edit_contract_dur').value = emp.contract_duration || 1;
